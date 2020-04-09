@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:monopolists/engine/ui/alert.dart';
 import 'package:monopolists/screens/game/action_screen/bottom_sheet.dart';
+import 'package:monopolists/screens/game/action_screen/info_card.dart';
 import 'package:monopolists/screens/game/action_screen/property_card.dart';
 
 import '../../../bloc/main_bloc.dart';
@@ -160,6 +161,7 @@ class ActionScreen extends StatelessWidget {
       PropertyActionCard(),
       MoneyCard(),
       ActionsCard(),
+      InfoCard()
     ];
     List<Widget> evenActions = [];
 
@@ -193,6 +195,7 @@ class ActionScreen extends StatelessWidget {
     }
 
     return ListView(
+      shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       children: actions,
     );

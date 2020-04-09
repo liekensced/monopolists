@@ -8,10 +8,7 @@ class UIActionsData extends HiveObject {
   @HiveField(0)
   bool shouldMove = true;
 
-  void loadActionScreen() {
-    Game.data.rentPayed = false;
-    Game.save();
-  }
+  void loadActionScreen() {}
 
   int get moveAnimationMillis {
     return (Game.data.currentDices[0] + Game.data.currentDices[1] * 200 + 500);

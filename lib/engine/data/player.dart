@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:monopolists/engine/data/info.dart';
 import 'package:monopolists/engine/data/map.dart';
 import 'package:monopolists/engine/kernel/main.dart';
 
@@ -24,6 +25,10 @@ class Player extends HiveObject {
   int jailTries = 0;
   @HiveField(8)
   int goojCards = 0;
+  @HiveField(9)
+  List<List<Info>> info = [[]];
+  @HiveField(10)
+  List<double> moneyHistory = [0];
 
   Tile get positionTile => Game.data.gmap[position];
   int get index => Game.data.players.indexOf(this);
@@ -67,5 +72,6 @@ class Player extends HiveObject {
     if (name == null) {
       name = "Player $id";
     }
+    moneyHistory.add(money);
   }
 }

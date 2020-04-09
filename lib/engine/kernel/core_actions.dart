@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:monopolists/engine/data/info.dart';
 import 'package:monopolists/engine/data/player.dart';
 import '../data/main.dart';
 
@@ -23,6 +24,9 @@ class CoreActions {
       case payType.rent:
         data.rentPayed = true;
         data.players[receiver].money += amount;
+        data.players[receiver].info.last.add(Info(
+            title: "Rent received from ${data.player.name}: $amount",
+            leading: "rent"));
         break;
       case payType.pot:
         data.rentPayed = true;

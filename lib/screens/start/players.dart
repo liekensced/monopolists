@@ -242,19 +242,19 @@ class ColorHelper {
   ];
 
   List<int> exampleAccentColors = [
-    Colors.redAccent.value,
-    Colors.pinkAccent.value,
-    Colors.purpleAccent.value,
-    Colors.deepPurpleAccent.value,
-    Colors.indigoAccent.value,
-    Colors.blueAccent.value,
-    Colors.lightBlueAccent.value,
-    Colors.cyanAccent.value,
-    Colors.greenAccent.value,
-    Colors.lightGreenAccent.value,
-    Colors.amber[900].value,
-    Colors.deepOrange.value,
-    Colors.deepOrangeAccent[700].value,
+    Colors.red[300].value,
+    Colors.pink[300].value,
+    Colors.purple[300].value,
+    Colors.deepPurple[300].value,
+    Colors.indigo[300].value,
+    Colors.blue[300].value,
+    Colors.lightBlue[300].value,
+    Colors.cyan[300].value,
+    Colors.green[300].value,
+    Colors.lightGreen[300].value,
+    Colors.amber[300].value,
+    Colors.orange[300].value,
+    Colors.deepOrange[300].value,
     Colors.blueGrey.value
   ];
 
@@ -262,7 +262,7 @@ class ColorHelper {
     assert(exampleAccentColors.length == exampleColors.length);
     if (exampleColors.contains(color)) {
       int index = exampleColors.indexOf(color);
-      return accentColors[index];
+      return Color(exampleAccentColors[index]);
     }
     return Color(color);
   }

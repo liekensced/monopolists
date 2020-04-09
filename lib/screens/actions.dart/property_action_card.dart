@@ -1,12 +1,16 @@
+import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
-import 'package:monopolists/bloc/main_bloc.dart';
-import 'package:monopolists/engine/data/map.dart';
-import 'package:monopolists/engine/data/player.dart';
-import 'package:monopolists/engine/kernel/../ui/alert.dart';
-import 'package:monopolists/engine/kernel/core_actions.dart';
-import 'package:monopolists/engine/kernel/main.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
+import '../../bloc/main_bloc.dart';
+import '../../engine/data/actions.dart';
+import '../../engine/data/map.dart';
+import '../../engine/data/player.dart';
+import '../../engine/kernel/../ui/alert.dart';
+import '../../engine/kernel/core_actions.dart';
+import '../../engine/kernel/main.dart';
 
 class PropertyActionCard extends StatelessWidget {
   @override
@@ -14,6 +18,127 @@ class PropertyActionCard extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: Hive.box(MainBloc.GAMESBOX).listenable(),
       builder: (_, __, ___) {
+        Tile tile = Game.data.player.positionTile;
+        if (tile.type == TileType.chance) {
+          CardAction action = events[Game.data.eventIndex];
+          return FlipCard(
+            front: Card(
+              color: Theme.of(context).primaryColor,
+              child: Container(
+                height: 200,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    FaIcon(
+                      FontAwesomeIcons.question,
+                      size: 50,
+                      color: Colors.white,
+                    ),
+                    Container(height: 20),
+                    Text(
+                      "Event card",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            back: Card(
+              color: Theme.of(context).primaryColor,
+              child: Container(
+                height: 200,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Spacer(),
+                      Text(
+                        Game.data.rentPayed ? "done" : action.text,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Game.data.rentPayed
+                            ? Container()
+                            : RaisedButton(
+                                color: Colors.red,
+                                child: Text(
+                                  "execute",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onPressed: () {
+                                  Alert.handle(
+                                      () => Game.executeEvent(action.func),
+                                      context);
+                                },
+                              ),
+                      )
+                    ]),
+              ),
+            ),
+          );
+        }
+        if (tile.type == TileType.chest) {
+          CardAction action = findings[Game.data.findingsIndex];
+          return FlipCard(
+            front: Card(
+              color: Theme.of(context).primaryColor,
+              child: Container(
+                height: 200,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    FaIcon(
+                      FontAwesomeIcons.solidGem,
+                      size: 50,
+                      color: Colors.white,
+                    ),
+                    Container(height: 20),
+                    Text(
+                      "Findings card",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            back: Card(
+              color: Theme.of(context).primaryColor,
+              child: Container(
+                height: 200,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Spacer(),
+                      Text(
+                        Game.data.rentPayed ? "done" : action.text,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Game.data.rentPayed
+                            ? Container()
+                            : RaisedButton(
+                                color: Colors.red,
+                                child: Text(
+                                  "execute",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onPressed: () {
+                                  Alert.handle(
+                                      () => Game.executeEvent(action.func),
+                                      context);
+                                },
+                              ),
+                      )
+                    ]),
+              ),
+            ),
+          );
+        }
         return PropertyActionCardChild();
       },
     );

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:monopolists/engine/data/extensions.dart';
+import 'package:monopolists/engine/data/info.dart';
 import 'package:monopolists/engine/data/settings.dart';
 import 'package:monopolists/engine/data/ui_actions.dart';
 import 'package:path_provider/path_provider.dart';
@@ -32,6 +33,7 @@ Future<void> main() async {
   Hive.registerAdapter(SettingsAdapter());
   Hive.registerAdapter(UIActionsDataAdapter());
   Hive.registerAdapter(ExtensionAdapter());
+  Hive.registerAdapter(InfoAdapter());
   await Hive.openBox(MainBloc.PREFBOX);
   runApp(MyApp());
 }

@@ -28,13 +28,15 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..settings = fields[8] as Settings
       ..extensions = (fields[9] as List)?.cast<Extension>()
       ..ui = fields[10] as UIActionsData
-      ..rentPayed = fields[11] as bool;
+      ..rentPayed = fields[11] as bool
+      ..findingsIndex = fields[12] as int
+      ..eventIndex = fields[13] as int;
   }
 
   @override
   void write(BinaryWriter writer, GameData obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.running)
       ..writeByte(1)
@@ -58,6 +60,10 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..writeByte(10)
       ..write(obj.ui)
       ..writeByte(11)
-      ..write(obj.rentPayed);
+      ..write(obj.rentPayed)
+      ..writeByte(12)
+      ..write(obj.findingsIndex)
+      ..writeByte(13)
+      ..write(obj.eventIndex);
   }
 }

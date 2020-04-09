@@ -26,13 +26,17 @@ class PlayerAdapter extends TypeAdapter<Player> {
       ..properties = (fields[5] as List)?.cast<int>()
       ..jailed = fields[6] as bool
       ..jailTries = fields[7] as int
-      ..goojCards = fields[8] as int;
+      ..goojCards = fields[8] as int
+      ..info = (fields[9] as List)
+          ?.map((dynamic e) => (e as List)?.cast<Info>())
+          ?.toList()
+      ..moneyHistory = (fields[10] as List)?.cast<double>();
   }
 
   @override
   void write(BinaryWriter writer, Player obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -50,6 +54,10 @@ class PlayerAdapter extends TypeAdapter<Player> {
       ..writeByte(7)
       ..write(obj.jailTries)
       ..writeByte(8)
-      ..write(obj.goojCards);
+      ..write(obj.goojCards)
+      ..writeByte(9)
+      ..write(obj.info)
+      ..writeByte(10)
+      ..write(obj.moneyHistory);
   }
 }

@@ -17,7 +17,7 @@ class GameData extends HiveObject {
   @HiveField(2)
   int currentPlayer = 0;
   @HiveField(3)
-  int turn = 0;
+  int turn = 1;
   @HiveField(4)
   List<int> currentDices = [1, -1];
   @HiveField(5)
@@ -34,6 +34,10 @@ class GameData extends HiveObject {
   UIActionsData ui = UIActionsData();
   @HiveField(11)
   bool rentPayed = false;
+  @HiveField(12)
+  int findingsIndex = 0;
+  @HiveField(13)
+  int eventIndex = 0;
 
   Player get player {
     return players[currentPlayer];

@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:monopolists/engine/data/actions.dart';
+import 'package:monopolists/engine/data/info.dart';
 import 'package:monopolists/engine/data/ui_actions.dart';
 import 'package:monopolists/engine/ui/alert.dart';
 
@@ -60,6 +64,9 @@ class Game {
       data.settings.name = "test game";
     }
 
+    data.findingsIndex = Random().nextInt(findings.length);
+    data.eventIndex = Random().nextInt(events.length);
+
     if (data.players.length > 0) {
       data.running = true;
       data.currentPlayer = 0;
@@ -69,7 +76,26 @@ class Game {
 
   //basic interactions
 
+  static Alert executeEvent(Function func) {
+    var r = func();
+    if (r is Alert) {
+      return r;
+    }
+
+    data.rentPayed = true;
+    Game.save();
+    return null;
+  }
+
+  static void jump(int position) {
+    data.rentPayed = false;
+
+    Game.data.player.position = position;
+    Game.save();
+  }
+
   static void move(int dice1, int dice2) {
+    data.rentPayed = false;
     ui.shouldMove = false;
     Player player = data.player;
     data.currentDices = [dice1, dice2];
@@ -92,9 +118,9 @@ class Game {
     } else {
       if (dice1 != dice2) data.doublesThrown = 0;
       for (int i = 0; i < steps; i++) {
-        if (player.position > data.gmap.length) {
+        if (player.position >= data.gmap.length) {
           player.position = 0;
-          Bank.rent();
+          onPassGo();
         } else {
           player.position++;
         }
@@ -112,17 +138,24 @@ class Game {
   }
 
   static Alert next() {
-    if (Game.data.player.positionTile.type == TileType.tax &&
-        !Game.data.rentPayed) {
+    data.findingsIndex = Random().nextInt(findings.length);
+    data.eventIndex = Random().nextInt(events.length);
+    TileType _type = Game.data.player.positionTile.type;
+    if (_type == TileType.tax && !Game.data.rentPayed) {
       return Alert(
           "Taxes not payed", "Please pay your taxes before continuing");
+    }
+    if (_type == TileType.chance ||
+        _type == TileType.chest && !Game.data.rentPayed) {
+      return Alert("Card not executed",
+          "Tap on the Findings or Event card and execute it.");
     }
     ui.shouldMove = true;
     if (data.currentDices[0] == data.currentDices[1] && !data.player.jailed) {
       data.doublesThrown++;
     } else if (data.currentPlayer == data.players.length - 1) {
       data.currentPlayer = 0;
-      data.turn++;
+      onNewTurn();
     } else {
       data.currentPlayer++;
     }
@@ -130,5 +163,22 @@ class Game {
     save();
 
     return null;
+  }
+
+  static onNewTurn() {
+    data.turn++;
+
+    data.players.asMap().forEach((int i, _) {
+      data.players[i].info.add([]);
+      data.players[i].moneyHistory.add(data.players[i].money);
+    });
+  }
+
+  static onPassGo() {
+    int _goBonus = Game.data.settings.goBonus;
+    data.player.money += _goBonus;
+    data.player.info.last.add(Info(title: "Received go bonus: $_goBonus"));
+
+    Bank.rent();
   }
 }
