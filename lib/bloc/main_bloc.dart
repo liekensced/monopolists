@@ -30,6 +30,9 @@ class MainBloc {
   static StreamSubscription<DocumentSnapshot> waiter;
   static int posOveride;
 
+  static double get maxWidth =>
+      Hive.box(PREFBOX).get("doubleMaxWidth", defaultValue: 700.0);
+
   static int get carrouselPosition {
     if (posOveride == null)
       return Game.data.player.position;

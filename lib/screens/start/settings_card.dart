@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/kernel/main.dart';
+import '../../widgets/my_card.dart';
 
 class SettingsCard extends StatefulWidget {
   @override
@@ -13,73 +14,63 @@ class _SettingsCardState extends State<SettingsCard>
   bool showAdvanced = false;
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.all(8),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "Settings",
-              style: Theme.of(context).textTheme.headline3,
-              textAlign: TextAlign.start,
-            ),
+    return MyCard(
+      title: "Settings:",
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            decoration: InputDecoration(
+                hintText: "Game " + MainBloc.getGameNumber.toString(),
+                labelText: "Game name"),
+            onChanged: (val) => Game.data.settings.name = val,
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                  hintText: "Game " + MainBloc.getGameNumber.toString(),
-                  labelText: "Game name"),
-              onChanged: (val) => Game.data.settings.name = val,
-            ),
-          ),
-          Divider(),
-          ListTile(
-            title: Text("Remotely build"),
-            subtitle: Text(
-                "You don't have to stand on the property to build something"),
-            trailing: Switch(
-              value: Game.data.settings.remotelyBuild,
-              onChanged: (val) {
-                Game.data.settings.remotelyBuild = val;
-                Game.save();
-              },
-            ),
-          ),
-          Divider(),
-          ListTile(
-            title: Text("Mandatory auction"),
-            subtitle:
-                Text("If you don't buy the property, it must be auctioned."),
-            trailing: Switch(
-              value: Game.data.settings.mustAuction,
-              onChanged: (val) {
-                Game.data.settings.mustAuction = val;
-                Game.save();
-              },
-            ),
-          ),
-          AnimatedSize(
-            duration: Duration(milliseconds: 500),
-            curve: Curves.decelerate,
-            vsync: this,
-            child: !showAdvanced ? Container() : AdvancedSettings(),
-          ),
-          MaterialButton(
-            onPressed: () {
-              setState(() {
-                showAdvanced = !showAdvanced;
-              });
+        ),
+        Divider(),
+        ListTile(
+          title: Text("Remotely build"),
+          subtitle: Text(
+              "You don't have to stand on the property to build something"),
+          trailing: Switch(
+            value: Game.data.settings.remotelyBuild,
+            onChanged: (val) {
+              Game.data.settings.remotelyBuild = val;
+              Game.save();
             },
-            child: Text(
-              showAdvanced ? "Close advanced" : "Open advanced",
-              style: TextStyle(color: Theme.of(context).primaryColor),
-            ),
           ),
-          Container(height: 8)
-        ],
-      ),
+        ),
+        Divider(),
+        ListTile(
+          title: Text("Mandatory auction"),
+          subtitle:
+              Text("If you don't buy the property, it must be auctioned."),
+          trailing: Switch(
+            value: Game.data.settings.mustAuction,
+            onChanged: (val) {
+              Game.data.settings.mustAuction = val;
+              Game.save();
+            },
+          ),
+        ),
+        AnimatedSize(
+          duration: Duration(milliseconds: 500),
+          curve: Curves.decelerate,
+          vsync: this,
+          child: !showAdvanced ? Container() : AdvancedSettings(),
+        ),
+        MaterialButton(
+          onPressed: () {
+            setState(() {
+              showAdvanced = !showAdvanced;
+            });
+          },
+          child: Text(
+            showAdvanced ? "Close advanced" : "Open advanced",
+            style: TextStyle(color: Theme.of(context).primaryColor),
+          ),
+        ),
+        Container(height: 8)
+      ],
     );
   }
 }

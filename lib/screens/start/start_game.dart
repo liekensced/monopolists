@@ -42,22 +42,27 @@ class _StartGameScreenState extends State<StartGameScreen> {
         appBar: AppBar(
           title: Text("Start new game"),
         ),
-        body: GameListener(builder: (context, __, _) {
-          List<Widget> items = [
-            SettingsCard(),
-            PlayersCard(red: red),
-            ExtensionsCard(),
-            EndOfList()
-          ];
-          return FractionallySizedBox(
-            heightFactor: 1,
-            child: ScrollablePositionedList.builder(
-                itemScrollController: ctrl,
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return items[index];
-                }),
-          );
-        }));
+        body: Center(
+          child: Container(
+            constraints: BoxConstraints(maxWidth: MainBloc.maxWidth),
+            child: GameListener(builder: (context, __, _) {
+              List<Widget> items = [
+                SettingsCard(),
+                PlayersCard(red: red),
+                ExtensionsCard(),
+                EndOfList()
+              ];
+              return FractionallySizedBox(
+                heightFactor: 1,
+                child: ScrollablePositionedList.builder(
+                    itemScrollController: ctrl,
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      return items[index];
+                    }),
+              );
+            }),
+          ),
+        ));
   }
 }

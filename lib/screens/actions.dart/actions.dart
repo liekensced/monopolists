@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/widgets/my_card.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/data/deal_data.dart';
@@ -54,21 +55,19 @@ class ActionsCardChild extends StatelessWidget {
     if (playersList.length >= 2) playersList.removeLast();
 
     return Container(
-      child: Card(
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.all(8),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Deal",
-                style: Theme.of(context).textTheme.headline3,
-                textAlign: TextAlign.start,
-              ),
+      child: MyCard(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Deal",
+              style: Theme.of(context).textTheme.headline3,
+              textAlign: TextAlign.start,
             ),
-            ...playersList
-          ],
-        ),
+          ),
+          ...playersList
+        ],
       ),
     );
   }

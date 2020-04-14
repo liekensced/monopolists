@@ -11,6 +11,7 @@ import '../../engine/data/player.dart';
 import '../../engine/kernel/../ui/alert.dart';
 import '../../engine/kernel/core_actions.dart';
 import '../../engine/kernel/main.dart';
+import '../../widgets/my_card.dart';
 
 class PropertyActionCard extends StatelessWidget {
   @override
@@ -82,9 +83,8 @@ class PropertyActionCard extends StatelessWidget {
         if (tile.type == TileType.chest) {
           CardAction action = findings[Game.data.findingsIndex];
           return FlipCard(
-            front: Card(
-              color: Theme.of(context).primaryColor,
-              child: Container(
+            front: MyCard(color: Theme.of(context).primaryColor, children: [
+              Container(
                 height: 200,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -102,10 +102,9 @@ class PropertyActionCard extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-            back: Card(
-              color: Theme.of(context).primaryColor,
-              child: Container(
+            ]),
+            back: MyCard(color: Theme.of(context).primaryColor, children: [
+              Container(
                 height: 200,
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -136,7 +135,7 @@ class PropertyActionCard extends StatelessWidget {
                       )
                     ]),
               ),
-            ),
+            ]),
           );
         }
         return PropertyActionCardChild();
@@ -148,21 +147,9 @@ class PropertyActionCard extends StatelessWidget {
 class PropertyActionCardChild extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.all(8),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "Tile",
-              style: Theme.of(context).textTheme.headline3,
-              textAlign: TextAlign.start,
-            ),
-          ),
-          buildRaisedButton(context)
-        ],
-      ),
+    return MyCard(
+      title: "tile",
+      children: <Widget>[buildRaisedButton(context)],
     );
   }
 

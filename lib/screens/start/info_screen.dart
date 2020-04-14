@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/widgets/my_card.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/data/extensions.dart';
@@ -69,8 +70,8 @@ class InfoScreen extends StatelessWidget {
       ));
     }
 
-    infoWidgets.add(Card(
-      child: Padding(
+    infoWidgets.add(MyCard(children: [
+      Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: ListView.separated(
           shrinkWrap: true,
@@ -84,7 +85,7 @@ class InfoScreen extends StatelessWidget {
           },
         ),
       ),
-    ));
+    ]));
     if (extensions.contains(Extension.bank)) {
       infoWidgets.add(IconDivider(icon: Bank.icon(size: 40)));
       Bank.getInfo().forEach((info) {
@@ -132,9 +133,7 @@ class InfoScreen extends StatelessWidget {
   }
 
   Widget _buildCard(Info info) {
-    return Card(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return MyCard(
       children: <Widget>[
         Container(
             height: 100,
@@ -162,7 +161,7 @@ class InfoScreen extends StatelessWidget {
               style: TextStyle(fontSize: 16), textAlign: TextAlign.center),
         )
       ],
-    ));
+    );
   }
 
   Widget _getIcon(type) {

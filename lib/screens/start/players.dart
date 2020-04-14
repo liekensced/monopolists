@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
+import 'package:plutopoly/widgets/my_card.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/data/player.dart';
@@ -24,60 +25,50 @@ class _PlayersCardState extends State<PlayersCard>
   Widget build(BuildContext context) {
     int _playersLength = Game.data.players.length;
     bool _noPlayers = _playersLength == 0;
-    return Card(
-      child: Column(
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.all(8),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "Players:",
-              style: Theme.of(context).textTheme.headline3,
-              textAlign: TextAlign.start,
-            ),
-          ),
-          _noPlayers
-              ? Container(
-                  height: 50,
-                  child: Center(
-                    child: widget.red
-                        ? Text("Please add players in the right order",
-                            style: TextStyle(color: Colors.red))
-                        : Text("Please add players in the right order"),
-                  ),
-                )
-              : ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: _playersLength,
-                  itemBuilder: (BuildContext ctxt, int index) {
-                    Player player = Game.data.players[index];
-                    return ListTile(
-                      title: Row(
-                        children: <Widget>[
-                          Text(player.name),
-                          Container(width: 5),
-                          CircleColor(
-                            circleSize: 10,
-                            color: Color(player.color),
-                          ),
-                        ],
-                      ),
-                      subtitle: Text("Normal player"),
-                      trailing: index == _playersLength - 1
-                          ? IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () => Game.setup.deleteLastPlayer(),
-                            )
-                          : Container(
-                              width: 0,
-                            ),
-                    );
-                  },
+    return MyCard(
+      title: "Players:",
+      children: <Widget>[
+        _noPlayers
+            ? Container(
+                height: 50,
+                child: Center(
+                  child: widget.red
+                      ? Text("Please add players in the right order",
+                          style: TextStyle(color: Colors.red))
+                      : Text("Please add players in the right order"),
                 ),
-          AddPlayerButton()
-        ],
-      ),
+              )
+            : ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: _playersLength,
+                itemBuilder: (BuildContext ctxt, int index) {
+                  Player player = Game.data.players[index];
+                  return ListTile(
+                    title: Row(
+                      children: <Widget>[
+                        Text(player.name),
+                        Container(width: 5),
+                        CircleColor(
+                          circleSize: 10,
+                          color: Color(player.color),
+                        ),
+                      ],
+                    ),
+                    subtitle: Text("Normal player"),
+                    trailing: index == _playersLength - 1
+                        ? IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () => Game.setup.deleteLastPlayer(),
+                          )
+                        : Container(
+                            width: 0,
+                          ),
+                  );
+                },
+              ),
+        AddPlayerButton()
+      ],
     );
   }
 }

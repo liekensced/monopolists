@@ -5,6 +5,7 @@ import '../../../engine/data/map.dart';
 import '../../../engine/kernel/main.dart';
 import '../../../engine/ui/alert.dart';
 import '../../../widgets/houses.dart';
+import '../../../widgets/my_card.dart';
 
 class PropertyCard extends StatefulWidget {
   final Tile tile;
@@ -117,44 +118,41 @@ class _PropertyCardState extends State<PropertyCard>
           : Container();
     }
 
-    return Card(
-      child: Column(
-        children: <Widget>[
-          Container(
-            color: color,
-            child: InkWell(
-              onTap: () {
-                expanded = !expanded;
-                setState(() {});
-              },
-              child: ListTile(
-                leading: leading,
-                title: Text(
-                  widget.tile.name,
-                  style:
-                      TextStyle(color: textColor, fontWeight: FontWeight.bold),
+    return MyCard(
+      children: <Widget>[
+        Container(
+          color: color,
+          child: InkWell(
+            onTap: () {
+              expanded = !expanded;
+              setState(() {});
+            },
+            child: ListTile(
+              leading: leading,
+              title: Text(
+                widget.tile.name,
+                style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+              ),
+              trailing: IconButton(
+                icon: Icon(
+                  expanded ? Icons.expand_less : Icons.expand_more,
+                  color: textColor,
                 ),
-                trailing: IconButton(
-                  icon: Icon(
-                    expanded ? Icons.expand_less : Icons.expand_more,
-                    color: textColor,
-                  ),
-                  onPressed: () {
-                    expanded = !expanded;
-                    setState(() {});
-                  },
-                ),
+                onPressed: () {
+                  expanded = !expanded;
+                  setState(() {});
+                },
               ),
             ),
           ),
-          AnimatedSize(
-            vsync: this,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOutCubic,
-            child: Container(height: expanded ? 200 : 0, child: content),
-          )
-        ],
-      ),
+        ),
+        AnimatedSize(
+          vsync: this,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOutCubic,
+          child: Container(height: expanded ? 200 : 0, child: content),
+        )
+      ],
     );
   }
 }
