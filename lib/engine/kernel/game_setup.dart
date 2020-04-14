@@ -1,8 +1,5 @@
-import 'dart:ui';
-
-import 'package:monopolists/engine/kernel/../ui/alert.dart';
-
 import '../data/player.dart';
+import '../ui/alert.dart';
 import 'main.dart';
 
 class GameSetup {
@@ -13,15 +10,15 @@ class GameSetup {
     Game.save();
   }
 
-  Alert addPlayer({String name, Color color: const Color(0x000000)}) {
+  Alert addPlayer({String name, int color: 0, int code: -1}) {
     Alert returnAlert;
     data.players.forEach((Player player) {
-      if (player.name == name) {
+      if (player.name == name && player.code != code) {
         returnAlert =
             Alert("Couldn't add player", "The name has already been used");
         return;
       }
-      if (player.color == color.value) {
+      if (player.color == color) {
         returnAlert = Alert("Couldn't add player", "The color already exists");
         return;
       }
@@ -29,7 +26,7 @@ class GameSetup {
     if (returnAlert != null) return returnAlert;
     int id = data.players.length;
     data.players
-        .add(Player(money: 750, id: id, color: color?.value, name: name));
+        .add(Player(money: 750, id: id, color: color, name: name, code: code));
     Game.save();
     return returnAlert;
   }

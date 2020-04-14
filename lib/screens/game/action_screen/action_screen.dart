@@ -1,40 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:monopolists/engine/ui/alert.dart';
-import 'package:monopolists/screens/game/action_screen/bottom_sheet.dart';
-import 'package:monopolists/screens/game/action_screen/info_card.dart';
-import 'package:monopolists/screens/game/action_screen/property_card.dart';
 
 import '../../../bloc/main_bloc.dart';
 import '../../../engine/kernel/main.dart';
+import '../../../engine/ui/alert.dart';
 import '../../../engine/ui/game_navigator.dart';
 import '../../../widgets/animated_count.dart';
 import '../../actions.dart/actions.dart';
 import '../../actions.dart/money_card.dart';
 import '../../actions.dart/property_action_card.dart';
 import '../../carousel/map_carousel.dart';
+import '../idle_screen.dart';
+import 'bottom_sheet.dart';
+import 'info_card.dart';
+import 'property_card.dart';
 
 class ActionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double fraction = 200 / MediaQuery.of(context).size.width;
     PageController pageController = PageController(
-        initialPage: Game.data.player.position, viewportFraction: fraction);
+      initialPage: Game.data.player.position,
+      viewportFraction: fraction,
+    );
     return DefaultTabController(
       length: 2,
       initialIndex: 1,
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            if (Alert.handle(Game.next, context)) {
-              GameNavigator.navigate(context);
-            }
+        floatingActionButton: GameListener(
+          builder: (BuildContext context, _, __) {
+            return Game.ui.idle
+                ? Container()
+                : FloatingActionButton(
+                    onPressed: () {
+                      if (Alert.handle(Game.next, context)) {
+                        GameNavigator.navigate(context);
+                      }
+                    },
+                    child: Icon(
+                      Icons.navigate_next,
+                      color: Colors.white,
+                    ),
+                  );
           },
-          child: Icon(
-            Icons.navigate_next,
-            color: Colors.white,
-          ),
         ),
         body: FractionallySizedBox(
           heightFactor: 1,
@@ -55,8 +64,7 @@ class ActionScreen extends StatelessWidget {
                         child: Card(
                             child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: ValueListenableBuilder(
-                        valueListenable: MainBloc.listen(),
+                      child: GameListener(
                         builder: (BuildContext context, _, __) {
                           return Row(
                             children: <Widget>[
@@ -110,14 +118,18 @@ class ActionScreen extends StatelessWidget {
               ];
             },
             body: TabBarView(
+              physics: Game.ui.idle
+                  ? NeverScrollableScrollPhysics()
+                  : PageScrollPhysics(),
               children: <Widget>[
                 buildHoldingCards(context),
-                ValueListenableBuilder(
-                  valueListenable: MainBloc.listen(),
-                  builder: (BuildContext context, _, __) {
-                    return buildActionCards(context);
-                  },
-                ),
+                Game.ui.idle
+                    ? IdleScreen(pageController)
+                    : GameListener(
+                        builder: (BuildContext context, _, __) {
+                          return buildActionCards(context);
+                        },
+                      ),
               ],
             ),
           ),
@@ -146,8 +158,7 @@ class ActionScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           return Theme(
             data: Theme.of(context).copyWith(brightness: Brightness.light),
-            child: ValueListenableBuilder(
-              valueListenable: MainBloc.listen(),
+            child: GameListener(
               builder: (BuildContext context, _, __) {
                 return PropertyCard(tile: Game.data.gmap[_properties[index]]);
               },

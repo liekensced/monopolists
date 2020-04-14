@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
-import 'package:monopolists/engine/data/info.dart';
-import 'package:monopolists/engine/data/player.dart';
-import '../data/main.dart';
 
+import '../data/info.dart';
+import '../data/main.dart';
 import '../data/map.dart';
+import '../data/player.dart';
 import '../ui/alert.dart';
 import 'main.dart';
 
@@ -24,8 +24,8 @@ class CoreActions {
       case payType.rent:
         data.rentPayed = true;
         data.players[receiver].money += amount;
-        data.players[receiver].info.last.add(Info(
-            title: "Rent received from ${data.player.name}: $amount",
+        data.players[receiver].info[data.turn].add(Info(
+            title: "Rent received from ${data.player.name}: £$amount",
             leading: "rent"));
         break;
       case payType.pot:
@@ -41,7 +41,7 @@ class CoreActions {
   Alert clearPot() {
     data.player.money += data.pot;
     data.pot = 0;
-    data.save();
+    Game.save();
     return Alert.snackBar("Emptied pot");
   }
 
@@ -53,7 +53,7 @@ class CoreActions {
     Game.helper.undoubleDices();
     data.doublesThrown = 0;
     data.player.jailed = false;
-    data.save();
+    Game.save();
     return null;
   }
 
@@ -63,7 +63,7 @@ class CoreActions {
       Game.helper.undoubleDices();
       data.doublesThrown = 0;
       data.player.jailed = false;
-      data.save();
+      Game.save();
     }
 
     return alert;

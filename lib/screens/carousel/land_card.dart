@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:monopolists/engine/data/map.dart';
-import 'package:monopolists/screens/carousel/players_indicator.dart';
+
+import '../../engine/data/map.dart';
+import 'players_indicator.dart';
 
 class LandCard extends StatelessWidget {
   final Tile tile;

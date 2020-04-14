@@ -2,10 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
-import 'package:monopolists/engine/data/player.dart';
-import 'package:monopolists/engine/kernel/../ui/alert.dart';
 
+import '../../bloc/main_bloc.dart';
+import '../../engine/data/player.dart';
+import '../../engine/kernel/../ui/alert.dart';
 import '../../engine/kernel/main.dart';
 
 class PlayersCard extends StatefulWidget {
@@ -87,6 +89,24 @@ class AddPlayerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (MainBloc.online) {
+      return ListTile(
+        title: Text("Share the game id"),
+        subtitle: Text(MainBloc.gameId ?? ""),
+        trailing: Column(
+          children: [
+            IconButton(
+              icon: Icon(Icons.content_copy),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(
+                    text: MainBloc.gameId ?? "Something went wrong :/"));
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
     return Padding(
       padding: EdgeInsets.all(20),
       child: RaisedButton(
@@ -112,8 +132,10 @@ class AddPlayerButton extends StatelessWidget {
 }
 
 class AddPlayerDialog extends StatefulWidget {
+  final bool prefPlayer;
   const AddPlayerDialog({
     Key key,
+    this.prefPlayer: false,
   }) : super(key: key);
 
   @override
@@ -127,7 +149,9 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
 
   @override
   void initState() {
-    playerId = Game.data.players.length + 1;
+    playerId = widget.prefPlayer
+        ? Random().nextInt(100)
+        : Game.data.players.length + 1;
     name = "Player $playerId";
     color = ColorHelper()
         .exampleColors[Random().nextInt(ColorHelper().exampleColors.length)];
@@ -142,10 +166,13 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           TextField(
+            maxLength: 15,
             textCapitalization: TextCapitalization.words,
             onChanged: (String value) => name = value,
             decoration: InputDecoration(
-                hintText: "Player ${Game.data.players.length + 1}"),
+                hintText: widget.prefPlayer
+                    ? "Please enter a nickname"
+                    : "Player ${Game.data.players.length + 1}"),
           ),
           Container(
             height: 5,
@@ -210,8 +237,13 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
             )),
         MaterialButton(
             onPressed: () {
+              if (widget.prefPlayer) {
+                MainBloc.setPlayer(name: name, color: color);
+                Navigator.pop(context);
+                return;
+              }
               Alert.handleAndPop(
-                  () => Game.setup.addPlayer(name: name, color: Color(color)),
+                  () => Game.setup.addPlayer(name: name, color: color),
                   context);
             },
             child: Text(

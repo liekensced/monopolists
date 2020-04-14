@@ -1,14 +1,13 @@
 import 'dart:math';
 
-import 'package:monopolists/engine/data/actions.dart';
-import 'package:monopolists/engine/data/info.dart';
-import 'package:monopolists/engine/data/ui_actions.dart';
-import 'package:monopolists/engine/ui/alert.dart';
-
 import '../../bloc/main_bloc.dart';
+import '../data/actions.dart';
+import '../data/info.dart';
 import '../data/main.dart';
 import '../data/map.dart';
 import '../data/player.dart';
+import '../data/ui_actions.dart';
+import '../ui/alert.dart';
 import 'core_actions.dart';
 import 'extensions/bank.dart';
 import 'game_helpers.dart';
@@ -26,7 +25,7 @@ class Game {
   static bool testing = false;
   static save() {
     if (!(testing ?? false)) {
-      data.save();
+      MainBloc.save(data);
     }
   }
 
@@ -38,7 +37,7 @@ class Game {
   }
 
   static loadGame(GameData loadData) {
-    if (!(testing ?? false)) assert(loadData.isInBox);
+    if (!(testing ?? false)) assert(loadData.isInBox || MainBloc.online);
     data = loadData;
     launch();
   }
@@ -70,8 +69,8 @@ class Game {
     if (data.players.length > 0) {
       data.running = true;
       data.currentPlayer = 0;
-      save();
     }
+    save();
   }
 
   //basic interactions
@@ -145,8 +144,8 @@ class Game {
       return Alert(
           "Taxes not payed", "Please pay your taxes before continuing");
     }
-    if (_type == TileType.chance ||
-        _type == TileType.chest && !Game.data.rentPayed) {
+    if ((_type == TileType.chance || _type == TileType.chest) &&
+        !Game.data.rentPayed) {
       return Alert("Card not executed",
           "Tap on the Findings or Event card and execute it.");
     }
@@ -169,7 +168,7 @@ class Game {
     data.turn++;
 
     data.players.asMap().forEach((int i, _) {
-      data.players[i].info.add([]);
+      data.players[i].info[data.turn + 1] = [];
       data.players[i].moneyHistory.add(data.players[i].money);
     });
   }
@@ -177,7 +176,8 @@ class Game {
   static onPassGo() {
     int _goBonus = Game.data.settings.goBonus;
     data.player.money += _goBonus;
-    data.player.info.last.add(Info(title: "Received go bonus: $_goBonus"));
+    data.player.info[data.turn]
+        .add(Info(title: "Received go bonus: $_goBonus"));
 
     Bank.rent();
   }

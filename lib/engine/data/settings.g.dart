@@ -46,3 +46,28 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..write(obj.dontBuyFirstRound);
   }
 }
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Settings _$SettingsFromJson(Map<String, dynamic> json) {
+  return Settings()
+    ..name = json['name'] as String
+    ..remotelyBuild = json['remotelyBuild'] as bool
+    ..goBonus = json['goBonus'] as int
+    ..maxTurnes = json['maxTurnes'] as int
+    ..mustAuction = json['mustAuction'] as bool
+    ..allowOneDice = json['allowOneDice'] as bool
+    ..dontBuyFirstRound = json['dontBuyFirstRound'] as bool;
+}
+
+Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
+      'name': instance.name,
+      'remotelyBuild': instance.remotelyBuild,
+      'goBonus': instance.goBonus,
+      'maxTurnes': instance.maxTurnes,
+      'mustAuction': instance.mustAuction,
+      'allowOneDice': instance.allowOneDice,
+      'dontBuyFirstRound': instance.dontBuyFirstRound,
+    };

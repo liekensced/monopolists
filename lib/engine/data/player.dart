@@ -1,10 +1,13 @@
 import 'package:hive/hive.dart';
-import 'package:monopolists/engine/data/info.dart';
-import 'package:monopolists/engine/data/map.dart';
-import 'package:monopolists/engine/kernel/main.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+import '../kernel/main.dart';
+import 'info.dart';
+import 'map.dart';
 
 part 'player.g.dart';
 
+@JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 3)
 class Player extends HiveObject {
   @HiveField(0)
@@ -26,9 +29,17 @@ class Player extends HiveObject {
   @HiveField(8)
   int goojCards = 0;
   @HiveField(9)
-  List<List<Info>> info = [[]];
+  Map<int, List<Info>> info = {
+    0: [Info(title: "New game")],
+    1: [Info(title: "Second round")]
+  };
   @HiveField(10)
   List<double> moneyHistory = [0];
+  @HiveField(11)
+  int code = 0;
+
+  factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
+  Map<String, dynamic> toJson() => _$PlayerToJson(this);
 
   Tile get positionTile => Game.data.gmap[position];
   int get index => Game.data.players.indexOf(this);
@@ -63,12 +74,14 @@ class Player extends HiveObject {
     return hasAll;
   }
 
-  Player(
-      {this.money = 0,
-      this.id = 0,
-      this.color = 9688,
-      this.position: 0,
-      this.name}) {
+  Player({
+    this.money = 0,
+    this.id = 0,
+    this.color = 9688,
+    this.position: 0,
+    this.name,
+    this.code,
+  }) {
     if (name == null) {
       name = "Player $id";
     }

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:monopolists/bloc/main_bloc.dart';
-import 'package:monopolists/engine/data/main.dart';
-import 'package:monopolists/engine/kernel/main.dart';
-import 'package:monopolists/engine/ui/game_navigator.dart';
+
+import '../bloc/main_bloc.dart';
+import '../engine/data/main.dart';
+import '../engine/kernel/main.dart';
+import '../engine/ui/game_navigator.dart';
 
 class GamesCard extends StatefulWidget {
   const GamesCard({

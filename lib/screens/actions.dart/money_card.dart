@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:monopolists/widgets/animated_count.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/data/player.dart';
 import '../../engine/kernel/main.dart';
+import '../../widgets/animated_count.dart';
 import '../start/players.dart';
 
 class MoneyCard extends StatelessWidget {
@@ -56,8 +56,7 @@ class MoneyCard extends StatelessWidget {
                     children: <Widget>[
                       Text("£",
                           style: TextStyle(color: Colors.white, fontSize: 50)),
-                      ValueListenableBuilder(
-                        valueListenable: MainBloc.listen(),
+                      GameListener(
                         builder: (BuildContext context, _, __) {
                           return AnimatedCount(
                               count: player.money.round(),

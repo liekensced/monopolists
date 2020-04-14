@@ -5,21 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:monopolists/engine/data/extensions.dart';
-import 'package:monopolists/engine/data/info.dart';
-import 'package:monopolists/engine/data/settings.dart';
-import 'package:monopolists/engine/data/ui_actions.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'bloc/main_bloc.dart';
+import 'engine/data/deal_data.dart';
+import 'engine/data/extensions.dart';
+import 'engine/data/info.dart';
 import 'engine/data/main.dart';
 import 'engine/data/map.dart';
 import 'engine/data/player.dart';
+import 'engine/data/settings.dart';
+import 'engine/data/ui_actions.dart';
 import 'screens/home_screen.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb) {
-    WidgetsFlutterBinding.ensureInitialized();
     var dir = await getApplicationDocumentsDirectory();
     Hive.init(dir.path);
   }
@@ -34,6 +35,8 @@ Future<void> main() async {
   Hive.registerAdapter(UIActionsDataAdapter());
   Hive.registerAdapter(ExtensionAdapter());
   Hive.registerAdapter(InfoAdapter());
+  Hive.registerAdapter(DealDataAdapter());
+  Hive.registerAdapter(MapConfigurationAdapter());
   await Hive.openBox(MainBloc.PREFBOX);
   runApp(MyApp());
 }
@@ -62,6 +65,8 @@ class MyApp extends StatelessWidget {
                 future: Future.wait([
                   Hive.openBox(MainBloc.GAMESBOX),
                   Hive.openBox(MainBloc.METABOX),
+                  Hive.openBox(MainBloc.UPDATEBOX),
+                  Hive.openBox(MainBloc.MAPCONFBOX)
                 ]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
@@ -73,7 +78,7 @@ class MyApp extends StatelessWidget {
                         ),
                       );
                     } else {
-                      MainBloc.initBoc();
+                      MainBloc.initBoc(context);
                       return MyHomePage();
                     }
                   } else {

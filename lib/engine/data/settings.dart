@@ -1,7 +1,9 @@
 import 'package:hive/hive.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'settings.g.dart';
 
+@JsonSerializable()
 @HiveType(typeId: 4)
 class Settings extends HiveObject {
   @HiveField(0)
@@ -18,4 +20,10 @@ class Settings extends HiveObject {
   bool allowOneDice = false;
   @HiveField(6)
   bool dontBuyFirstRound = false;
+
+  Settings();
+
+  factory Settings.fromJson(Map<String, dynamic> json) =>
+      _$SettingsFromJson(json);
+  Map<String, dynamic> toJson() => _$SettingsToJson(this);
 }

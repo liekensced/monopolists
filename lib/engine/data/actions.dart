@@ -1,4 +1,4 @@
-import 'package:monopolists/engine/kernel/main.dart';
+import '../kernel/main.dart';
 
 class CardAction {
   String text;

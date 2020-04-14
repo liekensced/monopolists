@@ -1,7 +1,6 @@
-import 'package:monopolists/engine/data/main.dart';
-import 'package:monopolists/engine/data/map.dart';
-import 'package:monopolists/engine/data/player.dart';
-
+import '../data/main.dart';
+import '../data/map.dart';
+import '../data/player.dart';
 import 'main.dart';
 
 class GameHelpers {
@@ -22,7 +21,7 @@ class GameHelpers {
       p.money -= 10;
       data.player.money += 10;
     });
-    data.save();
+    Game.save();
   }
 
   undoubleDices() {

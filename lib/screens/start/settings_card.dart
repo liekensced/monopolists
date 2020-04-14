@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:monopolists/bloc/main_bloc.dart';
-import 'package:monopolists/engine/kernel/main.dart';
+
+import '../../bloc/main_bloc.dart';
+import '../../engine/kernel/main.dart';
 
 class SettingsCard extends StatefulWidget {
   @override
@@ -118,7 +119,7 @@ class AdvancedSettings extends StatelessWidget {
                 builder: (context) {
                   submit(_) {
                     Game.data.settings.goBonus = int.tryParse(amount) ?? 200;
-                    Game.data.save();
+                    Game.save();
                     Navigator.pop(context);
                   }
 
@@ -169,7 +170,7 @@ class AdvancedSettings extends StatelessWidget {
                 builder: (context) {
                   submit(_) {
                     Game.data.settings.maxTurnes = int.tryParse(amount) ?? 200;
-                    Game.data.save();
+                    Game.save();
                     Navigator.pop(context);
                   }
 

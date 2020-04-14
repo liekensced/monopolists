@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:monopolists/engine/kernel/extensions/bank.dart';
-import 'package:monopolists/engine/kernel/extensions/jurisdiction.dart';
-import 'package:monopolists/engine/kernel/main.dart';
+
 import '../../engine/data/extensions.dart';
+import '../../engine/kernel/extensions/bank.dart';
+import '../../engine/kernel/extensions/jurisdiction.dart';
+import '../../engine/kernel/main.dart';
 
 class ExtensionsCard extends StatelessWidget {
   @override

@@ -18,12 +18,26 @@ class InfoCard extends StatelessWidget {
               textAlign: TextAlign.start,
             ),
           ),
-          ValueListenableBuilder(
-            valueListenable: MainBloc.listen(),
+          GameListener(
             builder: (BuildContext context, _, __) {
-              if (Game.data.player.info.length < 1) return Container();
-              List<Info> info = Game.data.player.info.last;
+              //check it exists
+
+              List<Info> info = [];
+              if (Game.data.player.info.containsKey(Game.data.turn - 1)) {
+                info.addAll(Game.data.player.info[Game.data.turn - 1]);
+              }
+              if (Game.data.player.info.containsKey(Game.data.turn - 2)) {
+                info.addAll(Game.data.player.info[Game.data.turn - 2]);
+              }
+              if (info.isEmpty)
+                return Container(
+                  height: 80,
+                  child: Center(
+                    child: Text("No information\n"),
+                  ),
+                );
               return ListView.separated(
+                physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: info.length,
                 separatorBuilder: (c, _) {

@@ -1,5 +1,5 @@
-name: monopolists
-description: A new Flutter project.
+name: plutopoly
+description: A classic boardgame to new levels.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -29,6 +29,8 @@ dependencies:
   carousel_slider: ^1.4.1
   scrollable_positioned_list: ^0.1.2
   flip_card: ^0.4.4
+  cloud_firestore: ^0.13.4+2
+  zoom_widget: ^0.1.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -39,7 +41,8 @@ dev_dependencies:
     sdk: flutter
   hive_generator: ^0.7.0+2
   build_runner: ^1.8.0
-  analyzer: any
+  analyzer: ^0.39.4
+  json_serializable: ^3.3.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

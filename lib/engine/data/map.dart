@@ -1,10 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:monopolists/engine/data/player.dart';
-import 'package:monopolists/engine/kernel/main.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+import '../kernel/main.dart';
+import 'player.dart';
 
 part 'map.g.dart';
 
+@JsonSerializable(nullable: true)
+@HiveType(typeId: 9)
+class MapConfiguration extends HiveObject {
+  @HiveField(0)
+  List<int> configuration;
+  @HiveField(1)
+  int width = 11;
+
+  MapConfiguration();
+  MapConfiguration.standard() {
+    width = 11;
+    configuration = standardConfiguration;
+  }
+  MapConfiguration.dense() {
+    width = 5;
+    configuration = denseConfiguration;
+  }
+  factory MapConfiguration.fromJson(Map<String, dynamic> json) =>
+      _$MapConfigurationFromJson(json);
+  Map<String, dynamic> toJson() => _$MapConfigurationToJson(this);
+}
+
+@JsonSerializable(nullable: true)
 @HiveType(typeId: 1)
 class Tile extends HiveObject {
   @HiveField(0)
@@ -27,6 +52,10 @@ class Tile extends HiveObject {
   int level = 0;
   @HiveField(10)
   int idIndex = 1;
+
+  factory Tile.fromJson(Map<String, dynamic> json) => _$TileFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TileToJson(this);
 
   String get id => "$idPrefix:$idIndex";
 
@@ -104,6 +133,22 @@ enum TileType {
   @HiveField(9)
   police
 }
+
+List<int> standardConfiguration = [
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, //
+  39, -1, -1, -1, -1, -1, -1, -1, -1, -1, 11, //
+  38, -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, //
+  37, -1, -1, -1, -1, -1, -1, -1, -1, -1, 13, //
+  36, -1, -1, -1, -1, -1, -1, -1, -1, -1, 14, //
+  35, -1, -1, -1, -1, -1, -1, -1, -1, -1, 15, //
+  34, -1, -1, -1, -1, -1, -1, -1, -1, -1, 16, //
+  33, -1, -1, -1, -1, -1, -1, -1, -1, -1, 17, //
+  32, -1, -1, -1, -1, -1, -1, -1, -1, -1, 18, //
+  31, -1, -1, -1, -1, -1, -1, -1, -1, -1, 19, //
+  30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, //
+];
+
+List<int> denseConfiguration = List.generate(100, (index) => index);
 
 List<Tile> defaultMap = [
   Tile(TileType.start, idIndex: 1),

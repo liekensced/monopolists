@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:monopolists/engine/data/player.dart';
-import 'package:monopolists/engine/kernel/main.dart';
+
+import '../data/player.dart';
+import '../kernel/main.dart';
 
 /// This can be returned by a Game method to show in the UI
 class Alert {

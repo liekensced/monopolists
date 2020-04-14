@@ -27,3 +27,16 @@ class UIActionsDataAdapter extends TypeAdapter<UIActionsData> {
       ..write(obj.shouldMove);
   }
 }
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+UIActionsData _$UIActionsDataFromJson(Map<String, dynamic> json) {
+  return UIActionsData()..shouldMove = json['shouldMove'] as bool;
+}
+
+Map<String, dynamic> _$UIActionsDataToJson(UIActionsData instance) =>
+    <String, dynamic>{
+      'shouldMove': instance.shouldMove,
+    };

@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:monopolists/bloc/main_bloc.dart';
-import 'package:monopolists/engine/kernel/main.dart';
+
+import '../../bloc/main_bloc.dart';
+import '../../engine/kernel/main.dart';
 
 class DiceSelect extends StatefulWidget {
   const DiceSelect({Key key}) : super(key: key);
@@ -20,7 +21,7 @@ class _DiceSelectState extends State<DiceSelect> {
   @override
   Widget build(BuildContext context) {
     Box box = Hive.box(MainBloc.PREFBOX);
-    if (box.get("boolRandomDices") == null) {
+    if (box.get("boolRandomDices") == null && !MainBloc.online) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -33,7 +34,8 @@ class _DiceSelectState extends State<DiceSelect> {
         ],
       );
     }
-    if (box.get("boolRandomDices") && !started) {
+    if ((box.get("boolRandomDices", defaultValue: true) || MainBloc.online) &&
+        !started) {
       return Center(
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,

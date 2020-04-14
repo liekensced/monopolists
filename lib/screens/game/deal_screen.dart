@@ -2,47 +2,54 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:monopolists/bloc/main_bloc.dart';
-import 'package:monopolists/engine/data/map.dart';
-import 'package:monopolists/engine/kernel/main.dart';
-import 'package:monopolists/engine/ui/alert.dart';
-import 'package:monopolists/widgets/houses.dart';
 
-class DealScreen extends StatefulWidget {
+import '../../bloc/main_bloc.dart';
+import '../../engine/data/deal_data.dart';
+import '../../engine/data/map.dart';
+import '../../engine/kernel/main.dart';
+import '../../engine/ui/alert.dart';
+import '../../widgets/houses.dart';
+
+class DealScreen extends StatelessWidget {
   final int dealer;
-
   const DealScreen({Key key, @required this.dealer}) : super(key: key);
 
   @override
-  _DealScreenState createState() => _DealScreenState();
+  Widget build(BuildContext context) {
+    Game.data.dealData.dealer = dealer;
+    Game.save();
+    return GameListener(
+      builder: (BuildContext context, dynamic value, Widget child) {
+        return DealScreenChild();
+      },
+    );
+  }
 }
 
-class _DealScreenState extends State<DealScreen>
+class DealScreenChild extends StatefulWidget {
+  const DealScreenChild({Key key}) : super(key: key);
+
+  @override
+  _DealScreenChildState createState() => _DealScreenChildState();
+}
+
+class _DealScreenChildState extends State<DealScreenChild>
     with SingleTickerProviderStateMixin {
-  int payAmount = 0;
-
-  List<int> receivableProperties = [];
-  List<int> receiveProperties = [];
-  List<int> payableProperties = [];
-  List<int> payProperties = [];
-
-  int price = 0;
-  List<bool> valid = [true, true];
+  final _dealerTextController = TextEditingController();
+  final _playerTextController = TextEditingController();
 
   AnimationController _controller;
   Animation<Offset> _offsetAnimation;
 
-  final _playerTextController = TextEditingController();
-  final _dealerTextController = TextEditingController();
-
-  bool playerChecked = false;
-  bool dealerChecked = false;
+  DealData get dealData => Game.data.dealData;
 
   @override
   void initState() {
     super.initState();
-    receivableProperties = Game.data.players[widget.dealer].properties;
-    payableProperties = Game.data.player.properties;
+    dealData.receivableProperties =
+        Game.data.players[dealData.dealer].properties;
+    dealData.payableProperties = Game.data.player.properties;
+    Game.save();
 
     _controller = AnimationController(
       duration: const Duration(milliseconds: 500),
@@ -67,13 +74,13 @@ class _DealScreenState extends State<DealScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (dealerChecked && playerChecked) {
+    if (dealData.dealerChecked && dealData.playerChecked) {
       _controller.forward();
     } else {
       _controller.reverse();
     }
 
-    if (checkPay() && valid[0] && valid[1]) {
+    if (checkPay() && dealData.valid[0] && dealData.valid[1]) {
       _controller.forward();
     }
 
@@ -110,7 +117,7 @@ class _DealScreenState extends State<DealScreen>
                 Tab(
                   text: Game.data.player.name,
                 ),
-                Tab(text: Game.data.players[widget.dealer].name),
+                Tab(text: Game.data.players[dealData.dealer].name),
               ],
             )),
         floatingActionButton: buildFab(context),
@@ -137,25 +144,28 @@ class _DealScreenState extends State<DealScreen>
   SlideTransition buildFab(BuildContext context) {
     return SlideTransition(
         position: _offsetAnimation,
-        child: FloatingActionButton.extended(
-          backgroundColor:
-              checkPay() ? Colors.red : Theme.of(context).accentColor,
-          label: Container(
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: Center(
-                  child: Text(
-                checkPay() ? "Pay" : "Deal",
-                style: TextStyle(color: Colors.white),
-              ))),
-          onPressed: () {
-            Alert.handleAndPop(
-                () => Game.act.deal(
-                    dealer: widget.dealer,
-                    payProperties: payProperties,
-                    receiveProperties: receiveProperties,
-                    payAmount: price),
-                context);
-          },
+        child: AbsorbPointer(
+          absorbing: checkPay(),
+          child: FloatingActionButton.extended(
+            backgroundColor:
+                checkPay() ? Colors.red : Theme.of(context).accentColor,
+            label: Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Center(
+                    child: Text(
+                  checkPay() ? "Pay" : "Deal",
+                  style: TextStyle(color: Colors.white),
+                ))),
+            onPressed: () {
+              Alert.handleAndPop(
+                  () => Game.act.deal(
+                      dealer: dealData.dealer,
+                      payProperties: dealData.payProperties,
+                      receiveProperties: dealData.receiveProperties,
+                      payAmount: dealData.price),
+                  context);
+            },
+          ),
         ));
   }
 
@@ -173,7 +183,7 @@ class _DealScreenState extends State<DealScreen>
                   alignment: Alignment.centerLeft,
                   child: Text(
                     dealer
-                        ? Game.data.players[widget.dealer].name
+                        ? Game.data.players[dealData.dealer].name
                         : Game.data.player.name,
                     style: Theme.of(context).textTheme.headline4,
                     textAlign: TextAlign.start,
@@ -191,24 +201,24 @@ class _DealScreenState extends State<DealScreen>
                       fillColor: Colors.red,
                       hoverColor: Colors.red,
                       labelText: "Enter amount",
-                      errorText: !valid[dealer ? 0 : 1]
+                      errorText: !dealData.valid[dealer ? 0 : 1]
                           ? "Please enter a natural number"
                           : null,
                     ),
                     onChanged: (String val) {
                       if (val == "") val = "0";
-                      price = int.tryParse(val);
-                      if (price == null)
-                        valid[dealer ? 0 : 1] = false;
+                      dealData.price = int.tryParse(val);
+                      if (dealData.price == null)
+                        dealData.valid[dealer ? 0 : 1] = false;
                       else {
-                        if (dealer) price = -price;
-                        valid[dealer ? 0 : 1] = true;
+                        if (dealer) dealData.price = -dealData.price;
+                        dealData.valid[dealer ? 0 : 1] = true;
                       }
                       if (dealer) {
                         _playerTextController.clear();
                       } else
                         _dealerTextController.clear();
-                      setState(() {});
+                      Game.save();
                     },
                   ),
                 ),
@@ -218,17 +228,20 @@ class _DealScreenState extends State<DealScreen>
                 ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount:
-                        (dealer ? receiveProperties : payProperties).length,
+                    itemCount: (dealer
+                            ? dealData.receiveProperties
+                            : dealData.payProperties)
+                        .length,
                     itemBuilder: (context, index) {
                       return _buildPropertyCard(
                           Game.data.gmap[(dealer
-                              ? receiveProperties
-                              : payProperties)[index]],
+                              ? dealData.receiveProperties
+                              : dealData.payProperties)[index]],
                           index,
                           dealer);
                     }),
-                (dealer ? receiveProperties : payProperties).isEmpty
+                (dealer ? dealData.receiveProperties : dealData.payProperties)
+                        .isEmpty
                     ? Container(
                         height: 64,
                         child: Center(
@@ -236,7 +249,8 @@ class _DealScreenState extends State<DealScreen>
                         ),
                       )
                     : Container(),
-                (receiveProperties.isEmpty && payProperties.isEmpty)
+                (dealData.receiveProperties.isEmpty &&
+                        dealData.payProperties.isEmpty)
                     ? Container()
                     : Align(
                         alignment: Alignment.centerRight,
@@ -255,10 +269,12 @@ class _DealScreenState extends State<DealScreen>
                                   ),
                             onPressed: () {
                               if (dealer)
-                                dealerChecked = !dealerChecked;
+                                dealData.dealerChecked =
+                                    !dealData.dealerChecked;
                               else
-                                playerChecked = !playerChecked;
-                              setState(() {});
+                                dealData.playerChecked =
+                                    !dealData.playerChecked;
+                              Game.save();
                             },
                           ),
                         ),
@@ -271,9 +287,16 @@ class _DealScreenState extends State<DealScreen>
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: max(
-                (dealer ? receivableProperties : payableProperties).length, 1),
+                (dealer
+                        ? dealData.receivableProperties
+                        : dealData.payableProperties)
+                    .length,
+                1),
             itemBuilder: (context, index) {
-              if ((dealer ? receivableProperties : payableProperties).isEmpty) {
+              if ((dealer
+                      ? dealData.receivableProperties
+                      : dealData.payableProperties)
+                  .isEmpty) {
                 return Container(
                   height: 64,
                   child: Center(
@@ -283,8 +306,8 @@ class _DealScreenState extends State<DealScreen>
               }
               return _buildPropertyCard(
                   Game.data.gmap[(dealer
-                      ? receivableProperties
-                      : payableProperties)[index]],
+                      ? dealData.receivableProperties
+                      : dealData.payableProperties)[index]],
                   index,
                   dealer,
                   selected: false);
@@ -294,27 +317,34 @@ class _DealScreenState extends State<DealScreen>
   }
 
   bool check(bool dealer) {
-    return ((dealer && dealerChecked) || (!dealer && playerChecked));
+    return ((dealer && dealData.dealerChecked) ||
+        (!dealer && dealData.playerChecked));
   }
 
   void addPay(int index, Tile tile, bool dealer) {
-    (dealer ? receivableProperties : payableProperties).removeAt(index);
-    (dealer ? receiveProperties : payProperties).add(tile.index);
-    dealerChecked = false;
-    playerChecked = false;
-    setState(() {});
+    (dealer ? dealData.receivableProperties : dealData.payableProperties)
+        .removeAt(index);
+    (dealer ? dealData.receiveProperties : dealData.payProperties)
+        .add(tile.index);
+    dealData.dealerChecked = false;
+    dealData.playerChecked = false;
+    Game.save();
   }
 
   void removePay(int index, Tile tile, bool dealer) {
-    (dealer ? receiveProperties : payProperties).removeAt(index);
-    (dealer ? receivableProperties : payableProperties).add(tile.index);
-    dealerChecked = false;
-    playerChecked = false;
-    setState(() {});
+    (dealer ? dealData.receiveProperties : dealData.payProperties)
+        .removeAt(index);
+    (dealer ? dealData.receivableProperties : dealData.payableProperties)
+        .add(tile.index);
+    dealData.dealerChecked = false;
+    dealData.playerChecked = false;
+    Game.save();
   }
 
   bool checkPay() {
-    return payProperties.isEmpty && receiveProperties.isEmpty && price != 0;
+    return dealData.payProperties.isEmpty &&
+        dealData.receiveProperties.isEmpty &&
+        dealData.price != 0;
   }
 
   Widget _buildPropertyCard(Tile tile, int index, bool dealer,

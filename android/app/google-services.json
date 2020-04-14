@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "477607309568",
+    "firebase_url": "https://playplutopoly.firebaseio.com",
+    "project_id": "playplutopoly",
+    "storage_bucket": "playplutopoly.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:477607309568:android:63e71166313a57ecae83e5",
+        "android_client_info": {
+          "package_name": "web.filorux.plutopoly"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "477607309568-sd8j25m194n3kmmb6ooad9h8sjjddd4t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd0fStG-rpty1n7dU66qcKb0-rIf0EJkM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "477607309568-sd8j25m194n3kmmb6ooad9h8sjjddd4t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

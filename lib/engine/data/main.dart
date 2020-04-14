@@ -1,13 +1,16 @@
 import 'package:hive/hive.dart';
 
 import '../data/extensions.dart';
+import 'deal_data.dart';
 import 'map.dart';
 import 'player.dart';
 import 'settings.dart';
 import 'ui_actions.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'main.g.dart';
 
+@JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 0)
 class GameData extends HiveObject {
   @HiveField(0)
@@ -38,6 +41,17 @@ class GameData extends HiveObject {
   int findingsIndex = 0;
   @HiveField(13)
   int eventIndex = 0;
+  @HiveField(14)
+  String mapConfiguration = "classic";
+
+  @HiveField(15)
+  DealData dealData = DealData();
+
+  GameData();
+
+  factory GameData.fromJson(Map<String, dynamic> json) =>
+      _$GameDataFromJson(json);
+  Map<String, dynamic> toJson() => _$GameDataToJson(this);
 
   Player get player {
     return players[currentPlayer];

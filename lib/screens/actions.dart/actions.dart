@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:monopolists/bloc/main_bloc.dart';
-import 'package:monopolists/engine/data/player.dart';
-import 'package:monopolists/engine/kernel/main.dart';
-import 'package:monopolists/screens/game/deal_screen.dart';
+
+import '../../bloc/main_bloc.dart';
+import '../../engine/data/deal_data.dart';
+import '../../engine/data/player.dart';
+import '../../engine/kernel/main.dart';
+import '../game/deal_screen.dart';
 
 class ActionsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: MainBloc.listen(),
+    return GameListener(
       builder: (BuildContext context, box, __) {
         return ActionsCardChild();
       },
@@ -34,6 +35,8 @@ class ActionsCardChild extends StatelessWidget {
         trailing: RaisedButton(
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
+              Game.data.dealData = DealData()..dealer = player.index;
+              Game.save();
               return DealScreen(
                 dealer: player.index,
               );
@@ -48,7 +51,7 @@ class ActionsCardChild extends StatelessWidget {
       ));
       playersList.add(Divider());
     });
-    playersList.removeLast();
+    if (playersList.length >= 2) playersList.removeLast();
 
     return Container(
       child: Card(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:monopolists/engine/data/player.dart';
-import 'package:monopolists/engine/data/tip.dart';
 
+import '../../data/player.dart';
+import '../../data/tip.dart';
 import '../main.dart';
 
 class Jurisdiction {

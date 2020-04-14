@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:monopolists/bloc/main_bloc.dart';
-import 'package:monopolists/engine/ui/game_navigator.dart';
-import 'package:monopolists/screens/start/start_game.dart';
 
+import '../../../bloc/main_bloc.dart';
+import '../../../engine/ui/game_navigator.dart';
+import '../../start/start_game.dart';
 import '../move_screen.dart';
 
 void showSettingsSheet(BuildContext context) {
@@ -25,15 +25,17 @@ void showSettingsSheet(BuildContext context) {
                       textAlign: TextAlign.start,
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      moveModalBottomSheet(context);
-                    },
-                    child: ListTile(
-                      leading: FaIcon(FontAwesomeIcons.dice),
-                      title: Text("Dice select"),
-                    ),
-                  ),
+                  MainBloc.online
+                      ? Container()
+                      : InkWell(
+                          onTap: () {
+                            moveModalBottomSheet(context);
+                          },
+                          child: ListTile(
+                            leading: FaIcon(FontAwesomeIcons.dice),
+                            title: Text("Dice select"),
+                          ),
+                        ),
                   InkWell(
                     onTap: () {
                       GameNavigator.navigate(context, loadGame: true);
@@ -52,18 +54,20 @@ void showSettingsSheet(BuildContext context) {
                       title: Text("Toggle dark mode"),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (BuildContext context) {
-                        return StartGameScreen();
-                      }));
-                    },
-                    child: ListTile(
-                      leading: Icon(Icons.settings),
-                      title: Text("Open Game settings"),
-                    ),
-                  ),
+                  MainBloc.online
+                      ? Container()
+                      : InkWell(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (BuildContext context) {
+                              return StartGameScreen();
+                            }));
+                          },
+                          child: ListTile(
+                            leading: Icon(Icons.settings),
+                            title: Text("Open Game settings"),
+                          ),
+                        ),
                 ],
               );
             });

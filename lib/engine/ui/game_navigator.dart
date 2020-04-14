@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:monopolists/engine/kernel/main.dart';
-import 'package:monopolists/screens/game/action_screen/action_screen.dart';
-import 'package:monopolists/screens/game/move_screen.dart';
-import 'package:monopolists/screens/start/info_screen.dart';
-import 'package:monopolists/screens/start/start_game.dart';
+
+import '../../bloc/main_bloc.dart';
+import '../../screens/game/action_screen/action_screen.dart';
+import '../../screens/game/move_screen.dart';
+import '../../screens/start/info_screen.dart';
+import '../../screens/start/start_game.dart';
+import '../kernel/main.dart';
 
 class GameNavigator {
   static void push(BuildContext context, GamePage page) {
@@ -29,12 +31,14 @@ class GameNavigator {
 
   static void navigate(BuildContext context,
       {bool loadGame: false, GamePage page}) {
+    MainBloc.posOveride = null;
+
     if (page != null) {
       push(context, page);
       return;
     }
 
-    if (Game.data.running == null) {
+    if (Game.data?.running == null) {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
         return StartGameScreen();
@@ -52,7 +56,17 @@ class GameNavigator {
 
     //DURING GAME
 
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    if (Game.ui.idle) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return ActionScreen();
+        }),
+      );
+      return;
+    }
+
+    if (MainBloc.hideOverlays) SystemChrome.setEnabledSystemUIOverlays([]);
     if (Game.ui.shouldMove) {
       Navigator.pushReplacement(
         context,

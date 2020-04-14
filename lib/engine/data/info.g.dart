@@ -32,3 +32,19 @@ class InfoAdapter extends TypeAdapter<Info> {
       ..write(obj.leading);
   }
 }
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Info _$InfoFromJson(Map<String, dynamic> json) {
+  return Info(
+    title: json['title'] as String,
+    leading: json['leading'] as String,
+  );
+}
+
+Map<String, dynamic> _$InfoToJson(Info instance) => <String, dynamic>{
+      'title': instance.title,
+      'leading': instance.leading,
+    };

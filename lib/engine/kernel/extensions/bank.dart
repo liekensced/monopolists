@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:monopolists/engine/data/tip.dart';
-import 'package:monopolists/engine/kernel/main.dart';
 
 import '../../data/extensions.dart';
+import '../../data/tip.dart';
+import '../main.dart';
 
 class Bank {
   static get enabled => Game.data.extensions.contains(Extension.bank);

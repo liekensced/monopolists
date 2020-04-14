@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:monopolists/widgets/houses.dart';
 
 import '../../../engine/data/map.dart';
 import '../../../engine/kernel/main.dart';
 import '../../../engine/ui/alert.dart';
+import '../../../widgets/houses.dart';
 
 class PropertyCard extends StatefulWidget {
   final Tile tile;

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:monopolists/engine/data/main.dart';
-import 'package:monopolists/engine/data/map.dart';
-import 'package:monopolists/engine/kernel/main.dart';
-import 'package:monopolists/engine/kernel/core_actions.dart';
+import 'package:plutopoly/engine/data/main.dart';
+import 'package:plutopoly/engine/data/map.dart';
+import 'package:plutopoly/engine/kernel/main.dart';
+import 'package:plutopoly/engine/kernel/core_actions.dart';
 
 void main() {
   test('Normal test game', () {

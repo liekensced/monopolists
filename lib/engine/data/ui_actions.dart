@@ -1,12 +1,28 @@
 import 'package:hive/hive.dart';
-import 'package:monopolists/engine/kernel/main.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+import '../../bloc/main_bloc.dart';
+import '../kernel/main.dart';
 
 part 'ui_actions.g.dart';
 
+@JsonSerializable()
 @HiveType(typeId: 5)
 class UIActionsData extends HiveObject {
   @HiveField(0)
   bool shouldMove = true;
+
+  bool get idle {
+    return true;
+    if (!MainBloc.online) return false;
+    return Game.data.player.code != MainBloc.player?.code;
+  }
+
+  UIActionsData();
+
+  factory UIActionsData.fromJson(Map<String, dynamic> json) =>
+      _$UIActionsDataFromJson(json);
+  Map<String, dynamic> toJson() => _$UIActionsDataToJson(this);
 
   void loadActionScreen() {}
 

@@ -75,6 +75,32 @@ class TileTypeAdapter extends TypeAdapter<TileType> {
   }
 }
 
+class MapConfigurationAdapter extends TypeAdapter<MapConfiguration> {
+  @override
+  final typeId = 9;
+
+  @override
+  MapConfiguration read(BinaryReader reader) {
+    var numOfFields = reader.readByte();
+    var fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return MapConfiguration()
+      ..configuration = (fields[0] as List)?.cast<int>()
+      ..width = fields[1] as int;
+  }
+
+  @override
+  void write(BinaryWriter writer, MapConfiguration obj) {
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.configuration)
+      ..writeByte(1)
+      ..write(obj.width);
+  }
+}
+
 class TileAdapter extends TypeAdapter<Tile> {
   @override
   final typeId = 1;
@@ -124,3 +150,92 @@ class TileAdapter extends TypeAdapter<Tile> {
       ..write(obj.idIndex);
   }
 }
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+MapConfiguration _$MapConfigurationFromJson(Map<String, dynamic> json) {
+  return MapConfiguration()
+    ..configuration =
+        (json['configuration'] as List)?.map((e) => e as int)?.toList()
+    ..width = json['width'] as int;
+}
+
+Map<String, dynamic> _$MapConfigurationToJson(MapConfiguration instance) =>
+    <String, dynamic>{
+      'configuration': instance.configuration,
+      'width': instance.width,
+    };
+
+Tile _$TileFromJson(Map<String, dynamic> json) {
+  return Tile(
+    _$enumDecodeNullable(_$TileTypeEnumMap, json['type']),
+    color: json['color'] as int,
+    idPrefix: json['idPrefix'] as String,
+    name: json['name'] as String,
+    price: json['price'] as int,
+    housePrice: json['housePrice'] as int,
+    rent: (json['rent'] as List)?.map((e) => e as int)?.toList(),
+    hyp: json['hyp'] as int,
+    idIndex: json['idIndex'] as int,
+  )..level = json['level'] as int;
+}
+
+Map<String, dynamic> _$TileToJson(Tile instance) => <String, dynamic>{
+      'type': _$TileTypeEnumMap[instance.type],
+      'color': instance.color,
+      'idPrefix': instance.idPrefix,
+      'name': instance.name,
+      'price': instance.price,
+      'hyp': instance.hyp,
+      'housePrice': instance.housePrice,
+      'rent': instance.rent,
+      'level': instance.level,
+      'idIndex': instance.idIndex,
+    };
+
+T _$enumDecode<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    throw ArgumentError('A value must be provided. Supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+
+  final value = enumValues.entries
+      .singleWhere((e) => e.value == source, orElse: () => null)
+      ?.key;
+
+  if (value == null && unknownValue == null) {
+    throw ArgumentError('`$source` is not one of the supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+  return value ?? unknownValue;
+}
+
+T _$enumDecodeNullable<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+}
+
+const _$TileTypeEnumMap = {
+  TileType.land: 'land',
+  TileType.company: 'company',
+  TileType.trainstation: 'trainstation',
+  TileType.start: 'start',
+  TileType.chest: 'chest',
+  TileType.tax: 'tax',
+  TileType.chance: 'chance',
+  TileType.jail: 'jail',
+  TileType.parking: 'parking',
+  TileType.police: 'police',
+};

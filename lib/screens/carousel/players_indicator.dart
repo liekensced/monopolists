@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:monopolists/engine/data/map.dart';
-import 'package:monopolists/engine/data/player.dart';
-import 'package:monopolists/engine/kernel/main.dart';
+
+import '../../engine/data/map.dart';
+import '../../engine/data/player.dart';
+import '../../engine/kernel/main.dart';
 
 class PlayerIndicators extends StatelessWidget {
   final bool jailed;

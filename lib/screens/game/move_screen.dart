@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:monopolists/engine/ui/game_navigator.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/kernel/main.dart';
+import '../../engine/ui/game_navigator.dart';
 import '../carousel/map_carousel.dart';
 import 'dice_select.dart';
 
@@ -22,18 +22,18 @@ class MoveScreen extends StatelessWidget {
           onVerticalDragEnd: (_) {
             moveModalBottomSheet(context);
           },
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 50),
-                child: Text(Game.data.player.name,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 45, color: Colors.white)),
-              ),
-              ValueListenableBuilder(
-                  valueListenable: Hive.box(MainBloc.GAMESBOX).listenable(),
-                  builder: (context, Box box, _) {
+          child: SafeArea(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 50),
+                  child: Text(Game.data.player.name,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 45, color: Colors.white)),
+                ),
+                GameListener(
+                  builder: (context, __, _) {
                     return LimitedBox(
                       maxHeight: 300,
                       child: Theme(
@@ -43,47 +43,50 @@ class MoveScreen extends StatelessWidget {
                         ),
                       ),
                     );
-                  }),
-              ValueListenableBuilder(
-                valueListenable: Hive.box(MainBloc.PREFBOX).listenable(),
-                builder: (BuildContext context, Box box, Widget _) {
-                  if (box.get("boolDoneRandomSelect", defaultValue: true)) {
-                    if (box.containsKey("intDice0") &&
-                        box.containsKey("intDice1")) {
-                      Game.move(box.get("intDice0"), box.get("intDice1"));
+                  },
+                ),
+                ValueListenableBuilder(
+                  valueListenable: Hive.box(MainBloc.PREFBOX).listenable(),
+                  builder: (BuildContext context, Box box, Widget _) {
+                    if (MainBloc.randomDices) {
+                      if (box.containsKey("intDice0") &&
+                          box.containsKey("intDice1")) {
+                        Game.move(box.get("intDice0"), box.get("intDice1"));
 
-                      int pos = Game.data.player.position;
+                        int pos = Game.data.player.position;
 
-                      int mapLength = Game.data.gmap.length;
-                      pageController.animateToPage(
-                        (pageController.page ?? 0) > pos
-                            ? pos + mapLength
-                            : pos,
-                        duration:
-                            Duration(milliseconds: Game.ui.moveAnimationMillis),
-                        curve: Curves.decelerate,
-                      );
-                      Future.delayed(
-                          Duration(
-                              milliseconds: Game.ui.moveAnimationMillis + 500),
-                          () {
-                        box.delete("intDice0");
-                        box.delete("intDice1");
-                        navigate(context);
-                      });
-                    }
-                  }
-
-                  return ValueListenableBuilder(
-                      valueListenable: Hive.box(MainBloc.GAMESBOX).listenable(),
-                      builder: (context, _, __) {
-                        return Expanded(
-                          child: DiceSelect(),
+                        int mapLength = Game.data.gmap.length;
+                        pageController.animateToPage(
+                          (pageController.page ?? 0) > pos
+                              ? pos + mapLength
+                              : pos,
+                          duration: Duration(
+                              milliseconds: Game.ui.moveAnimationMillis),
+                          curve: Curves.decelerate,
                         );
-                      });
-                },
-              ),
-            ],
+                        Future.delayed(
+                            Duration(
+                                milliseconds:
+                                    Game.ui.moveAnimationMillis + 500), () {
+                          box.delete("intDice0");
+                          box.delete("intDice1");
+                          navigate(context);
+                        });
+                      }
+                    }
+
+                    return ValueListenableBuilder(
+                        valueListenable:
+                            Hive.box(MainBloc.GAMESBOX).listenable(),
+                        builder: (context, _, __) {
+                          return Expanded(
+                            child: DiceSelect(),
+                          );
+                        });
+                  },
+                ),
+              ],
+            ),
           ),
         ));
   }
@@ -94,6 +97,7 @@ class MoveScreen extends StatelessWidget {
 }
 
 void moveModalBottomSheet(BuildContext context) {
+  if (MainBloc.online) return;
   Box box = Hive.box(MainBloc.PREFBOX);
   box.delete("intDice0");
   box.delete("intDice1");

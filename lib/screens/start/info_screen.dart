@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../bloc/main_bloc.dart';
 import '../../engine/data/extensions.dart';
 import '../../engine/data/settings.dart';
 import '../../engine/data/tip.dart';
@@ -10,12 +11,15 @@ import '../../engine/kernel/extensions/jurisdiction.dart';
 import '../../engine/kernel/main.dart';
 import '../../engine/ui/game_navigator.dart';
 import '../../widgets/end_of_list.dart';
+import 'players.dart';
 
 class InfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> infoWidgets = <Widget>[];
     List<Extension> extensions = Game.data.extensions;
+
+    if (MainBloc.online) infoWidgets.add(PlayersCard());
 
     infoWidgets.add(IconDivider(
       icon: Icon(Icons.settings, size: 40),
