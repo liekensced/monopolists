@@ -57,13 +57,14 @@ class Alert {
     Alert alert = function();
     if (alert != null) {
       if (alert.snackbar) {
-        Scaffold.of(context).hideCurrentSnackBar();
-
-        Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text(alert.title),
-        ));
-
-        return true;
+        try {
+          Scaffold.of(context).hideCurrentSnackBar();
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text(alert.title),
+          ));
+        } finally {
+          return true;
+        }
       }
 
       List<Widget> actions = [];

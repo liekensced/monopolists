@@ -42,11 +42,12 @@ class Game {
     launch();
   }
 
-  static addInfo(UpdateInfo updateInfo) {
-    if (Game.data.player.info[Game.data.turn - 1] == null) {
-      Game.data.player.info[Game.data.turn - 1] = [];
+  static addInfo(UpdateInfo updateInfo, [int playerIndex]) {
+    if (playerIndex == null) playerIndex = Game.data.currentPlayer;
+    if (Game.data.players[playerIndex].info[Game.data.turn - 1] == null) {
+      Game.data.players[playerIndex].info[Game.data.turn - 1] = [];
     }
-    Game.data.player.info[Game.data.turn - 1].add(updateInfo);
+    Game.data.players[playerIndex].info[Game.data.turn - 1].add(updateInfo);
   }
 
   static Alert build([Tile property]) {
@@ -176,6 +177,7 @@ class Game {
     //after here
     data.players.asMap().forEach((int i, _) {
       Player mapPlayer = data.players[i];
+      addInfo(UpdateInfo(title: "turn ${data.turn}", leading: "time"), i);
       data.players[i].info[data.turn + 1] = [];
       data.players[i].info[data.turn + 2] = [];
       Bank.newTurn(i);

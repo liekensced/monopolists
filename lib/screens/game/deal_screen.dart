@@ -145,7 +145,7 @@ class _DealScreenChildState extends State<DealScreenChild>
     return SlideTransition(
         position: _offsetAnimation,
         child: AbsorbPointer(
-          absorbing: checkPay(),
+          absorbing: false,
           child: FloatingActionButton.extended(
             backgroundColor:
                 checkPay() ? Colors.red : Theme.of(context).accentColor,

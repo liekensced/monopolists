@@ -37,11 +37,11 @@ class CoreActions {
       Player _player = data.players[receiver];
       if (_player.money < -amount) return Alert.funds(_player);
     }
+    if (receiver != null) data.players[receiver].money += amount;
     data.player.money -= amount;
     switch (type) {
       case PayType.rent:
         data.rentPayed = true;
-        data.players[receiver].money += amount;
         data.players[receiver].info[data.turn].add(UpdateInfo(
             title: "Rent received from ${data.player.name}: £$amount",
             leading: "rent"));

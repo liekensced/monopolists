@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../../engine/kernel/extensions/bank.dart';
 
 import '../../../bloc/main_bloc.dart';
 import '../../../engine/data/info.dart';
@@ -55,6 +57,10 @@ Widget getLeading(String leading) {
     case "rent":
       return Icon(Icons.home);
       break;
+    case "bank":
+      return Bank.icon();
+    case "time":
+      return FaIcon(FontAwesomeIcons.solidClock);
     default:
       return Icon(Icons.info);
   }

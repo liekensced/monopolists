@@ -32,7 +32,7 @@ class Player extends HiveObject {
   @HiveField(9)
   Map<int, List<UpdateInfo>> info = {
     0: [UpdateInfo(title: "New game")],
-    1: [UpdateInfo(title: "Second round")]
+    1: []
   };
   @HiveField(10)
   List<double> moneyHistory = [0];

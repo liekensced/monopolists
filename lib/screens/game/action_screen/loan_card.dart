@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../../bloc/main_bloc.dart';
 import '../../../engine/data/bank/loan.dart';
 import '../../../engine/kernel/extensions/bank.dart';
 import '../../../engine/kernel/main.dart';
@@ -12,12 +11,35 @@ class LoanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> loans = [];
+
+    loans.add(Container(
+      height: 40,
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text("£" + Game.data.player.debt.toInt().toString(),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            Text(" / £" + Bank.lendingCap().toInt().toString() + " lend ",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Tooltip(
+              message: "This is the maximum you can lend. (Cash*3 + assets)",
+              child: Icon(
+                Icons.info,
+                color: Colors.grey,
+              ),
+            )
+          ],
+        ),
+      ),
+    ));
+
     Bank.getLoans().forEach((Loan loan) {
       loans.add(ListTile(
-        title:
-            Text("+£${loan.amount.toInt()} with ${loan.interest}% interest."),
+        title: Text(
+            "+£${loan.amount.toInt()} with ${loan.interest * 100}% interest."),
         subtitle: Text(
-            "Start fee: ${loan.fee}%. Receive in ${loan.waitingTurns} turns."),
+            "Start fee: ${loan.fee * 100}%. Receive in ${loan.waitingTurns} turns."),
         trailing: IconButton(
             icon: FaIcon(
               FontAwesomeIcons.creditCard,
@@ -45,6 +67,16 @@ class LoanCard extends StatelessWidget {
                         MaterialButton(
                             onPressed: () {
                               Alert.handle(() => Bank.lend(loan), context);
+                            },
+                            child: Text(
+                              "add 1",
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor),
+                            )),
+                        MaterialButton(
+                            onPressed: () {
+                              Alert.handleAndPop(
+                                  () => Bank.lend(loan), context);
                             },
                             child: Text(
                               "take",
@@ -76,12 +108,30 @@ class DebtCard extends StatelessWidget {
 
   List<Widget> getDebts(BuildContext context) {
     List<Widget> debts = [];
-    Game.data.player.loans.forEach((Loan loan) {
+    List<Loan> loans = Game.data.player.loans;
+    loans.sort((l, ll) => l.fullId.compareTo(ll.fullId));
+    Map<String, int> idAmount = {};
+    loans.forEach((l) {
+      if (idAmount.containsKey(l.fullId)) {
+        idAmount[l.fullId]++;
+      } else {
+        idAmount[l.fullId] = 1;
+      }
+    });
+    idAmount.forEach((String fullId, int amount) {
+      Loan loan = loans.firstWhere((element) => element.fullId == fullId);
+      if (amount == 0) return;
       debts.add(ListTile(
-        title:
-            Text("+£${loan.amount.toInt()} with ${loan.interest}% interest."),
-        subtitle: Text(
-            "Start fee: ${loan.fee}%. Receive in ${loan.waitingTurns} turns."),
+        leading: Text(
+          amount.toString(),
+          textScaleFactor: 2,
+        ),
+        title: Text(
+            "+£${loan.amount.toInt()} with ${loan.interest * 100}% interest."),
+        subtitle: Text("Start fee: ${loan.fee * 100}%. " +
+            ((loan.waitingTurns > 0)
+                ? "Receive in ${loan.waitingTurns} turns."
+                : "Received")),
         trailing: IconButton(
             icon: FaIcon(
               FontAwesomeIcons.moneyBill,
@@ -91,6 +141,7 @@ class DebtCard extends StatelessWidget {
               Alert.handle(() => Bank.payLoan(loan), context);
             }),
       ));
+      amount = 1;
     });
     return debts;
   }

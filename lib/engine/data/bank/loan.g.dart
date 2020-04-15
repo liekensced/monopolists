@@ -20,6 +20,7 @@ class LoanAdapter extends TypeAdapter<Loan> {
       interest: fields[0] as double,
       amount: fields[1] as double,
       waitingTurns: fields[2] as int,
+      id: fields[5] as String,
       fee: fields[4] as double,
       countToCap: fields[3] as bool,
     );
@@ -28,7 +29,7 @@ class LoanAdapter extends TypeAdapter<Loan> {
   @override
   void write(BinaryWriter writer, Loan obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.interest)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class LoanAdapter extends TypeAdapter<Loan> {
       ..writeByte(3)
       ..write(obj.countToCap)
       ..writeByte(4)
-      ..write(obj.fee);
+      ..write(obj.fee)
+      ..writeByte(5)
+      ..write(obj.id);
   }
 }
 
@@ -51,6 +54,7 @@ Loan _$LoanFromJson(Map<String, dynamic> json) {
     interest: (json['interest'] as num)?.toDouble(),
     amount: (json['amount'] as num)?.toDouble(),
     waitingTurns: json['waitingTurns'] as int,
+    id: json['id'] as String,
     fee: (json['fee'] as num)?.toDouble(),
     countToCap: json['countToCap'] as bool,
   );
@@ -62,4 +66,5 @@ Map<String, dynamic> _$LoanToJson(Loan instance) => <String, dynamic>{
       'waitingTurns': instance.waitingTurns,
       'countToCap': instance.countToCap,
       'fee': instance.fee,
+      'id': instance.id,
     };

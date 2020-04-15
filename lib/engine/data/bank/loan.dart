@@ -17,13 +17,29 @@ class Loan extends HiveObject {
   bool countToCap;
   @HiveField(4)
   double fee;
+  @HiveField(5)
+  String id = "";
+
+  String get fullId => id + ":$waitingTurns:$amount";
 
   Loan(
       {@required this.interest,
       @required this.amount,
       @required this.waitingTurns,
+      @required this.id,
       this.fee: 0,
       this.countToCap: true});
+  @override
+  bool operator ==(o) => o is Loan && o.fullId == fullId;
+
+  Loan.copy(Loan loan) {
+    interest = loan.interest;
+    amount = loan.amount;
+    waitingTurns = loan.waitingTurns;
+    id = loan.id;
+    fee = loan.fee ?? 0;
+    countToCap = loan.countToCap ?? true;
+  }
 
   factory Loan.fromJson(Map<String, dynamic> json) => _$LoanFromJson(json);
   Map<String, dynamic> toJson() => _$LoanToJson(this);
