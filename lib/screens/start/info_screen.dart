@@ -50,10 +50,10 @@ class InfoScreen extends StatelessWidget {
         title: Text("You have to stand on the property to build a house"),
       ));
     }
-    if (settings.allowOneDice) {
+    if (settings.startingMoney != 1500) {
       prefs.add(ListTile(
         leading: Icon(Icons.info),
-        title: Text("You can choose to only use 1 dice."),
+        title: Text("You get 1500 starting money."),
       ));
     }
     if (settings.goBonus != 200) {

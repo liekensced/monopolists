@@ -22,7 +22,7 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..goBonus = fields[2] as int
       ..maxTurnes = fields[3] as int
       ..mustAuction = fields[4] as bool
-      ..allowOneDice = fields[5] as bool
+      ..startingMoney = fields[5] as int
       ..dontBuyFirstRound = fields[6] as bool;
   }
 
@@ -41,7 +41,7 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(4)
       ..write(obj.mustAuction)
       ..writeByte(5)
-      ..write(obj.allowOneDice)
+      ..write(obj.startingMoney)
       ..writeByte(6)
       ..write(obj.dontBuyFirstRound);
   }
@@ -58,7 +58,7 @@ Settings _$SettingsFromJson(Map<String, dynamic> json) {
     ..goBonus = json['goBonus'] as int
     ..maxTurnes = json['maxTurnes'] as int
     ..mustAuction = json['mustAuction'] as bool
-    ..allowOneDice = json['allowOneDice'] as bool
+    ..startingMoney = json['startingMoney'] as int
     ..dontBuyFirstRound = json['dontBuyFirstRound'] as bool;
 }
 
@@ -68,6 +68,6 @@ Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
       'goBonus': instance.goBonus,
       'maxTurnes': instance.maxTurnes,
       'mustAuction': instance.mustAuction,
-      'allowOneDice': instance.allowOneDice,
+      'startingMoney': instance.startingMoney,
       'dontBuyFirstRound': instance.dontBuyFirstRound,
     };

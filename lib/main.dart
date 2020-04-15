@@ -6,8 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:plutopoly/screens/home/home_screen.dart';
 
 import 'bloc/main_bloc.dart';
+import 'engine/data/bank/loan.dart';
 import 'engine/data/deal_data.dart';
 import 'engine/data/extensions.dart';
 import 'engine/data/info.dart';
@@ -16,7 +18,6 @@ import 'engine/data/map.dart';
 import 'engine/data/player.dart';
 import 'engine/data/settings.dart';
 import 'engine/data/ui_actions.dart';
-import 'screens/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,9 +35,10 @@ Future<void> main() async {
   Hive.registerAdapter(SettingsAdapter());
   Hive.registerAdapter(UIActionsDataAdapter());
   Hive.registerAdapter(ExtensionAdapter());
-  Hive.registerAdapter(InfoAdapter());
+  Hive.registerAdapter(UpdateInfoAdapter());
   Hive.registerAdapter(DealDataAdapter());
   Hive.registerAdapter(MapConfigurationAdapter());
+  Hive.registerAdapter(LoanAdapter());
   await Hive.openBox(MainBloc.PREFBOX);
   runApp(MyApp());
 }
@@ -74,7 +76,10 @@ class MyApp extends StatelessWidget {
                       print(snapshot.error);
                       return Scaffold(
                         body: Center(
-                          child: Text('Something went wrong :/'),
+                          child: Text(
+                            'Something went wrong :/\n\nIf this keeps happening, reset all app data in settings.',
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       );
                     } else {

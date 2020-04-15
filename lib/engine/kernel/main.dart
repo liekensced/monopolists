@@ -42,6 +42,13 @@ class Game {
     launch();
   }
 
+  static addInfo(UpdateInfo updateInfo) {
+    if (Game.data.player.info[Game.data.turn - 1] == null) {
+      Game.data.player.info[Game.data.turn - 1] = [];
+    }
+    Game.data.player.info[Game.data.turn - 1].add(updateInfo);
+  }
+
   static Alert build([Tile property]) {
     Tile tile = property ?? Game.data.player.positionTile;
     if (tile.housePrice == null)
@@ -86,7 +93,8 @@ class Game {
     return null;
   }
 
-  static void jump(int position) {
+  static void jump([int position]) {
+    if (position == null) position = Random().nextInt(Game.data.gmap.length);
     data.rentPayed = false;
 
     Game.data.player.position = position;
@@ -158,7 +166,6 @@ class Game {
     } else {
       data.currentPlayer++;
     }
-    Bank.rent();
     save();
 
     return null;
@@ -166,18 +173,22 @@ class Game {
 
   static onNewTurn() {
     data.turn++;
-
+    //after here
     data.players.asMap().forEach((int i, _) {
+      Player mapPlayer = data.players[i];
       data.players[i].info[data.turn + 1] = [];
-      data.players[i].moneyHistory.add(data.players[i].money);
+      data.players[i].info[data.turn + 2] = [];
+      Bank.newTurn(i);
+
+      data.players[i].moneyHistory.add(mapPlayer.money);
     });
   }
 
   static onPassGo() {
     int _goBonus = Game.data.settings.goBonus;
     data.player.money += _goBonus;
-    data.player.info[data.turn]
-        .add(Info(title: "Received go bonus: $_goBonus"));
+
+    addInfo(UpdateInfo(title: "Received go bonus: $_goBonus"));
 
     Bank.rent();
   }

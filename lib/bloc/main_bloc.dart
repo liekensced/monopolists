@@ -15,7 +15,7 @@ import '../engine/kernel/main.dart';
 import '../engine/ui/alert.dart';
 
 class MainBloc {
-  static const _version = "1.1.2.3";
+  static const _version = "1.1.2.7";
   static const GAMESBOX = _version + "gamesbox";
 
   static const PREFBOX = _version + "prefbox";
@@ -29,6 +29,13 @@ class MainBloc {
   static StreamSubscription<DocumentSnapshot> listener;
   static StreamSubscription<DocumentSnapshot> waiter;
   static int posOveride;
+
+  static List<String> getRecent() {
+    List<String> recent =
+        Hive.box(METABOX).get("listRecent", defaultValue: []).cast<String>();
+
+    return recent;
+  }
 
   static double get maxWidth =>
       Hive.box(PREFBOX).get("doubleMaxWidth", defaultValue: 700.0);
@@ -48,9 +55,8 @@ class MainBloc {
   }
 
   static Future<Alert> newOnlineGame() async {
-    if (player.name == null)
-      return Alert(
-          "Please complete your account", "Change your name and add a color");
+    if (player.name == null || player.name == "null")
+      return Alert.accountIncomplete();
     Alert alert;
     online = true;
     Hive.box(METABOX).put("boolOnline", true);
@@ -88,21 +94,22 @@ class MainBloc {
   }
 
   static Player get player => Hive.box(PREFBOX).get("playerPlayer",
-      defaultValue: Player(name: null, color: Colors.amber.value, code: code));
+      defaultValue:
+          Player(name: "null", color: Colors.amber.value, code: code));
 
   static setPlayer({String name: "", int color: 0}) {
-    Hive.box(PREFBOX).put("playerPlayer", Player(color: color, name: name));
+    Hive.box(PREFBOX)
+        .put("playerPlayer", Player(color: color, name: name, code: code));
   }
 
   static Future<Alert> joinOnline(String gameIdInput) async {
-    if (player.name == null)
-      return Alert(
-          "Please complete your account", "Change your name and add a color");
+    if (player.name == null || player.name == "null")
+      return Alert.accountIncomplete();
 
     online = true;
 
     Alert alert;
-    gameId = gameIdInput;
+    gameId = gameIdInput.trim();
     DocumentSnapshot snapshot;
     DocumentReference ref;
     if (waiter != null) waiter.cancel();
@@ -150,8 +157,15 @@ class MainBloc {
       return Alert("Error while joining game", e.toString());
     }
     Hive.box(METABOX).put("boolOnline", true);
-
+    addToRecent(gameId);
     return null;
+  }
+
+  static addToRecent(String newGameId) {
+    List<String> recent =
+        Hive.box(METABOX).get("listRecent", defaultValue: []).cast<String>();
+    recent.add(newGameId);
+    Hive.box(METABOX).put("listRecent", recent);
   }
 
   static cancelOnline() async {

@@ -52,6 +52,8 @@ class Tile extends HiveObject {
   int level = 0;
   @HiveField(10)
   int idIndex = 1;
+  @HiveField(11)
+  bool mortaged = false;
 
   factory Tile.fromJson(Map<String, dynamic> json) => _$TileFromJson(json);
 
@@ -106,6 +108,7 @@ class Tile extends HiveObject {
     this.housePrice,
     this.rent,
     this.hyp,
+    this.mortaged: false,
     @required this.idIndex,
   });
 }

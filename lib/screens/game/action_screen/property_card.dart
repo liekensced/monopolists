@@ -9,9 +9,11 @@ import '../../../widgets/my_card.dart';
 
 class PropertyCard extends StatefulWidget {
   final Tile tile;
+  final bool expanded;
   const PropertyCard({
     @required this.tile,
     Key key,
+    this.expanded: false,
   }) : super(key: key);
 
   @override
@@ -22,10 +24,11 @@ class _PropertyCardState extends State<PropertyCard>
     with SingleTickerProviderStateMixin {
   Tile get tile => widget.tile;
 
-  bool expanded = false;
+  bool expanded;
 
   @override
   Widget build(BuildContext context) {
+    if (expanded == null) expanded = widget.expanded;
     Color color = Colors.white;
     Widget leading = Container(width: 0);
     Color textColor = Colors.black;
@@ -44,16 +47,62 @@ class _PropertyCardState extends State<PropertyCard>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
+                      tile.level > 0
+                          ? Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Houses(amount: tile.level),
+                              ),
+                            )
+                          : Container(),
                       Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Houses(amount: tile.level),
-                        ),
-                      ),
-                      Expanded(
-                          child:
-                              Center(child: Text("£" + tile.price.toString()))),
+                          child: Center(
+                              child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Text("Value: £" + tile.price.toString()),
+                          tile.mortaged
+                              ? Center(
+                                  child: Text(
+                                  "mortaged",
+                                  style: TextStyle(color: Colors.grey),
+                                ))
+                              : Container()
+                        ],
+                      ))),
                     ],
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.bottomCenter,
+                    padding: const EdgeInsets.all(8.0),
+                    width: double.maxFinite,
+                    child: Tooltip(
+                      message: tile.mortaged ? "Buy back" : "Mortage",
+                      child: RaisedButton(
+                        color: Colors.orange,
+                        child: Container(
+                          width: double.maxFinite,
+                          child: Center(
+                            child: Text(
+                              (tile.mortaged
+                                      ? "Buy back for £"
+                                      : "Mortage for  £") +
+                                  tile.hyp.toString(),
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          Alert.handle(
+                              () => Game.act.mortage(tile.index), context);
+                        },
+                      ),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -109,13 +158,11 @@ class _PropertyCardState extends State<PropertyCard>
       color = Colors.white;
       textColor = Colors.black;
       leading = Icon(Icons.train);
-      content = expanded
-          ? Container(
-              height: 200,
-              child: Center(
-                child: leading,
-              ))
-          : Container();
+      content = Container(
+          height: 200,
+          child: Center(
+            child: leading,
+          ));
     }
 
     return MyCard(
@@ -150,7 +197,9 @@ class _PropertyCardState extends State<PropertyCard>
           vsync: this,
           duration: Duration(milliseconds: 300),
           curve: Curves.easeInOutCubic,
-          child: Container(height: expanded ? 200 : 0, child: content),
+          child: Container(
+              height: expanded ? 200 : 0,
+              child: expanded ? content : Container()),
         )
       ],
     );

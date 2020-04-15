@@ -65,7 +65,33 @@ class LandCard extends StatelessWidget {
                           ),
                         ),
                       )
-                    : Container(),
+                    : Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  "Owner: ",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                Text(tile.owner.name,
+                                    style: TextStyle(
+                                        color: Color(tile.owner.color),
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                            Container(height: 2),
+                            tile.mortaged
+                                ? Text(
+                                    "(mortaged)",
+                                    style: TextStyle(color: Colors.grey),
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      ),
                 Expanded(
                     child: Center(
                   child: Text("£" + tile.price.toString()),

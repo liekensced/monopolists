@@ -1,8 +1,7 @@
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/screens/game/action_screen/property_card.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/data/actions.dart';
@@ -16,8 +15,7 @@ import '../../widgets/my_card.dart';
 class PropertyActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: Hive.box(MainBloc.GAMESBOX).listenable(),
+    return GameListener(
       builder: (_, __, ___) {
         Tile tile = Game.data.player.positionTile;
         if (tile.type == TileType.chance) {
@@ -138,6 +136,9 @@ class PropertyActionCard extends StatelessWidget {
             ]),
           );
         }
+        if (tile.owner?.id == Game.data.player.id) {
+          return PropertyCard(tile: tile);
+        }
         return PropertyActionCardChild();
       },
     );
@@ -148,7 +149,7 @@ class PropertyActionCardChild extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyCard(
-      title: "tile",
+      title: "Tile",
       children: <Widget>[buildRaisedButton(context)],
     );
   }
@@ -198,7 +199,7 @@ class PropertyActionCardChild extends StatelessWidget {
                 fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           onPressed: () {
-            Alert.handle(() => Game.act.pay(payType.pot, price), context);
+            Alert.handle(() => Game.act.pay(PayType.pot, price), context);
           },
         ),
       );
@@ -281,34 +282,7 @@ class PropertyActionCardChild extends StatelessWidget {
         ),
       );
     }
-    if (owner == Game.data.player) {
-      if (((tile.rent?.length ?? 0) <= tile.level) ||
-          (tile.type == TileType.trainstation) ||
-          !Game.data.player.hasAll(tile.idPrefix)) {
-        return Container(
-          padding: const EdgeInsets.all(8.0),
-          width: double.maxFinite,
-          height: 60,
-          child: Center(child: Text("No actions")),
-        );
-      }
-      return Container(
-        padding: const EdgeInsets.all(8.0),
-        width: double.maxFinite,
-        child: RaisedButton(
-          padding: const EdgeInsets.all(8.0),
-          color: Colors.orange,
-          child: Text(
-            "Build house £" + tile.housePrice.toString(),
-            style: TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          onPressed: () {
-            Alert.handle(Game.build, context);
-          },
-        ),
-      );
-    }
+
     if (Game.data.rentPayed ?? false) {
       return Container(
         padding: const EdgeInsets.all(8.0),

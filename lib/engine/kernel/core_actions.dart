@@ -7,28 +7,46 @@ import '../data/player.dart';
 import '../ui/alert.dart';
 import 'main.dart';
 
-enum payType { rent, bank, pot, pay }
+enum PayType { rent, bank, pot, pay }
 
 class CoreActions {
   GameData get data => Game.data;
   CoreActions();
-  Alert pay(payType type, int amount, [int receiver]) {
+
+  Alert mortage(int tileIndex) {
+    Alert alert;
+    Tile tile = data.gmap[tileIndex];
+    bool _mortaged = tile.mortaged;
+    if (_mortaged) {
+      alert = pay(PayType.bank, tile.hyp);
+      if (alert != null) return alert;
+      tile.mortaged = false;
+      alert = Alert.snackBar("Lifted mortaged " + tile.name);
+    } else {
+      pay(PayType.bank, -tile.hyp);
+      tile.mortaged = true;
+      alert = Alert.snackBar("Mortaged " + tile.name);
+    }
+    return alert;
+  }
+
+  Alert pay(PayType type, int amount, [int receiver]) {
     if (amount > 0) {
       if (data.player.money < amount) return Alert.funds();
-    } else if (amount < 0) {
+    } else if (amount < 0 && receiver != null) {
       Player _player = data.players[receiver];
       if (_player.money < -amount) return Alert.funds(_player);
     }
     data.player.money -= amount;
     switch (type) {
-      case payType.rent:
+      case PayType.rent:
         data.rentPayed = true;
         data.players[receiver].money += amount;
-        data.players[receiver].info[data.turn].add(Info(
+        data.players[receiver].info[data.turn].add(UpdateInfo(
             title: "Rent received from ${data.player.name}: £$amount",
             leading: "rent"));
         break;
-      case payType.pot:
+      case PayType.pot:
         data.rentPayed = true;
         data.pot += amount;
         break;
@@ -58,7 +76,7 @@ class CoreActions {
   }
 
   Alert buyOutJail() {
-    Alert alert = pay(payType.pot, 50);
+    Alert alert = pay(PayType.pot, 50);
     if (alert == null) {
       Game.helper.undoubleDices();
       data.doublesThrown = 0;
@@ -73,7 +91,7 @@ class CoreActions {
     Tile tile = data.gmap[tileIndex];
     int price = payPrice ?? tile.currentRent;
     int receiver = tile.owner.index;
-    return pay(payType.rent, price, receiver);
+    return pay(PayType.rent, price, receiver);
   }
 
   Alert deal({
@@ -83,7 +101,7 @@ class CoreActions {
     @required int dealer,
   }) {
     if (payAmount != null) {
-      Alert alert = pay(payType.pay, payAmount, dealer);
+      Alert alert = pay(PayType.pay, payAmount, dealer);
       if (alert != null) {
         return alert;
       }

@@ -29,6 +29,7 @@ class _GamesCardState extends State<GamesCard>
           duration: Duration(milliseconds: 200),
           curve: Curves.decelerate,
           vsync: this,
+          //EXCEPTIONAL ValueListenable
           child: ValueListenableBuilder(
               valueListenable: Hive.box(MainBloc.GAMESBOX).listenable(),
               builder: (context, Box box, __) {
@@ -46,6 +47,7 @@ class _GamesCardState extends State<GamesCard>
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
+                        MainBloc.cancelOnline();
                         Game.loadGame(games[index]);
                         GameNavigator.navigate(context, loadGame: true);
                       },

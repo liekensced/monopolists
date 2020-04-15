@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/screens/game/action_screen/loan_card.dart';
+import 'package:plutopoly/widgets/end_of_list.dart';
+import 'package:plutopoly/widgets/slide_fab.dart';
 
 import '../../../bloc/main_bloc.dart';
 import '../../../engine/kernel/main.dart';
@@ -28,23 +29,8 @@ class ActionScreen extends StatelessWidget {
       length: 2,
       initialIndex: 1,
       child: Scaffold(
-        floatingActionButton: GameListener(
-          builder: (BuildContext context, _, __) {
-            return Game.ui.idle
-                ? Container()
-                : FloatingActionButton(
-                    onPressed: () {
-                      if (Alert.handle(Game.next, context)) {
-                        GameNavigator.navigate(context);
-                      }
-                    },
-                    child: Icon(
-                      Icons.navigate_next,
-                      color: Colors.white,
-                    ),
-                  );
-          },
-        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: ActionFab(),
         body: FractionallySizedBox(
           heightFactor: 1,
           child: NestedScrollView(
@@ -96,9 +82,7 @@ class ActionScreen extends StatelessWidget {
                           height: 300,
                           child: Theme(
                             data: ThemeData.light(),
-                            child: ValueListenableBuilder(
-                              valueListenable:
-                                  Hive.box(MainBloc.GAMESBOX).listenable(),
+                            child: GameListener(
                               builder: (_, __, ___) {
                                 return MapCarousel(controller: pageController);
                               },
@@ -122,9 +106,10 @@ class ActionScreen extends StatelessWidget {
                   ? NeverScrollableScrollPhysics()
                   : PageScrollPhysics(),
               children: <Widget>[
-                buildHoldingCards(context),
+                GameListener(builder: (c, _, __) => buildHoldingCards(context)),
                 Game.ui.idle
-                    ? IdleScreen(pageController)
+                    ? GameListener(
+                        builder: (c, __, ___) => IdleScreen(pageController))
                     : GameListener(
                         builder: (BuildContext context, _, __) {
                           return buildActionCards(context);
@@ -172,7 +157,9 @@ class ActionScreen extends StatelessWidget {
       PropertyActionCard(),
       MoneyCard(),
       ActionsCard(),
-      InfoCard()
+      InfoCard(),
+      LoanCard(),
+      DebtCard()
     ];
     List<Widget> evenActions = [];
 
@@ -204,11 +191,56 @@ class ActionScreen extends StatelessWidget {
         ],
       );
     }
-
+    actions.add(EndOfList());
     return ListView(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       children: actions,
+    );
+  }
+}
+
+class ActionFab extends StatelessWidget {
+  const ActionFab({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    bool wasIdle = false;
+    return GameListener(
+      builder: (BuildContext context, _, __) {
+        if (Game.ui.idle || wasIdle) {
+          wasIdle = true;
+          return SlideFab(
+            hide: Game.ui.idle,
+            title: "Your turn",
+            onTap: () {
+              GameNavigator.navigate(context);
+            },
+          );
+        }
+
+        return Game.ui.idle
+            ? Container()
+            : Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 12.0),
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      if (Alert.handle(Game.next, context)) {
+                        GameNavigator.navigate(context);
+                      }
+                    },
+                    child: Icon(
+                      Icons.navigate_next,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              );
+      },
     );
   }
 }

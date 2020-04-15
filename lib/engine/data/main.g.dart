@@ -107,9 +107,7 @@ GameData _$GameDataFromJson(Map<String, dynamic> json) {
     ..rentPayed = json['rentPayed'] as bool
     ..findingsIndex = json['findingsIndex'] as int
     ..eventIndex = json['eventIndex'] as int
-    ..mapConfiguration = json['mapConfiguration'] == null
-        ? null
-        : json['mapConfiguration'] as String
+    ..mapConfiguration = json['mapConfiguration'] as String
     ..dealData = json['dealData'] == null
         ? null
         : DealData.fromJson(json['dealData'] as Map<String, dynamic>);

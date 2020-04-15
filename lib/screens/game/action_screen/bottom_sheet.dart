@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../bloc/main_bloc.dart';
@@ -55,7 +56,19 @@ void showSettingsSheet(BuildContext context) {
                     ),
                   ),
                   MainBloc.online
-                      ? Container()
+                      ? InkWell(
+                          onTap: () {
+                            Clipboard.setData(
+                                ClipboardData(text: MainBloc.gameId));
+                          },
+                          child: ListTile(
+                            title: Text("Game id"),
+                            subtitle: Text(MainBloc.gameId),
+                            trailing: IconButton(
+                                icon: Icon(Icons.content_copy),
+                                onPressed: () {}),
+                          ),
+                        )
                       : InkWell(
                           onTap: () {
                             Navigator.push(context, MaterialPageRoute(

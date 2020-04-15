@@ -120,6 +120,7 @@ class TileAdapter extends TypeAdapter<Tile> {
       housePrice: fields[6] as int,
       rent: (fields[7] as List)?.cast<int>(),
       hyp: fields[5] as int,
+      mortaged: fields[11] as bool,
       idIndex: fields[10] as int,
     )..level = fields[9] as int;
   }
@@ -127,7 +128,7 @@ class TileAdapter extends TypeAdapter<Tile> {
   @override
   void write(BinaryWriter writer, Tile obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.type)
       ..writeByte(1)
@@ -147,7 +148,9 @@ class TileAdapter extends TypeAdapter<Tile> {
       ..writeByte(9)
       ..write(obj.level)
       ..writeByte(10)
-      ..write(obj.idIndex);
+      ..write(obj.idIndex)
+      ..writeByte(11)
+      ..write(obj.mortaged);
   }
 }
 
@@ -178,6 +181,7 @@ Tile _$TileFromJson(Map<String, dynamic> json) {
     housePrice: json['housePrice'] as int,
     rent: (json['rent'] as List)?.map((e) => e as int)?.toList(),
     hyp: json['hyp'] as int,
+    mortaged: json['mortaged'] as bool,
     idIndex: json['idIndex'] as int,
   )..level = json['level'] as int;
 }
@@ -193,6 +197,7 @@ Map<String, dynamic> _$TileToJson(Tile instance) => <String, dynamic>{
       'rent': instance.rent,
       'level': instance.level,
       'idIndex': instance.idIndex,
+      'mortaged': instance.mortaged,
     };
 
 T _$enumDecode<T>(

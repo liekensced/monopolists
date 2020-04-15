@@ -22,6 +22,7 @@ List<CardAction> events = [
   CardAction("Go to the start",
       () => Game.move(40 - Game.data.player.position - 1, 0)),
   CardAction("You get fined: -20", () => Game.data.player.money -= 20),
+  CardAction("Move to a random tile", () => Game.jump())
 ];
 List<CardAction> findings = [
   CardAction("Go to prison", () => Game.helper.jail(Game.data.currentPlayer)),
@@ -43,4 +44,5 @@ List<CardAction> findings = [
   CardAction(
       "Go to the start", () => Game.move(40 - Game.data.player.position, 0)),
   CardAction("Deducting taxes: +20", () => Game.data.player.money += 20),
+  CardAction("Move to a random tile", () => Game.jump())
 ];

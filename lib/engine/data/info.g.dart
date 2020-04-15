@@ -6,24 +6,24 @@ part of 'info.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class InfoAdapter extends TypeAdapter<Info> {
+class UpdateInfoAdapter extends TypeAdapter<UpdateInfo> {
   @override
   final typeId = 7;
 
   @override
-  Info read(BinaryReader reader) {
+  UpdateInfo read(BinaryReader reader) {
     var numOfFields = reader.readByte();
     var fields = <int, dynamic>{
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Info(
+    return UpdateInfo(
       title: fields[0] as String,
       leading: fields[1] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Info obj) {
+  void write(BinaryWriter writer, UpdateInfo obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)
@@ -37,14 +37,15 @@ class InfoAdapter extends TypeAdapter<Info> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Info _$InfoFromJson(Map<String, dynamic> json) {
-  return Info(
+UpdateInfo _$UpdateInfoFromJson(Map<String, dynamic> json) {
+  return UpdateInfo(
     title: json['title'] as String,
     leading: json['leading'] as String,
   );
 }
 
-Map<String, dynamic> _$InfoToJson(Info instance) => <String, dynamic>{
+Map<String, dynamic> _$UpdateInfoToJson(UpdateInfo instance) =>
+    <String, dynamic>{
       'title': instance.title,
       'leading': instance.leading,
     };

@@ -17,7 +17,7 @@ class Settings extends HiveObject {
   @HiveField(4)
   bool mustAuction = false;
   @HiveField(5)
-  bool allowOneDice = false;
+  int startingMoney = 1500;
   @HiveField(6)
   bool dontBuyFirstRound = false;
 

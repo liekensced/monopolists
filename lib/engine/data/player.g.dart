@@ -29,14 +29,16 @@ class PlayerAdapter extends TypeAdapter<Player> {
       ..jailTries = fields[7] as int
       ..goojCards = fields[8] as int
       ..info = (fields[9] as Map)?.map((dynamic k, dynamic v) =>
-          MapEntry(k as int, (v as List)?.cast<Info>()))
-      ..moneyHistory = (fields[10] as List)?.cast<double>();
+          MapEntry(k as int, (v as List)?.cast<UpdateInfo>()))
+      ..moneyHistory = (fields[10] as List)?.cast<double>()
+      ..debt = fields[12] as double
+      ..loans = (fields[13] as List)?.cast<Loan>();
   }
 
   @override
   void write(BinaryWriter writer, Player obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -60,7 +62,11 @@ class PlayerAdapter extends TypeAdapter<Player> {
       ..writeByte(10)
       ..write(obj.moneyHistory)
       ..writeByte(11)
-      ..write(obj.code);
+      ..write(obj.code)
+      ..writeByte(12)
+      ..write(obj.debt)
+      ..writeByte(13)
+      ..write(obj.loans);
   }
 }
 
@@ -85,12 +91,18 @@ Player _$PlayerFromJson(Map<String, dynamic> json) {
       (k, e) => MapEntry(
           int.parse(k),
           (e as List)
-              ?.map((e) =>
-                  e == null ? null : Info.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => e == null
+                  ? null
+                  : UpdateInfo.fromJson(e as Map<String, dynamic>))
               ?.toList()),
     )
     ..moneyHistory = (json['moneyHistory'] as List)
         ?.map((e) => (e as num)?.toDouble())
+        ?.toList()
+    ..debt = (json['debt'] as num)?.toDouble()
+    ..loans = (json['loans'] as List)
+        ?.map(
+            (e) => e == null ? null : Loan.fromJson(e as Map<String, dynamic>))
         ?.toList();
 }
 
@@ -108,4 +120,6 @@ Map<String, dynamic> _$PlayerToJson(Player instance) => <String, dynamic>{
           MapEntry(k.toString(), e?.map((e) => e?.toJson())?.toList())),
       'moneyHistory': instance.moneyHistory,
       'code': instance.code,
+      'debt': instance.debt,
+      'loans': instance.loans?.map((e) => e?.toJson())?.toList(),
     };

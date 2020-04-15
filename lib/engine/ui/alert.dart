@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../screens/start/players.dart';
 import '../data/player.dart';
 import '../kernel/main.dart';
 
@@ -7,7 +8,7 @@ import '../kernel/main.dart';
 class Alert {
   String title = "";
   String content = "";
-  Map<String, Function> actions;
+  Map<String, Function(BuildContext context)> actions;
   bool closable = true;
   bool snackbar = false;
   bool failed = true;
@@ -23,6 +24,22 @@ class Alert {
     content = content ?? "";
     snackbar = true;
     failed = false;
+  }
+  Alert.accountIncomplete() {
+    title = "Please complete your account";
+    content = "Change your name and add a color";
+
+    actions = {
+      "change": (BuildContext context) {
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AddPlayerDialog(prefPlayer: true);
+          },
+        );
+      }
+    };
   }
   Alert.funds([Player player]) {
     title = "Not enough funds";
@@ -63,7 +80,7 @@ class Alert {
       if (alert.actions != null) {
         alert.actions.forEach((String key, Function value) {
           actions.add(MaterialButton(
-              onPressed: value,
+              onPressed: () => value(context),
               child: Text(
                 key,
                 style: TextStyle(color: Theme.of(context).primaryColor),

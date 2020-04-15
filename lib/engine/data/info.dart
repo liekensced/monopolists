@@ -5,13 +5,14 @@ part 'info.g.dart';
 
 @JsonSerializable()
 @HiveType(typeId: 7)
-class Info extends HiveObject {
+class UpdateInfo extends HiveObject {
   @HiveField(0)
   String title = "";
   @HiveField(1)
   String leading = "i";
-  Info({this.title, this.leading: "i"});
+  UpdateInfo({this.title, this.leading: "i"});
 
-  factory Info.fromJson(Map<String, dynamic> json) => _$InfoFromJson(json);
-  Map<String, dynamic> toJson() => _$InfoToJson(this);
+  factory UpdateInfo.fromJson(Map<String, dynamic> json) =>
+      _$UpdateInfoFromJson(json);
+  Map<String, dynamic> toJson() => _$UpdateInfoToJson(this);
 }

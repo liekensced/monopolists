@@ -9,13 +9,13 @@ class InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyCard(
-      title: "info",
+      title: "Info",
       children: <Widget>[
         GameListener(
           builder: (BuildContext context, _, __) {
             //check it exists
 
-            List<Info> info = [];
+            List<UpdateInfo> info = [];
             if (Game.data.player.info.containsKey(Game.data.turn - 1)) {
               info.addAll(Game.data.player.info[Game.data.turn - 1]);
             }

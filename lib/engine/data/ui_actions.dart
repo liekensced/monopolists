@@ -13,7 +13,6 @@ class UIActionsData extends HiveObject {
   bool shouldMove = true;
 
   bool get idle {
-    return true;
     if (!MainBloc.online) return false;
     return Game.data.player.code != MainBloc.player?.code;
   }

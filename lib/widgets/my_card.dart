@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
 
+import 'eager_inkwell.dart';
+
 class MyCard extends StatelessWidget {
   final String title;
   final bool smallTitle;
   final bool listen;
   final List<Widget> children;
   final Color color;
+  final Function onTap;
+  final double maxWidth;
 
   const MyCard({
     Key key,
     this.title,
     this.listen: false,
-    this.children: const [],
+    @required this.children,
     this.smallTitle: false,
     this.color,
+    this.onTap,
+    this.maxWidth,
   }) : super(key: key);
 
   @override
@@ -49,13 +55,23 @@ class MyCard extends StatelessWidget {
   Widget buildCenter() {
     return Center(
       child: Container(
-        constraints: BoxConstraints(maxWidth: MainBloc.maxWidth),
+        constraints: BoxConstraints(maxWidth: maxWidth ?? MainBloc.maxWidth),
         child: Card(
-          color: color,
-          child: Column(
-            children: children,
-          ),
-        ),
+            clipBehavior: Clip.hardEdge, color: color, child: buildCardChild()),
+      ),
+    );
+  }
+
+  Widget buildCardChild() {
+    if (onTap == null) {
+      return Column(
+        children: children,
+      );
+    }
+    return EagerInkWell(
+      onTap: onTap,
+      child: Column(
+        children: children,
       ),
     );
   }

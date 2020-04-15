@@ -201,13 +201,53 @@ class AdvancedSettings extends StatelessWidget {
         ),
         Divider(),
         ListTile(
-          title: Text("Allow one dice"),
-          subtitle: Text("You will have the choice to only use 1 dice."),
-          trailing: Switch(
-            value: Game.data.settings.allowOneDice,
-            onChanged: (val) {
-              Game.data.settings.allowOneDice = val;
-              Game.save();
+          title: Text("Starting money"),
+          subtitle: Text(Game.data.settings.goBonus.toString()),
+          trailing: IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              String amount;
+              showDialog(
+                context: context,
+                builder: (context) {
+                  submit(_) {
+                    Game.data.settings.startingMoney =
+                        int.tryParse(amount) ?? 1500;
+                    Game.save();
+                    Navigator.pop(context);
+                  }
+
+                  return AlertDialog(
+                      title: Text("Edit starting money"),
+                      content: TextField(
+                        autofocus: true,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(labelText: "Enter amount "),
+                        onChanged: (val) => amount = val,
+                        onSubmitted: submit,
+                      ),
+                      actions: [
+                        MaterialButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "cancel",
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor),
+                            )),
+                        MaterialButton(
+                            onPressed: () {
+                              submit("");
+                            },
+                            child: Text(
+                              "change",
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor),
+                            )),
+                      ]);
+                },
+              );
             },
           ),
         ),

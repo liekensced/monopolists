@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 import '../kernel/main.dart';
 import 'info.dart';
 import 'map.dart';
+import 'bank/loan.dart';
 
 part 'player.g.dart';
 
@@ -29,14 +30,18 @@ class Player extends HiveObject {
   @HiveField(8)
   int goojCards = 0;
   @HiveField(9)
-  Map<int, List<Info>> info = {
-    0: [Info(title: "New game")],
-    1: [Info(title: "Second round")]
+  Map<int, List<UpdateInfo>> info = {
+    0: [UpdateInfo(title: "New game")],
+    1: [UpdateInfo(title: "Second round")]
   };
   @HiveField(10)
   List<double> moneyHistory = [0];
   @HiveField(11)
   int code = 0;
+  @HiveField(12)
+  double debt = 0;
+  @HiveField(13)
+  List<Loan> loans = [];
 
   factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
   Map<String, dynamic> toJson() => _$PlayerToJson(this);

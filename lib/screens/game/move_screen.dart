@@ -75,14 +75,11 @@ class MoveScreen extends StatelessWidget {
                       }
                     }
 
-                    return ValueListenableBuilder(
-                        valueListenable:
-                            Hive.box(MainBloc.GAMESBOX).listenable(),
-                        builder: (context, _, __) {
-                          return Expanded(
-                            child: DiceSelect(),
-                          );
-                        });
+                    return GameListener(builder: (context, _, __) {
+                      return Expanded(
+                        child: DiceSelect(),
+                      );
+                    });
                   },
                 ),
               ],

@@ -19,7 +19,7 @@ void main() {
     Game.next();
 
     Game.move(1, 2);
-    Game.act.pay(payType.pot, 100);
+    Game.act.pay(PayType.pot, 100);
     Game.next();
 
     expect(Game.data.currentPlayer, 0);
