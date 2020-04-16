@@ -41,6 +41,6 @@ class GameSetup {
   defaultPlayer(Player player) {
     deletePlayer(player);
     Game.data.currentPlayer--;
-    Game.next();
+    Game.next(force: true);
   }
 }

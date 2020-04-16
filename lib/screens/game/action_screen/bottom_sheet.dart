@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/engine/kernel/main.dart';
 
 import '../../../bloc/main_bloc.dart';
 import '../../../engine/ui/game_navigator.dart';
 import '../../start/start_game.dart';
 import '../move_screen.dart';
 
-void showSettingsSheet(BuildContext context) {
+void showSettingsSheet(BuildContext context, PageController pageController) {
   showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -81,6 +82,17 @@ void showSettingsSheet(BuildContext context) {
                             title: Text("Open Game settings"),
                           ),
                         ),
+                  InkWell(
+                    onTap: () {
+                      pageController.animateToPage(Game.data.player.position,
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.easeInOutCubic);
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.location_searching),
+                      title: Text("Locate player"),
+                    ),
+                  ),
                 ],
               );
             });

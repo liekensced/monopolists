@@ -67,7 +67,7 @@ class Bank {
     if (!enabled) return;
     double rent = Game.data.player.money * 0.10;
     Game.data.player.money += rent;
-    Game.addInfo(UpdateInfo(title: "Received rent: +£$rent"));
+    Game.addInfo(UpdateInfo(title: "Received rent: +£${rent.floor()}"));
   }
 
   static Alert payLoan(Loan loan) {

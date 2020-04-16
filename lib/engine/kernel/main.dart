@@ -94,11 +94,13 @@ class Game {
     return null;
   }
 
-  static void jump([int position]) {
-    if (position == null) position = Random().nextInt(Game.data.gmap.length);
+  static void jump([int newPosition]) {
+    if (newPosition == null)
+      newPosition = Random().nextInt(Game.data.gmap.length);
     data.rentPayed = false;
+    if (Game.data.player.position > newPosition) onPassGo();
+    Game.data.player.position = newPosition;
 
-    Game.data.player.position = position;
     Game.save();
   }
 
@@ -145,23 +147,25 @@ class Game {
     save();
   }
 
-  static Alert next() {
+  static Alert next({force: false}) {
     data.findingsIndex = Random().nextInt(findings.length);
     data.eventIndex = Random().nextInt(events.length);
     TileType _type = Game.data.player.positionTile.type;
-    if (_type == TileType.tax && !Game.data.rentPayed) {
-      return Alert(
-          "Taxes not payed", "Please pay your taxes before continuing");
-    }
-    if ((_type == TileType.chance || _type == TileType.chest) &&
-        !Game.data.rentPayed) {
-      return Alert("Card not executed",
-          "Tap on the Findings or Event card and execute it.");
-    }
+    if (!force) {
+      if (_type == TileType.tax && !Game.data.rentPayed) {
+        return Alert(
+            "Taxes not payed", "Please pay your taxes before continuing");
+      }
+      if ((_type == TileType.chance || _type == TileType.chest) &&
+          !Game.data.rentPayed) {
+        return Alert("Card not executed",
+            "Tap on the Findings or Event card and execute it.");
+      }
 
-    if (Game.data.player.money < 0)
-      return Alert("Negative cash",
-          "You can not have negative cash! Make your cash postion positive or default.");
+      if (Game.data.player.money < 0)
+        return Alert("Negative cash",
+            "You can not have negative cash! Make your cash postion positive or default.");
+    }
 
     ui.shouldMove = true;
     if (data.currentDices[0] == data.currentDices[1] && !data.player.jailed) {
