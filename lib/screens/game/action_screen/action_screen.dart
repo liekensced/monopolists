@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:plutopoly/screens/game/action_screen/loan_card.dart';
-import 'package:plutopoly/widgets/end_of_list.dart';
-import 'package:plutopoly/widgets/slide_fab.dart';
 
 import '../../../bloc/main_bloc.dart';
+import '../../../engine/data/player.dart';
 import '../../../engine/kernel/main.dart';
 import '../../../engine/ui/alert.dart';
 import '../../../engine/ui/game_navigator.dart';
 import '../../../widgets/animated_count.dart';
+import '../../../widgets/end_of_list.dart';
+import '../../../widgets/slide_fab.dart';
 import '../../actions.dart/actions.dart';
 import '../../actions.dart/money_card.dart';
 import '../../actions.dart/property_action_card.dart';
 import '../../carousel/map_carousel.dart';
+import '../deal_screen.dart';
 import '../idle_screen.dart';
 import 'bottom_sheet.dart';
+import 'default_card.dart';
 import 'info_card.dart';
+import 'loan_card.dart';
 import 'property_card.dart';
 
 class ActionScreen extends StatelessWidget {
@@ -52,11 +55,35 @@ class ActionScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: GameListener(
                         builder: (BuildContext context, _, __) {
+                          if (Game.data.dealData.dealer != null) if (Game
+                                      .data
+                                      .players[Game.data.dealData.dealer]
+                                      .code ==
+                                  MainBloc.code &&
+                              MainBloc.online &&
+                              Game.ui.showDealScreen) {
+                            Future.delayed(Duration.zero, () {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return DealScreen(
+                                  dealer: Game.data.dealData.dealer,
+                                  visit: true,
+                                );
+                              }));
+                            });
+                          }
+
                           return Row(
                             children: <Widget>[
                               Text("£"),
                               AnimatedCount(
-                                count: Game.data.player.money.round(),
+                                count: (MainBloc.online
+                                    ? (Game.data.players
+                                        .firstWhere((Player p) =>
+                                            p.code == MainBloc.code)
+                                        .money
+                                        .toInt())
+                                    : (Game.data.player.money.round())),
                                 duration: Duration(seconds: 1),
                               ),
                             ],
@@ -112,7 +139,7 @@ class ActionScreen extends StatelessWidget {
                         builder: (c, __, ___) => IdleScreen(pageController))
                     : GameListener(
                         builder: (BuildContext context, _, __) {
-                          return buildActionCards(context);
+                          return buildActionCards(context, pageController);
                         },
                       ),
               ],
@@ -152,14 +179,16 @@ class ActionScreen extends StatelessWidget {
         });
   }
 
-  Widget buildActionCards(BuildContext context) {
+  Widget buildActionCards(BuildContext context, PageController pageController) {
     List<Widget> actions = [
-      PropertyActionCard(),
+      PropertyActionCard(pageController: pageController),
       MoneyCard(),
       ActionsCard(),
       InfoCard(),
       LoanCard(),
-      DebtCard()
+      DebtCard(),
+      //END
+      DefaultCard()
     ];
     List<Widget> evenActions = [];
 

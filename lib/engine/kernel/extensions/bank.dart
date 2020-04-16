@@ -126,7 +126,7 @@ class Bank {
     player.properties.forEach((int index) {
       Tile tile = Game.data.gmap[index];
       propertiesValue += tile.price;
-      propertiesValue += tile.level * tile.housePrice;
+      propertiesValue += tile.level * (tile.housePrice ?? 0);
       if (tile.mortaged) propertiesValue -= tile.hyp;
     });
     return propertiesValue;

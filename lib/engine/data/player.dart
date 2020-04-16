@@ -17,8 +17,9 @@ class Player extends HiveObject {
   double money;
   @HiveField(2)
   int position;
-  @HiveField(3)
-  int id;
+
+  int get id => Game.data.players.indexWhere((Player p) => p.name == name);
+
   @HiveField(4)
   int color;
   @HiveField(5)
@@ -81,7 +82,6 @@ class Player extends HiveObject {
 
   Player({
     this.money = 0,
-    this.id = 0,
     this.color = 9688,
     this.position: 0,
     this.name,

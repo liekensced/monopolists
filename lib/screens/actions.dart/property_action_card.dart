@@ -13,6 +13,9 @@ import '../../engine/kernel/main.dart';
 import '../../widgets/my_card.dart';
 
 class PropertyActionCard extends StatelessWidget {
+  final PageController pageController;
+
+  const PropertyActionCard({Key key, this.pageController}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return GameListener(
@@ -70,6 +73,10 @@ class PropertyActionCard extends StatelessWidget {
                                   Alert.handle(
                                       () => Game.executeEvent(action.func),
                                       context);
+                                  pageController.animateToPage(
+                                      Game.data.player.position,
+                                      duration: Duration(milliseconds: 500),
+                                      curve: Curves.easeInOutCubic);
                                 },
                               ),
                       )

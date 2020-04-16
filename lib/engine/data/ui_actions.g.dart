@@ -16,15 +16,19 @@ class UIActionsDataAdapter extends TypeAdapter<UIActionsData> {
     var fields = <int, dynamic>{
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return UIActionsData()..shouldMove = fields[0] as bool;
+    return UIActionsData()
+      ..shouldMove = fields[0] as bool
+      ..showDealScreen = fields[1] as bool;
   }
 
   @override
   void write(BinaryWriter writer, UIActionsData obj) {
     writer
-      ..writeByte(1)
+      ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.shouldMove);
+      ..write(obj.shouldMove)
+      ..writeByte(1)
+      ..write(obj.showDealScreen);
   }
 }
 
@@ -33,10 +37,13 @@ class UIActionsDataAdapter extends TypeAdapter<UIActionsData> {
 // **************************************************************************
 
 UIActionsData _$UIActionsDataFromJson(Map<String, dynamic> json) {
-  return UIActionsData()..shouldMove = json['shouldMove'] as bool;
+  return UIActionsData()
+    ..shouldMove = json['shouldMove'] as bool
+    ..showDealScreen = json['showDealScreen'] as bool;
 }
 
 Map<String, dynamic> _$UIActionsDataToJson(UIActionsData instance) =>
     <String, dynamic>{
       'shouldMove': instance.shouldMove,
+      'showDealScreen': instance.showDealScreen,
     };

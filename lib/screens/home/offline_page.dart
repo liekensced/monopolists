@@ -35,9 +35,8 @@ class OfflinePage extends StatelessWidget {
                 onPressed: () async {
                   Alert alert = await MainBloc.joinOnline(MainBloc.gameId);
                   if (Alert.handle(() => alert, context)) {
-                    GameNavigator.navigate(context);
+                    GameNavigator.navigate(context, loadGame: true);
                   }
-                  GameNavigator.navigate(context);
                 },
               ),
             ),

@@ -12,6 +12,9 @@ class UIActionsData extends HiveObject {
   @HiveField(0)
   bool shouldMove = true;
 
+  @HiveField(1)
+  bool showDealScreen = false;
+
   bool get idle {
     if (!MainBloc.online) return false;
     return Game.data.player.code != MainBloc.player?.code;

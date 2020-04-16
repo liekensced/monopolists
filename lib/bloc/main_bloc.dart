@@ -15,7 +15,7 @@ import '../engine/kernel/main.dart';
 import '../engine/ui/alert.dart';
 
 class MainBloc {
-  static const _version = "1.1.2.7";
+  static const _version = "1.1.2.8";
   static const GAMESBOX = _version + "gamesbox";
 
   static const PREFBOX = _version + "prefbox";
@@ -79,7 +79,7 @@ class MainBloc {
     return alert;
   }
 
-  static get code {
+  static int get code {
     int code = Hive.box(PREFBOX).get("intCode");
     if (code == null) {
       code = Random().nextInt(4294967000);
@@ -164,7 +164,7 @@ class MainBloc {
   static addToRecent(String newGameId) {
     List<String> recent =
         Hive.box(METABOX).get("listRecent", defaultValue: []).cast<String>();
-    recent.add(newGameId);
+    if (!recent.contains(newGameId)) recent.add(newGameId);
     Hive.box(METABOX).put("listRecent", recent);
   }
 

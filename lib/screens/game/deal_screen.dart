@@ -12,11 +12,17 @@ import '../../widgets/houses.dart';
 
 class DealScreen extends StatelessWidget {
   final int dealer;
-  const DealScreen({Key key, @required this.dealer}) : super(key: key);
+  final bool visit;
+  const DealScreen({Key key, @required this.dealer, bool this.visit: false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Game.data.dealData.dealer = dealer;
+    if (!visit) {
+      Game.data.dealData.dealer = dealer;
+    } else {
+      Game.ui.showDealScreen = false;
+    }
     Game.save();
     return GameListener(
       builder: (BuildContext context, dynamic value, Widget child) {
@@ -46,10 +52,6 @@ class _DealScreenChildState extends State<DealScreenChild>
   @override
   void initState() {
     super.initState();
-    dealData.receivableProperties =
-        Game.data.players[dealData.dealer].properties;
-    dealData.payableProperties = Game.data.player.properties;
-    Game.save();
 
     _controller = AnimationController(
       duration: const Duration(milliseconds: 500),
@@ -62,6 +64,11 @@ class _DealScreenChildState extends State<DealScreenChild>
       parent: _controller,
       curve: Curves.easeInCubic,
     ));
+    if (dealData.dealer == null) return;
+    dealData.receivableProperties =
+        Game.data.players[dealData.dealer].properties;
+    dealData.payableProperties = Game.data.player.properties;
+    Game.save();
   }
 
   @override
@@ -74,13 +81,18 @@ class _DealScreenChildState extends State<DealScreenChild>
 
   @override
   Widget build(BuildContext context) {
-    if (dealData.dealerChecked && dealData.playerChecked) {
+    if (dealData.dealer == null) {
+      Future.delayed(Duration.zero, () => Navigator.pop(context));
+      return Scaffold();
+    }
+
+    if (dealData.dealerChecked && dealData.playerChecked && !Game.ui.idle) {
       _controller.forward();
     } else {
       _controller.reverse();
     }
 
-    if (checkPay() && dealData.valid[0] && dealData.valid[1]) {
+    if (checkPay() && dealData.valid[0] && dealData.valid[1] && !Game.ui.idle) {
       _controller.forward();
     }
 
@@ -182,7 +194,7 @@ class _DealScreenChildState extends State<DealScreenChild>
                   padding: const EdgeInsets.all(8),
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    dealer
+                    !dealer
                         ? Game.data.players[dealData.dealer].name
                         : Game.data.player.name,
                     style: Theme.of(context).textTheme.headline4,
@@ -193,7 +205,7 @@ class _DealScreenChildState extends State<DealScreenChild>
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
                     controller:
-                        dealer ? _dealerTextController : _playerTextController,
+                        !dealer ? _dealerTextController : _playerTextController,
                     keyboardType: TextInputType.numberWithOptions(
                         signed: false, decimal: false),
                     decoration: InputDecoration(
@@ -201,7 +213,7 @@ class _DealScreenChildState extends State<DealScreenChild>
                       fillColor: Colors.red,
                       hoverColor: Colors.red,
                       labelText: "Enter amount",
-                      errorText: !dealData.valid[dealer ? 0 : 1]
+                      errorText: !dealData.valid[!dealer ? 0 : 1]
                           ? "Please enter a natural number"
                           : null,
                     ),
@@ -209,12 +221,12 @@ class _DealScreenChildState extends State<DealScreenChild>
                       if (val == "") val = "0";
                       dealData.price = int.tryParse(val);
                       if (dealData.price == null)
-                        dealData.valid[dealer ? 0 : 1] = false;
+                        dealData.valid[!dealer ? 0 : 1] = false;
                       else {
-                        if (dealer) dealData.price = -dealData.price;
-                        dealData.valid[dealer ? 0 : 1] = true;
+                        if (!dealer) dealData.price = -dealData.price;
+                        dealData.valid[!dealer ? 0 : 1] = true;
                       }
-                      if (dealer) {
+                      if (!dealer) {
                         _playerTextController.clear();
                       } else
                         _dealerTextController.clear();

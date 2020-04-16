@@ -45,26 +45,21 @@ class _PlayersCardState extends State<PlayersCard>
                 itemBuilder: (BuildContext ctxt, int index) {
                   Player player = Game.data.players[index];
                   return ListTile(
-                    title: Row(
-                      children: <Widget>[
-                        Text(player.name),
-                        Container(width: 5),
-                        CircleColor(
-                          circleSize: 10,
-                          color: Color(player.color),
-                        ),
-                      ],
-                    ),
-                    subtitle: Text("Normal player"),
-                    trailing: index == _playersLength - 1
-                        ? IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () => Game.setup.deleteLastPlayer(),
-                          )
-                        : Container(
-                            width: 0,
+                      title: Row(
+                        children: <Widget>[
+                          Text(player.name),
+                          Container(width: 5),
+                          CircleColor(
+                            circleSize: 10,
+                            color: Color(player.color),
                           ),
-                  );
+                        ],
+                      ),
+                      subtitle: Text("Normal player"),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () => Game.setup.deletePlayer(player),
+                      ));
                 },
               ),
         AddPlayerButton()

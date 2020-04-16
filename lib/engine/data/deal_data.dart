@@ -27,7 +27,7 @@ class DealData extends HiveObject {
   @HiveField(8)
   bool dealerChecked = false;
   @HiveField(9)
-  int dealer = 0;
+  int dealer;
   DealData();
   factory DealData.fromJson(Map<String, dynamic> json) =>
       _$DealDataFromJson(json);

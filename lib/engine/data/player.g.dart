@@ -18,7 +18,6 @@ class PlayerAdapter extends TypeAdapter<Player> {
     };
     return Player(
       money: fields[1] as double,
-      id: fields[3] as int,
       color: fields[4] as int,
       position: fields[2] as int,
       name: fields[0] as String,
@@ -38,15 +37,13 @@ class PlayerAdapter extends TypeAdapter<Player> {
   @override
   void write(BinaryWriter writer, Player obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
       ..write(obj.money)
       ..writeByte(2)
       ..write(obj.position)
-      ..writeByte(3)
-      ..write(obj.id)
       ..writeByte(4)
       ..write(obj.color)
       ..writeByte(5)
@@ -77,7 +74,6 @@ class PlayerAdapter extends TypeAdapter<Player> {
 Player _$PlayerFromJson(Map<String, dynamic> json) {
   return Player(
     money: (json['money'] as num)?.toDouble(),
-    id: json['id'] as int,
     color: json['color'] as int,
     position: json['position'] as int,
     name: json['name'] as String,
@@ -110,7 +106,6 @@ Map<String, dynamic> _$PlayerToJson(Player instance) => <String, dynamic>{
       'name': instance.name,
       'money': instance.money,
       'position': instance.position,
-      'id': instance.id,
       'color': instance.color,
       'properties': instance.properties,
       'jailed': instance.jailed,

@@ -105,7 +105,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                     Alert alert =
                                         await MainBloc.newOnlineGame();
                                     if (Alert.handle(() => alert, context)) {
-                                      GameNavigator.navigate(context);
+                                      GameNavigator.navigate(
+                                        context,
+                                      );
                                     }
                                   },
                                 ),

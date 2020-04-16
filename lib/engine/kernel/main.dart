@@ -126,7 +126,7 @@ class Game {
     } else {
       if (dice1 != dice2) data.doublesThrown = 0;
       for (int i = 0; i < steps; i++) {
-        if (player.position >= data.gmap.length) {
+        if (player.position >= data.gmap.length - 1) {
           player.position = 0;
           onPassGo();
         } else {
@@ -158,6 +158,11 @@ class Game {
       return Alert("Card not executed",
           "Tap on the Findings or Event card and execute it.");
     }
+
+    if (Game.data.player.money < 0)
+      return Alert("Negative cash",
+          "You can not have negative cash! Make your cash postion positive or default.");
+
     ui.shouldMove = true;
     if (data.currentDices[0] == data.currentDices[1] && !data.player.jailed) {
       data.doublesThrown++;

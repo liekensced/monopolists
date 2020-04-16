@@ -48,7 +48,7 @@ class _JoinOnlineCardState extends State<JoinOnlineCard> {
                 //"hYN1GZlPy0b0WZ0uc714"
                 Alert alert = await MainBloc.joinOnline(gamePin.trim());
                 if (Alert.handle(() => alert, context)) {
-                  GameNavigator.navigate(context);
+                  GameNavigator.navigate(context, loadGame: true);
                 }
               }),
         ),
