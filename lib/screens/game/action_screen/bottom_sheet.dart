@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
+import 'package:plutopoly/screens/hacker_screen.dart';
 
 import '../../../bloc/main_bloc.dart';
 import '../../../engine/ui/game_navigator.dart';
@@ -82,6 +83,20 @@ void showSettingsSheet(BuildContext context, PageController pageController) {
                             title: Text("Open Game settings"),
                           ),
                         ),
+                  Game.data.settings.hackerScreen
+                      ? InkWell(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return HackerScreen();
+                            }));
+                          },
+                          child: ListTile(
+                            leading: Icon(Icons.code),
+                            title: Text("Hacker screen"),
+                          ),
+                        )
+                      : Container(),
                   InkWell(
                     onTap: () {
                       pageController.animateToPage(Game.data.player.position,

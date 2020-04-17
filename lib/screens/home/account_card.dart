@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/engine/ui/alert.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/data/player.dart';
@@ -27,7 +28,7 @@ class AccountCard extends StatelessWidget {
           ),
         ),
         ValueListenableBuilder(
-          valueListenable: Hive.box(MainBloc.PREFBOX).listenable(),
+          valueListenable: Hive.box(MainBloc.ACCOUNTBOX).listenable(),
           builder: (BuildContext context, _, __) {
             Player player = MainBloc.player;
             return ListTile(
@@ -61,7 +62,85 @@ class AccountCard extends StatelessWidget {
             },
           ),
         ),
+        Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: FlatButton(
+            textColor: Colors.red,
+            child: Container(
+                width: double.infinity,
+                child: Text(
+                  "Authentication code",
+                  textAlign: TextAlign.center,
+                )),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return authDialog(context);
+                },
+              );
+            },
+          ),
+        ),
       ],
     );
   }
+}
+
+AlertDialog authDialog(BuildContext context) {
+  return AlertDialog(
+    title: Text("Authentication code"),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextField(
+          decoration: InputDecoration(labelText: "Change auth code"),
+          maxLength: 10,
+          keyboardType: TextInputType.number,
+          onSubmitted: (String val) {
+            Alert.handle(() => MainBloc.setCode(val), context);
+          },
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+              "The authentication code is used to rejoin games as you. If you want to log into another device as this account, than you must enter this code on the new device."),
+        ),
+        MaterialButton(
+          textColor: Colors.white,
+          color: Colors.red,
+          child: Container(
+              width: double.infinity,
+              child: Text(
+                "Show your code",
+                textAlign: TextAlign.center,
+              )),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                    title: Text("Your code"),
+                    content: Text(
+                      MainBloc.code.toString(),
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    actions: [
+                      MaterialButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            "close",
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor),
+                          ))
+                    ]);
+              },
+            );
+          },
+        ),
+      ],
+    ),
+  );
 }

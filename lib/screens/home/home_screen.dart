@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/widgets/end_of_list.dart';
 import 'recent_card.dart';
 
 import '../../bloc/main_bloc.dart';
@@ -119,7 +120,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   builder: (context, Box box, _) {
                                     return RecentCard(box: box);
                                   }),
-                              AccountCard()
+                              AccountCard(),
+                              EndOfList()
                             ],
                           );
                         }),

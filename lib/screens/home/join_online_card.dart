@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/ui/alert.dart';
@@ -16,6 +17,27 @@ class JoinOnlineCard extends StatefulWidget {
 
 class _JoinOnlineCardState extends State<JoinOnlineCard> {
   String gamePin = "";
+  TextEditingController textEditingController = TextEditingController();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      ClipboardData data = await Clipboard.getData("text/plain");
+      if (data != null) {
+        if (data.text.length == 20) {
+          textEditingController.text = data.text;
+        }
+      }
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +46,8 @@ class _JoinOnlineCardState extends State<JoinOnlineCard> {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: TextField(
+          child: TextFormField(
+            controller: textEditingController,
             maxLength: 20,
             maxLengthEnforced: true,
             onChanged: (val) {
@@ -45,8 +68,7 @@ class _JoinOnlineCardState extends State<JoinOnlineCard> {
                     textAlign: TextAlign.center,
                   )),
               onPressed: () async {
-                //"hYN1GZlPy0b0WZ0uc714"
-                Alert alert = await MainBloc.joinOnline(gamePin.trim());
+                Alert alert = await MainBloc.joinOnline(gamePin);
                 if (Alert.handle(() => alert, context)) {
                   GameNavigator.navigate(context, loadGame: true);
                 }

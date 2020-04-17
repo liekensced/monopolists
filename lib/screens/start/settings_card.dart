@@ -86,18 +86,6 @@ class AdvancedSettings extends StatelessWidget {
       children: <Widget>[
         Divider(),
         ListTile(
-          title: Text("Don't buy the first round"),
-          subtitle: Text("You have to pass Go before you can buy properties."),
-          trailing: Switch(
-            value: Game.data.settings.dontBuyFirstRound,
-            onChanged: (val) {
-              Game.data.settings.dontBuyFirstRound = val;
-              Game.save();
-            },
-          ),
-        ),
-        Divider(),
-        ListTile(
           title: Text("Go bonus"),
           subtitle: Text("Amount you get for passing go: " +
               Game.data.settings.goBonus.toString()),
@@ -248,6 +236,18 @@ class AdvancedSettings extends StatelessWidget {
                       ]);
                 },
               );
+            },
+          ),
+        ),
+        Divider(),
+        ListTile(
+          title: Text("Hacker screen"),
+          subtitle: Text("Allow players to see the hacker screen."),
+          trailing: Switch(
+            value: Game.data.settings.hackerScreen,
+            onChanged: (val) {
+              Game.data.settings.hackerScreen = val;
+              Game.save();
             },
           ),
         ),

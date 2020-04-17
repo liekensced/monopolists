@@ -42,7 +42,7 @@ class MyDrawer extends StatelessWidget {
             title: Text("Dark mode"),
             trailing: Switch(
               value: Hive.box(MainBloc.PREFBOX)
-                  .get("boolDark", defaultValue: false),
+                  .get("boolDark", defaultValue: true),
               onChanged: (value) {
                 MainBloc.toggleDarkMode();
               },

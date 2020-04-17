@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/engine/ui/alert.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 
@@ -16,9 +17,11 @@ class RecentCard extends StatelessWidget {
     List<Widget> recents = [];
     MainBloc.getRecent().asMap().forEach((int index, String gameId) {
       recents.add(InkWell(
-        onTap: () {
-          MainBloc.joinOnline(gameId);
-          GameNavigator.navigate(context, loadGame: true);
+        onTap: () async {
+          Alert alert = await MainBloc.joinOnline(gameId);
+          if (Alert.handle(() => alert, context)) {
+            GameNavigator.navigate(context, loadGame: true);
+          }
         },
         child: ListTile(
           title: Text(gameId),

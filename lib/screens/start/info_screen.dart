@@ -27,12 +27,6 @@ class InfoScreen extends StatelessWidget {
     ));
     List<Widget> prefs = <Widget>[];
     Settings settings = Game.data.settings;
-    if (settings.dontBuyFirstRound) {
-      prefs.add(ListTile(
-        leading: Icon(Icons.info),
-        title: Text("You can't buy the first round"),
-      ));
-    }
     if (settings.mustAuction) {
       prefs.add(ListTile(
         leading: Icon(Icons.info),

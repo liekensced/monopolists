@@ -19,7 +19,7 @@ class Settings extends HiveObject {
   @HiveField(5)
   int startingMoney = 1500;
   @HiveField(6)
-  bool dontBuyFirstRound = false;
+  bool hackerScreen = false;
 
   Settings();
 

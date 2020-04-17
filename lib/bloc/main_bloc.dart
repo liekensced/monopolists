@@ -22,6 +22,7 @@ class MainBloc {
   static const METABOX = _version + "metabox";
   static const UPDATEBOX = _version + "updateBox";
   static const MAPCONFBOX = _version + "mapconfBox";
+  static const ACCOUNTBOX = _version + "accountBox";
 
   static int currentGame = 0;
   static bool online = false;
@@ -80,12 +81,22 @@ class MainBloc {
   }
 
   static int get code {
-    int code = Hive.box(PREFBOX).get("intCode");
+    int code = Hive.box(ACCOUNTBOX).get("intCode");
     if (code == null) {
       code = Random().nextInt(4294967000);
-      Hive.box(PREFBOX).put("intCode", code);
+      Hive.box(ACCOUNTBOX).put("intCode", code);
     }
     return code;
+  }
+
+  static Alert setCode(String code) {
+    int newCode = int.tryParse(code);
+    if (newCode == null)
+      return Alert("Couldn't parse code", "Please enter a normal integer");
+    Hive.box(ACCOUNTBOX).put("intCode", newCode);
+    return Alert(
+        "Changed succesfully", "Your auth code has been changed succesfully.",
+        failed: false);
   }
 
   static bool get isListening {
@@ -93,12 +104,12 @@ class MainBloc {
     return false;
   }
 
-  static Player get player => Hive.box(PREFBOX).get("playerPlayer",
+  static Player get player => Hive.box(ACCOUNTBOX).get("playerPlayer",
       defaultValue:
           Player(name: "null", color: Colors.amber.value, code: code));
 
   static setPlayer({String name: "", int color: 0}) {
-    Hive.box(PREFBOX)
+    Hive.box(ACCOUNTBOX)
         .put("playerPlayer", Player(color: color, name: name, code: code));
   }
 
@@ -207,7 +218,8 @@ class MainBloc {
 
   static Box get prefbox => Hive.box(PREFBOX);
 
-  static initBoc(BuildContext context) {
+  static initBloc(BuildContext context) {
+    code;
     currentGame = Hive.box(METABOX).get("intCurrentGame");
     if (Hive.box(MAPCONFBOX).isEmpty) {
       Hive.box(MAPCONFBOX).put("classic", MapConfiguration.standard());

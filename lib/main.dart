@@ -68,7 +68,8 @@ class MyApp extends StatelessWidget {
                   Hive.openBox(MainBloc.GAMESBOX),
                   Hive.openBox(MainBloc.METABOX),
                   Hive.openBox(MainBloc.UPDATEBOX),
-                  Hive.openBox(MainBloc.MAPCONFBOX)
+                  Hive.openBox(MainBloc.MAPCONFBOX),
+                  Hive.openBox(MainBloc.ACCOUNTBOX),
                 ]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
@@ -83,7 +84,7 @@ class MyApp extends StatelessWidget {
                         ),
                       );
                     } else {
-                      MainBloc.initBoc(context);
+                      MainBloc.initBloc(context);
                       return MyHomePage();
                     }
                   } else {

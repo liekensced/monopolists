@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:plutopoly/screens/no_data_screen.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../screens/game/action_screen/action_screen.dart';
@@ -38,7 +39,15 @@ class GameNavigator {
       return;
     }
 
-    if (Game.data?.running == null) {
+    if (Game.data == null) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return NoDataScreen();
+      }));
+      return;
+    }
+
+    if (Game.data.running == null) {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
         return StartGameScreen();
