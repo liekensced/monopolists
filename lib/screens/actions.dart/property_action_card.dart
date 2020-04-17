@@ -335,6 +335,7 @@ class _MyTextFieldState extends State<MyTextField> {
     return AlertDialog(
         title: Text("Buy ${tile.name}"),
         content: TextFormField(
+          readOnly: MainBloc.online,
           initialValue: tile.price.toString(),
           keyboardType:
               TextInputType.numberWithOptions(signed: false, decimal: false),
@@ -394,6 +395,7 @@ class _MyPayTextFieldState extends State<MyPayTextField> {
     return AlertDialog(
         title: Text("Pay rent for ${tile.name}"),
         content: TextFormField(
+          readOnly: MainBloc.online,
           initialValue: tile.currentRent.toString(),
           keyboardType:
               TextInputType.numberWithOptions(signed: false, decimal: false),

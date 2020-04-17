@@ -27,6 +27,7 @@ class CoreActions {
       tile.mortaged = true;
       alert = Alert.snackBar("Mortaged " + tile.name);
     }
+    Game.save();
     return alert;
   }
 

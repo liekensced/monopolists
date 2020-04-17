@@ -57,6 +57,31 @@ void showSettingsSheet(BuildContext context, PageController pageController) {
                       title: Text("Toggle dark mode"),
                     ),
                   ),
+                  Game.data.settings.hackerScreen
+                      ? InkWell(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return HackerScreen();
+                            }));
+                          },
+                          child: ListTile(
+                            leading: Icon(Icons.code),
+                            title: Text("Hacker screen"),
+                          ),
+                        )
+                      : Container(),
+                  InkWell(
+                    onTap: () {
+                      pageController.animateToPage(Game.data.player.position,
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.easeInOutCubic);
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.location_searching),
+                      title: Text("Locate player"),
+                    ),
+                  ),
                   MainBloc.online
                       ? InkWell(
                           onTap: () {
@@ -83,31 +108,6 @@ void showSettingsSheet(BuildContext context, PageController pageController) {
                             title: Text("Open Game settings"),
                           ),
                         ),
-                  Game.data.settings.hackerScreen
-                      ? InkWell(
-                          onTap: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return HackerScreen();
-                            }));
-                          },
-                          child: ListTile(
-                            leading: Icon(Icons.code),
-                            title: Text("Hacker screen"),
-                          ),
-                        )
-                      : Container(),
-                  InkWell(
-                    onTap: () {
-                      pageController.animateToPage(Game.data.player.position,
-                          duration: Duration(milliseconds: 500),
-                          curve: Curves.easeInOutCubic);
-                    },
-                    child: ListTile(
-                      leading: Icon(Icons.location_searching),
-                      title: Text("Locate player"),
-                    ),
-                  ),
                 ],
               );
             });

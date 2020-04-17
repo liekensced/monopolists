@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../bloc/main_bloc.dart';
 
+import '../../bloc/main_bloc.dart';
 import '../../engine/data/map.dart';
 import '../../engine/kernel/main.dart';
+import '../../widgets/owner_text.dart';
 import 'jail_card.dart';
 import 'land_card.dart';
 import 'players_indicator.dart';
@@ -127,17 +128,21 @@ Widget buildCard(Tile tile, BuildContext context, int index) {
         child: Column(
           children: <Widget>[
             Expanded(
-              flex: 2,
-              child: Center(
-                  child: tile.idIndex == 1
-                      ? FaIcon(
-                          FontAwesomeIcons.bolt,
-                          size: 50,
-                          color: Colors.orange,
-                        )
-                      : FaIcon(FontAwesomeIcons.faucet,
-                          size: 50, color: Colors.blue)),
-            ),
+                flex: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    tile.idIndex == 1
+                        ? FaIcon(
+                            FontAwesomeIcons.bolt,
+                            size: 50,
+                            color: Colors.orange,
+                          )
+                        : FaIcon(FontAwesomeIcons.faucet,
+                            size: 50, color: Colors.blue),
+                    OwnerText(tile: tile),
+                  ],
+                )),
             Expanded(
               child: PlayerIndicators(tile: tile),
             ),
@@ -186,12 +191,17 @@ Widget buildCard(Tile tile, BuildContext context, int index) {
           children: <Widget>[
             Expanded(
                 flex: 2,
-                child: Center(
-                    child: FaIcon(
-                  FontAwesomeIcons.train,
-                  size: 50,
-                  color: Colors.black,
-                ))),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    FaIcon(
+                      FontAwesomeIcons.train,
+                      size: 50,
+                      color: Colors.black,
+                    ),
+                    OwnerText(tile: tile),
+                  ],
+                )),
             Expanded(
               child: PlayerIndicators(tile: tile),
             ),

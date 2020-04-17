@@ -160,19 +160,20 @@ class MainBloc {
       GameData data = GameData.fromJson(snapshot.data);
       Game.loadGame(data);
       listener = ref.snapshots().listen(update);
-      if (!preJoined)
+      if (!preJoined) {
         Game.setup
             .addPlayer(name: player.name, color: player.color, code: code);
+      }
     } catch (e) {
       await cancelOnline();
       return Alert("Error while joining game", e.toString());
     }
     Hive.box(METABOX).put("boolOnline", true);
-    addToRecent(gameId);
+    addToRecent(gameId, Game.data.settings.name);
     return null;
   }
 
-  static addToRecent(String newGameId) {
+  static addToRecent(String newGameId, [String name]) {
     List<String> recent =
         Hive.box(METABOX).get("listRecent", defaultValue: []).cast<String>();
     if (!recent.contains(newGameId)) recent.add(newGameId);

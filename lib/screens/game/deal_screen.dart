@@ -183,7 +183,6 @@ class _DealScreenChildState extends State<DealScreenChild>
 
   Widget buildDealTab(BuildContext context, {bool dealer: false}) {
     return Column(
-      // physics: BouncingScrollPhysics(),
       children: <Widget>[
         Card(
           child: Padding(
@@ -194,7 +193,7 @@ class _DealScreenChildState extends State<DealScreenChild>
                   padding: const EdgeInsets.all(8),
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    !dealer
+                    dealer
                         ? Game.data.players[dealData.dealer].name
                         : Game.data.player.name,
                     style: Theme.of(context).textTheme.headline4,
@@ -205,7 +204,7 @@ class _DealScreenChildState extends State<DealScreenChild>
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
                     controller:
-                        !dealer ? _dealerTextController : _playerTextController,
+                        dealer ? _dealerTextController : _playerTextController,
                     keyboardType: TextInputType.numberWithOptions(
                         signed: false, decimal: false),
                     decoration: InputDecoration(
@@ -213,7 +212,7 @@ class _DealScreenChildState extends State<DealScreenChild>
                       fillColor: Colors.red,
                       hoverColor: Colors.red,
                       labelText: "Enter amount",
-                      errorText: !dealData.valid[!dealer ? 0 : 1]
+                      errorText: !dealData.valid[dealer ? 0 : 1]
                           ? "Please enter a natural number"
                           : null,
                     ),
@@ -221,12 +220,12 @@ class _DealScreenChildState extends State<DealScreenChild>
                       if (val == "") val = "0";
                       dealData.price = int.tryParse(val);
                       if (dealData.price == null)
-                        dealData.valid[!dealer ? 0 : 1] = false;
+                        dealData.valid[dealer ? 0 : 1] = false;
                       else {
-                        if (!dealer) dealData.price = -dealData.price;
-                        dealData.valid[!dealer ? 0 : 1] = true;
+                        if (dealer) dealData.price = -dealData.price;
+                        dealData.valid[dealer ? 0 : 1] = true;
                       }
-                      if (!dealer) {
+                      if (dealer) {
                         _playerTextController.clear();
                       } else
                         _dealerTextController.clear();
@@ -280,12 +279,35 @@ class _DealScreenChildState extends State<DealScreenChild>
                                     style: TextStyle(color: Colors.white),
                                   ),
                             onPressed: () {
-                              if (dealer)
+                              if (dealer) {
+                                if (MainBloc.online) {
+                                  if (MainBloc.player.code !=
+                                      Game
+                                          .data
+                                          .players[Game.data.dealData.dealer]
+                                          .code) {
+                                    Alert.handle(
+                                        () => Alert("No permission",
+                                            "You can not confirm this side."),
+                                        context);
+                                    return;
+                                  }
+                                }
                                 dealData.dealerChecked =
                                     !dealData.dealerChecked;
-                              else
+                              } else {
+                                if (MainBloc.player.code !=
+                                    Game.data.players[Game.data.dealData.dealer]
+                                        .code) {
+                                  Alert.handle(
+                                      () => Alert("No permission",
+                                          "You can not confirm this side."),
+                                      context);
+                                  return;
+                                }
                                 dealData.playerChecked =
                                     !dealData.playerChecked;
+                              }
                               Game.save();
                             },
                           ),

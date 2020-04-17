@@ -66,6 +66,7 @@ class Game {
   }
 
   static launch() {
+    if (data.running) return;
     //init variables
     if (testing ?? false) {
       data.settings.name = "test game";

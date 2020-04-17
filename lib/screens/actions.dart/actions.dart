@@ -45,7 +45,6 @@ class ActionsCardChild extends StatelessWidget {
             })).then((_) {
               Game.data.dealData = DealData();
               Game.data.dealData.dealer = null;
-              print("nULL");
               Game.save();
             });
           },
