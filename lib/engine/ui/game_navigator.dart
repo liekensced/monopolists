@@ -10,34 +10,8 @@ import '../../screens/start/start_game.dart';
 import '../kernel/main.dart';
 
 class GameNavigator {
-  static void push(BuildContext context, GamePage page) {
-    switch (page) {
-      case GamePage.auction:
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return InfoScreen();
-        }));
-        return;
-      case GamePage.infoScreen:
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return InfoScreen();
-        }));
-        break;
-      case GamePage.settings:
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return StartGameScreen();
-        }));
-        break;
-    }
-  }
-
-  static void navigate(BuildContext context,
-      {bool loadGame: false, GamePage page}) {
+  static void navigate(BuildContext context, {bool loadGame: false}) {
     MainBloc.posOveride = null;
-
-    if (page != null) {
-      push(context, page);
-      return;
-    }
 
     if (Game.data == null) {
       Navigator.push(context,

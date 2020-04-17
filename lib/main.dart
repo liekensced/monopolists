@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
         builder: (context, Box box, _) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Monopolists',
+            title: 'Plutopoly',
             theme: ThemeData(
                 brightness: Hive.box(MainBloc.PREFBOX)
                         .get("boolDark", defaultValue: true)

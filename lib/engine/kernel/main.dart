@@ -39,7 +39,6 @@ class Game {
   static loadGame(GameData loadData) {
     if (!(testing ?? false)) assert(loadData.isInBox || MainBloc.online);
     data = loadData;
-    launch();
   }
 
   static addInfo(UpdateInfo updateInfo, [int playerIndex]) {
@@ -58,7 +57,12 @@ class Game {
     if (tile.level >= tile.rent.length - 1)
       return Alert("Not upgradable",
           "The tile ${tile.name} is already the highest level.");
-
+    if (data.settings.remotelyBuild) {
+      if (property.index != Game.data.player.position) {
+        return Alert("Couldn't build house",
+            "You can not remotely build houses. (You can change this in settings)");
+      }
+    }
     data.player.money -= tile.housePrice;
     tile.level++;
     save();
@@ -66,7 +70,7 @@ class Game {
   }
 
   static launch() {
-    if (data.running) return;
+    if (data.running ?? false) return;
     //init variables
     if (testing ?? false) {
       data.settings.name = "test game";
@@ -74,11 +78,11 @@ class Game {
 
     data.findingsIndex = Random().nextInt(findings.length);
     data.eventIndex = Random().nextInt(events.length);
+    data.currentPlayer = 0;
 
-    if (data.players.length > 0) {
-      data.running = true;
-      data.currentPlayer = 0;
-    }
+    data.players.forEach((Player p) {
+      p.money = Game.data.settings.startingMoney.toDouble();
+    });
     save();
   }
 

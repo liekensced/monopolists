@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:plutopoly/engine/data/deal_data.dart';
 
 import '../../../bloc/main_bloc.dart';
 import '../../../engine/data/player.dart';
@@ -70,12 +69,7 @@ class ActionScreen extends StatelessWidget {
                                   dealer: Game.data.dealData.dealer,
                                   visit: true,
                                 );
-                              })).then((_) {
-                                Game.data.dealData = DealData();
-                                Game.data.dealData.dealer = null;
-                                GameNavigator.navigate(context);
-                                Game.save();
-                              });
+                              }));
                               ;
                             });
                           }

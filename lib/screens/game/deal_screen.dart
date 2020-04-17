@@ -66,8 +66,8 @@ class _DealScreenChildState extends State<DealScreenChild>
     ));
     if (dealData.dealer == null) return;
     dealData.receivableProperties =
-        Game.data.players[dealData.dealer].properties;
-    dealData.payableProperties = Game.data.player.properties;
+        List.from(Game.data.players[dealData.dealer].properties);
+    dealData.payableProperties = List.from(Game.data.player.properties);
     Game.save();
   }
 
@@ -82,8 +82,14 @@ class _DealScreenChildState extends State<DealScreenChild>
   @override
   Widget build(BuildContext context) {
     if (dealData.dealer == null) {
-      Future.delayed(Duration.zero, () => Navigator.pop(context));
-      return Scaffold();
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Deal Screen"),
+        ),
+        body: Center(
+          child: Text("Session terminated"),
+        ),
+      );
     }
 
     if (dealData.dealerChecked && dealData.playerChecked && !Game.ui.idle) {
@@ -296,9 +302,9 @@ class _DealScreenChildState extends State<DealScreenChild>
                                 dealData.dealerChecked =
                                     !dealData.dealerChecked;
                               } else {
-                                if (MainBloc.player.code !=
-                                    Game.data.players[Game.data.dealData.dealer]
-                                        .code) {
+                                if (MainBloc.online &&
+                                    MainBloc.player.code !=
+                                        Game.data.player.code) {
                                   Alert.handle(
                                       () => Alert("No permission",
                                           "You can not confirm this side."),

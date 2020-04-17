@@ -37,7 +37,7 @@ class MoneyCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text("Monopolists",
+                    Text("Plutopolist",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
