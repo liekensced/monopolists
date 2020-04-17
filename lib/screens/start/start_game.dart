@@ -27,8 +27,8 @@ class _StartGameScreenState extends State<StartGameScreen> {
           ),
           onPressed: () {
             if (Game.data.players.length >= 2 || MainBloc.online) {
-              Game.data.running = false;
-              GameNavigator.navigate(context);
+              Game.data.running = Game.data.running ?? false;
+              GameNavigator.navigate(context, loadGame: true);
             } else {
               red = true;
               ctrl.scrollTo(

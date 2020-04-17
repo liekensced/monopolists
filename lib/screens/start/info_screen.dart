@@ -103,7 +103,7 @@ class InfoScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Game.data.running = true;
+          Game.launch();
           GameNavigator.navigate(context);
         },
         child: FaIcon(

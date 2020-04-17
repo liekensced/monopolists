@@ -57,7 +57,7 @@ class Game {
     if (tile.level >= tile.rent.length - 1)
       return Alert("Not upgradable",
           "The tile ${tile.name} is already the highest level.");
-    if (data.settings.remotelyBuild) {
+    if (!data.settings.remotelyBuild) {
       if (property.index != Game.data.player.position) {
         return Alert("Couldn't build house",
             "You can not remotely build houses. (You can change this in settings)");
@@ -71,6 +71,8 @@ class Game {
 
   static launch() {
     if (data.running ?? false) return;
+    Game.data.running = true;
+
     //init variables
     if (testing ?? false) {
       data.settings.name = "test game";
@@ -99,7 +101,8 @@ class Game {
     return null;
   }
 
-  static void jump([int newPosition]) {
+  static void jump([int newPosition, bool passGo = false]) {
+    if (passGo) onPassGo();
     if (newPosition == null)
       newPosition = Random().nextInt(Game.data.gmap.length);
     data.rentPayed = false;
@@ -143,8 +146,7 @@ class Game {
 
       switch (data.gmap[player.position].type) {
         case TileType.police:
-          data.player.jailed = true;
-          data.player.jailTries = 3;
+          Game.helper.jail(player.index);
           break;
         default:
       }

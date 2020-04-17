@@ -41,14 +41,53 @@ class _SettingsCardState extends State<SettingsCard>
         ),
         Divider(),
         ListTile(
-          title: Text("Mandatory auction"),
-          subtitle:
-              Text("If you don't buy the property, it must be auctioned."),
-          trailing: Switch(
-            value: Game.data.settings.mustAuction,
-            onChanged: (val) {
-              Game.data.settings.mustAuction = val;
-              Game.save();
+          title: Text("Starting money"),
+          subtitle: Text(Game.data.settings.startingMoney.toString()),
+          trailing: IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              String amount;
+              showDialog(
+                context: context,
+                builder: (context) {
+                  submit(_) {
+                    Game.data.settings.startingMoney =
+                        int.tryParse(amount) ?? 1500;
+                    Game.save();
+                    Navigator.pop(context);
+                  }
+
+                  return AlertDialog(
+                      title: Text("Edit starting money"),
+                      content: TextField(
+                        autofocus: true,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(labelText: "Enter amount "),
+                        onChanged: (val) => amount = val,
+                        onSubmitted: submit,
+                      ),
+                      actions: [
+                        MaterialButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "cancel",
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor),
+                            )),
+                        MaterialButton(
+                            onPressed: () {
+                              submit("");
+                            },
+                            child: Text(
+                              "change",
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor),
+                            )),
+                      ]);
+                },
+              );
             },
           ),
         ),
@@ -175,58 +214,6 @@ class AdvancedSettings extends StatelessWidget {
                         MaterialButton(
                             onPressed: () {
                               submit("_");
-                            },
-                            child: Text(
-                              "change",
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColor),
-                            )),
-                      ]);
-                },
-              );
-            },
-          ),
-        ),
-        Divider(),
-        ListTile(
-          title: Text("Starting money"),
-          subtitle: Text(Game.data.settings.goBonus.toString()),
-          trailing: IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              String amount;
-              showDialog(
-                context: context,
-                builder: (context) {
-                  submit(_) {
-                    Game.data.settings.startingMoney =
-                        int.tryParse(amount) ?? 1500;
-                    Game.save();
-                    Navigator.pop(context);
-                  }
-
-                  return AlertDialog(
-                      title: Text("Edit starting money"),
-                      content: TextField(
-                        autofocus: true,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(labelText: "Enter amount "),
-                        onChanged: (val) => amount = val,
-                        onSubmitted: submit,
-                      ),
-                      actions: [
-                        MaterialButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              "cancel",
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColor),
-                            )),
-                        MaterialButton(
-                            onPressed: () {
-                              submit("");
                             },
                             child: Text(
                               "change",

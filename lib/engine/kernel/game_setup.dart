@@ -28,7 +28,11 @@ class GameSetup {
       }
     });
     if (returnAlert != null) return returnAlert;
-    data.players.add(Player(money: 750, color: color, name: name, code: code));
+    data.players.add(Player(
+        money: Game.data.settings.startingMoney.toDouble() ?? 750,
+        color: color,
+        name: name,
+        code: code));
     Game.save();
     return returnAlert;
   }

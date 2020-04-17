@@ -9,6 +9,7 @@ class GameHelpers {
   static GameData get data => Game.data;
 
   jail(int player) {
+    data.doublesThrown = 0;
     data.players[player].jailed = true;
     data.players[player].jailTries = 3;
     data.players[player].position = 10;

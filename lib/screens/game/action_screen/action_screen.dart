@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plutopoly/engine/data/extensions.dart';
 
 import '../../../bloc/main_bloc.dart';
 import '../../../engine/data/player.dart';
@@ -186,11 +187,16 @@ class ActionScreen extends StatelessWidget {
       MoneyCard(),
       ActionsCard(),
       InfoCard(),
-      LoanCard(),
-      DebtCard(),
-      //END
-      DefaultCard()
     ];
+
+    if (Game.data.extensions.contains(Extension.bank)) {
+      actions.add(LoanCard());
+      actions.add(DebtCard());
+    }
+
+    //END
+    actions.add(DefaultCard());
+
     List<Widget> evenActions = [];
 
     List<Widget> oddActions = [];

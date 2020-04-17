@@ -43,7 +43,7 @@ class CoreActions {
     switch (type) {
       case PayType.rent:
         data.rentPayed = true;
-        data.players[receiver].info[data.turn].add(UpdateInfo(
+        Game.addInfo(UpdateInfo(
             title: "Rent received from ${data.player.name}: £$amount",
             leading: "rent"));
         break;

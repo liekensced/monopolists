@@ -62,7 +62,8 @@ class Tile extends HiveObject {
   String get id => "$idPrefix:$idIndex";
 
   int get currentRent {
-    if (rent == null) return 0;
+    if (mortaged ?? false) return 0;
+    int _rentFactor = 1;
     if (type == TileType.trainstation) {
       return rent[owner.trainstations - 1];
     }
@@ -74,8 +75,12 @@ class Tile extends HiveObject {
         return _eyes * 4;
       }
     }
+    if (rent == null) return 0;
+    if (level == 0) {
+      if (owner.hasAll(idPrefix)) _rentFactor *= 2;
+    }
     if (level > rent.length) return 0;
-    return rent[level];
+    return rent[level] * _rentFactor;
   }
 
   int get index {
