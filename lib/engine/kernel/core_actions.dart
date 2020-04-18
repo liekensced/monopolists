@@ -18,7 +18,7 @@ class CoreActions {
     Tile tile = data.gmap[tileIndex];
     bool _mortaged = tile.mortaged;
     if (_mortaged) {
-      alert = pay(PayType.bank, tile.hyp);
+      alert = pay(PayType.bank, (tile.hyp * 1.1).toInt());
       if (alert != null) return alert;
       tile.mortaged = false;
       alert = Alert.snackBar("Lifted mortaged " + tile.name);

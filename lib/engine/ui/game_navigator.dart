@@ -24,7 +24,7 @@ class GameNavigator {
     if (Game.data.running == null) {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
-        return StartGameScreen();
+        return StartGameScreen(online: MainBloc.online);
       }));
       return;
     }

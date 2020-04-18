@@ -38,6 +38,8 @@ class _PropertyCardState extends State<PropertyCard>
       bool _hasAll = Game.data.player.hasAll(tile.idPrefix);
       color = Color(tile.color);
       textColor = Colors.white;
+      if (tile.mortaged ?? false)
+        leading = Icon(Icons.turned_in, color: Colors.white);
       content = Column(
         children: !expanded
             ? []
@@ -87,9 +89,9 @@ class _PropertyCardState extends State<PropertyCard>
                           child: Center(
                             child: Text(
                               (tile.mortaged
-                                      ? "Buy back for £"
-                                      : "Mortage for  £") +
-                                  tile.hyp.toString(),
+                                  ? "Buy back for £" +
+                                      (tile.hyp * 1.1).floor().toString()
+                                  : "Mortage for  £" + tile.hyp.toString()),
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,

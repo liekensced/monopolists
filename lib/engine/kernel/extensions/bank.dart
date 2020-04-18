@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/engine/data/bank/loan.dart';
@@ -13,18 +15,48 @@ import '../main.dart';
 
 class Bank {
   static get enabled => Game.data.extensions.contains(Extension.bank);
+
+  static Alert onEnabled([Extension type]) {
+    return Alert("Banking",
+        "If you enable this extension, you should give a lower starting money. Tap to change to 500",
+        actions: {
+          "Change": (c) {
+            Game.data.settings.startingMoney = 500;
+            Game.save();
+            Navigator.pop(c);
+          }
+        });
+  }
+
+  static Widget icon({double size: 30}) {
+    return FaIcon(FontAwesomeIcons.university, size: size);
+  }
+
   static List<Info> getInfo() {
     List<Info> info = <Info>[];
     if (Game.data.extensions.contains(Extension.bank)) {
       info.add(
         Info(
             "Interest",
-            "You get 20% interest on the money you have in the bank if you pass go.",
+            "You get 10% interest on the money you have in the bank if you pass go.",
             InfoType.rule),
       );
     }
 
     return info;
+  }
+
+  static double getNewStockFactor() {
+    const int stableness = 50;
+
+    double newFactor = 0;
+
+    for (int i = 0; i < stableness; i++) {
+      newFactor += sqrt(Random().nextDouble()) + 0.38;
+    }
+
+    newFactor /= stableness;
+    return newFactor;
   }
 
   static List<Loan> getAllLoans() {
@@ -57,10 +89,6 @@ class Bank {
     if (totalInterest != 0)
       Game.addInfo(UpdateInfo(
           title: "Total interest: -£$totalInterest", leading: "bank"));
-  }
-
-  static Widget icon({double size: 30}) {
-    return FaIcon(FontAwesomeIcons.university, size: size);
   }
 
   static rent() {
@@ -112,7 +140,7 @@ class Bank {
 
   static double lendingCap([Player player]) {
     if (player == null) player = Game.data.player;
-    return (player.money * 3) + propertiesValue(player);
+    return (player.money * 2) + propertiesValue(player);
   }
 
   static double lendingRoom([Player player]) {

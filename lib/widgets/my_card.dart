@@ -26,20 +26,23 @@ class MyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (title != null) {
-      children.insert(
-        0,
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            title,
-            style: !smallTitle
-                ? Theme.of(context).textTheme.headline3
-                : Theme.of(context).textTheme.headline4,
-            textAlign: TextAlign.start,
+      if (children[0].key != Key("title key")) {
+        children.insert(
+          0,
+          Container(
+            key: Key("title key"),
+            padding: const EdgeInsets.all(8),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              title,
+              style: !smallTitle
+                  ? Theme.of(context).textTheme.headline3
+                  : Theme.of(context).textTheme.headline4,
+              textAlign: TextAlign.start,
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
 
     if (listen) {

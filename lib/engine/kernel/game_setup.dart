@@ -14,7 +14,7 @@ class GameSetup {
 
   Alert addPlayer({String name, int color: 0, int code: -1}) {
     Alert returnAlert;
-    data.players.forEach((Player player) {
+    data.players.forEach((player) {
       if (player.code != code && MainBloc.online)
         Alert.snackBar("Rejoined as ${player.name}");
       if (player.name == name) {

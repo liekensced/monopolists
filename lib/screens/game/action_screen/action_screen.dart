@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plutopoly/engine/data/extensions.dart';
+import 'package:plutopoly/engine/data/map.dart';
 
 import '../../../bloc/main_bloc.dart';
 import '../../../engine/data/player.dart';
@@ -154,6 +155,7 @@ class ActionScreen extends StatelessWidget {
 
   Widget buildHoldingCards(BuildContext context) {
     List<int> _properties = Game.data.player.properties;
+    if (MainBloc.online) _properties = MainBloc.gamePlayer.properties;
     if (_properties.isEmpty) {
       return Container(
         height: 100,
@@ -265,8 +267,46 @@ class ActionFab extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 12.0),
                   child: FloatingActionButton(
                     onPressed: () {
-                      if (Alert.handle(Game.next, context)) {
-                        GameNavigator.navigate(context);
+                      if (continueCheck(
+                          DefaultTabController.of(context).index, context)) {
+                        if (Alert.handle(Game.next, context)) {
+                          GameNavigator.navigate(context);
+                        }
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                                title: Text("Continue"),
+                                content: Text(
+                                    "Are you sure you want to go to the next turn?"),
+                                actions: [
+                                  MaterialButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        "close",
+                                        style: TextStyle(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                      )),
+                                  MaterialButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        if (Alert.handle(Game.next, context)) {
+                                          GameNavigator.navigate(context);
+                                        }
+                                      },
+                                      child: Text(
+                                        "continue",
+                                        style: TextStyle(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                      ))
+                                ]);
+                          },
+                        );
                       }
                     },
                     child: Icon(
@@ -279,4 +319,22 @@ class ActionFab extends StatelessWidget {
       },
     );
   }
+}
+
+bool continueCheck(int index, BuildContext c) {
+  if (Game.nextCheck() != null) return true;
+  if (index != 1) return false;
+  Tile currentTile = Game.data.player.positionTile;
+  if (currentTile.price != null) {
+    Player owner = Game.data.player.positionTile.owner;
+    if (owner != Game.data.player && owner != null) {
+      if (!Game.data.rentPayed) return false;
+    }
+    if (currentTile.price < Game.data.player.money) return false;
+    if (Game.data.player.hasAll(currentTile.idPrefix)) {
+      if (currentTile.level < 5 &&
+          (Game.data.player.money + 200) > currentTile.price) return false;
+    }
+  }
+  return true;
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
+import 'package:plutopoly/screens/game/action_screen/info_card.dart';
 import 'package:plutopoly/widgets/eager_inkwell.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 import 'package:zoom_widget/zoom_widget.dart';
@@ -29,7 +30,7 @@ class IdleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double fraction = 400 / MediaQuery.of(context).size.width;
+    double fraction = 300 / MediaQuery.of(context).size.width;
     PageController playersController =
         PageController(viewportFraction: fraction);
     List<Widget> listItems = [];
@@ -71,17 +72,20 @@ class IdleScreen extends StatelessWidget {
                   )
                 ],
               )
-            : RaisedButton(
-                child: Container(
-                  width: double.maxFinite,
-                  child: Text(
-                    "Your turn",
-                    style: TextStyle(color: Colors.white),
+            : Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: RaisedButton(
+                  child: Container(
+                    width: double.maxFinite,
+                    child: Text(
+                      "Your turn",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
+                  onPressed: () {
+                    GameNavigator.navigate(context);
+                  },
                 ),
-                onPressed: () {
-                  GameNavigator.navigate(context);
-                },
               ),
         Builder(builder: (context) {
           List<Tile> gmap = Game.data.gmap;
@@ -133,7 +137,8 @@ class IdleScreen extends StatelessWidget {
                     Container(
                       width: size,
                       height: (gridChildren.length / pow(width.toDouble(), 2)) *
-                          size,
+                          size *
+                          (4 / 3),
                       child:
                           BoardZoom(width: width, gridChildren: gridChildren),
                     ),
@@ -152,6 +157,10 @@ class IdleScreen extends StatelessWidget {
                 );
               });
         }),
+        InfoCard(
+          iplayer: MainBloc.gamePlayer,
+          short: false,
+        )
       ],
     );
   }
@@ -177,7 +186,7 @@ class BoardZoom extends StatelessWidget {
       canvasColor: Theme.of(context).canvasColor,
       enableScroll: true,
       width: (width.toDouble() * 250),
-      height: (gridChildren.length / width.toDouble()) * 250,
+      height: (gridChildren.length / width.toDouble()) * 250 * (4 / 3),
       backgroundColor: Colors.black,
       child: buildGrid(),
     );
@@ -186,6 +195,7 @@ class BoardZoom extends StatelessWidget {
   GridView buildGrid() {
     return GridView.count(
       padding: EdgeInsets.zero,
+      childAspectRatio: 3 / 4,
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       crossAxisCount: width,

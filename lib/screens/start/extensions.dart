@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:plutopoly/widgets/my_card.dart';
 
 import '../../engine/data/extensions.dart';
 import '../../engine/kernel/extensions/bank.dart';
 import '../../engine/kernel/extensions/jurisdiction.dart';
 import '../../engine/kernel/main.dart';
+import '../../engine/ui/alert.dart';
+import '../../widgets/my_card.dart';
 
 class ExtensionsCard extends StatelessWidget {
   @override
@@ -20,9 +21,10 @@ class ExtensionsCard extends StatelessWidget {
               Switch(
                 value: Game.data.extensions.contains(Extension.bank),
                 onChanged: (val) {
-                  if (val)
+                  if (val) {
+                    Alert.handle(Bank.onEnabled, context);
                     Game.data.extensions.add(Extension.bank);
-                  else
+                  } else
                     Game.data.extensions.remove(Extension.bank);
                   Game.save();
                 },

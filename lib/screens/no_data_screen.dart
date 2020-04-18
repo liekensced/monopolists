@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:plutopoly/engine/ui/game_navigator.dart';
-import 'package:plutopoly/widgets/my_card.dart';
+
+import '../engine/ui/alert.dart';
+import '../engine/ui/game_navigator.dart';
+import '../widgets/my_card.dart';
 
 class NoDataScreen extends StatefulWidget {
+  final Alert alert;
+  final bool cancel;
+
+  const NoDataScreen({Key key, this.alert, this.cancel}) : super(key: key);
   @override
   _NoDataScreenState createState() => _NoDataScreenState();
 }
@@ -11,9 +17,10 @@ class _NoDataScreenState extends State<NoDataScreen> {
   bool cancel = false;
   @override
   Widget build(BuildContext context) {
+    if (widget.cancel != null) cancel = widget.cancel;
     Future.delayed(
         Duration(
-          milliseconds: 2000,
+          milliseconds: 3000,
         ), () {
       if (!cancel) {
         GameNavigator.navigate(context);

@@ -31,6 +31,9 @@ class MainBloc {
   static StreamSubscription<DocumentSnapshot> waiter;
   static int posOveride;
 
+  static Player get gamePlayer =>
+      Game.data.players.firstWhere((Player p) => p.code == MainBloc.code);
+
   static List<String> getRecent() {
     List<String> recent =
         Hive.box(METABOX).get("listRecent", defaultValue: []).cast<String>();
@@ -65,11 +68,13 @@ class MainBloc {
         await Firestore.instance.collection("/games").add({"starting ...": ""});
     gameId = data.documentID;
     Game.newGame();
-    waiter = data.snapshots().listen((event) {
+    waiter = await data.snapshots().listen((event) {
       if (event.exists) {
+        Game.save();
         joinOnline(data.documentID);
       }
     });
+    if (alert != null) return alert;
     Future.delayed(Duration(seconds: 10), () async {
       if (waiter != null) if (waiter.isPaused) {
         waiter.cancel();
@@ -136,17 +141,19 @@ class MainBloc {
             "We couldn't find a game with id:$gameIdInput\n Check key or create a new game");
       }
       List players = snapshot.data["players"];
-      players.forEach((iplayer) {
-        if (iplayer["code"] == player.code) {
-          preJoined = true;
-          return;
-        }
-        if (iplayer["name"] == player.name) {
-          alert = Alert("Name already taken",
-              "${player.name} is already taken. Please change your name and try again");
-          return;
-        }
-      });
+      if (players != null) {
+        players.forEach((iplayer) {
+          if (iplayer["code"] == player.code) {
+            preJoined = true;
+            return;
+          }
+          if (iplayer["name"] == player.name) {
+            alert = Alert("Name already taken",
+                "${player.name} is already taken. Please change your name and try again");
+            return;
+          }
+        });
+      }
     } catch (e) {
       await cancelOnline();
       return Alert("Error while opening connection", e.toString());

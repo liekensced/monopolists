@@ -154,25 +154,35 @@ class Game {
     save();
   }
 
+  static Alert nextCheck() {
+    TileType _type = Game.data.player.positionTile.type;
+    Player _owner = Game.data.player.positionTile.owner;
+
+    if (_owner != null && _owner != Game.data.player) {
+      if (!Game.data.rentPayed && MainBloc.online)
+        return Alert("Rent not payed", "Please pay rent before continuing");
+    }
+    if (_type == TileType.tax && !Game.data.rentPayed) {
+      return Alert(
+          "Taxes not payed", "Please pay your taxes before continuing");
+    }
+    if ((_type == TileType.chance || _type == TileType.chest) &&
+        !Game.data.rentPayed) {
+      return Alert("Card not executed",
+          "Tap on the Findings or Event card and execute it.");
+    }
+
+    if (Game.data.player.money < 0)
+      return Alert("Negative cash",
+          "You can not have negative cash! Make your cash postion positive or default.");
+    return null;
+  }
+
   static Alert next({force: false}) {
     data.findingsIndex = Random().nextInt(findings.length);
     data.eventIndex = Random().nextInt(events.length);
-    TileType _type = Game.data.player.positionTile.type;
-    if (!force) {
-      if (_type == TileType.tax && !Game.data.rentPayed) {
-        return Alert(
-            "Taxes not payed", "Please pay your taxes before continuing");
-      }
-      if ((_type == TileType.chance || _type == TileType.chest) &&
-          !Game.data.rentPayed) {
-        return Alert("Card not executed",
-            "Tap on the Findings or Event card and execute it.");
-      }
-
-      if (Game.data.player.money < 0)
-        return Alert("Negative cash",
-            "You can not have negative cash! Make your cash postion positive or default.");
-    }
+    Alert alert = nextCheck();
+    if (alert != null && !force) return alert;
 
     ui.shouldMove = true;
     if (data.currentDices[0] == data.currentDices[1] && !data.player.jailed) {
