@@ -1,4 +1,4 @@
-# monopolists
+# Plutopoly
 
 A new Flutter project.
 

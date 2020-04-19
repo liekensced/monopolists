@@ -46,9 +46,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           background: Padding(
                             padding: const EdgeInsets.all(75.0),
                             child: Center(
-                              child: Container(
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
                                 child: Image.asset(
-                                  "assets/logo.png",
+                                  MainBloc.isWide(context)
+                                      ? "assets/wide.png"
+                                      : "assets/logo.png",
                                   fit: BoxFit.scaleDown,
                                 ),
                               ),
