@@ -102,11 +102,10 @@ class Game {
   }
 
   static void jump([int newPosition, bool passGo = false]) {
-    if (passGo) onPassGo();
     if (newPosition == null)
       newPosition = Random().nextInt(Game.data.gmap.length);
     data.rentPayed = false;
-    if (Game.data.player.position > newPosition) onPassGo();
+    if (Game.data.player.position > newPosition && passGo) onPassGo();
     Game.data.player.position = newPosition;
 
     Game.save();

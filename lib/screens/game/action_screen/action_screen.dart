@@ -325,12 +325,13 @@ bool continueCheck(int index, BuildContext c) {
   if (Game.nextCheck() != null) return true;
   if (index != 1) return false;
   Tile currentTile = Game.data.player.positionTile;
+  if (currentTile.type == TileType.tax) return true;
   if (currentTile.price != null) {
     Player owner = Game.data.player.positionTile.owner;
-    if (owner != Game.data.player && owner != null) {
-      if (!Game.data.rentPayed) return false;
+    if (owner == null) {
+      if (currentTile.price < Game.data.player.money) return false;
     }
-    if (currentTile.price < Game.data.player.money) return false;
+
     if (Game.data.player.hasAll(currentTile.idPrefix)) {
       if (currentTile.level < 5 &&
           (Game.data.player.money + 200) > currentTile.price) return false;

@@ -21,13 +21,12 @@ List<CardAction> events = [
   CardAction("Repare your houses", () => Game.helper.repareHouses()),
   CardAction("Insure your houses",
       () => Game.helper.repareHouses(houseFactor: 40, hotelFactor: 115)),
-  CardAction("Go to the start", () => Game.jump(0, true)),
+  CardAction("Go to the start", () => Game.jump(0)),
   CardAction("You get fined: -20", () => Game.act.pay(PayType.pot, 20)),
-  CardAction("Move to a random tile. You will pass Start",
-      () => Game.jump(null, true)),
-  CardAction("Move to a random tile. You will pass Start",
-      () => Game.jump(null, true)),
-  CardAction("Move to a random tile. You don't pass Start", () => Game.jump()),
+  CardAction("Move to a random tile.", () => Game.jump()),
+  CardAction("Move to a random tile.", () => Game.jump()),
+  CardAction("Move to a random tile. You don't pass Start",
+      () => Game.jump(null, false)),
 ];
 List<CardAction> findings = [
   CardAction("Go to prison", () => Game.helper.jail(Game.data.currentPlayer)),
@@ -46,9 +45,9 @@ List<CardAction> findings = [
       "You win a drawing contest: +10", () => Game.data.player.money += 10),
   CardAction("It's your birthday: +10 from every player",
       () => Game.helper.birthDay()),
-  CardAction("Go to the start", () => Game.jump(0, true)),
+  CardAction("Go to the start", () => Game.jump(0)),
   CardAction("Deducting taxes: +20", () => Game.data.player.money += 20),
-  CardAction("Move to a random tile. You don't pass Start", () => Game.jump()),
-  CardAction(
-      "Move to a random tile. You will pass Start", () => Game.jump(null, true))
+  CardAction("Move to a random tile. You don't pass Start",
+      () => Game.jump(null, false)),
+  CardAction("Move to a random tile.", () => Game.jump())
 ];
