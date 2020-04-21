@@ -11,6 +11,7 @@ class MyCard extends StatefulWidget {
   final Color color;
   final Function onTap;
   final double maxWidth;
+  final bool animate;
 
   const MyCard({
     Key key,
@@ -21,6 +22,7 @@ class MyCard extends StatefulWidget {
     this.color,
     this.onTap,
     this.maxWidth,
+    this.animate: true,
   }) : super(key: key);
 
   @override
@@ -30,24 +32,6 @@ class MyCard extends StatefulWidget {
 class _MyCardState extends State<MyCard> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    if (widget.title != null) {
-      widget.children.insert(
-        0,
-        Container(
-          key: Key("title key"),
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            widget.title,
-            style: !widget.smallTitle
-                ? Theme.of(context).textTheme.headline3
-                : Theme.of(context).textTheme.headline4,
-            textAlign: TextAlign.start,
-          ),
-        ),
-      );
-    }
-
     if (widget.listen) {
       return GameListener(
         builder: (BuildContext context, __, _) {
@@ -61,31 +45,69 @@ class _MyCardState extends State<MyCard> with SingleTickerProviderStateMixin {
   Widget buildCenter() {
     return Center(
       child: Container(
-        constraints:
-            BoxConstraints(maxWidth: widget.maxWidth ?? MainBloc.maxWidth),
-        child: Card(
-            clipBehavior: Clip.hardEdge,
-            color: widget.color,
-            child: AnimatedSize(
-              vsync: this,
-              duration: Duration(milliseconds: 200),
-              child: buildCardChild(),
-            )),
-      ),
+          constraints:
+              BoxConstraints(maxWidth: widget.maxWidth ?? MainBloc.maxWidth),
+          child: EagerInkWell(
+            onTap: widget.onTap,
+            child: Card(
+                clipBehavior: Clip.hardEdge,
+                color: widget.color,
+                child: Column(
+                  children: <Widget>[
+                    widget.title == null
+                        ? Container()
+                        : Container(
+                            key: Key("title key"),
+                            padding: const EdgeInsets.all(8),
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              widget.title,
+                              style: !widget.smallTitle
+                                  ? Theme.of(context).textTheme.headline3
+                                  : Theme.of(context).textTheme.headline4,
+                              textAlign: TextAlign.start,
+                            ),
+                          ),
+                    animatedSizeWrapper(),
+                  ],
+                )),
+          )),
+    );
+  }
+
+  Widget animatedSizeWrapper() {
+    if (!widget.animate) return buildCardChild();
+    return AnimatedSize(
+      vsync: this,
+      duration: Duration(milliseconds: 200),
+      child: buildCardChild(),
     );
   }
 
   Widget buildCardChild() {
-    if (widget.onTap == null) {
-      return Column(
-        children: widget.children,
+    return buildColumn();
+  }
+
+  Widget buildColumn() {
+    return Column(
+      children: widget.children,
+    );
+  }
+
+  Widget buildTitle() {
+    if (widget.title != null) {
+      return Container(
+        padding: const EdgeInsets.all(8),
+        alignment: Alignment.centerLeft,
+        child: Text(
+          widget.title,
+          style: !widget.smallTitle
+              ? Theme.of(context).textTheme.headline3
+              : Theme.of(context).textTheme.headline4,
+          textAlign: TextAlign.start,
+        ),
       );
     }
-    return EagerInkWell(
-      onTap: widget.onTap,
-      child: Column(
-        children: widget.children,
-      ),
-    );
+    return Container();
   }
 }

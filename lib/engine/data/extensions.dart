@@ -8,7 +8,9 @@ enum Extension {
   @HiveField(1)
   bank2,
   @HiveField(2)
-  jurisdiction
+  jurisdiction,
+  @HiveField(3)
+  stock
 }
 
 //This is an example extension:

@@ -84,8 +84,15 @@ class AddPlayerButton extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.content_copy),
               onPressed: () {
-                Clipboard.setData(ClipboardData(
-                    text: MainBloc.gameId ?? "Something went wrong :/"));
+                try {
+                  Clipboard.setData(ClipboardData(
+                      text: MainBloc.gameId ?? "Something went wrong :/"));
+                } catch (e) {
+                  Alert.handle(
+                      () => Alert("Could not copy",
+                          "Did you give permission?\n" + e.toString()),
+                      context);
+                }
               },
             ),
           ],
@@ -137,10 +144,19 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
   void initState() {
     playerId = widget.prefPlayer
         ? Random().nextInt(100)
-        : Game.data.players.length + 1;
+        : (Game.data.players?.length ?? 0) + 1;
     name = "Player $playerId";
     color = ColorHelper()
         .exampleColors[Random().nextInt(ColorHelper().exampleColors.length)];
+    if (!widget.prefPlayer) {
+      try {
+        Game.setup.addPlayerCheck(color: color);
+      } on Alert {
+        color = ColorHelper().exampleColors[
+            Random().nextInt(ColorHelper().exampleColors.length)];
+      }
+    }
+
     super.initState();
   }
 

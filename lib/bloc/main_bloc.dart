@@ -98,7 +98,10 @@ class MainBloc {
     int newCode = int.tryParse(code);
     if (newCode == null)
       return Alert("Couldn't parse code", "Please enter a normal integer");
-    Hive.box(ACCOUNTBOX).put("intCode", newCode);
+    Box _accountBox = Hive.box(ACCOUNTBOX);
+    _accountBox.put("intCode", newCode);
+    _accountBox.put(
+        "playerPlayer", _accountBox.get("playerPlayer")..code = newCode);
     return Alert(
         "Changed succesfully", "Your auth code has been changed succesfully.",
         failed: false);

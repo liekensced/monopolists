@@ -85,8 +85,10 @@ void showSettingsSheet(BuildContext context, PageController pageController) {
                   MainBloc.online
                       ? InkWell(
                           onTap: () {
-                            Clipboard.setData(
-                                ClipboardData(text: MainBloc.gameId));
+                            try {
+                              Clipboard.setData(
+                                  ClipboardData(text: MainBloc.gameId));
+                            } catch (e) {}
                           },
                           child: ListTile(
                             title: Text("Game id"),

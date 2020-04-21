@@ -32,13 +32,14 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..findingsIndex = fields[12] as int
       ..eventIndex = fields[13] as int
       ..mapConfiguration = fields[14] as String
-      ..dealData = fields[15] as DealData;
+      ..dealData = fields[15] as DealData
+      ..bankData = fields[16] as BankData;
   }
 
   @override
   void write(BinaryWriter writer, GameData obj) {
     writer
-      ..writeByte(16)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.running)
       ..writeByte(1)
@@ -70,7 +71,9 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..writeByte(14)
       ..write(obj.mapConfiguration)
       ..writeByte(15)
-      ..write(obj.dealData);
+      ..write(obj.dealData)
+      ..writeByte(16)
+      ..write(obj.bankData);
   }
 }
 
@@ -110,7 +113,10 @@ GameData _$GameDataFromJson(Map<String, dynamic> json) {
     ..mapConfiguration = json['mapConfiguration'] as String
     ..dealData = json['dealData'] == null
         ? null
-        : DealData.fromJson(json['dealData'] as Map<String, dynamic>);
+        : DealData.fromJson(json['dealData'] as Map<String, dynamic>)
+    ..bankData = json['bankData'] == null
+        ? null
+        : BankData.fromJson(json['bankData'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
@@ -131,6 +137,7 @@ Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
       'eventIndex': instance.eventIndex,
       'mapConfiguration': instance.mapConfiguration,
       'dealData': instance.dealData?.toJson(),
+      'bankData': instance.bankData?.toJson(),
     };
 
 T _$enumDecode<T>(
@@ -169,4 +176,5 @@ const _$ExtensionEnumMap = {
   Extension.bank: 'bank',
   Extension.bank2: 'bank2',
   Extension.jurisdiction: 'jurisdiction',
+  Extension.stock: 'stock',
 };

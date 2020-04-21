@@ -31,7 +31,7 @@ class CoreActions {
     return alert;
   }
 
-  Alert pay(PayType type, int amount, [int receiver]) {
+  Alert pay(PayType type, int amount, {int receiver, bool count: false}) {
     if (amount > 0) {
       if (data.player.money < amount) return Alert.funds();
     } else if (amount < 0 && receiver != null) {
@@ -43,9 +43,11 @@ class CoreActions {
     switch (type) {
       case PayType.rent:
         data.rentPayed = true;
-        Game.addInfo(UpdateInfo(
-            title: "Rent received from ${data.player.name}: £$amount",
-            leading: "rent"));
+        Game.addInfo(
+            UpdateInfo(
+                title: "Rent received from ${data.player.name}: £$amount",
+                leading: "rent"),
+            receiver);
         break;
       case PayType.pot:
         data.rentPayed = true;
@@ -92,7 +94,7 @@ class CoreActions {
     Tile tile = data.gmap[tileIndex];
     int price = payPrice ?? tile.currentRent;
     int receiver = tile.owner.index;
-    return pay(PayType.rent, price, receiver);
+    return pay(PayType.rent, price, receiver: receiver, count: true);
   }
 
   Alert deal({
@@ -102,7 +104,7 @@ class CoreActions {
     @required int dealer,
   }) {
     if (payAmount != null) {
-      Alert alert = pay(PayType.pay, payAmount, dealer);
+      Alert alert = pay(PayType.pay, payAmount, receiver: dealer);
       if (alert != null) {
         return alert;
       }
@@ -134,7 +136,7 @@ class CoreActions {
     if (data.gmap[prop].type == TileType.land ||
         data.gmap[prop].type == TileType.trainstation ||
         data.gmap[prop].type == TileType.company) {
-      data.player.money -= price;
+      pay(PayType.bank, price, count: true);
       data.player.properties.add(prop);
       data.player.properties.sort();
       Game.save();

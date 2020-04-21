@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../data/player.dart';
-import '../../data/tip.dart';
-import '../main.dart';
+import '../data/player.dart';
+import '../data/tip.dart';
+import '../kernel/main.dart';
 
 class Jurisdiction {
   static Widget icon({double size: 30}) {

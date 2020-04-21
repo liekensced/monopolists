@@ -51,7 +51,7 @@ class MyDrawer extends StatelessWidget {
           Container(
             height: 50,
             child: Center(
-              child: Text("Filorux"),
+              child: Text("Filorux v0.2.1"),
             ),
           )
         ],

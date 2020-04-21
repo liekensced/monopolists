@@ -8,6 +8,7 @@ class EagerInkWell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (onTap == null) return child;
     return Stack(
       children: <Widget>[
         child,
@@ -15,7 +16,6 @@ class EagerInkWell extends StatelessWidget {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              splashColor: Theme.of(context).accentColor,
               onTap: onTap,
             ),
           ),

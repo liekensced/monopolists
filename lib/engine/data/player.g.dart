@@ -31,7 +31,7 @@ class PlayerAdapter extends TypeAdapter<Player> {
           MapEntry(k as int, (v as List)?.cast<UpdateInfo>()))
       ..moneyHistory = (fields[10] as List)?.cast<double>()
       ..debt = fields[12] as double
-      ..loans = (fields[13] as List)?.cast<Loan>();
+      ..loans = (fields[13] as List)?.cast<Contract>();
   }
 
   @override
@@ -97,8 +97,8 @@ Player _$PlayerFromJson(Map<String, dynamic> json) {
         ?.toList()
     ..debt = (json['debt'] as num)?.toDouble()
     ..loans = (json['loans'] as List)
-        ?.map(
-            (e) => e == null ? null : Loan.fromJson(e as Map<String, dynamic>))
+        ?.map((e) =>
+            e == null ? null : Contract.fromJson(e as Map<String, dynamic>))
         ?.toList();
 }
 

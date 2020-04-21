@@ -1,6 +1,7 @@
 import '../data/main.dart';
 import '../data/map.dart';
 import '../data/player.dart';
+import 'core_actions.dart';
 import 'main.dart';
 
 class GameHelpers {
@@ -40,7 +41,7 @@ class GameHelpers {
       }
       _housesPay += tile.level * houseFactor;
     });
-    Game.data.player.money -= _housesPay;
+    Game.act.pay(PayType.bank, _housesPay, count: true);
     Game.save();
   }
 }

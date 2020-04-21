@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:plutopoly/widgets/my_card.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/data/extensions.dart';
 import '../../engine/data/settings.dart';
 import '../../engine/data/tip.dart';
-import '../../engine/kernel/extensions/bank.dart';
-import '../../engine/kernel/extensions/jurisdiction.dart';
+import '../../engine/extensions/bank/bank.dart';
+import '../../engine/extensions/jurisdiction.dart';
 import '../../engine/kernel/main.dart';
+import '../../engine/ui/alert.dart';
 import '../../engine/ui/game_navigator.dart';
 import '../../widgets/end_of_list.dart';
+import '../../widgets/my_card.dart';
 import 'players.dart';
 
 class InfoScreen extends StatelessWidget {
@@ -47,7 +48,7 @@ class InfoScreen extends StatelessWidget {
     if (settings.startingMoney != 1500) {
       prefs.add(ListTile(
         leading: Icon(Icons.info),
-        title: Text("You get 1500 starting money."),
+        title: Text("You get ${settings.startingMoney} starting money."),
       ));
     }
     if (settings.goBonus != 200) {
@@ -103,8 +104,15 @@ class InfoScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Game.launch();
-          GameNavigator.navigate(context);
+          if (Game.data.players.length > 1) {
+            Game.launch();
+            GameNavigator.navigate(context);
+          } else {
+            Alert.handle(
+                () => Alert("Not enough players",
+                    "Please add at least 2 players or start a local game."),
+                context);
+          }
         },
         child: FaIcon(
           FontAwesomeIcons.rocket,

@@ -6,7 +6,7 @@ part 'loan.g.dart';
 
 @JsonSerializable()
 @HiveType(typeId: 10)
-class Loan extends HiveObject {
+class Contract extends HiveObject {
   @HiveField(0)
   double interest = 0.05;
   @HiveField(1)
@@ -22,17 +22,17 @@ class Loan extends HiveObject {
 
   String get fullId => id + ":$waitingTurns:$amount";
 
-  Loan(
-      {@required this.interest,
+  Contract(
+      {this.interest,
       @required this.amount,
-      @required this.waitingTurns,
+      this.waitingTurns,
       @required this.id,
       this.fee: 0,
       this.countToCap: true});
   @override
-  bool operator ==(o) => o is Loan && o.fullId == fullId;
+  bool operator ==(o) => o is Contract && o.fullId == fullId;
 
-  Loan.copy(Loan loan) {
+  Contract.copy(Contract loan) {
     interest = loan.interest;
     amount = loan.amount;
     waitingTurns = loan.waitingTurns;
@@ -41,6 +41,6 @@ class Loan extends HiveObject {
     countToCap = loan.countToCap ?? true;
   }
 
-  factory Loan.fromJson(Map<String, dynamic> json) => _$LoanFromJson(json);
+  factory Contract.fromJson(Map<String, dynamic> json) => _$LoanFromJson(json);
   Map<String, dynamic> toJson() => _$LoanToJson(this);
 }

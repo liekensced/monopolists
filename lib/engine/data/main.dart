@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 
 import '../data/extensions.dart';
+import '../extensions/bank/data/bank_data.dart';
 import 'deal_data.dart';
 import 'map.dart';
 import 'player.dart';
@@ -43,9 +44,10 @@ class GameData extends HiveObject {
   int eventIndex = 0;
   @HiveField(14)
   String mapConfiguration = "classic";
-
   @HiveField(15)
   DealData dealData = DealData();
+  @HiveField(16)
+  BankData bankData = BankData();
 
   GameData();
 

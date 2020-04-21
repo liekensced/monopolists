@@ -28,7 +28,7 @@ class _SlideFabState extends State<SlideFab>
       vsync: this,
     );
     _offsetAnimation = Tween<Offset>(
-      begin: Offset(0, 2),
+      begin: Offset(0, 5),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _controller,

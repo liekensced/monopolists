@@ -12,29 +12,33 @@ class GameSetup {
     Game.save();
   }
 
-  Alert addPlayer({String name, int color: 0, int code: -1}) {
-    Alert returnAlert;
+  void addPlayerCheck({String name: "", int color: 0, int code: -1}) {
     data.players.forEach((player) {
       if (player.code != code && MainBloc.online)
         Alert.snackBar("Rejoined as ${player.name}");
       if (player.name == name) {
-        returnAlert =
-            Alert("Couldn't add player", "The name has already been used");
-        return;
+        throw Alert("Couldn't add player", "The name has already been used");
       }
       if (player.color == color) {
-        returnAlert = Alert("Couldn't add player", "The color already exists");
-        return;
+        throw Alert("Couldn't add player", "The color already exists");
       }
     });
-    if (returnAlert != null) return returnAlert;
+  }
+
+  Alert addPlayer({String name, int color: 0, int code: -1}) {
+    try {
+      addPlayerCheck(name: name, color: color, code: code);
+    } on Alert catch (e) {
+      return e;
+    }
+
     data.players.add(Player(
         money: Game.data.settings.startingMoney.toDouble() ?? 750,
         color: color,
         name: name,
         code: code));
     Game.save();
-    return returnAlert;
+    return null;
   }
 
   deletePlayer(Player player) {

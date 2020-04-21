@@ -104,7 +104,7 @@ class IdleScreen extends StatelessWidget {
                     elevation: 0,
                     margin: EdgeInsets.zero,
                     color: Colors.white,
-                    shape: Border.all(color: Colors.black, width: 1),
+                    shape: Border.all(color: Colors.black, width: 0.5),
                   )),
                   child: EagerInkWell(
                     onTap: () {

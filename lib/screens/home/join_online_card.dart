@@ -22,12 +22,15 @@ class _JoinOnlineCardState extends State<JoinOnlineCard> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      ClipboardData data = await Clipboard.getData("text/plain");
-      if (data != null) {
-        if (data.text.length == 20) {
-          textEditingController.text = data.text;
+      try {
+        ClipboardData data = await Clipboard.getData("text/plain");
+        if (data != null) {
+          if (data.text.length == 20) {
+            textEditingController.text = data.text;
+            gamePin = data.text;
+          }
         }
-      }
+      } catch (e) {}
     });
 
     super.initState();

@@ -83,6 +83,7 @@ class MoneyCard extends StatelessWidget {
     double lastMoney = Game.data.player.moneyHistory[Game.data.turn - 1];
     double percentChange =
         ((Game.data.player.money - lastMoney) / lastMoney) * 100;
+    if (percentChange.isInfinite || percentChange.isNaN) percentChange = 0;
     bool p = percentChange >= 0;
     return Card(
       child: Padding(

@@ -193,7 +193,9 @@ class ActionScreen extends StatelessWidget {
 
     if (Game.data.extensions.contains(Extension.bank)) {
       actions.add(LoanCard());
-      actions.add(DebtCard());
+      if ((Game.data.player.loans ?? []).isNotEmpty) {
+        actions.add(DebtCard());
+      }
     }
 
     //END

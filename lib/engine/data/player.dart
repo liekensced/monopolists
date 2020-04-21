@@ -1,10 +1,10 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../extensions/bank/data/loan.dart';
 import '../kernel/main.dart';
 import 'info.dart';
 import 'map.dart';
-import 'bank/loan.dart';
 
 part 'player.g.dart';
 
@@ -42,7 +42,7 @@ class Player extends HiveObject {
   @HiveField(12)
   double debt = 0;
   @HiveField(13)
-  List<Loan> loans = [];
+  List<Contract> loans = [];
 
   factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
   Map<String, dynamic> toJson() => _$PlayerToJson(this);

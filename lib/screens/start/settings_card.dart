@@ -15,6 +15,7 @@ class _SettingsCardState extends State<SettingsCard>
   @override
   Widget build(BuildContext context) {
     return MyCard(
+      animate: false,
       title: "Settings:",
       children: <Widget>[
         Padding(

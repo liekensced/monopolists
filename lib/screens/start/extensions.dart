@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../engine/data/extensions.dart';
-import '../../engine/kernel/extensions/bank.dart';
-import '../../engine/kernel/extensions/jurisdiction.dart';
+import '../../engine/extensions/bank/bank.dart';
+import '../../engine/extensions/jurisdiction.dart';
 import '../../engine/kernel/main.dart';
 import '../../engine/ui/alert.dart';
 import '../../widgets/my_card.dart';

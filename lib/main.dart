@@ -9,7 +9,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:plutopoly/screens/home/home_screen.dart';
 
 import 'bloc/main_bloc.dart';
-import 'engine/data/bank/loan.dart';
 import 'engine/data/deal_data.dart';
 import 'engine/data/extensions.dart';
 import 'engine/data/info.dart';
@@ -18,6 +17,7 @@ import 'engine/data/map.dart';
 import 'engine/data/player.dart';
 import 'engine/data/settings.dart';
 import 'engine/data/ui_actions.dart';
+import 'engine/extensions/bank/data/loan.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -9,7 +9,7 @@ import '../data/player.dart';
 import '../data/ui_actions.dart';
 import '../ui/alert.dart';
 import 'core_actions.dart';
-import 'extensions/bank.dart';
+import '../extensions/bank/bank.dart';
 import 'game_helpers.dart';
 import 'game_setup.dart';
 
@@ -63,7 +63,7 @@ class Game {
             "You can not remotely build houses. (You can change this in settings)");
       }
     }
-    data.player.money -= tile.housePrice;
+    act.pay(PayType.bank, tile.housePrice, count: true);
     tile.level++;
     save();
     return Alert.snackBar("Build 1 house", "house");
@@ -198,6 +198,7 @@ class Game {
   }
 
   static onNewTurn() {
+    Bank.onNewTurn();
     data.turn++;
     //after here
     data.players.asMap().forEach((int i, _) {
@@ -205,7 +206,7 @@ class Game {
       addInfo(UpdateInfo(title: "turn ${data.turn}", leading: "time"), i);
       data.players[i].info[data.turn + 1] = [];
       data.players[i].info[data.turn + 2] = [];
-      Bank.newTurn(i);
+      Bank.onNewTurnPlayer(i);
 
       data.players[i].moneyHistory.add(mapPlayer.money);
     });
@@ -217,6 +218,6 @@ class Game {
 
     addInfo(UpdateInfo(title: "Received go bonus: $_goBonus"));
 
-    Bank.rent();
+    Bank.onPassGo();
   }
 }
