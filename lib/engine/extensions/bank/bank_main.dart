@@ -1,5 +1,3 @@
-import 'dart:math' as Math;
-
 import '../../data/extensions.dart';
 import '../../data/info.dart';
 import '../../data/map.dart';
@@ -14,19 +12,6 @@ class BankMain {
   static get enabled => Game.data.extensions.contains(Extension.bank);
 
   static Bank get bank => Game.bank;
-
-  static double getNewStockFactor() {
-    const int stableness = 50;
-
-    double newFactor = 0;
-
-    for (int i = 0; i < stableness; i++) {
-      newFactor += Math.sqrt(Math.Random().nextDouble()) + 0.38;
-    }
-
-    newFactor /= stableness;
-    return newFactor;
-  }
 
   static List<Contract> getAllLoans() {
     return getLoans();
@@ -111,12 +96,32 @@ class BankMain {
 
   static double lendingCap([Player player]) {
     if (player == null) player = Game.data.player;
-    return ((player.money - player.debt) * 3) + propertiesValue(player);
+    return (netMoney(player) * 2) +
+        propertiesValue(player) +
+        stocksValue(player);
+  }
+
+  static netMoney(Player player) {
+    double willReceive = 0;
+    player.loans.forEach((Contract c) {
+      if (c.waitingTurns != 0) willReceive += c.amount;
+    });
+
+    return player.money + willReceive - player.debt;
   }
 
   static double lendingRoom([Player player]) {
     if (player == null) player = Game.data.player;
     return lendingCap(player) - player.debt;
+  }
+
+  static double stocksValue([Player player]) {
+    if (player == null) player = Game.data.player;
+    double stocksValue = 0;
+    player.stock.forEach((key, int amount) {
+      stocksValue += Game.data.bankData.worldStock.value * amount;
+    });
+    return stocksValue;
   }
 
   static double propertiesValue([Player player]) {

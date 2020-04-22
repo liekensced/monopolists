@@ -47,7 +47,7 @@ class GameData extends HiveObject {
   @HiveField(15)
   DealData dealData = DealData();
   @HiveField(16)
-  BankData bankData = BankData();
+  BankData bankData;
 
   GameData();
 

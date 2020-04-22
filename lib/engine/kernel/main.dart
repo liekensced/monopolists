@@ -1,5 +1,8 @@
 import 'dart:math';
 
+import 'package:plutopoly/engine/data/extensions.dart';
+import 'package:plutopoly/engine/extensions/bank/data/bank_data.dart';
+
 import '../../bloc/main_bloc.dart';
 import '../data/actions.dart';
 import '../data/info.dart';
@@ -78,6 +81,10 @@ class Game {
       data.settings.name = "test game";
     }
 
+    if (Game.data.extensions.contains(Extension.bank)) {
+      Game.data.bankData = BankData();
+    }
+
     data.findingsIndex = Random().nextInt(findings.length);
     data.eventIndex = Random().nextInt(events.length);
     data.currentPlayer = 0;
@@ -101,7 +108,7 @@ class Game {
     return null;
   }
 
-  static void jump([int newPosition, bool passGo = false]) {
+  static void jump([int newPosition, bool passGo = true]) {
     if (newPosition == null)
       newPosition = Random().nextInt(Game.data.gmap.length);
     data.rentPayed = false;

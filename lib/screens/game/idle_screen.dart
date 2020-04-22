@@ -6,6 +6,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
 import 'package:plutopoly/screens/game/action_screen/info_card.dart';
+import 'package:plutopoly/screens/game/action_screen/stock_card.dart';
 import 'package:plutopoly/widgets/eager_inkwell.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 import 'package:zoom_widget/zoom_widget.dart';
@@ -160,7 +161,8 @@ class IdleScreen extends StatelessWidget {
         InfoCard(
           iplayer: MainBloc.gamePlayer,
           short: false,
-        )
+        ),
+        StockCard()
       ],
     );
   }

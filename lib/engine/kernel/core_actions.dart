@@ -38,6 +38,7 @@ class CoreActions {
       Player _player = data.players[receiver];
       if (_player.money < -amount) return Alert.funds(_player);
     }
+    if (count) Game.bank.onCountedPay(amount);
     if (receiver != null) data.players[receiver].money += amount;
     data.player.money -= amount;
     switch (type) {
@@ -128,6 +129,7 @@ class CoreActions {
   }
 
   Alert buy([int price, int prop]) {
+    Alert alert;
     if (prop == null) prop = data.player.position;
     if (price == null) price = data.gmap[prop].price;
     if (data.gmap[prop].owner != null) {
@@ -136,7 +138,8 @@ class CoreActions {
     if (data.gmap[prop].type == TileType.land ||
         data.gmap[prop].type == TileType.trainstation ||
         data.gmap[prop].type == TileType.company) {
-      pay(PayType.bank, price, count: true);
+      alert = pay(PayType.bank, price, count: true);
+      if (alert != null) return alert;
       data.player.properties.add(prop);
       data.player.properties.sort();
       Game.save();

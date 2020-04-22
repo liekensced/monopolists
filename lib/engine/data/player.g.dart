@@ -31,13 +31,14 @@ class PlayerAdapter extends TypeAdapter<Player> {
           MapEntry(k as int, (v as List)?.cast<UpdateInfo>()))
       ..moneyHistory = (fields[10] as List)?.cast<double>()
       ..debt = fields[12] as double
-      ..loans = (fields[13] as List)?.cast<Contract>();
+      ..loans = (fields[13] as List)?.cast<Contract>()
+      ..stock = (fields[14] as Map)?.cast<String, int>();
   }
 
   @override
   void write(BinaryWriter writer, Player obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -63,7 +64,9 @@ class PlayerAdapter extends TypeAdapter<Player> {
       ..writeByte(12)
       ..write(obj.debt)
       ..writeByte(13)
-      ..write(obj.loans);
+      ..write(obj.loans)
+      ..writeByte(14)
+      ..write(obj.stock);
   }
 }
 
@@ -99,7 +102,10 @@ Player _$PlayerFromJson(Map<String, dynamic> json) {
     ..loans = (json['loans'] as List)
         ?.map((e) =>
             e == null ? null : Contract.fromJson(e as Map<String, dynamic>))
-        ?.toList();
+        ?.toList()
+    ..stock = (json['stock'] as Map<String, dynamic>)?.map(
+      (k, e) => MapEntry(k, e as int),
+    );
 }
 
 Map<String, dynamic> _$PlayerToJson(Player instance) => <String, dynamic>{
@@ -117,4 +123,5 @@ Map<String, dynamic> _$PlayerToJson(Player instance) => <String, dynamic>{
       'code': instance.code,
       'debt': instance.debt,
       'loans': instance.loans?.map((e) => e?.toJson())?.toList(),
+      'stock': instance.stock,
     };

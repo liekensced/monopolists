@@ -16,7 +16,8 @@ List<CardAction> events = [
       () => Game.act.pay(PayType.pot, 150, count: true)),
   CardAction("Go to prison", () => Game.helper.jail(Game.data.currentPlayer)),
   CardAction("Free out of prison card", () => Game.data.player.goojCards++),
-  CardAction("Reverse three steps", () => Game.data.player.position -= 3),
+  CardAction(
+      "Reverse three steps", () => Game.jump(Game.data.player.position - 3)),
   CardAction("Fine: -£15", () => Game.data.player.money += 15),
   CardAction("You get a divident: +£50", () => Game.data.player.money += 50),
   CardAction("Repare your houses", () => Game.helper.repareHouses()),

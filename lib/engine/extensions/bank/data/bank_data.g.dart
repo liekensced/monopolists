@@ -19,9 +19,9 @@ class BankDataAdapter extends TypeAdapter<BankData> {
     return BankData()
       ..expendature = fields[0] as int
       ..expandatureList = (fields[1] as List)?.cast<int>()
-      ..worldStockPrice = (fields[2] as List)?.cast<int>()
       ..bullPoints = fields[3] as int
-      ..volatility = fields[4] as int;
+      ..volatility = fields[4] as int
+      ..worldStock = fields[5] as Stock;
   }
 
   @override
@@ -32,12 +32,12 @@ class BankDataAdapter extends TypeAdapter<BankData> {
       ..write(obj.expendature)
       ..writeByte(1)
       ..write(obj.expandatureList)
-      ..writeByte(2)
-      ..write(obj.worldStockPrice)
       ..writeByte(3)
       ..write(obj.bullPoints)
       ..writeByte(4)
-      ..write(obj.volatility);
+      ..write(obj.volatility)
+      ..writeByte(5)
+      ..write(obj.worldStock);
   }
 }
 
@@ -50,16 +50,17 @@ BankData _$BankDataFromJson(Map<String, dynamic> json) {
     ..expendature = json['expendature'] as int
     ..expandatureList =
         (json['expandatureList'] as List)?.map((e) => e as int)?.toList()
-    ..worldStockPrice =
-        (json['worldStockPrice'] as List)?.map((e) => e as int)?.toList()
     ..bullPoints = json['bullPoints'] as int
-    ..volatility = json['volatility'] as int;
+    ..volatility = json['volatility'] as int
+    ..worldStock = json['worldStock'] == null
+        ? null
+        : Stock.fromJson(json['worldStock'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$BankDataToJson(BankData instance) => <String, dynamic>{
       'expendature': instance.expendature,
       'expandatureList': instance.expandatureList,
-      'worldStockPrice': instance.worldStockPrice,
       'bullPoints': instance.bullPoints,
       'volatility': instance.volatility,
+      'worldStock': instance.worldStock?.toJson(),
     };

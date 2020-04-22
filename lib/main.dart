@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:plutopoly/screens/home/home_screen.dart';
 
 import 'bloc/main_bloc.dart';
 import 'engine/data/deal_data.dart';
@@ -17,7 +16,10 @@ import 'engine/data/map.dart';
 import 'engine/data/player.dart';
 import 'engine/data/settings.dart';
 import 'engine/data/ui_actions.dart';
+import 'engine/extensions/bank/data/bank_data.dart';
 import 'engine/extensions/bank/data/loan.dart';
+import 'engine/extensions/bank/data/stock.dart';
+import 'screens/home/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +40,9 @@ Future<void> main() async {
   Hive.registerAdapter(UpdateInfoAdapter());
   Hive.registerAdapter(DealDataAdapter());
   Hive.registerAdapter(MapConfigurationAdapter());
-  Hive.registerAdapter(LoanAdapter());
+  Hive.registerAdapter(BankDataAdapter());
+  Hive.registerAdapter(ContractAdapter());
+  Hive.registerAdapter(StockAdapter());
   await Hive.openBox(MainBloc.PREFBOX);
   runApp(MyApp());
 }

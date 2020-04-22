@@ -32,15 +32,16 @@ class Contract extends HiveObject {
   @override
   bool operator ==(o) => o is Contract && o.fullId == fullId;
 
-  Contract.copy(Contract loan) {
-    interest = loan.interest;
-    amount = loan.amount;
-    waitingTurns = loan.waitingTurns;
-    id = loan.id;
-    fee = loan.fee ?? 0;
-    countToCap = loan.countToCap ?? true;
+  Contract.copy(Contract contract) {
+    interest = contract.interest;
+    amount = contract.amount;
+    waitingTurns = contract.waitingTurns;
+    id = contract.id;
+    fee = contract.fee ?? 0;
+    countToCap = contract.countToCap ?? true;
   }
 
-  factory Contract.fromJson(Map<String, dynamic> json) => _$LoanFromJson(json);
-  Map<String, dynamic> toJson() => _$LoanToJson(this);
+  factory Contract.fromJson(Map<String, dynamic> json) =>
+      _$ContractFromJson(json);
+  Map<String, dynamic> toJson() => _$ContractToJson(this);
 }

@@ -6,7 +6,7 @@ part of 'loan.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class LoanAdapter extends TypeAdapter<Contract> {
+class ContractAdapter extends TypeAdapter<Contract> {
   @override
   final typeId = 10;
 
@@ -22,6 +22,7 @@ class LoanAdapter extends TypeAdapter<Contract> {
       waitingTurns: fields[2] as int,
       id: fields[5] as String,
       fee: fields[4] as double,
+      countToCap: fields[3] as bool,
     );
   }
 
@@ -48,17 +49,18 @@ class LoanAdapter extends TypeAdapter<Contract> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Contract _$LoanFromJson(Map<String, dynamic> json) {
+Contract _$ContractFromJson(Map<String, dynamic> json) {
   return Contract(
     interest: (json['interest'] as num)?.toDouble(),
     amount: (json['amount'] as num)?.toDouble(),
     waitingTurns: json['waitingTurns'] as int,
     id: json['id'] as String,
     fee: (json['fee'] as num)?.toDouble(),
+    countToCap: json['countToCap'] as bool,
   );
 }
 
-Map<String, dynamic> _$LoanToJson(Contract instance) => <String, dynamic>{
+Map<String, dynamic> _$ContractToJson(Contract instance) => <String, dynamic>{
       'interest': instance.interest,
       'amount': instance.amount,
       'waitingTurns': instance.waitingTurns,

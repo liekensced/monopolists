@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
+import 'package:plutopoly/screens/testing/stock_testing_screen.dart';
 
 import '../bloc/main_bloc.dart';
 
@@ -14,6 +15,36 @@ class MyDrawer extends StatelessWidget {
     return Drawer(
       child: Column(
         children: <Widget>[
+          Container(
+            width: double.maxFinite,
+            color: Theme.of(context).accentColor,
+            child: DrawerHeader(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  "Plutopoly extended boardgame",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(8),
+            alignment: Alignment.centerLeft,
+            child: Text("Testing"),
+          ),
+          ListTile(
+            title: Text("Stock simulator"),
+            trailing: IconButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                    return StockTestingScreen();
+                  }));
+                },
+                icon: Icon(Icons.open_in_new)),
+          ),
+          Divider(),
           Spacer(),
           ListTile(
             title: Text("Hide system overlays"),

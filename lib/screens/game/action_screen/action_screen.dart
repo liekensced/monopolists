@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plutopoly/engine/data/extensions.dart';
 import 'package:plutopoly/engine/data/map.dart';
+import 'package:plutopoly/screens/game/action_screen/stock_card.dart';
 
 import '../../../bloc/main_bloc.dart';
 import '../../../engine/data/player.dart';
@@ -196,6 +197,10 @@ class ActionScreen extends StatelessWidget {
       if ((Game.data.player.loans ?? []).isNotEmpty) {
         actions.add(DebtCard());
       }
+    }
+
+    if (Game.data.extensions.contains(Extension.stock)) {
+      actions.add(StockCard());
     }
 
     //END

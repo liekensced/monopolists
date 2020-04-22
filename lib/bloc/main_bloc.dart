@@ -31,8 +31,11 @@ class MainBloc {
   static StreamSubscription<DocumentSnapshot> waiter;
   static int posOveride;
 
-  static Player get gamePlayer =>
-      Game.data.players.firstWhere((Player p) => p.code == MainBloc.code);
+  static Player get gamePlayer {
+    return Game.data.players
+            .firstWhere((Player p) => p.code == MainBloc.code) ??
+        Game.data.player;
+  }
 
   static List<String> getRecent() {
     List<String> recent =

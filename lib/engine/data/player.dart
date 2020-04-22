@@ -43,6 +43,8 @@ class Player extends HiveObject {
   double debt = 0;
   @HiveField(13)
   List<Contract> loans = [];
+  @HiveField(14)
+  Map<String, int> stock = {};
 
   factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
   Map<String, dynamic> toJson() => _$PlayerToJson(this);

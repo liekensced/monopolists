@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:hive/hive.dart';
+
+import 'stock.dart';
 
 part 'bank_data.g.dart';
 
@@ -9,15 +13,17 @@ class BankData extends HiveObject {
   @HiveField(0)
   int expendature = 0;
   @HiveField(1)
-  List<int> expandatureList = [];
-  @HiveField(2)
-  List<int> worldStockPrice = [];
+  List<int> expandatureList = [500];
   @HiveField(3)
   int bullPoints = 0;
   @HiveField(4)
   int volatility = 5;
+  @HiveField(5)
+  Stock worldStock = Stock.world();
 
-  BankData();
+  BankData() {
+    bullPoints = Random().nextInt(200) - 100;
+  }
 
   factory BankData.fromJson(Map<String, dynamic> json) =>
       _$BankDataFromJson(json);

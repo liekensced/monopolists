@@ -159,11 +159,39 @@ class InfoScreen extends StatelessWidget {
             20.0,
             20.0,
           ),
-          child: Text(info.content,
-              style: TextStyle(fontSize: 16), textAlign: TextAlign.center),
+          child: buildContent(info),
         )
       ],
     );
+  }
+
+  Widget buildContent(Info info) {
+    if (info.content == "__WS__")
+      return Column(
+        children: [
+          Text(
+              "Invest your money in world stock. The price is changed on 3 factors:"),
+          ListTile(
+            title: Text("Random (average of +4%)"),
+          ),
+          ListTile(
+            title: Text("Difference in expenditure"),
+            trailing: Tooltip(
+              child: Icon(Icons.info, color: Colors.grey),
+              message: "Properties, houses, rent, ... NOT Fees, taxes",
+            ),
+          ),
+          ListTile(
+            title: Text("Bull/Bear market (+8% or -8%)"),
+            trailing: Tooltip(
+              child: Icon(Icons.info, color: Colors.grey),
+              message: "Rising stock can cause a bull market and otherwise.",
+            ),
+          ),
+        ],
+      );
+    return Text(info.content,
+        style: TextStyle(fontSize: 16), textAlign: TextAlign.center);
   }
 
   Widget _getIcon(type) {
