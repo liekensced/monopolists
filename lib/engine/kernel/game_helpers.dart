@@ -12,7 +12,7 @@ class GameHelpers {
   jail(int player) {
     data.doublesThrown = 0;
     data.players[player].jailed = true;
-    data.players[player].jailTries = 3;
+    data.players[player].jailTries = 2;
     data.players[player].position = 10;
     Game.save();
   }

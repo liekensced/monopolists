@@ -15,7 +15,13 @@ class StockTestingScreen extends StatefulWidget {
 }
 
 class _StockTestingScreenState extends State<StockTestingScreen> {
+  List<int> bullPointsHistory = [];
+
+  int turns = 50;
+  bool constExpenditure = false;
+
   void generateData() {
+    bullPointsHistory = [];
     Game.testing = true;
     Game.newGame();
     Game.data.extensions.add(Extension.bank);
@@ -23,10 +29,11 @@ class _StockTestingScreenState extends State<StockTestingScreen> {
     Game.setup.addPlayer(name: "Jeff");
     Game.launch();
     Game.ui.idle;
-    while (Game.data.turn < 50) {
+    while (Game.data.turn < turns) {
       Game.data.bankData.expendature =
           Random().nextInt(400 + 50 * Game.data.turn);
       Bank.onNewTurn();
+      bullPointsHistory.add(Game.data.bankData.bullPoints);
       Game.data.turn++;
     }
   }
@@ -37,6 +44,41 @@ class _StockTestingScreenState extends State<StockTestingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Stock testing screen"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                      title: Text("Change turns"),
+                      content: TextField(
+                        decoration:
+                            InputDecoration(labelText: "Enter test turns"),
+                        keyboardType: TextInputType.number,
+                        onChanged: (val) {
+                          int newVal = min(int.tryParse(val), 500);
+                          if (newVal != null) turns = newVal;
+                        },
+                      ),
+                      actions: [
+                        MaterialButton(
+                            onPressed: () {
+                              setState(() {});
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "enter",
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor),
+                            ))
+                      ]);
+                },
+              );
+            },
+          )
+        ],
       ),
       body: ListView(
         shrinkWrap: true,
@@ -51,7 +93,8 @@ class _StockTestingScreenState extends State<StockTestingScreen> {
               onPressed: () => setState(() {}),
             ),
           ),
-          buildExpenditureCard()
+          buildExpenditureCard(),
+          buildBullCard(),
         ],
       ),
     );
@@ -64,13 +107,33 @@ class _StockTestingScreenState extends State<StockTestingScreen> {
     );
   }
 
-  Widget buildBezierChart(BuildContext context) {
+  Widget buildBullCard() {
+    return MyCard(
+      title: "Bull/Bear points",
+      children: [buildBezierChart(context, false)],
+    );
+  }
+
+  Widget buildBezierChart(BuildContext context, [bool exp = true]) {
     List<DataPoint> stockData = [];
     List<double> xAxisCustomValues = [];
     Game.data.bankData.expandatureList.asMap().forEach((key, value) {
       stockData.add(DataPoint(value: value.toDouble(), xAxis: key));
       xAxisCustomValues.add(key.toDouble());
     });
+    List<DataPoint> bullData = [DataPoint(value: 0, xAxis: 0)];
+    List<DataPoint> bearData = [DataPoint(value: 0, xAxis: 0)];
+    bullPointsHistory.asMap().forEach((int key, int value) {
+      if (value >= 0) {
+        bearData.add(DataPoint(xAxis: key + 1, value: 0));
+        bullData.add(DataPoint(xAxis: key + 1, value: value.toDouble() * 100));
+        return;
+      }
+
+      bearData.add(DataPoint(xAxis: key + 1, value: -value.toDouble() * 100));
+      bullData.add(DataPoint(xAxis: key + 1, value: 0));
+    });
+
     return Container(
       height: min(MediaQuery.of(context).size.height / 2, 300),
       width:
@@ -86,9 +149,19 @@ class _StockTestingScreenState extends State<StockTestingScreen> {
           displayYAxis: true,
           showDataPoints: false,
         ),
-        series: [
-          BezierLine(data: stockData, lineColor: Theme.of(context).accentColor)
-        ],
+        series: exp
+            ? [
+                BezierLine(
+                    data: stockData, lineColor: Theme.of(context).accentColor)
+              ]
+            : [
+                BezierLine(
+                    data: bullData,
+                    lineColor: Colors.green,
+                    lineStrokeWidth: 1),
+                BezierLine(
+                    data: bearData, lineColor: Colors.red, lineStrokeWidth: 1),
+              ],
         xAxisCustomValues: xAxisCustomValues,
         bezierChartScale: BezierChartScale.CUSTOM,
       ),

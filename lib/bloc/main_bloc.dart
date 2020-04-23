@@ -256,7 +256,7 @@ class MainBloc {
 
   static GameData newGame() {
     GameData newGameData = GameData();
-    if (!online) {
+    if (!online && !Game.testing) {
       Hive.box(METABOX).put("intTotalGames", getGameNumber + 1);
       newGameData.settings.name = "Game $getGameNumber";
 

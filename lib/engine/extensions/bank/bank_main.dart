@@ -40,11 +40,15 @@ class BankMain {
       }
     });
     if (totalReceived != 0)
-      Game.addInfo(UpdateInfo(
-          title: "Received loan(s): +£$totalReceived", leading: "bank"));
+      Game.addInfo(
+          UpdateInfo(
+              title: "Received loan(s): +£$totalReceived", leading: "bank"),
+          playerIndex);
     if (totalInterest != 0)
-      Game.addInfo(UpdateInfo(
-          title: "Total interest: -£$totalInterest", leading: "bank"));
+      Game.addInfo(
+          UpdateInfo(
+              title: "Total interest: -£$totalInterest", leading: "bank"),
+          playerIndex);
   }
 
   static rent() {

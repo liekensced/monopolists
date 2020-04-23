@@ -22,8 +22,8 @@ class StockBloc {
       Game.data.bankData.worldStock.value = 1;
     }
     Game.data.bankData.bullPoints =
-        ((Game.data.bankData.bullPoints + getWSDifference) * 0.8 +
-                (Game.data.bankData.bullPoints < 0 ? 20 : -15))
+        ((Game.data.bankData.bullPoints + getWSDifference) * 0.85 +
+                (Game.data.bankData.bullPoints < 0 ? 10 : -10))
             .toInt();
     Game.data.bankData.volatility += Math.Random().nextInt(3) - 1;
 
@@ -77,13 +77,13 @@ class StockBloc {
   static double getBullStockFactor() {
     int bullPoints = Game.data.bankData.bullPoints;
     if (bullPoints > 100)
-      return 0.12;
+      return 0.15;
     else if (bullPoints >= 0)
-      return 0.08;
+      return 0.11;
     else if (bullPoints < -100)
-      return -0.06;
+      return -0.09;
     else
-      return -0.1;
+      return -0.13;
   }
 
   static double getRandomStockFactor() {
@@ -93,7 +93,7 @@ class StockBloc {
     double newFactor = 0;
 
     for (int i = 0; i < stableness; i++) {
-      newFactor += Math.sqrt(Math.Random().nextDouble()) + 0.38;
+      newFactor += Math.sqrt(Math.Random().nextDouble()) + 0.36;
     }
 
     newFactor /= stableness;

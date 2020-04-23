@@ -17,7 +17,7 @@ class MyDrawer extends StatelessWidget {
         children: <Widget>[
           Container(
             width: double.maxFinite,
-            color: Theme.of(context).accentColor,
+            color: Theme.of(context).primaryColor,
             child: DrawerHeader(
               child: Align(
                 alignment: Alignment.bottomCenter,
@@ -27,11 +27,6 @@ class MyDrawer extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            alignment: Alignment.centerLeft,
-            child: Text("Testing"),
           ),
           ListTile(
             title: Text("Stock simulator"),
@@ -82,7 +77,7 @@ class MyDrawer extends StatelessWidget {
           Container(
             height: 50,
             child: Center(
-              child: Text("Filorux v0.2.1"),
+              child: Text("Filorux v0.2.2"),
             ),
           )
         ],
