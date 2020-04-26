@@ -47,14 +47,16 @@ class StockCard extends StatelessWidget {
   Widget buildBezierChart(BuildContext context) {
     List<DataPoint> stockData = [];
     List<double> xAxisCustomValues = [];
-    Game.data.bankData.worldStock.valueHistory.forEach((key, value) {
-      if (key < Game.data.bankData.worldStock.valueHistory.length - maxDots)
-        return;
+
+    for (int key = 0;
+        key < Game.data.bankData.worldStock.valueHistory.length;
+        key++) {
+      double value = Game.data.bankData.worldStock.valueHistory[key];
 
       stockData.add(DataPoint(value: value, xAxis: key));
-      xAxisCustomValues.add(key.toDouble() -
-          max(Game.data.bankData.worldStock.valueHistory.length - maxDots, 0));
-    });
+      xAxisCustomValues.add(key.toDouble());
+    }
+
     return Container(
       height: min(MediaQuery.of(context).size.height / 2, 300),
       width:

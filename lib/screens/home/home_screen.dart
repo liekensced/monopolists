@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/screens/home/landing_page.dart';
 import 'package:plutopoly/widgets/end_of_list.dart';
 import 'recent_card.dart';
 
@@ -22,6 +24,16 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+    if (Hive.box(MainBloc.PREFBOX).get("boolLanding", defaultValue: true)) {
+      return LandingPage();
+    }
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     return Scaffold(
       drawer: MyDrawer(),
       body: Stack(

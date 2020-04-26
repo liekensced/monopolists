@@ -34,7 +34,7 @@ class StockBloc {
   static getExpenditureStockFactor() {
     return (Game.data.bankData.expandatureList[Game.data.turn] -
             Game.data.bankData.bullPoints * 2) /
-        (100 * Game.data.bankData.worldStock.value);
+        (50 * Game.data.bankData.worldStock.value);
   }
 
   static Alert buyWorldStock() {
@@ -81,9 +81,9 @@ class StockBloc {
     else if (bullPoints >= 0)
       return 0.11;
     else if (bullPoints < -100)
-      return -0.09;
+      return -0.07;
     else
-      return -0.13;
+      return -0.18;
   }
 
   static double getRandomStockFactor() {

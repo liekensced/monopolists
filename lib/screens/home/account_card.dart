@@ -10,8 +10,10 @@ import '../../widgets/my_card.dart';
 import '../start/players.dart';
 
 class AccountCard extends StatelessWidget {
+  final bool welcome;
   const AccountCard({
     Key key,
+    this.welcome: false,
   }) : super(key: key);
 
   @override
@@ -69,14 +71,16 @@ class AccountCard extends StatelessWidget {
             child: Container(
                 width: double.infinity,
                 child: Text(
-                  "Authentication code",
+                  welcome
+                      ? "Synchronize with previous account"
+                      : "Authentication code",
                   textAlign: TextAlign.center,
                 )),
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (context) {
-                  return authDialog(context);
+                  return authDialog(context, welcome);
                 },
               );
             },
@@ -87,60 +91,64 @@ class AccountCard extends StatelessWidget {
   }
 }
 
-AlertDialog authDialog(BuildContext context) {
+AlertDialog authDialog(BuildContext context, bool welcome) {
   return AlertDialog(
     title: Text("Authentication code"),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TextField(
-          decoration: InputDecoration(labelText: "Change auth code"),
-          maxLength: 10,
-          keyboardType: TextInputType.number,
-          onSubmitted: (String val) {
-            Alert.handle(() => MainBloc.setCode(val), context);
-          },
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-              "The authentication code is used to rejoin games as you. If you want to log into another device as this account, than you must enter this code on the new device."),
-        ),
-        MaterialButton(
-          textColor: Colors.white,
-          color: Colors.red,
-          child: Container(
-              width: double.infinity,
-              child: Text(
-                "Show your code",
-                textAlign: TextAlign.center,
-              )),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                    title: Text("Your code"),
-                    content: Text(
-                      MainBloc.code.toString(),
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    actions: [
-                      MaterialButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            "close",
-                            style: TextStyle(
-                                color: Theme.of(context).primaryColor),
-                          ))
-                    ]);
-              },
-            );
-          },
-        ),
-      ],
+    content: Container(
+      constraints: BoxConstraints(maxWidth: MainBloc.maxWidth),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            decoration: InputDecoration(labelText: "Change auth code"),
+            maxLength: 10,
+            keyboardType: TextInputType.number,
+            onSubmitted: (String val) {
+              Alert.handle(() => MainBloc.setCode(val), context);
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(welcome
+                ? "If you already have an account, enter the code here to synchronize."
+                : "The authentication code is used to rejoin games as you. If you want to log into another device as this account, than you must enter this code on the new device."),
+          ),
+          MaterialButton(
+            textColor: Colors.white,
+            color: Colors.red,
+            child: Container(
+                width: double.infinity,
+                child: Text(
+                  "Show your code",
+                  textAlign: TextAlign.center,
+                )),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                      title: Text("Your code"),
+                      content: Text(
+                        MainBloc.code.toString(),
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      actions: [
+                        MaterialButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "close",
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor),
+                            ))
+                      ]);
+                },
+              );
+            },
+          ),
+        ],
+      ),
     ),
   );
 }

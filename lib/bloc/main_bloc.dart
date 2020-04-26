@@ -31,7 +31,14 @@ class MainBloc {
   static StreamSubscription<DocumentSnapshot> waiter;
   static int posOveride;
 
+  static bool dealOpen = false;
+
+  static Box get metaBox {
+    return Hive.box(METABOX);
+  }
+
   static Player get gamePlayer {
+    if (!online) return Game.data.player;
     return Game.data.players
             .firstWhere((Player p) => p.code == MainBloc.code) ??
         Game.data.player;

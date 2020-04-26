@@ -85,7 +85,7 @@ class _DiceSelectState extends State<DiceSelect> {
         dices[0] = Random().nextInt(6) + 1;
         dices[1] = Random().nextInt(6) + 1;
         setState(() {});
-        if (Random().nextInt(5) == 4) {
+        if (Random().nextInt(4) == 1) {
           Future.delayed(Duration(milliseconds: 400), () {
             box.put("intDice0", dices[0]);
             box.put("intDice1", dices[1]);

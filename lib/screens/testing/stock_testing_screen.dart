@@ -126,11 +126,11 @@ class _StockTestingScreenState extends State<StockTestingScreen> {
     bullPointsHistory.asMap().forEach((int key, int value) {
       if (value >= 0) {
         bearData.add(DataPoint(xAxis: key + 1, value: 0));
-        bullData.add(DataPoint(xAxis: key + 1, value: value.toDouble() * 100));
+        bullData.add(DataPoint(xAxis: key + 1, value: value.toDouble()));
         return;
       }
 
-      bearData.add(DataPoint(xAxis: key + 1, value: -value.toDouble() * 100));
+      bearData.add(DataPoint(xAxis: key + 1, value: -value.toDouble()));
       bullData.add(DataPoint(xAxis: key + 1, value: 0));
     });
 
@@ -145,7 +145,7 @@ class _StockTestingScreenState extends State<StockTestingScreen> {
           verticalIndicatorStrokeWidth: 3.0,
           verticalIndicatorColor: Colors.black26,
           showVerticalIndicator: true,
-          stepsYAxis: Game.data.bankData.worldStock.value ~/ 2,
+          stepsYAxis: 100,
           displayYAxis: true,
           showDataPoints: false,
         ),

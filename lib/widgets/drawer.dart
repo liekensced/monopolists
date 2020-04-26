@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
+import 'package:plutopoly/screens/home/landing_page.dart';
 import 'package:plutopoly/screens/testing/stock_testing_screen.dart';
 
 import '../bloc/main_bloc.dart';
@@ -28,18 +29,32 @@ class MyDrawer extends StatelessWidget {
               ),
             ),
           ),
-          ListTile(
-            title: Text("Stock simulator"),
-            trailing: IconButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                    return StockTestingScreen();
-                  }));
-                },
-                icon: Icon(Icons.open_in_new)),
+          InkWell(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                return StockTestingScreen();
+              }));
+            },
+            child: ListTile(
+              title: Text("Stock simulator"),
+              trailing: Icon(Icons.open_in_new),
+            ),
           ),
           Divider(),
+          InkWell(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                return LandingPage();
+              }));
+            },
+            child: ListTile(
+              leading: Icon(Icons.info),
+              title: Text("Info"),
+              trailing: Icon(Icons.open_in_new),
+            ),
+          ),
           Spacer(),
           ListTile(
             title: Text("Hide system overlays"),

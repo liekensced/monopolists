@@ -37,16 +37,11 @@ class ActionsCardChild extends StatelessWidget {
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               Game.data.dealData = DealData()..dealer = player.index;
-              Game.ui.showDealScreen = true;
               Game.save();
               return DealScreen(
                 dealer: player.index,
               );
-            })).then((_) {
-              Game.data.dealData = DealData();
-              Game.data.dealData.dealer = null;
-              Game.save();
-            });
+            }));
           },
           color: Theme.of(context).primaryColor,
           child: FaIcon(

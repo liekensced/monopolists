@@ -84,14 +84,14 @@ class InfoScreen extends StatelessWidget {
     if (extensions.contains(Extension.bank)) {
       infoWidgets.add(IconDivider(icon: Bank.icon(size: 40)));
       Bank.getInfo().forEach((info) {
-        infoWidgets.add(_buildCard(info));
+        infoWidgets.add(GeneralInfoCard(info: info));
       });
     }
 
     if (extensions.contains(Extension.jurisdiction)) {
       infoWidgets.add(IconDivider(icon: Jurisdiction.icon(size: 40)));
       Jurisdiction.getInfo().forEach((info) {
-        infoWidgets.add(_buildCard(info));
+        infoWidgets.add(GeneralInfoCard(info: info));
       });
     }
     if (infoWidgets.length > 3) {
@@ -133,8 +133,17 @@ class InfoScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildCard(Info info) {
+class GeneralInfoCard extends StatelessWidget {
+  final Info info;
+  const GeneralInfoCard({
+    Key key,
+    @required this.info,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return MyCard(
       children: <Widget>[
         Container(

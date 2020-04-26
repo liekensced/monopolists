@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plutopoly/engine/data/extensions.dart';
+import 'package:plutopoly/engine/data/main.dart';
 import 'package:plutopoly/engine/data/map.dart';
 import 'package:plutopoly/screens/game/action_screen/stock_card.dart';
 
@@ -24,6 +25,10 @@ import 'loan_card.dart';
 import 'property_card.dart';
 
 class ActionScreen extends StatelessWidget {
+  ActionScreen() {
+    MainBloc.dealOpen = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     double fraction = 200 / MediaQuery.of(context).size.width;
@@ -58,23 +63,28 @@ class ActionScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: GameListener(
                         builder: (BuildContext context, _, __) {
-                          if (Game.data.dealData.dealer != null) if (Game
-                                      .data
-                                      .players[Game.data.dealData.dealer]
-                                      .code ==
-                                  MainBloc.code &&
-                              MainBloc.online &&
-                              Game.ui.showDealScreen) {
-                            Future.delayed(Duration.zero, () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return DealScreen(
-                                  dealer: Game.data.dealData.dealer,
-                                  visit: true,
-                                );
-                              }));
-                              ;
-                            });
+                          try {
+                            if (Game.data.dealData.dealer != null) {
+                              if (Game.data.players[Game.data.dealData.dealer]
+                                          .code ==
+                                      MainBloc.code &&
+                                  MainBloc.online &&
+                                  !MainBloc.dealOpen &&
+                                  Game.ui.showDealScreen) {
+                                Future.delayed(Duration.zero, () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return DealScreen(
+                                      dealer: Game.data.dealData.dealer,
+                                      visit: true,
+                                    );
+                                  }));
+                                  ;
+                                });
+                              }
+                            }
+                          } catch (e) {
+                            Game.data.dealData == GameData();
                           }
 
                           return Row(
