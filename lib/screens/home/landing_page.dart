@@ -133,7 +133,6 @@ class _LandingPageState extends State<LandingPage>
                       padding: EdgeInsets.all(8),
                       constraints: BoxConstraints(maxWidth: 700),
                       child: ListView(
-                        physics: NeverScrollableScrollPhysics(),
                         children: [
                           kIsWeb
                               ? MyCard(
@@ -288,7 +287,6 @@ class _LandingPageState extends State<LandingPage>
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ListView(
-                      physics: NeverScrollableScrollPhysics(),
                       children: [
                         AccountCard(welcome: true),
                         Center(

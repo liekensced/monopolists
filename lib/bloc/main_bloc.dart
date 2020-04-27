@@ -15,14 +15,15 @@ import '../engine/kernel/main.dart';
 import '../engine/ui/alert.dart';
 
 class MainBloc {
-  static const _version = "1.1.2.8";
-  static const GAMESBOX = _version + "gamesbox";
+  static const version = "0.2.4";
+  static const _boxVersion = "1.1.2.8";
+  static const GAMESBOX = _boxVersion + "gamesbox";
 
-  static const PREFBOX = _version + "prefbox";
-  static const METABOX = _version + "metabox";
-  static const UPDATEBOX = _version + "updateBox";
-  static const MAPCONFBOX = _version + "mapconfBox";
-  static const ACCOUNTBOX = _version + "accountBox";
+  static const PREFBOX = _boxVersion + "prefbox";
+  static const METABOX = _boxVersion + "metabox";
+  static const UPDATEBOX = _boxVersion + "updateBox";
+  static const MAPCONFBOX = _boxVersion + "mapconfBox";
+  static const ACCOUNTBOX = _boxVersion + "accountBox";
 
   static int currentGame = 0;
   static bool online = false;
@@ -154,6 +155,7 @@ class MainBloc {
             "We couldn't find a game with id:$gameIdInput\n Check key or create a new game");
       }
       List players = snapshot.data["players"];
+      List lostPlayers = snapshot.data["lostPlayers"];
       if (players != null) {
         players.forEach((iplayer) {
           if (iplayer["code"] == player.code) {
@@ -163,6 +165,14 @@ class MainBloc {
           if (iplayer["name"] == player.name) {
             alert = Alert("Name already taken",
                 "${player.name} is already taken. Please change your name and try again");
+            return;
+          }
+        });
+      }
+      if (lostPlayers != null) {
+        lostPlayers.forEach((iplayer) {
+          if (iplayer["code"] == player.code) {
+            preJoined = true;
             return;
           }
         });
@@ -222,6 +232,7 @@ class MainBloc {
       print("== New Online Save ==");
 
       if (data != null) {
+        data.bot = false;
         Map<String, dynamic> json = data.toJson();
         Firestore.instance.document("/games/$gameId").updateData(json);
       }

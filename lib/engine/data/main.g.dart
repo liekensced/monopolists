@@ -33,13 +33,15 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..eventIndex = fields[13] as int
       ..mapConfiguration = fields[14] as String
       ..dealData = fields[15] as DealData
-      ..bankData = fields[16] as BankData;
+      ..bankData = fields[16] as BankData
+      ..version = fields[17] as String
+      ..lostPlayers = (fields[18] as List)?.cast<Player>();
   }
 
   @override
   void write(BinaryWriter writer, GameData obj) {
     writer
-      ..writeByte(17)
+      ..writeByte(19)
       ..writeByte(0)
       ..write(obj.running)
       ..writeByte(1)
@@ -73,7 +75,11 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..writeByte(15)
       ..write(obj.dealData)
       ..writeByte(16)
-      ..write(obj.bankData);
+      ..write(obj.bankData)
+      ..writeByte(17)
+      ..write(obj.version)
+      ..writeByte(18)
+      ..write(obj.lostPlayers);
   }
 }
 
@@ -116,7 +122,12 @@ GameData _$GameDataFromJson(Map<String, dynamic> json) {
         : DealData.fromJson(json['dealData'] as Map<String, dynamic>)
     ..bankData = json['bankData'] == null
         ? null
-        : BankData.fromJson(json['bankData'] as Map<String, dynamic>);
+        : BankData.fromJson(json['bankData'] as Map<String, dynamic>)
+    ..version = json['version'] as String
+    ..lostPlayers = (json['lostPlayers'] as List)
+        ?.map((e) =>
+            e == null ? null : Player.fromJson(e as Map<String, dynamic>))
+        ?.toList();
 }
 
 Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
@@ -138,6 +149,8 @@ Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
       'mapConfiguration': instance.mapConfiguration,
       'dealData': instance.dealData?.toJson(),
       'bankData': instance.bankData?.toJson(),
+      'version': instance.version,
+      'lostPlayers': instance.lostPlayers?.map((e) => e?.toJson())?.toList(),
     };
 
 T _$enumDecode<T>(

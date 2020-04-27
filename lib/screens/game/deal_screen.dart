@@ -203,6 +203,7 @@ class _DealScreenChildState extends State<DealScreenChild>
                           textColor: Theme.of(context).primaryColor,
                           onPressed: () {
                             MainBloc.metaBox.put("boolDealInfo", false);
+                            setState(() {});
                           },
                           child: Text("Got it"),
                         ),

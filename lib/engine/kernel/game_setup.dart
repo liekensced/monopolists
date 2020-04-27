@@ -47,8 +47,12 @@ class GameSetup {
   }
 
   defaultPlayer(Player player) {
+    Game.data.lostPlayers.add(player);
     deletePlayer(player);
     Game.data.currentPlayer--;
+    if (Game.data.currentPlayer < 0) {
+      Game.data.currentPlayer = Game.data.players.last.index;
+    }
     Game.next(force: true);
   }
 }

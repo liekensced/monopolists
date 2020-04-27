@@ -49,7 +49,6 @@ class IdleScreen extends StatelessWidget {
     });
 
     return ListView(
-      physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       children: [
         Container(

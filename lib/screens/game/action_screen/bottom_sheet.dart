@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:plutopoly/engine/kernel/main.dart';
-import 'package:plutopoly/screens/hacker_screen.dart';
 
 import '../../../bloc/main_bloc.dart';
+import '../../../engine/kernel/main.dart';
 import '../../../engine/ui/game_navigator.dart';
+import '../../hacker_screen.dart';
 import '../../start/start_game.dart';
 import '../move_screen.dart';
 
-void showSettingsSheet(BuildContext context, PageController pageController) {
+void showSettingsSheet(BuildContext context, [PageController pageController]) {
+  Widget settings = Container();
+  if (MainBloc.gamePlayer == Game.data.player) {
+    settings = InkWell(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (BuildContext context) {
+          return StartGameScreen();
+        }));
+      },
+      child: ListTile(
+        leading: Icon(Icons.settings),
+        title: Text("Open Game settings"),
+      ),
+    );
+  }
+
   showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -71,17 +87,21 @@ void showSettingsSheet(BuildContext context, PageController pageController) {
                           ),
                         )
                       : Container(),
-                  InkWell(
-                    onTap: () {
-                      pageController.animateToPage(Game.data.player.position,
-                          duration: Duration(milliseconds: 500),
-                          curve: Curves.easeInOutCubic);
-                    },
-                    child: ListTile(
-                      leading: Icon(Icons.location_searching),
-                      title: Text("Locate player"),
-                    ),
-                  ),
+                  pageController != null
+                      ? InkWell(
+                          onTap: () {
+                            pageController.animateToPage(
+                                Game.data.player.position,
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.easeInOutCubic);
+                          },
+                          child: ListTile(
+                            leading: Icon(Icons.location_searching),
+                            title: Text("Locate player"),
+                          ),
+                        )
+                      : Container(),
+                  settings,
                   MainBloc.online
                       ? InkWell(
                           onTap: () {
@@ -98,18 +118,7 @@ void showSettingsSheet(BuildContext context, PageController pageController) {
                                 onPressed: () {}),
                           ),
                         )
-                      : InkWell(
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (BuildContext context) {
-                              return StartGameScreen();
-                            }));
-                          },
-                          child: ListTile(
-                            leading: Icon(Icons.settings),
-                            title: Text("Open Game settings"),
-                          ),
-                        ),
+                      : Container(),
                 ],
               );
             });

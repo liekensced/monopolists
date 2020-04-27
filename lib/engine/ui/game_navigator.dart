@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:plutopoly/screens/game/win_screen.dart';
 import 'package:plutopoly/screens/no_data_screen.dart';
 
 import '../../bloc/main_bloc.dart';
@@ -25,6 +26,14 @@ class GameNavigator {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
         return StartGameScreen(online: MainBloc.online);
+      }));
+      return;
+    }
+
+    if (Game.data.running && Game.data.players.length == 1) {
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return WinScreen();
       }));
       return;
     }

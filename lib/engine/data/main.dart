@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:plutopoly/bloc/main_bloc.dart';
 
 import '../data/extensions.dart';
 import '../extensions/bank/data/bank_data.dart';
@@ -48,14 +49,25 @@ class GameData extends HiveObject {
   DealData dealData = DealData();
   @HiveField(16)
   BankData bankData;
+  @HiveField(17)
+  String version = "0";
+  @HiveField(18)
+  List<Player> lostPlayers = [];
+  @HiveField(19)
+  bool bot = false;
 
-  GameData();
+  GameData() {
+    version = MainBloc.version;
+  }
 
   factory GameData.fromJson(Map<String, dynamic> json) =>
       _$GameDataFromJson(json);
   Map<String, dynamic> toJson() => _$GameDataToJson(this);
 
   Player get player {
+    if (currentPlayer < 0) {
+      currentPlayer = players.last.index;
+    }
     return players[currentPlayer];
   }
 }

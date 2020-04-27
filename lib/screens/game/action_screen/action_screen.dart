@@ -179,7 +179,6 @@ class ActionScreen extends StatelessWidget {
       );
     }
     return ListView.builder(
-        physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: _properties.length,
         itemBuilder: (context, index) {
@@ -227,29 +226,28 @@ class ActionScreen extends StatelessWidget {
     });
 
     if (MainBloc.isWide(context)) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ListView(
-              physics: NeverScrollableScrollPhysics(),
-              children: evenActions,
+      return SingleChildScrollView(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                children: evenActions,
+              ),
             ),
-          ),
-          Expanded(
-            child: ListView(
-              physics: NeverScrollableScrollPhysics(),
-              children: oddActions,
-            ),
-          )
-        ],
+            Expanded(
+              child: Column(
+                children: oddActions,
+              ),
+            )
+          ],
+        ),
       );
     }
     actions.add(EndOfList());
     return ListView(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
       children: actions,
     );
   }

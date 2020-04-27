@@ -17,7 +17,7 @@ class StockBloc {
     newWSFactor += 1 + getBullStockFactor();
     newWSFactor += 1 + getExpenditureStockFactor();
 
-    Game.data.bankData.worldStock.value *= (newWSFactor / 3);
+    Game.data.bankData.worldStock.value *= Math.min((newWSFactor / 3), 0.1);
     if (Game.data.bankData.worldStock.value < 1) {
       Game.data.bankData.worldStock.value = 1;
     }

@@ -18,6 +18,7 @@ class StockCard extends StatelessWidget {
     double percentChange = StockBloc.getWSDifference;
     bool p = percentChange >= 0;
     return MyCard(
+      animate: false,
       title: "Stock",
       children: [
         ListTile(
