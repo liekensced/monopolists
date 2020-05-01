@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:bezier_chart/bezier_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/data/player.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
 import 'package:plutopoly/widgets/my_card.dart';
@@ -104,7 +104,7 @@ class WinScreen extends StatelessWidget {
           },
           body: Center(
             child: Container(
-              constraints: BoxConstraints(maxWidth: MainBloc.maxWidth),
+              constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
               child: ListView(
                 children: [
                   MyCard(
@@ -178,8 +178,7 @@ class WinScreen extends StatelessWidget {
 
     return Container(
       height: min(MediaQuery.of(context).size.height / 2, 300),
-      width:
-          min(MediaQuery.of(context).size.width * 0.9, MainBloc.maxWidth - 50),
+      width: min(MediaQuery.of(context).size.width * 0.9, UIBloc.maxWidth - 50),
       child: BezierChart(
         bezierChartAggregation: BezierChartAggregation.MAX,
         config: BezierChartConfig(
@@ -218,8 +217,7 @@ class WinScreen extends StatelessWidget {
 
     return Container(
       height: min(MediaQuery.of(context).size.height / 2, 300),
-      width:
-          min(MediaQuery.of(context).size.width * 0.9, MainBloc.maxWidth - 50),
+      width: min(MediaQuery.of(context).size.width * 0.9, UIBloc.maxWidth - 50),
       child: BezierChart(
         bezierChartAggregation: BezierChartAggregation.MAX,
         config: BezierChartConfig(

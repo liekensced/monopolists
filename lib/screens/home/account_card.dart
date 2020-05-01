@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
 
 import '../../bloc/main_bloc.dart';
@@ -95,7 +96,7 @@ AlertDialog authDialog(BuildContext context, bool welcome) {
   return AlertDialog(
     title: Text("Authentication code"),
     content: Container(
-      constraints: BoxConstraints(maxWidth: MainBloc.maxWidth),
+      constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

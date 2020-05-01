@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/bloc/game_listener.dart';
 import 'package:plutopoly/engine/data/player.dart';
 import '../../../engine/extensions/bank/bank.dart';
 
-import '../../../bloc/main_bloc.dart';
 import '../../../engine/data/info.dart';
 import '../../../engine/kernel/main.dart';
 import '../../../widgets/my_card.dart';

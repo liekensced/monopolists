@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:plutopoly/bloc/recent.dart';
 
 import 'bloc/main_bloc.dart';
 import 'engine/data/deal_data.dart';
@@ -43,6 +44,7 @@ Future<void> main() async {
   Hive.registerAdapter(BankDataAdapter());
   Hive.registerAdapter(ContractAdapter());
   Hive.registerAdapter(StockAdapter());
+  Hive.registerAdapter(RecentAdapter());
   await Hive.openBox(MainBloc.PREFBOX);
   runApp(MyApp());
 }
@@ -74,6 +76,7 @@ class MyApp extends StatelessWidget {
                   Hive.openBox(MainBloc.UPDATEBOX),
                   Hive.openBox(MainBloc.MAPCONFBOX),
                   Hive.openBox(MainBloc.ACCOUNTBOX),
+                  Hive.openBox(MainBloc.RECENTBOX),
                 ]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {

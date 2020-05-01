@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:plutopoly/engine/data/extensions.dart';
-import 'package:plutopoly/engine/data/main.dart';
-import 'package:plutopoly/engine/data/map.dart';
-import 'package:plutopoly/screens/game/action_screen/stock_card.dart';
 
+import '../../../bloc/game_listener.dart';
 import '../../../bloc/main_bloc.dart';
+import '../../../bloc/ui_bloc.dart';
+import '../../../engine/data/extensions.dart';
+import '../../../engine/data/main.dart';
+import '../../../engine/data/map.dart';
 import '../../../engine/data/player.dart';
 import '../../../engine/kernel/main.dart';
 import '../../../engine/ui/alert.dart';
@@ -23,6 +24,7 @@ import 'default_card.dart';
 import 'info_card.dart';
 import 'loan_card.dart';
 import 'property_card.dart';
+import 'stock_card.dart';
 
 class ActionScreen extends StatelessWidget {
   ActionScreen() {
@@ -92,11 +94,7 @@ class ActionScreen extends StatelessWidget {
                               Text("£"),
                               AnimatedCount(
                                 count: (MainBloc.online
-                                    ? (Game.data.players
-                                        .firstWhere((Player p) =>
-                                            p.code == MainBloc.code)
-                                        .money
-                                        .toInt())
+                                    ? (UIBloc.gamePlayer.money.toInt())
                                     : (Game.data.player.money.round())),
                                 duration: Duration(seconds: 1),
                               ),
@@ -166,7 +164,7 @@ class ActionScreen extends StatelessWidget {
 
   Widget buildHoldingCards(BuildContext context) {
     List<int> _properties = Game.data.player.properties;
-    if (MainBloc.online) _properties = MainBloc.gamePlayer.properties;
+    if (MainBloc.online) _properties = UIBloc.gamePlayer.properties;
     if (_properties.isEmpty) {
       return Container(
         height: 100,
@@ -225,7 +223,7 @@ class ActionScreen extends StatelessWidget {
         oddActions.add(w);
     });
 
-    if (MainBloc.isWide(context)) {
+    if (UIBloc.isWide(context)) {
       return SingleChildScrollView(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

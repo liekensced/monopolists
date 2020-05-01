@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:plutopoly/bloc/game_listener.dart';
 
-import '../../bloc/main_bloc.dart';
 import '../../engine/data/player.dart';
 import '../../engine/kernel/main.dart';
 import '../../widgets/animated_count.dart';

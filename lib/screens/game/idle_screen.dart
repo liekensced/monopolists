@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
 import 'package:plutopoly/screens/game/action_screen/info_card.dart';
 import 'package:plutopoly/screens/game/action_screen/stock_card.dart';
@@ -22,7 +23,7 @@ class IdleScreen extends StatelessWidget {
   IdleScreen(this.carrouselController);
 
   void changePos(int index) {
-    MainBloc.posOveride = index;
+    UIBloc.posOveride = index;
     if (carrouselController.hasClients) {
       carrouselController.animateToPage(index,
           duration: Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
@@ -74,23 +75,25 @@ class IdleScreen extends StatelessWidget {
               )
             : Padding(
                 padding: const EdgeInsets.all(12.0),
-                child: RaisedButton(
-                  child: Container(
-                    width: double.maxFinite,
-                    child: Text(
-                      "Your turn",
-                      style: TextStyle(color: Colors.white),
+                child: Container(
+                  width: UIBloc.maxWidth,
+                  child: Center(
+                    child: RaisedButton(
+                      onPressed: () {
+                        GameNavigator.navigate(context);
+                      },
+                      child: Text(
+                        "Your turn",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
-                  onPressed: () {
-                    GameNavigator.navigate(context);
-                  },
                 ),
               ),
         Builder(builder: (context) {
           List<Tile> gmap = Game.data.gmap;
           List<Widget> gridChildren = [];
-          MainBloc.mapConfiguration.configuration.forEach((int tileIndex) {
+          UIBloc.mapConfiguration.configuration.forEach((int tileIndex) {
             if (0 > tileIndex) {
               gridChildren.add(Container());
               return;
@@ -127,7 +130,7 @@ class IdleScreen extends StatelessWidget {
 
           double size = min(MediaQuery.of(context).size.width,
               MediaQuery.of(context).size.height);
-          int width = MainBloc.mapConfiguration.width;
+          int width = UIBloc.mapConfiguration.width;
           return ValueListenableBuilder(
               valueListenable: Hive.box(MainBloc.PREFBOX).listenable(),
               builder: (context, Box box, _) {
@@ -158,7 +161,7 @@ class IdleScreen extends StatelessWidget {
               });
         }),
         InfoCard(
-          iplayer: MainBloc.gamePlayer,
+          iplayer: UIBloc.gamePlayer,
           short: false,
         ),
         StockCard()

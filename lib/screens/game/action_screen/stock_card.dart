@@ -2,7 +2,8 @@ import 'dart:math';
 
 import 'package:bezier_chart/bezier_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
+import 'package:plutopoly/engine/data/extensions.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
 
 import '../../../engine/extensions/bank/stock_bloc.dart';
@@ -15,6 +16,7 @@ class StockCard extends StatelessWidget {
   const StockCard({Key key, this.maxDots: 20}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    if (!Game.data.extensions.contains(Extension.stock)) return Container();
     double percentChange = StockBloc.getWSDifference;
     bool p = percentChange >= 0;
     return MyCard(
@@ -60,8 +62,7 @@ class StockCard extends StatelessWidget {
 
     return Container(
       height: min(MediaQuery.of(context).size.height / 2, 300),
-      width:
-          min(MediaQuery.of(context).size.width * 0.9, MainBloc.maxWidth - 50),
+      width: min(MediaQuery.of(context).size.width * 0.9, UIBloc.maxWidth - 50),
       child: BezierChart(
         bezierChartAggregation: BezierChartAggregation.MAX,
         config: BezierChartConfig(

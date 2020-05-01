@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/screens/game/win_screen.dart';
 import 'package:plutopoly/screens/no_data_screen.dart';
 
@@ -12,7 +13,7 @@ import '../kernel/main.dart';
 
 class GameNavigator {
   static void navigate(BuildContext context, {bool loadGame: false}) {
-    MainBloc.posOveride = null;
+    UIBloc.posOveride = null;
 
     if (Game.data == null) {
       Navigator.push(context,
@@ -58,7 +59,7 @@ class GameNavigator {
       return;
     }
 
-    if (MainBloc.hideOverlays) SystemChrome.setEnabledSystemUIOverlays([]);
+    if (UIBloc.hideOverlays) SystemChrome.setEnabledSystemUIOverlays([]);
     if (Game.ui.shouldMove) {
       Navigator.pushReplacement(
         context,

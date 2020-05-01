@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../bloc/main_bloc.dart';
+import '../../../bloc/ui_bloc.dart';
 import '../../../engine/kernel/main.dart';
 import '../../../engine/ui/game_navigator.dart';
 import '../../hacker_screen.dart';
@@ -11,7 +12,7 @@ import '../move_screen.dart';
 
 void showSettingsSheet(BuildContext context, [PageController pageController]) {
   Widget settings = Container();
-  if (MainBloc.gamePlayer == Game.data.player) {
+  if (UIBloc.gamePlayer == Game.data.player) {
     settings = InkWell(
       onTap: () {
         Navigator.push(context,
@@ -66,7 +67,7 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                   ),
                   InkWell(
                     onTap: () {
-                      MainBloc.toggleDarkMode();
+                      UIBloc.toggleDarkMode();
                     },
                     child: ListTile(
                       leading: FaIcon(FontAwesomeIcons.adjust),

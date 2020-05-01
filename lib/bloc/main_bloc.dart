@@ -7,15 +7,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 
 import '../engine/data/main.dart';
 import '../engine/data/map.dart';
 import '../engine/data/player.dart';
 import '../engine/kernel/main.dart';
 import '../engine/ui/alert.dart';
+import 'recent_bloc.dart';
 
 class MainBloc {
-  static const version = "0.2.4";
+  static const version = "0.2.5";
   static const _boxVersion = "1.1.2.8";
   static const GAMESBOX = _boxVersion + "gamesbox";
 
@@ -24,49 +26,18 @@ class MainBloc {
   static const UPDATEBOX = _boxVersion + "updateBox";
   static const MAPCONFBOX = _boxVersion + "mapconfBox";
   static const ACCOUNTBOX = _boxVersion + "accountBox";
+  static const RECENTBOX = _boxVersion + "recentBox";
 
   static int currentGame = 0;
   static bool online = false;
   static String gameId;
   static StreamSubscription<DocumentSnapshot> listener;
   static StreamSubscription<DocumentSnapshot> waiter;
-  static int posOveride;
 
   static bool dealOpen = false;
 
   static Box get metaBox {
     return Hive.box(METABOX);
-  }
-
-  static Player get gamePlayer {
-    if (!online) return Game.data.player;
-    return Game.data.players
-            .firstWhere((Player p) => p.code == MainBloc.code) ??
-        Game.data.player;
-  }
-
-  static List<String> getRecent() {
-    List<String> recent =
-        Hive.box(METABOX).get("listRecent", defaultValue: []).cast<String>();
-
-    return recent;
-  }
-
-  static double get maxWidth =>
-      Hive.box(PREFBOX).get("doubleMaxWidth", defaultValue: 700.0);
-
-  static int get carrouselPosition {
-    if (posOveride == null)
-      return Game.data.player.position;
-    else
-      return posOveride;
-  }
-
-  static MapConfiguration get mapConfiguration {
-    MapConfiguration config = Hive.box(MAPCONFBOX).get(
-        Hive.box(PREFBOX).get("mapConfiguration", defaultValue: "classic"));
-
-    return config;
   }
 
   static Future<Alert> newOnlineGame() async {
@@ -199,15 +170,8 @@ class MainBloc {
       return Alert("Error while joining game", e.toString());
     }
     Hive.box(METABOX).put("boolOnline", true);
-    addToRecent(gameId, Game.data.settings.name);
+    RecentBloc.update(Game.data);
     return null;
-  }
-
-  static addToRecent(String newGameId, [String name]) {
-    List<String> recent =
-        Hive.box(METABOX).get("listRecent", defaultValue: []).cast<String>();
-    if (!recent.contains(newGameId)) recent.add(newGameId);
-    Hive.box(METABOX).put("listRecent", recent);
   }
 
   static cancelOnline() async {
@@ -230,7 +194,7 @@ class MainBloc {
       data.save();
     } else {
       print("== New Online Save ==");
-
+      RecentBloc.update(data);
       if (data != null) {
         data.bot = false;
         Map<String, dynamic> json = data.toJson();
@@ -240,18 +204,11 @@ class MainBloc {
     }
   }
 
-  static bool isWide(BuildContext context) {
-    return MediaQuery.of(context).size.width >
-        prefbox.get("doubleWideWidth", defaultValue: 500);
-  }
-
-  static bool get hideOverlays =>
-      Hive.box(MainBloc.PREFBOX).get("boolOverlays", defaultValue: true);
-
   static Box get prefbox => Hive.box(PREFBOX);
 
   static initBloc(BuildContext context) {
     code;
+
     currentGame = Hive.box(METABOX).get("intCurrentGame");
     if (Hive.box(MAPCONFBOX).isEmpty) {
       Hive.box(MAPCONFBOX).put("classic", MapConfiguration.standard());
@@ -259,17 +216,14 @@ class MainBloc {
     }
     if (Hive.box(MainBloc.PREFBOX).get("mapConfiguration") == null) {
       Hive.box(MainBloc.PREFBOX).put(
-          "mapConfiguration", MainBloc.isWide(context) ? "classic" : "dense");
+          "mapConfiguration", UIBloc.isWide(context) ? "classic" : "dense");
     }
+
+    RecentBloc.checkRecent();
   }
 
   static int get getGameNumber {
     return Hive.box(METABOX).get("intTotalGames", defaultValue: 0);
-  }
-
-  static toggleDarkMode() {
-    Hive.box(MainBloc.PREFBOX).put("boolDark",
-        !Hive.box(MainBloc.PREFBOX).get("boolDark", defaultValue: false));
   }
 
   static GameData newGame() {
@@ -296,22 +250,4 @@ class MainBloc {
   static bool get randomDices =>
       Hive.box(PREFBOX).get("boolDoneRandomSelect", defaultValue: true) ||
       online;
-}
-
-class GameListener extends StatelessWidget {
-  final ValueWidgetBuilder builder;
-
-  const GameListener({Key key, this.builder}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: Hive.box(MainBloc.GAMESBOX).listenable(),
-      builder: (___, _, __) {
-        return ValueListenableBuilder(
-          valueListenable: Hive.box(MainBloc.UPDATEBOX).listenable(),
-          builder: builder,
-        );
-      },
-    );
-  }
 }

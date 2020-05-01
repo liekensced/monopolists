@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/bloc/game_listener.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 
 import 'eager_inkwell.dart';
 
@@ -46,7 +47,7 @@ class _MyCardState extends State<MyCard> with SingleTickerProviderStateMixin {
     return Center(
       child: Container(
           constraints:
-              BoxConstraints(maxWidth: widget.maxWidth ?? MainBloc.maxWidth),
+              BoxConstraints(maxWidth: widget.maxWidth ?? UIBloc.maxWidth),
           child: EagerInkWell(
             onTap: widget.onTap,
             child: Card(

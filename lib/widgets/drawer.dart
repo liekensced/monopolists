@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
-import 'package:plutopoly/screens/home/landing_page.dart';
-import 'package:plutopoly/screens/testing/stock_testing_screen.dart';
 
 import '../bloc/main_bloc.dart';
+import '../bloc/ui_bloc.dart';
+import '../screens/home/landing_page.dart';
+import '../screens/testing/stock_testing_screen.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({
@@ -66,7 +67,7 @@ class MyDrawer extends StatelessWidget {
                     "boolOverlays",
                     !Hive.box(MainBloc.PREFBOX)
                         .get("boolOverlays", defaultValue: true));
-                if (!MainBloc.hideOverlays) {
+                if (!UIBloc.hideOverlays) {
                   SystemChrome.setEnabledSystemUIOverlays([
                     SystemUiOverlay.bottom,
                     SystemUiOverlay.bottom,
@@ -85,7 +86,7 @@ class MyDrawer extends StatelessWidget {
               value: Hive.box(MainBloc.PREFBOX)
                   .get("boolDark", defaultValue: true),
               onChanged: (value) {
-                MainBloc.toggleDarkMode();
+                UIBloc.toggleDarkMode();
               },
             ),
           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 
-import '../../bloc/main_bloc.dart';
 import '../../engine/data/map.dart';
 import '../../engine/kernel/main.dart';
 import '../../widgets/owner_text.dart';
@@ -23,8 +23,8 @@ class _MapCarouselState extends State<MapCarousel> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (MainBloc.posOveride != null)
-        widget.controller.jumpToPage(MainBloc.posOveride);
+      if (UIBloc.posOveride != null)
+        widget.controller.jumpToPage(UIBloc.posOveride);
     });
   }
 

@@ -1,6 +1,7 @@
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/bloc/game_listener.dart';
 import 'package:plutopoly/screens/game/action_screen/property_card.dart';
 
 import '../../bloc/main_bloc.dart';

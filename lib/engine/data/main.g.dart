@@ -35,13 +35,14 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..dealData = fields[15] as DealData
       ..bankData = fields[16] as BankData
       ..version = fields[17] as String
-      ..lostPlayers = (fields[18] as List)?.cast<Player>();
+      ..lostPlayers = (fields[18] as List)?.cast<Player>()
+      ..bot = fields[19] as bool;
   }
 
   @override
   void write(BinaryWriter writer, GameData obj) {
     writer
-      ..writeByte(19)
+      ..writeByte(20)
       ..writeByte(0)
       ..write(obj.running)
       ..writeByte(1)
@@ -79,7 +80,9 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..writeByte(17)
       ..write(obj.version)
       ..writeByte(18)
-      ..write(obj.lostPlayers);
+      ..write(obj.lostPlayers)
+      ..writeByte(19)
+      ..write(obj.bot);
   }
 }
 
@@ -127,7 +130,8 @@ GameData _$GameDataFromJson(Map<String, dynamic> json) {
     ..lostPlayers = (json['lostPlayers'] as List)
         ?.map((e) =>
             e == null ? null : Player.fromJson(e as Map<String, dynamic>))
-        ?.toList();
+        ?.toList()
+    ..bot = json['bot'] as bool;
 }
 
 Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
@@ -151,6 +155,7 @@ Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
       'bankData': instance.bankData?.toJson(),
       'version': instance.version,
       'lostPlayers': instance.lostPlayers?.map((e) => e?.toJson())?.toList(),
+      'bot': instance.bot,
     };
 
 T _$enumDecode<T>(

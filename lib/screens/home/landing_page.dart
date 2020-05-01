@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 
 import '../../bloc/main_bloc.dart';
+import '../../bloc/ui_bloc.dart';
 import '../../engine/data/tip.dart';
 import '../../engine/extensions/bank/bank.dart';
 import '../../widgets/end_of_list.dart';
@@ -111,7 +112,7 @@ class _LandingPageState extends State<LandingPage>
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(20)),
                                   child: Image.asset(
-                                    MainBloc.isWide(context)
+                                    UIBloc.isWide(context)
                                         ? "assets/wide.png"
                                         : "assets/logo.png",
                                     fit: BoxFit.scaleDown,

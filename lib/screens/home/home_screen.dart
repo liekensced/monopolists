@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/screens/home/landing_page.dart';
 import 'package:plutopoly/widgets/end_of_list.dart';
 import 'recent_card.dart';
@@ -62,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(20)),
                                 child: Image.asset(
-                                  MainBloc.isWide(context)
+                                  UIBloc.isWide(context)
                                       ? "assets/wide.png"
                                       : "assets/logo.png",
                                   fit: BoxFit.scaleDown,
@@ -88,6 +89,15 @@ class _MyHomePageState extends State<MyHomePage> {
                               SizedBox(
                                 height: 10,
                               ),
+                              ValueListenableBuilder(
+                                  valueListenable:
+                                      Hive.box(MainBloc.RECENTBOX).listenable(),
+                                  builder: (context, Box box, _) {
+                                    return RecentCard(
+                                      box: box,
+                                      active: true,
+                                    );
+                                  }),
                               Padding(
                                 padding: EdgeInsets.all(20),
                                 child: RaisedButton(
@@ -132,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               JoinOnlineCard(),
                               ValueListenableBuilder(
                                   valueListenable:
-                                      Hive.box(MainBloc.METABOX).listenable(),
+                                      Hive.box(MainBloc.RECENTBOX).listenable(),
                                   builder: (context, Box box, _) {
                                     return RecentCard(box: box);
                                   }),

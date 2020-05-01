@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 
 import '../../../engine/data/map.dart';
 import '../../../engine/kernel/main.dart';
@@ -36,7 +36,7 @@ class _PropertyCardState extends State<PropertyCard>
     Widget content = Container(height: 200);
 
     if (tile.type == TileType.land) {
-      bool _hasAll = MainBloc.gamePlayer.hasAll(tile.idPrefix);
+      bool _hasAll = UIBloc.gamePlayer.hasAll(tile.idPrefix);
       color = Color(tile.color);
       textColor = Colors.white;
       if (tile.mortaged ?? false)

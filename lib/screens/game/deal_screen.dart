@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/bloc/game_listener.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 
 import '../../bloc/main_bloc.dart';
@@ -148,7 +150,7 @@ class _DealScreenChildState extends State<DealScreenChild>
 
     bool infoMessage = MainBloc.metaBox.get("boolDealInfo", defaultValue: true);
 
-    if (MainBloc.isWide(context)) {
+    if (UIBloc.isWide(context)) {
       bool lockLandscape =
           MainBloc.metaBox.get("boolDealLandscape", defaultValue: true);
       return Scaffold(
