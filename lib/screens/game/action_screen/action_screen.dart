@@ -345,7 +345,7 @@ bool continueCheck(int index, BuildContext c) {
       if (currentTile.price < Game.data.player.money) return false;
     }
 
-    if (Game.data.player.hasAll(currentTile.idPrefix)) {
+    if (Game.data.player.hasAllUnmortaged(currentTile.idPrefix)) {
       if (currentTile.level < 5 &&
           (Game.data.player.money + 200) > currentTile.price) return false;
     }

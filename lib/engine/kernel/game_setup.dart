@@ -1,11 +1,13 @@
-import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/engine/ai/ai_type.dart';
+import 'package:plutopoly/engine/data/main.dart';
+import 'package:plutopoly/screens/start/players.dart';
 
 import '../data/player.dart';
 import '../ui/alert.dart';
 import 'main.dart';
 
 class GameSetup {
-  static get data => Game.data;
+  static GameData get data => Game.data;
   GameSetup();
   setGameName(String name) {
     Game.data.settings.name = name;
@@ -14,15 +16,34 @@ class GameSetup {
 
   void addPlayerCheck({String name: "", int color: 0, int code: -1}) {
     data.players.forEach((player) {
-      if (player.code != code && MainBloc.online)
-        Alert.snackBar("Rejoined as ${player.name}");
       if (player.name == name) {
         throw Alert("Couldn't add player", "The name has already been used");
       }
-      if (player.color == color) {
-        throw Alert("Couldn't add player", "The color already exists");
-      }
     });
+  }
+
+  Alert addBot() {
+    if (data.players.isEmpty)
+      return Alert("Failed to add bot", "Please start with a real player.");
+    String name = "bot ${data.players.length}";
+    while (true) {
+      try {
+        addPlayerCheck(name: name);
+        break;
+      } catch (e) {
+        name += "+";
+      }
+    }
+
+    data.players.add(Player(
+      money: Game.data.settings.startingMoney.toDouble() ?? 750,
+      name: "$name",
+      color: ColorHelper().randomColor,
+      code: -2,
+      aiType: AIType.normal,
+    ));
+    Game.save();
+    return null;
   }
 
   Alert addPlayer({String name, int color: 0, int code: -1}) {
@@ -33,10 +54,12 @@ class GameSetup {
     }
 
     data.players.add(Player(
-        money: Game.data.settings.startingMoney.toDouble() ?? 750,
-        color: color,
-        name: name,
-        code: code));
+      money: Game.data.settings.startingMoney.toDouble() ?? 750,
+      color: color,
+      name: name,
+      code: code,
+      aiType: AIType.player,
+    ));
     Game.save();
     return null;
   }

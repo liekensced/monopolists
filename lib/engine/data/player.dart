@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:plutopoly/engine/ai/ai_type.dart';
 
 import '../extensions/bank/data/loan.dart';
 import '../kernel/main.dart';
@@ -45,6 +46,9 @@ class Player extends HiveObject {
   List<Contract> loans = [];
   @HiveField(14)
   Map<String, int> stock = {};
+  @HiveField(15)
+  @JsonKey(defaultValue: AIType.player)
+  AIType aiType = AIType.player;
 
   factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
   Map<String, dynamic> toJson() => _$PlayerToJson(this);
@@ -72,14 +76,32 @@ class Player extends HiveObject {
   }
 
   bool hasAll(String idPrefix) {
-    bool hasAll = true;
+    return missing(idPrefix) == 0;
+  }
+
+  bool hasAllUnmortaged(String idPrefix) {
+    bool has = true;
     Game.data.gmap.asMap().forEach((int i, Tile tile) {
-      if (tile.idPrefix == idPrefix && !properties.contains(i)) {
-        hasAll = false;
-        return;
+      if (tile.idPrefix == idPrefix) {
+        if (!properties.contains(i)) {
+          has = false;
+          return;
+        } else {
+          if (tile.mortaged) has = false;
+        }
       }
     });
-    return hasAll;
+    return has;
+  }
+
+  int missing(String idPrefix) {
+    int mis = 0;
+    Game.data.gmap.asMap().forEach((int i, Tile tile) {
+      if (tile.idPrefix == idPrefix && !properties.contains(i)) {
+        mis++;
+      }
+    });
+    return mis;
   }
 
   Player({
@@ -88,6 +110,7 @@ class Player extends HiveObject {
     this.position: 0,
     this.name,
     this.code,
+    this.aiType,
   }) {
     if (name == null) {
       name = "Player $id";

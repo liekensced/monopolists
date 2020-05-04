@@ -64,7 +64,12 @@ class GameData extends HiveObject {
       _$GameDataFromJson(json);
   Map<String, dynamic> toJson() => _$GameDataToJson(this);
 
+  Tile get tile {
+    return player.positionTile;
+  }
+
   Player get player {
+    if (currentPlayer >= players.length) return null;
     if (currentPlayer < 0) {
       currentPlayer = players.last.index;
     }

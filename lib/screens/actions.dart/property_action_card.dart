@@ -429,7 +429,7 @@ class _MyPayTextFieldState extends State<MyPayTextField> {
               onPressed: () {
                 if (!valid) return;
                 Alert.handleAndPop(
-                    () => Game.act.payRent(tile.index, price), context);
+                    () => Game.act.payRent(tile.mapIndex, price), context);
               },
               child: Text(
                 "pay",

@@ -56,7 +56,9 @@ class InfoCard extends StatelessWidget {
               itemBuilder: (BuildContext context, int i) {
                 return ListTile(
                   leading: getLeading(info[i].leading),
-                  title: Text(info[i].title),
+                  title: Text(
+                    info[i].title,
+                  ),
                 );
               },
             );
@@ -76,6 +78,11 @@ Widget getLeading(String leading) {
       return Bank.icon();
     case "time":
       return FaIcon(FontAwesomeIcons.solidClock);
+    case "alert":
+      return Icon(
+        Icons.error,
+        color: Colors.red,
+      );
     default:
       return Icon(Icons.info);
   }

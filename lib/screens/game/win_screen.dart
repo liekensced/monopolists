@@ -4,9 +4,11 @@ import 'dart:math';
 import 'package:bezier_chart/bezier_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
+import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/data/player.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
+import 'package:plutopoly/engine/ui/game_navigator.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 
 import 'action_screen/bottom_sheet.dart';
@@ -14,6 +16,7 @@ import 'action_screen/bottom_sheet.dart';
 class WinScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Game.data.currentPlayer = Game.data.ui.winner.index;
     return Scaffold(
       body: FractionallySizedBox(
         heightFactor: 1,
@@ -120,8 +123,22 @@ class WinScreen extends StatelessWidget {
                           textAlign: TextAlign.start,
                         ),
                       ),
-                      buildexpanditureChart(context)
+                      buildexpanditureChart(context),
                     ],
+                  ),
+                  Center(
+                    child: RaisedButton(
+                      color: Colors.red,
+                      child: Text(
+                        "New game",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        MainBloc.resetGame();
+                        Navigator.pop(context);
+                        GameNavigator.navigate(context);
+                      },
+                    ),
                   )
                 ],
               ),
@@ -139,22 +156,8 @@ class WinScreen extends StatelessWidget {
     List<DataPoint> playerMoney = [];
     List<BezierLine> series = [];
 
-    for (int key = 0; key < Game.data.player.moneyHistory.length; key++) {
-      double value = Game.data.player.moneyHistory[key];
-      if (value >= 0) {
-        playerMoney.add(DataPoint(xAxis: key + 1, value: value));
-      } else {
-        playerMoney.add(DataPoint(xAxis: key + 1, value: 0));
-      }
-    }
-
-    Game.data.player.moneyHistory.asMap().forEach((int key, double value) {});
-    series.add(BezierLine(
-      data: playerMoney,
-      lineColor: Color(Game.data.player.color),
-    ));
     if (Game.data.lostPlayers != null) {
-      Game.data.lostPlayers.forEach((Player player) {
+      [...Game.data.lostPlayers, ...Game.data.players].forEach((Player player) {
         playerMoney = [];
         for (int key = 0; key < Game.data.player.moneyHistory.length; key++) {
           double value = 0;
@@ -172,7 +175,6 @@ class WinScreen extends StatelessWidget {
           data: playerMoney,
           lineColor: Color(player.color),
         ));
-        print("mjqkdfhmjkqsghedghqdsrthezrhfn");
       });
     }
 

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/engine/ai/ai_type.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 
 import '../../bloc/main_bloc.dart';
@@ -55,56 +57,97 @@ class _PlayersCardState extends State<PlayersCard>
                           ),
                         ],
                       ),
-                      subtitle: Text("Normal player"),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          if (MainBloc.online) {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                    title: Text("Delete Player"),
-                                    content: Text(
-                                        "Are you sure you want to delete this player?"),
-                                    actions: [
-                                      MaterialButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(
-                                            "cancel",
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .primaryColor),
-                                          )),
-                                      MaterialButton(
-                                          onPressed: () {
-                                            if (Game.data.running == true) {
-                                              Game.setup.defaultPlayer(player);
-                                            } else {
-                                              Game.setup.deletePlayer(player);
-                                            }
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(
-                                            "kick",
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .primaryColor),
-                                          ))
-                                    ]);
+                      subtitle: player.aiType == AIType.normal
+                          ? Text("Normal BOT")
+                          : Text("Normal player"),
+                      trailing: index == 0
+                          ? Container(
+                              width: 0,
+                            )
+                          : IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                if (MainBloc.online) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                          title: Text("Delete Player"),
+                                          content: Text(
+                                              "Are you sure you want to delete this player?"),
+                                          actions: [
+                                            MaterialButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  "cancel",
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .primaryColor),
+                                                )),
+                                            MaterialButton(
+                                                onPressed: () {
+                                                  if (Game.data.running ==
+                                                      true) {
+                                                    Game.setup
+                                                        .defaultPlayer(player);
+                                                  } else {
+                                                    Game.setup
+                                                        .deletePlayer(player);
+                                                  }
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  "kick",
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .primaryColor),
+                                                ))
+                                          ]);
+                                    },
+                                  );
+                                } else {
+                                  if (Game.data.running == true) {
+                                    Game.setup.defaultPlayer(player);
+                                  } else {
+                                    Game.setup.deletePlayer(player);
+                                  }
+                                  setState(() {});
+                                }
                               },
-                            );
-                          } else {
-                            return Game.setup.deletePlayer(player);
-                          }
-                        },
-                      ));
+                            ));
                 },
               ),
+        AddBotButton(),
         AddPlayerButton()
       ],
+    );
+  }
+}
+
+class AddBotButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(right: 20),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: RaisedButton.icon(
+          textColor: Colors.white,
+          color: Colors.teal,
+          icon: FaIcon(FontAwesomeIcons.robot),
+          label: Text(
+            "Add bot",
+            textAlign: TextAlign.center,
+          ),
+          onPressed: Game.data.players.isEmpty
+              ? null
+              : () {
+                  Alert.handle(Game.setup.addBot, context);
+                },
+        ),
+      ),
     );
   }
 }
@@ -142,7 +185,7 @@ class AddPlayerButton extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(20).copyWith(top: 10),
       child: RaisedButton(
         textColor: Colors.white,
         color: Colors.teal,
@@ -187,14 +230,12 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
         ? Random().nextInt(100)
         : (Game.data.players?.length ?? 0) + 1;
     name = "Player $playerId";
-    color = ColorHelper()
-        .exampleColors[Random().nextInt(ColorHelper().exampleColors.length)];
+    color = ColorHelper().randomColor;
     if (!widget.prefPlayer) {
       try {
         Game.setup.addPlayerCheck(color: color);
       } on Alert {
-        color = ColorHelper().exampleColors[
-            Random().nextInt(ColorHelper().exampleColors.length)];
+        color = ColorHelper().randomColor;
       }
     }
 
@@ -299,6 +340,8 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
 }
 
 class ColorHelper {
+  int get randomColor =>
+      exampleColors[Random().nextInt(ColorHelper().exampleColors.length)];
   List<int> exampleColors = [
     Colors.red.value,
     Colors.pink.value,

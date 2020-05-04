@@ -30,7 +30,6 @@ class LandCard extends StatelessWidget {
                 ],
               ),
               child: Container(
-                width: 250,
                 alignment: Alignment.bottomCenter,
                 padding: EdgeInsets.only(bottom: 10),
                 child: Text(
@@ -69,7 +68,15 @@ class LandCard extends StatelessWidget {
                     : OwnerText(tile: tile),
                 Expanded(
                     child: Center(
-                  child: Text("£" + tile.price.toString()),
+                  child: Text(
+                    "£" +
+                        (tile.owner == null
+                            ? tile.price.toString()
+                            : tile.currentRent.toString()),
+                    style: TextStyle(
+                        color: tile.owner == null ? Colors.green : Colors.red,
+                        fontWeight: FontWeight.bold),
+                  ),
                 )),
                 Expanded(
                   child: Align(

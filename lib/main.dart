@@ -7,6 +7,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:plutopoly/bloc/recent.dart';
+import 'package:plutopoly/engine/ai/ai_type.dart';
 
 import 'bloc/main_bloc.dart';
 import 'engine/data/deal_data.dart';
@@ -45,6 +46,7 @@ Future<void> main() async {
   Hive.registerAdapter(ContractAdapter());
   Hive.registerAdapter(StockAdapter());
   Hive.registerAdapter(RecentAdapter());
+  Hive.registerAdapter(AITypeAdapter());
   await Hive.openBox(MainBloc.PREFBOX);
   runApp(MyApp());
 }

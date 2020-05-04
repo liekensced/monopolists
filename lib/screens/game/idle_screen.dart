@@ -111,9 +111,9 @@ class IdleScreen extends StatelessWidget {
                   )),
                   child: EagerInkWell(
                     onTap: () {
-                      changePos(tile.index);
+                      changePos(tile.mapIndex);
                     },
-                    child: buildCard(tile, context, tileIndex),
+                    child: buildCard(tile),
                   ),
                 ),
               );

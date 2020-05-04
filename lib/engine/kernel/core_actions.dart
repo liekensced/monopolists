@@ -16,6 +16,8 @@ class CoreActions {
   Alert mortage(int tileIndex) {
     Alert alert;
     Tile tile = data.gmap[tileIndex];
+    if (tile.hyp == null)
+      return Alert("Couldn't mortage", "You can't mortage this tile.");
     bool _mortaged = tile.mortaged;
     if (_mortaged) {
       alert = pay(PayType.bank, (tile.hyp * 1.1).toInt());
@@ -31,12 +33,15 @@ class CoreActions {
     return alert;
   }
 
-  Alert pay(PayType type, int amount, {int receiver, bool count: false}) {
-    if (amount > 0) {
-      if (data.player.money < amount) return Alert.funds();
-    } else if (amount < 0 && receiver != null) {
-      Player _player = data.players[receiver];
-      if (_player.money < -amount) return Alert.funds(_player);
+  Alert pay(PayType type, int amount,
+      {int receiver, bool count: false, bool force: false}) {
+    if (!force) {
+      if (amount > 0) {
+        if (data.player.money < amount) return Alert.funds();
+      } else if (amount < 0 && receiver != null) {
+        Player _player = data.players[receiver];
+        if (_player.money < -amount) return Alert.funds(_player);
+      }
     }
     if (count) Game.bank.onCountedPay(amount);
     if (receiver != null) data.players[receiver].money += amount;
@@ -91,11 +96,12 @@ class CoreActions {
     return alert;
   }
 
-  Alert payRent(int tileIndex, [int payPrice]) {
+  Alert payRent(int tileIndex, [int payPrice, bool force = false]) {
     Tile tile = data.gmap[tileIndex];
     int price = payPrice ?? tile.currentRent;
     int receiver = tile.owner.index;
-    return pay(PayType.rent, price, receiver: receiver, count: true);
+    return pay(PayType.rent, price,
+        receiver: receiver, count: true, force: force);
   }
 
   Alert deal({

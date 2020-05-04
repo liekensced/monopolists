@@ -193,7 +193,7 @@ class _DealScreenChildState extends State<DealScreenChild>
                         padding: const EdgeInsets.all(8.0),
                         child: !emptyText
                             ? Text(
-                                "Here you can deal with other players. \nThe left side shows what you offer. The right side shows what you receive.\n When ready click on confirm and wait for the other player to confirm as well. ",
+                                "Here you can deal with other players. \nEverything in the left card gets swapped with the right card\n When ready click on confirm and wait for the other player to confirm as well. ",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontSize: 18),
                               )
@@ -539,7 +539,7 @@ class _DealScreenChildState extends State<DealScreenChild>
     (dealer ? dealData.receivableProperties : dealData.payableProperties)
         .removeAt(index);
     (dealer ? dealData.receiveProperties : dealData.payProperties)
-        .add(tile.index);
+        .add(tile.mapIndex);
     dealData.dealerChecked = false;
     dealData.playerChecked = false;
     Game.save();
@@ -549,7 +549,7 @@ class _DealScreenChildState extends State<DealScreenChild>
     (dealer ? dealData.receiveProperties : dealData.payProperties)
         .removeAt(index);
     (dealer ? dealData.receivableProperties : dealData.payableProperties)
-        .add(tile.index);
+        .add(tile.mapIndex);
     dealData.dealerChecked = false;
     dealData.playerChecked = false;
     Game.save();

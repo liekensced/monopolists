@@ -4,7 +4,6 @@ import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/screens/game/win_screen.dart';
 import 'package:plutopoly/screens/no_data_screen.dart';
 
-import '../../bloc/main_bloc.dart';
 import '../../screens/game/action_screen/action_screen.dart';
 import '../../screens/game/move_screen.dart';
 import '../../screens/start/info_screen.dart';
@@ -22,27 +21,24 @@ class GameNavigator {
       }));
       return;
     }
-
     if (Game.data.running == null) {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
-        return StartGameScreen(online: MainBloc.online);
+        return StartGameScreen();
       }));
       return;
     }
-
-    if (Game.data.running && Game.data.players.length == 1) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) {
-        return WinScreen();
-      }));
-      return;
-    }
-
     if (!Game.data.running || loadGame) {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
         return InfoScreen();
+      }));
+      return;
+    }
+    if (Game.data.ui.ended) {
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return WinScreen();
       }));
       return;
     }

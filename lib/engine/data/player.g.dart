@@ -22,6 +22,7 @@ class PlayerAdapter extends TypeAdapter<Player> {
       position: fields[2] as int,
       name: fields[0] as String,
       code: fields[11] as int,
+      aiType: fields[15] as AIType,
     )
       ..properties = (fields[5] as List)?.cast<int>()
       ..jailed = fields[6] as bool
@@ -38,7 +39,7 @@ class PlayerAdapter extends TypeAdapter<Player> {
   @override
   void write(BinaryWriter writer, Player obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -66,7 +67,9 @@ class PlayerAdapter extends TypeAdapter<Player> {
       ..writeByte(13)
       ..write(obj.loans)
       ..writeByte(14)
-      ..write(obj.stock);
+      ..write(obj.stock)
+      ..writeByte(15)
+      ..write(obj.aiType);
   }
 }
 
@@ -81,6 +84,8 @@ Player _$PlayerFromJson(Map<String, dynamic> json) {
     position: json['position'] as int,
     name: json['name'] as String,
     code: json['code'] as int,
+    aiType:
+        _$enumDecodeNullable(_$AITypeEnumMap, json['aiType']) ?? AIType.player,
   )
     ..properties = (json['properties'] as List)?.map((e) => e as int)?.toList()
     ..jailed = json['jailed'] as bool
@@ -124,4 +129,42 @@ Map<String, dynamic> _$PlayerToJson(Player instance) => <String, dynamic>{
       'debt': instance.debt,
       'loans': instance.loans?.map((e) => e?.toJson())?.toList(),
       'stock': instance.stock,
+      'aiType': _$AITypeEnumMap[instance.aiType],
     };
+
+T _$enumDecode<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    throw ArgumentError('A value must be provided. Supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+
+  final value = enumValues.entries
+      .singleWhere((e) => e.value == source, orElse: () => null)
+      ?.key;
+
+  if (value == null && unknownValue == null) {
+    throw ArgumentError('`$source` is not one of the supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+  return value ?? unknownValue;
+}
+
+T _$enumDecodeNullable<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+}
+
+const _$AITypeEnumMap = {
+  AIType.player: 'player',
+  AIType.normal: 'normal',
+};

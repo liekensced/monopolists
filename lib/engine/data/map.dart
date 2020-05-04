@@ -61,6 +61,23 @@ class Tile extends HiveObject {
 
   String get id => "$idPrefix:$idIndex";
 
+  bool get buyable {
+    if (price == null) return false;
+    switch (type) {
+      case TileType.land:
+        return true;
+        break;
+      case TileType.company:
+        return true;
+        break;
+      case TileType.trainstation:
+        return true;
+        break;
+      default:
+        return false;
+    }
+  }
+
   int get currentRent {
     if (mortaged ?? false) return 0;
     int _rentFactor = 1;
@@ -77,20 +94,20 @@ class Tile extends HiveObject {
     }
     if (rent == null) return 0;
     if (level == 0) {
-      if (owner.hasAll(idPrefix)) _rentFactor *= 2;
+      if (owner.hasAllUnmortaged(idPrefix)) _rentFactor *= 2;
     }
     if (level > rent.length) return 0;
-    return rent[level] * _rentFactor;
+    return rent[owner.hasAllUnmortaged(idPrefix) ? level : 0] * _rentFactor;
   }
 
-  int get index {
+  int get mapIndex {
     return Game.data.gmap.indexWhere((tile) => tile.id == id);
   }
 
   Player get owner {
     Player owner;
     Game.data.players.forEach((Player player) {
-      if (player.properties.contains(index)) {
+      if (player.properties.contains(mapIndex)) {
         owner = player;
         return;
       }
@@ -100,7 +117,7 @@ class Tile extends HiveObject {
 
   List<Player> get players {
     return Game.data.players
-        .where((player) => player.position == index)
+        .where((player) => player.position == mapIndex)
         .toList();
   }
 

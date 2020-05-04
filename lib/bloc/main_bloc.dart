@@ -200,8 +200,12 @@ class MainBloc {
         Map<String, dynamic> json = data.toJson();
         Firestore.instance.document("/games/$gameId").updateData(json);
       }
-      Hive.box(UPDATEBOX).put("update", 0);
+      updateUI();
     }
+  }
+
+  static updateUI() {
+    Hive.box(UPDATEBOX).put("update", 0);
   }
 
   static Box get prefbox => Hive.box(PREFBOX);
@@ -224,6 +228,17 @@ class MainBloc {
 
   static int get getGameNumber {
     return Hive.box(METABOX).get("intTotalGames", defaultValue: 0);
+  }
+
+  static resetGame([GameData data]) {
+    GameData newData = data ?? GameData();
+    if (!MainBloc.online) {
+      Hive.box(GAMESBOX).put(getGameNumber, newData);
+      if (!newData.isInBox)
+        throw Alert("New offline data not in box", "My bad, sorry");
+    }
+    Game.data = newData;
+    Game.save();
   }
 
   static GameData newGame() {

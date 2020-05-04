@@ -1,18 +1,19 @@
 import 'dart:math';
 
-import 'package:plutopoly/engine/data/extensions.dart';
-import 'package:plutopoly/engine/extensions/bank/data/bank_data.dart';
-
 import '../../bloc/main_bloc.dart';
+import '../ai/ai_type.dart';
+import '../ai/normal/normal_ai.dart';
 import '../data/actions.dart';
+import '../data/extensions.dart';
 import '../data/info.dart';
 import '../data/main.dart';
 import '../data/map.dart';
 import '../data/player.dart';
 import '../data/ui_actions.dart';
+import '../extensions/bank/bank.dart';
+import '../extensions/bank/data/bank_data.dart';
 import '../ui/alert.dart';
 import 'core_actions.dart';
-import '../extensions/bank/bank.dart';
 import 'game_helpers.dart';
 import 'game_setup.dart';
 
@@ -26,7 +27,16 @@ class Game {
   static UIActionsData get ui => Game.data.ui;
 
   static bool testing = false;
-  static save() {
+  static save({force: false}) {
+    if (Game.data.dealData.dealer != null) {
+      if (Game.data.players[Game.data.dealData.dealer].aiType ==
+          AIType.normal) {
+        NormalAI.onDealUpdate();
+        MainBloc.updateUI();
+      }
+    }
+    if (data.running == true && data.player?.aiType == AIType.normal && !force)
+      return;
     if (!(testing ?? false)) {
       MainBloc.save(data);
     }
@@ -44,16 +54,24 @@ class Game {
     data = loadData;
   }
 
-  static addInfo(UpdateInfo updateInfo, [int playerIndex]) {
+  static addInfo(UpdateInfo updateInfo, [int playerIndex, int minus = 1]) {
     if (playerIndex == null) playerIndex = Game.data.currentPlayer;
-    if (Game.data.players[playerIndex].info[Game.data.turn - 1] == null) {
-      Game.data.players[playerIndex].info[Game.data.turn - 1] = [];
+    if (Game.data.players[playerIndex].info[Game.data.turn - minus] == null) {
+      Game.data.players[playerIndex].info[Game.data.turn - minus] = [];
     }
-    Game.data.players[playerIndex].info[Game.data.turn - 1].add(updateInfo);
+    Game.data.players[playerIndex].info[Game.data.turn - minus].add(updateInfo);
   }
 
   static Alert build([Tile property]) {
     Tile tile = property ?? Game.data.player.positionTile;
+    if (!Game.data.player.hasAll(tile.idPrefix)) {
+      return Alert("Couldn't build house",
+          "You don't have all the properties of this street .");
+    }
+    if (!Game.data.player.hasAllUnmortaged(tile.idPrefix)) {
+      return Alert("Couldn't build house",
+          "You don't have all the properties of this street unmortaged.");
+    }
     if (tile.housePrice == null)
       return Alert("Couldn't build house", "No house price specified?");
     if (data.player.money < tile.housePrice) return Alert.funds();
@@ -61,7 +79,7 @@ class Game {
       return Alert("Not upgradable",
           "The tile ${tile.name} is already the highest level.");
     if (!data.settings.remotelyBuild) {
-      if (property.index != Game.data.player.position) {
+      if (property.mapIndex != Game.data.player.position) {
         return Alert("Couldn't build house",
             "You can not remotely build houses. (You can change this in settings)");
       }
@@ -98,12 +116,12 @@ class Game {
   //basic interactions
 
   static Alert executeEvent(Function func) {
+    data.rentPayed = true;
     var r = func();
     if (r is Alert) {
       return r;
     }
 
-    data.rentPayed = true;
     Game.save();
     return null;
   }
@@ -111,10 +129,11 @@ class Game {
   static void jump([int newPosition, bool passGo = true]) {
     if (newPosition == null)
       newPosition = Random().nextInt(Game.data.gmap.length);
-    data.rentPayed = false;
     if (Game.data.player.position > newPosition && passGo) onPassGo();
+
     Game.data.player.position = newPosition;
 
+    data.rentPayed = false;
     Game.save();
   }
 
@@ -165,7 +184,7 @@ class Game {
     Player _owner = Game.data.player.positionTile.owner;
 
     if (_owner != null && _owner != Game.data.player) {
-      if (!Game.data.rentPayed && MainBloc.online)
+      if (!Game.data.rentPayed)
         return Alert("Rent not payed", "Please pay rent before continuing");
     }
     if (_type == TileType.tax && !Game.data.rentPayed) {
@@ -199,8 +218,14 @@ class Game {
     } else {
       data.currentPlayer++;
     }
-    save();
 
+    if (!Game.ui.realPlayers) {
+    } else {
+      if (data.player.aiType == AIType.normal) {
+        NormalAI.onPlayerTurn();
+      }
+    }
+    save();
     return null;
   }
 

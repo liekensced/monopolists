@@ -42,7 +42,7 @@ class Bank {
       );
     }
 
-    if (Game.data.extensions.contains(Extension.bank)) {
+    if (Game.data.extensions.contains(Extension.stock)) {
       info.add(
         Info("World Stock", "__WS__", InfoType.rule),
       );

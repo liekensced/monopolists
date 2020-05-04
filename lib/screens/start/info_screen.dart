@@ -9,7 +9,6 @@ import '../../engine/data/tip.dart';
 import '../../engine/extensions/bank/bank.dart';
 import '../../engine/extensions/jurisdiction.dart';
 import '../../engine/kernel/main.dart';
-import '../../engine/ui/alert.dart';
 import '../../engine/ui/game_navigator.dart';
 import '../../widgets/end_of_list.dart';
 import '../../widgets/my_card.dart';
@@ -104,15 +103,8 @@ class InfoScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (Game.data.players.length > 1) {
-            Game.launch();
-            GameNavigator.navigate(context);
-          } else {
-            Alert.handle(
-                () => Alert("Not enough players",
-                    "Please add at least 2 players or start a local game."),
-                context);
-          }
+          Game.launch();
+          GameNavigator.navigate(context);
         },
         child: FaIcon(
           FontAwesomeIcons.rocket,

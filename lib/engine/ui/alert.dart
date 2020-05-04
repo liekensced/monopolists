@@ -102,4 +102,9 @@ class Alert {
     } else
       return true;
   }
+
+  @override
+  String toString() {
+    return "$title: $content";
+  }
 }

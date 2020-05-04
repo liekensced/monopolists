@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/engine/ai/ai_type.dart';
+import 'package:plutopoly/engine/ui/alert.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../bloc/game_listener.dart';
@@ -40,6 +42,14 @@ class _StartGameScreenState extends State<StartGameScreen> {
                   color: Colors.white,
                 ),
                 onPressed: () {
+                  if (Game.data.players[0].aiType != AIType.player &&
+                      Game.data.running == true) {
+                    Alert.handle(
+                        () => Alert(
+                            "Real player", "The first player can't be a bot"),
+                        context);
+                    return;
+                  }
                   if (Game.data.players.length >= 2 || MainBloc.online) {
                     Game.data.running = Game.data.running ?? false;
                     GameNavigator.navigate(context, loadGame: true);

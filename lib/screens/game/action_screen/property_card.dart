@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
+import 'package:plutopoly/screens/game/property_page.dart';
 
 import '../../../engine/data/map.dart';
 import '../../../engine/kernel/main.dart';
@@ -36,58 +37,65 @@ class _PropertyCardState extends State<PropertyCard>
     Widget content = Container(height: 200);
 
     if (tile.type == TileType.land) {
-      bool _hasAll = UIBloc.gamePlayer.hasAll(tile.idPrefix);
+      bool _hasAll = UIBloc.gamePlayer.hasAllUnmortaged(tile.idPrefix);
       color = Color(tile.color);
       textColor = Colors.white;
       if (tile.mortaged ?? false)
         leading = Icon(Icons.turned_in, color: Colors.white);
-      content = Column(
-        children: !expanded
-            ? []
-            : [
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      tile.level > 0
-                          ? Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: Houses(amount: tile.level),
-                              ),
-                            )
-                          : Container(),
-                      Expanded(
-                          child: Center(
-                              child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Text("Value: £" + tile.price.toString()),
-                          tile.mortaged
-                              ? Center(
-                                  child: Text(
-                                  "mortaged",
-                                  style: TextStyle(color: Colors.grey),
-                                ))
-                              : Container()
-                        ],
-                      ))),
-                    ],
+      content = InkWell(
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) {
+            return PropertyPage(
+              property: tile,
+            );
+          }));
+        },
+        child: Column(
+          children: !expanded
+              ? []
+              : [
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        tile.level > 0
+                            ? Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Houses(amount: tile.level),
+                                ),
+                              )
+                            : Container(),
+                        Expanded(
+                            child: Center(
+                                child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Text("Value: £" + tile.price.toString()),
+                            tile.mortaged
+                                ? Center(
+                                    child: Text(
+                                    "mortaged",
+                                    style: TextStyle(color: Colors.grey),
+                                  ))
+                                : Container()
+                          ],
+                        ))),
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.bottomCenter,
-                    padding: const EdgeInsets.all(8.0),
-                    width: double.maxFinite,
-                    child: Tooltip(
-                      message: tile.mortaged ? "Buy back" : "Mortage",
-                      child: RaisedButton(
-                        color: Colors.orange,
-                        child: Container(
-                          width: double.maxFinite,
-                          child: Center(
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      padding: const EdgeInsets.all(8.0),
+                      width: double.maxFinite,
+                      child: Tooltip(
+                        message: tile.mortaged ? "Buy back" : "Mortage",
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: FlatButton(
                             child: Text(
                               (tile.mortaged
                                   ? "Buy back for £" +
@@ -96,51 +104,52 @@ class _PropertyCardState extends State<PropertyCard>
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+                                  color: Colors.orange),
                             ),
+                            onPressed: () {
+                              Alert.handle(
+                                  () => Game.act.mortage(tile.mapIndex),
+                                  context);
+                            },
                           ),
                         ),
-                        onPressed: () {
-                          Alert.handle(
-                              () => Game.act.mortage(tile.index), context);
-                        },
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.bottomCenter,
-                    padding: const EdgeInsets.all(8.0),
-                    width: double.maxFinite,
-                    child: Tooltip(
-                      message: _hasAll
-                          ? "Build a house"
-                          : "You need all properties of this color.",
-                      child: RaisedButton(
-                        color: Colors.orange,
-                        child: Container(
-                          width: double.maxFinite,
-                          child: Center(
-                            child: Text(
-                              "Build house £" + tile.housePrice.toString(),
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      padding: const EdgeInsets.all(8.0),
+                      width: double.maxFinite,
+                      child: Tooltip(
+                        message: _hasAll
+                            ? "Build a house"
+                            : "You need all properties of this color.",
+                        child: RaisedButton(
+                          color: Colors.orange,
+                          child: Container(
+                            width: double.maxFinite,
+                            child: Center(
+                              child: Text(
+                                "Build house £" + tile.housePrice.toString(),
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
                             ),
                           ),
+                          onPressed: _hasAll
+                              ? () {
+                                  Alert.handle(() => Game.build(tile), context);
+                                }
+                              : null,
                         ),
-                        onPressed: _hasAll
-                            ? () {
-                                Alert.handle(() => Game.build(tile), context);
-                              }
-                            : null,
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+        ),
       );
     }
 

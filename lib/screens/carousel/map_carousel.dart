@@ -32,7 +32,7 @@ class _MapCarouselState extends State<MapCarousel> {
   Widget build(BuildContext context) {
     List<Widget> listItems = [];
     for (int i = 0; i < Game.data.gmap.length; i++) {
-      listItems.add(buildCard(Game.data.gmap[i], context, i));
+      listItems.add(buildCard(Game.data.gmap[i]));
     }
 
     return PageView.builder(
@@ -43,7 +43,7 @@ class _MapCarouselState extends State<MapCarousel> {
   }
 }
 
-Widget buildCard(Tile tile, BuildContext context, int index) {
+Widget buildCard(Tile tile) {
   switch (tile.type) {
     case TileType.land:
       return LandCard(
