@@ -21,8 +21,11 @@ class StartCard extends StatelessWidget {
             alignment: Alignment.topCenter,
             child: Padding(
               padding: const EdgeInsets.all(10),
-              child:
-                  Text("Start", style: Theme.of(context).textTheme.headline4),
+              child: Text("Start",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline4
+                      .copyWith(color: Colors.black)),
             ),
           ),
           Align(
@@ -30,6 +33,7 @@ class StartCard extends StatelessWidget {
             child: FaIcon(
               FontAwesomeIcons.arrowRight,
               size: 40,
+              color: Colors.black,
             ),
           ),
           PlayerIndicators(

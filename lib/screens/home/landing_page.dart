@@ -157,13 +157,6 @@ class _LandingPageState extends State<LandingPage>
                                           "Install the app (add to homescreen on mobile) and make it act like any other application."),
                                       leading: Icon(Icons.file_download),
                                     ),
-                                    Divider(),
-                                    ListTile(
-                                      title: Text("Mouse scroll"),
-                                      subtitle: Text(
-                                          "To scroll on desktop you have to click and drag. Sorry for the inconvenience"),
-                                      leading: Icon(Icons.expand_more),
-                                    )
                                   ],
                                 )
                               : Container(),

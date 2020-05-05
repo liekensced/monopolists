@@ -15,7 +15,9 @@ import '../../engine/kernel/main.dart';
 
 class PlayersCard extends StatefulWidget {
   final bool red;
-  const PlayersCard({Key key, this.red: false}) : super(key: key);
+  final bool showBots;
+  const PlayersCard({Key key, this.red: false, this.showBots: true})
+      : super(key: key);
 
   @override
   _PlayersCardState createState() => _PlayersCardState();
@@ -119,7 +121,7 @@ class _PlayersCardState extends State<PlayersCard>
                             ));
                 },
               ),
-        AddBotButton(),
+        widget.showBots ? AddBotButton() : Container(),
         AddPlayerButton()
       ],
     );

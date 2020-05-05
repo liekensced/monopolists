@@ -7,17 +7,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
 
 import '../engine/data/main.dart';
 import '../engine/data/map.dart';
 import '../engine/data/player.dart';
 import '../engine/kernel/main.dart';
 import '../engine/ui/alert.dart';
+import 'online_extensions.dart';
 import 'recent_bloc.dart';
+import 'ui_bloc.dart';
 
 class MainBloc {
-  static const version = "0.2.5";
+  static const version = "0.2.6";
   static const _boxVersion = "1.1.2.8";
   static const GAMESBOX = _boxVersion + "gamesbox";
 
@@ -50,6 +51,8 @@ class MainBloc {
         await Firestore.instance.collection("/games").add({"starting ...": ""});
     gameId = data.documentID;
     Game.newGame();
+    Game.data.settings.name = "Game $getGameNumber";
+
     waiter = await data.snapshots().listen((event) {
       if (event.exists) {
         Game.save();
@@ -58,7 +61,7 @@ class MainBloc {
     });
     if (alert != null) return alert;
     Future.delayed(Duration(seconds: 10), () async {
-      if (waiter != null) if (waiter.isPaused) {
+      if (waiter?.isPaused ?? true) {
         waiter.cancel();
         await cancelOnline();
         alert = Alert("Failed to start game", "Check you internet connection.");
@@ -184,11 +187,12 @@ class MainBloc {
 
   static update(DocumentSnapshot snap) {
     Game.data = GameData.fromJson(snap.data);
+    OnlineExtensions.setData(snap.data);
     print("== Received Data ==");
     Hive.box(UPDATEBOX).put("update", 0);
   }
 
-  static save(GameData data) {
+  static save(GameData data, [Map<String, dynamic> bots]) {
     if (!online) {
       print("== New Local Save ==");
       data.save();
@@ -198,6 +202,9 @@ class MainBloc {
       if (data != null) {
         data.bot = false;
         Map<String, dynamic> json = data.toJson();
+        if (bots != null) {
+          json["bots"] = bots;
+        }
         Firestore.instance.document("/games/$gameId").updateData(json);
       }
       updateUI();

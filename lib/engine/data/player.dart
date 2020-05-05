@@ -13,16 +13,16 @@ part 'player.g.dart';
 @HiveType(typeId: 3)
 class Player extends HiveObject {
   @HiveField(0)
-  String name;
+  String name = "null";
   @HiveField(1)
-  double money;
+  double money = 0;
   @HiveField(2)
-  int position;
+  int position = 0;
 
   int get id => Game.data.players.indexWhere((Player p) => p.name == name);
 
   @HiveField(4)
-  int color;
+  int color = 0;
   @HiveField(5)
   List<int> properties = [];
   @HiveField(6)

@@ -8,8 +8,11 @@ import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
 import 'package:plutopoly/screens/game/action_screen/info_card.dart';
 import 'package:plutopoly/screens/game/action_screen/stock_card.dart';
+import 'package:plutopoly/screens/game/property_page.dart';
 import 'package:plutopoly/widgets/eager_inkwell.dart';
+import 'package:plutopoly/widgets/end_of_list.dart';
 import 'package:plutopoly/widgets/my_card.dart';
+import 'package:plutopoly/widgets/online_extensions_card.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 
 import '../../bloc/main_bloc.dart';
@@ -111,7 +114,14 @@ class IdleScreen extends StatelessWidget {
                   )),
                   child: EagerInkWell(
                     onTap: () {
-                      changePos(tile.mapIndex);
+                      if (tile.buyable) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (BuildContext context) {
+                          return PropertyPage(property: tile);
+                        }));
+                      } else {
+                        changePos(tile.mapIndex);
+                      }
                     },
                     child: buildCard(tile),
                   ),
@@ -164,7 +174,9 @@ class IdleScreen extends StatelessWidget {
           iplayer: UIBloc.gamePlayer,
           short: false,
         ),
-        StockCard()
+        StockCard(),
+        OnlineExtensionsCard(),
+        EndOfList()
       ],
     );
   }
@@ -183,9 +195,6 @@ class BoardZoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Zoom(
-      onScaleUpdate: (d, dd) {
-        print(d);
-      },
       initZoom: 0,
       canvasColor: Theme.of(context).canvasColor,
       enableScroll: true,

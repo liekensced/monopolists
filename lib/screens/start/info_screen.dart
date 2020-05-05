@@ -20,7 +20,7 @@ class InfoScreen extends StatelessWidget {
     List<Widget> infoWidgets = <Widget>[];
     List<Extension> extensions = Game.data.extensions;
 
-    if (MainBloc.online) infoWidgets.add(PlayersCard());
+    if (MainBloc.online) infoWidgets.add(PlayersCard(showBots: false));
 
     infoWidgets.add(IconDivider(
       icon: Icon(Icons.settings, size: 40),

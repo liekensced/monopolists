@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:plutopoly/engine/ai/ai_type.dart';
-import 'package:plutopoly/engine/ui/alert.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../bloc/game_listener.dart';
 import '../../bloc/main_bloc.dart';
 import '../../bloc/ui_bloc.dart';
+import '../../engine/ai/ai_type.dart';
 import '../../engine/kernel/main.dart';
+import '../../engine/ui/alert.dart';
 import '../../engine/ui/game_navigator.dart';
 import '../../widgets/end_of_list.dart';
+import '../../widgets/online_extensions_card.dart';
 import '../no_data_screen.dart';
 import 'extensions.dart';
 import 'players.dart';
@@ -74,6 +75,7 @@ class _StartGameScreenState extends State<StartGameScreen> {
                       SettingsCard(),
                       PlayersCard(red: red),
                       ExtensionsCard(),
+                      OnlineExtensionsCard(),
                       EndOfList()
                     ];
                     return FractionallySizedBox(

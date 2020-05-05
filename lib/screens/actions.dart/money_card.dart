@@ -79,20 +79,24 @@ class MoneyCard extends StatelessWidget {
   }
 
   Widget buildText() {
-    if (Game.data.turn <= 1) return Container();
-    double lastMoney = Game.data.player.moneyHistory[Game.data.turn - 1];
-    double percentChange =
-        ((Game.data.player.money - lastMoney) / lastMoney) * 100;
-    if (percentChange.isInfinite || percentChange.isNaN) percentChange = 0;
-    bool p = percentChange >= 0;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          percentChange.floor().toString() + (p ? "% ▲" : "% ▼"),
-          style: TextStyle(color: p ? Colors.green : Colors.red),
+    try {
+      if (Game.data.turn <= 1) return Container();
+      double lastMoney = Game.data.player.moneyHistory[Game.data.turn - 1];
+      double percentChange =
+          ((Game.data.player.money - lastMoney) / lastMoney) * 100;
+      if (percentChange.isInfinite || percentChange.isNaN) percentChange = 0;
+      bool p = percentChange >= 0;
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            percentChange.floor().toString() + (p ? "% ▲" : "% ▼"),
+            style: TextStyle(color: p ? Colors.green : Colors.red),
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      return Container();
+    }
   }
 }

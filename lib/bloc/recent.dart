@@ -19,5 +19,7 @@ class Recent extends HiveObject {
   @HiveField(5)
   bool idle;
 
-  Recent(this.name, this.owner, this.turn, this.idle);
+  Recent(this.name, this.owner, this.turn, this.idle) {
+    if (name == "") name = "game";
+  }
 }

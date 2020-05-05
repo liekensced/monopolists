@@ -56,6 +56,24 @@ class MyDrawer extends StatelessWidget {
               trailing: Icon(Icons.open_in_new),
             ),
           ),
+          Divider(),
+          InkWell(
+            onTap: () {
+              showAboutDialog(
+                  context: context,
+                  applicationName: "Plutopoly",
+                  applicationVersion: MainBloc.version,
+                  applicationIcon: Image.asset(
+                    "assets/logo.png",
+                    width: 40,
+                    height: 40,
+                  ));
+            },
+            child: ListTile(
+              title: Text("About plutopoly"),
+              trailing: Icon(Icons.open_in_new),
+            ),
+          ),
           Spacer(),
           ListTile(
             title: Text("Hide system overlays"),

@@ -69,7 +69,7 @@ class GameData extends HiveObject {
   }
 
   Player get player {
-    if (currentPlayer >= players.length) return null;
+    if (currentPlayer >= players.length) return Player();
     if (currentPlayer < 0) {
       currentPlayer = players.last.index;
     }

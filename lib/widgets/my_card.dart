@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plutopoly/bloc/game_listener.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'eager_inkwell.dart';
 
@@ -77,12 +78,61 @@ class _MyCardState extends State<MyCard> with SingleTickerProviderStateMixin {
   }
 
   Widget animatedSizeWrapper() {
-    if (!widget.animate) return buildCardChild();
-    return AnimatedSize(
-      vsync: this,
-      duration: Duration(milliseconds: 200),
-      child: buildCardChild(),
-    );
+    try {
+      if (!widget.animate) return buildCardChild();
+      return AnimatedSize(
+        vsync: this,
+        duration: Duration(milliseconds: 200),
+        child: buildCardChild(),
+      );
+    } catch (e) {
+      return ListTile(
+        title: Text("Something went wrong :/"),
+        trailing: IconButton(
+          icon: Icon(Icons.info_outline),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                    title: Text("Card failed to load"),
+                    content: Text(e.toString()),
+                    actions: [
+                      MaterialButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            "close",
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor),
+                          )),
+                      MaterialButton(
+                          onPressed: () {
+                            _launchURL();
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            "report",
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor),
+                          ))
+                    ]);
+              },
+            );
+          },
+        ),
+      );
+    }
+  }
+
+  _launchURL() async {
+    const url = 'mailto:filoruxonline+bug@gmail.com';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   Widget buildCardChild() {
