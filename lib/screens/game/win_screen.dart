@@ -130,12 +130,14 @@ class WinScreen extends StatelessWidget {
                     child: RaisedButton(
                       color: Colors.red,
                       child: Text(
-                        "New game",
+                        "Reset: you can reuse this game pin",
                         style: TextStyle(color: Colors.white),
                       ),
                       onPressed: () {
                         MainBloc.resetGame();
-                        Navigator.pop(context);
+                        Navigator.popUntil(context, (Route d) {
+                          return d.isFirst;
+                        });
                         GameNavigator.navigate(context);
                       },
                     ),

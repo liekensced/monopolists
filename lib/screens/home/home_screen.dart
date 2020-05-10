@@ -1,10 +1,18 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/screens/home/landing_page.dart';
-import 'package:plutopoly/widgets/end_of_list.dart';
+import '../../bloc/ui_bloc.dart';
+import 'landing_page.dart';
+import '../start/info_screen.dart';
+import '../version_screen.dart';
+import '../../widgets/ad.dart';
+import '../../widgets/ad_message.dart';
+import '../../widgets/end_of_list.dart';
+import '../../widgets/my_card.dart';
+import '../../widgets/settings_card.dart';
 import 'recent_card.dart';
 
 import '../../bloc/main_bloc.dart';
@@ -23,6 +31,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final NativeAdmobController _adController = NativeAdmobController();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Future.delayed(Duration.zero, () {
+        UIBloc.showAlerts(context);
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (Hive.box(MainBloc.PREFBOX).get("boolLanding", defaultValue: true)) {
@@ -76,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 body: Center(
                   child: Container(
-                    constraints: BoxConstraints(maxWidth: 700),
+                    constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
                     child: ValueListenableBuilder(
                         valueListenable:
                             Hive.box(MainBloc.METABOX).listenable(),
@@ -146,7 +166,71 @@ class _MyHomePageState extends State<MyHomePage> {
                                   builder: (context, Box box, _) {
                                     return RecentCard(box: box);
                                   }),
+                              IconDivider(
+                                icon: Icon(
+                                  Icons.settings,
+                                  size: 40,
+                                ),
+                              ),
+                              ADView(
+                                controller: _adController,
+                              ),
                               AccountCard(),
+                              SettingsCard(),
+                              VersionCard(),
+                              IconDivider(
+                                icon: Icon(
+                                  Icons.whatshot,
+                                  size: 40,
+                                ),
+                              ),
+                              MyCard(
+                                title: "Add ad",
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      if (kIsWeb) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                                title: Text("No ads on web"),
+                                                content: Text(
+                                                    "There are no daily ads on the web version."),
+                                                actions: [
+                                                  MaterialButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text(
+                                                        "close",
+                                                        style: TextStyle(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor),
+                                                      ))
+                                                ]);
+                                          },
+                                        );
+                                        return;
+                                      }
+                                      int amount = Hive.box(MainBloc.METABOX)
+                                          .get("intAdDays", defaultValue: 0);
+                                      Hive.box(MainBloc.METABOX)
+                                          .put("intAdDays", amount + 1);
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Text(
+                                          "Tap to add an ad to daily ads."),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              ADView(
+                                large: true,
+                                controller: _adController,
+                              ),
                               EndOfList()
                             ],
                           );
@@ -183,6 +267,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   return Container();
                 },
               ),
+              ValueListenableBuilder(
+                  valueListenable: MainBloc.metaBox.listenable(),
+                  builder: (context, snapshot, _) {
+                    return DailyAdsMessage();
+                  }),
             ],
           ),
         ],

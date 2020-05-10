@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/data/player.dart';
@@ -148,6 +149,34 @@ AlertDialog authDialog(BuildContext context, bool welcome) {
               );
             },
           ),
+          welcome
+              ? Container()
+              : Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                      "You can automatically syncronize accounts with this link."),
+                ),
+          welcome
+              ? Container()
+              : MaterialButton(
+                  textColor: Colors.white,
+                  color: Colors.green,
+                  child: Container(
+                      width: double.infinity,
+                      child: Text(
+                        "Automatically syncronize",
+                        textAlign: TextAlign.center,
+                      )),
+                  onPressed: () async {
+                    String url =
+                        "https://plutopoly.web.app/?authcode=${MainBloc.code}&name=${MainBloc.player.name}&color=${MainBloc.player.color}";
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+                  },
+                ),
         ],
       ),
     ),

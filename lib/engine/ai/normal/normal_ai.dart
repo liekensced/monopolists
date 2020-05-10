@@ -38,11 +38,22 @@ class NormalAI {
     value = property.price * (Game.data.turn / 20 + 1);
     value += property.level * property.housePrice;
     int missing = play.missing(property.idPrefix);
-    if (missing == 3) value * 0.8;
-    if (missing == 2) {
-      value *= 1.5;
-    } else if (missing == 1) {
-      value *= 2;
+    switch (missing) {
+      case 0:
+        value *= 20;
+        break;
+      case 1:
+        value *= 1.8;
+        value += 300;
+        break;
+      case 2:
+        value *= 1.3;
+        value += 100;
+        break;
+      case 3:
+        value * 0.8;
+        break;
+      default:
     }
 
     return value.floor();
@@ -100,39 +111,8 @@ class NormalAI {
       }
       remotelyBuild();
       trade();
-      if (player.jailed) {
-        if (Game.data.turn < 20) {
-          if (chance(0.8)) Game.act.buyOutJail();
-        } else {
-          if (chance(0.2)) Game.act.buyOutJail();
-        }
-      }
-
-      while (player.money < 0) {
-        List<int> streetless = player.properties.where((int i) {
-          Tile property = Game.data.gmap[i];
-          if (property.hyp == null) return false;
-          if (property.mortaged) return false;
-          if (player.hasAll(property.idPrefix)) return false;
-          return true;
-        }).toList();
-        List<int> streets = player.properties.where((int i) {
-          Tile property = Game.data.gmap[i];
-          if (property.hyp == null) return false;
-          if (property.mortaged) return false;
-          if (!player.hasAll(property.idPrefix)) return false;
-          return true;
-        }).toList();
-        if (streetless.isEmpty && streets.isEmpty) {
-          Game.setup.defaultPlayer(player);
-          return;
-        }
-        if (streetless.isEmpty) {
-          Game.act.mortage(streets[Random().nextInt(streets.length)]);
-        } else {
-          Game.act.mortage(streetless[Random().nextInt(streetless.length)]);
-        }
-      }
+      checkJail();
+      mortage();
     } finally {
       Alert nextAlert = Game.next();
       if (nextAlert?.failed ?? false) {
@@ -143,14 +123,56 @@ class NormalAI {
     }
   }
 
+  static checkJail() {
+    if (player.jailed) {
+      if (Game.data.turn < 20) {
+        if (chance(0.8)) Game.act.buyOutJail();
+      } else {
+        if (chance(0.2)) Game.act.buyOutJail();
+      }
+    }
+  }
+
+  static mortage() {
+    while (player.money < 0) {
+      List<int> streetless = player.properties.where((int i) {
+        Tile property = Game.data.gmap[i];
+        if (property.hyp == null) return false;
+        if (property.mortaged) return false;
+        if (player.hasAll(property.idPrefix)) return false;
+        return true;
+      }).toList();
+      List<int> streets = player.properties.where((int i) {
+        Tile property = Game.data.gmap[i];
+        if (property.hyp == null) return false;
+        if (property.mortaged) return false;
+        if (!player.hasAll(property.idPrefix)) return false;
+        return true;
+      }).toList();
+      if (streetless.isEmpty && streets.isEmpty) {
+        Game.setup.defaultPlayer(player);
+        return;
+      }
+      if (streetless.isEmpty) {
+        Game.act.mortage(streets[Random().nextInt(streets.length)]);
+      } else {
+        Game.act.mortage(streetless[Random().nextInt(streetless.length)]);
+      }
+    }
+  }
+
+  static buildHouses(Tile property) {
+    if (player.hasAll(tile.idPrefix)) {
+      while (property.housePrice < player.money) {
+        if (chance(0.1)) break;
+        print(Game.build());
+      }
+    }
+  }
+
   static onLand() {
     if (isOwner) {
-      if (player.hasAll(tile.idPrefix)) {
-        while (tile.housePrice < player.money) {
-          if (chance(0.1)) break;
-          print(Game.build());
-        }
-      }
+      buildHouses(tile);
       return;
     }
     if (tile.price < player.money * 2) {
@@ -172,7 +194,7 @@ class NormalAI {
   }
 
   static trade() {
-    if (Game.data.turn < 10 && chance(player.money / 1000)) return;
+    if (Game.data.turn > 10 && chance(player.money / 1000)) return;
     Game.data.gmap
         .where((Tile t) {
           if (!t.buyable) return false;

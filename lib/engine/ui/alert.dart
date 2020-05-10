@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/engine/ui/game_navigator.dart';
 
 import '../../screens/start/players.dart';
 import '../data/player.dart';
@@ -6,8 +8,13 @@ import '../kernel/main.dart';
 
 /// This can be returned by a Game method to show in the UI
 class Alert {
+  static const String FASTJOIN = ">FAST_JOIN";
   String title = "";
   String content = "";
+
+  /// The key is the shown name
+  /// Gets added after the cancel action.
+  /// Please pop when done
   Map<String, Function(BuildContext context)> actions;
   bool closable = true;
   bool snackbar = false;
@@ -24,6 +31,15 @@ class Alert {
     content = content ?? "";
     snackbar = true;
     failed = false;
+  }
+  Alert.join(String gamePin) {
+    if (gamePin == null) {
+      title = "failed alert";
+      content = "failed unsucessfullly";
+    } else {
+      title = FASTJOIN;
+      content = gamePin;
+    }
   }
   Alert.accountIncomplete() {
     title = "Please complete your account";
@@ -53,9 +69,28 @@ class Alert {
     }
   }
 
+  static joinOnline(BuildContext context, String gamePin) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AddPlayerDialog(prefPlayer: true);
+      },
+    );
+    if (MainBloc.player.name != "null") {
+      Alert alert = await MainBloc.joinOnline(gamePin);
+      if (handle(() => alert, context)) {
+        GameNavigator.navigate(context);
+      }
+    }
+  }
+
   static bool handle(Alert Function() function, BuildContext context) {
     Alert alert = function();
     if (alert != null) {
+      if (alert.title == FASTJOIN) {
+        joinOnline(context, alert.content);
+        return true;
+      }
       if (alert.snackbar) {
         try {
           Scaffold.of(context).hideCurrentSnackBar();

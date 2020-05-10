@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/helpers/route_helper.dart';
 
 import '../engine/data/main.dart';
 import '../engine/data/map.dart';
@@ -29,6 +30,7 @@ class MainBloc {
   static const ACCOUNTBOX = _boxVersion + "accountBox";
   static const RECENTBOX = _boxVersion + "recentBox";
 
+  static bool initialized = false;
   static int currentGame = 0;
   static bool online = false;
   static String gameId;
@@ -36,6 +38,8 @@ class MainBloc {
   static StreamSubscription<DocumentSnapshot> waiter;
 
   static bool dealOpen = false;
+
+  static bool get isPro => false;
 
   static Box get metaBox {
     return Hive.box(METABOX);
@@ -218,6 +222,8 @@ class MainBloc {
   static Box get prefbox => Hive.box(PREFBOX);
 
   static initBloc(BuildContext context) {
+    if (initialized) return;
+    initialized = true;
     code;
 
     currentGame = Hive.box(METABOX).get("intCurrentGame");
@@ -231,6 +237,7 @@ class MainBloc {
     }
 
     RecentBloc.checkRecent();
+    RouteHelper.initUniLinks();
   }
 
   static int get getGameNumber {

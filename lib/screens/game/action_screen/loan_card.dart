@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
+import 'package:plutopoly/engine/data/extensions.dart';
 import 'package:plutopoly/engine/extensions/bank/bank_main.dart';
+import 'package:plutopoly/engine/kernel/main.dart';
 
 import '../../../engine/extensions/bank/data/loan.dart';
-import '../../../engine/kernel/main.dart';
 import '../../../engine/ui/alert.dart';
 import '../../../widgets/my_card.dart';
 
 class LoanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    if (!UIBloc.playing) return Container();
+    if (!Game.data.extensions.contains(Extension.bank)) return Container();
+
     List<Widget> loans = [];
 
     loans.add(Container(
@@ -18,7 +23,7 @@ class LoanCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("£" + Game.data.player.debt.toInt().toString(),
+            Text("£" + UIBloc.gamePlayer.debt.toInt().toString(),
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             Text(" / £" + BankMain.lendingCap().toInt().toString() + " lend ",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -108,7 +113,7 @@ class DebtCard extends StatelessWidget {
 
   List<Widget> getDebts(BuildContext context) {
     List<Widget> debts = [];
-    List<Contract> loans = Game.data.player.loans;
+    List<Contract> loans = UIBloc.gamePlayer.loans;
     loans.sort((l, ll) => l.fullId.compareTo(ll.fullId));
     Map<String, int> idAmount = {};
     loans.forEach((l) {

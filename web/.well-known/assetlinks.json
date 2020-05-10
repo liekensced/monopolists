@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "web.filorux.plutopoly",
+      "sha256_cert_fingerprints": [
+        " 65:E6:C1:1D:04:63:F4:68:DD:44:37:82:09:33:C2:E4:7F:4C:5E:A6:76:B8:CD:92:A6:1F:C5:15:DC:D3:56:20"
+      ]
+    }
+  }
+]

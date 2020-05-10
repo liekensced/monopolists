@@ -22,6 +22,7 @@ class PropertyActionCard extends StatelessWidget {
     return GameListener(
       builder: (_, __, ___) {
         Tile tile = Game.data.player.positionTile;
+
         if (tile.type == TileType.chance) {
           CardAction action = events[Game.data.eventIndex];
           return FlipCard(
@@ -136,6 +137,10 @@ class PropertyActionCard extends StatelessWidget {
                                   Alert.handle(
                                       () => Game.executeEvent(action.func),
                                       context);
+                                  pageController.animateToPage(
+                                      Game.data.player.position,
+                                      duration: Duration(milliseconds: 500),
+                                      curve: Curves.easeInOutCubic);
                                 },
                               ),
                       )
@@ -165,6 +170,13 @@ class PropertyActionCardChild extends StatelessWidget {
   Widget buildRaisedButton(BuildContext context) {
     Tile tile = Game.data.player.positionTile;
     Player owner = tile.owner;
+
+    if (tile.type == TileType.start) {
+      return Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Text("Your on the start tile."),
+      );
+    }
 
     if (tile.type == TileType.parking) {
       return Container(

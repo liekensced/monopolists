@@ -17,7 +17,10 @@ class StockBloc {
     newWSFactor += 1 + getBullStockFactor();
     newWSFactor += 1 + getExpenditureStockFactor();
 
-    Game.data.bankData.worldStock.value *= Math.min((newWSFactor / 3), 0.1);
+    Game.data.bankData.worldStock.value *= Math.max((newWSFactor / 3), 0.1);
+    Game.data.bankData.worldStock.value +=
+        correction(Game.data.turn, Game.data.bankData.worldStock.value);
+
     if (Game.data.bankData.worldStock.value < 1) {
       Game.data.bankData.worldStock.value = 1;
     }
@@ -25,7 +28,7 @@ class StockBloc {
         ((Game.data.bankData.bullPoints + getWSDifference) * 0.85 +
                 (Game.data.bankData.bullPoints < 0 ? 10 : -10))
             .toInt();
-    Game.data.bankData.volatility += Math.Random().nextInt(3) - 1;
+    Game.data.bankData.volatility += Math.Random().nextInt(2) - 1;
 
     Game.data.bankData.worldStock.valueHistory[Game.data.turn] =
         Game.data.bankData.worldStock.value;
@@ -77,13 +80,13 @@ class StockBloc {
   static double getBullStockFactor() {
     int bullPoints = Game.data.bankData.bullPoints;
     if (bullPoints > 100)
-      return 0.15;
+      return 0.18;
     else if (bullPoints >= 0)
-      return 0.11;
+      return 0.13;
     else if (bullPoints < -100)
-      return -0.07;
+      return -0.09;
     else
-      return -0.18;
+      return -0.15;
   }
 
   static double getRandomStockFactor() {
@@ -98,5 +101,11 @@ class StockBloc {
 
     newFactor /= stableness;
     return newFactor;
+  }
+
+  static int correction(int turn, double value) {
+    double trend = 100 + Math.pow(10 * turn, 1 + turn / 600) * 1.8;
+    double dif = trend - value;
+    return (-dif * 0.005 * Game.data.bankData.volatility).floor();
   }
 }

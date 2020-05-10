@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
+import 'package:plutopoly/screens/online_extension_page.dart';
 
 import '../bloc/main_bloc.dart';
 import '../bloc/ui_bloc.dart';
 import '../screens/home/landing_page.dart';
-import '../screens/testing/stock_testing_screen.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({
@@ -32,14 +32,10 @@ class MyDrawer extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (BuildContext context) {
-                return StockTestingScreen();
-              }));
+              Navigator.pushNamed(context, "/stocktest");
             },
             child: ListTile(
               title: Text("Stock simulator"),
-              trailing: Icon(Icons.open_in_new),
             ),
           ),
           Divider(),
@@ -51,9 +47,19 @@ class MyDrawer extends StatelessWidget {
               }));
             },
             child: ListTile(
-              leading: Icon(Icons.info),
               title: Text("Info"),
-              trailing: Icon(Icons.open_in_new),
+            ),
+          ),
+          Divider(),
+          InkWell(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                return OnlineExtensionPage();
+              }));
+            },
+            child: ListTile(
+              title: Text("Online Extensions"),
             ),
           ),
           Divider(),
@@ -71,7 +77,6 @@ class MyDrawer extends StatelessWidget {
             },
             child: ListTile(
               title: Text("About plutopoly"),
-              trailing: Icon(Icons.open_in_new),
             ),
           ),
           Spacer(),

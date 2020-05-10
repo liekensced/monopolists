@@ -11,9 +11,11 @@ import '../../../engine/kernel/main.dart';
 import '../../../widgets/my_card.dart';
 
 class StockCard extends StatelessWidget {
-  final int maxDots;
+  final bool showTrend;
+  final bool showActions;
 
-  const StockCard({Key key, this.maxDots: 20}) : super(key: key);
+  const StockCard({Key key, this.showTrend: false, this.showActions})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     if (!Game.data.extensions.contains(Extension.stock)) return Container();
@@ -49,6 +51,7 @@ class StockCard extends StatelessWidget {
 
   Widget buildBezierChart(BuildContext context) {
     List<DataPoint> stockData = [];
+    List<DataPoint> trend = [];
     List<double> xAxisCustomValues = [];
 
     for (int key = 0;
@@ -57,9 +60,18 @@ class StockCard extends StatelessWidget {
       double value = Game.data.bankData.worldStock.valueHistory[key];
 
       stockData.add(DataPoint(value: value, xAxis: key));
+      trend.add(DataPoint(
+          value: 100 + pow(10 * key, 1 + key / 600) * 1.8, xAxis: key));
       xAxisCustomValues.add(key.toDouble());
     }
 
+    List<BezierLine> series = [];
+    series.add(
+        BezierLine(data: stockData, lineColor: Theme.of(context).accentColor));
+    if (showTrend) {
+      series.add(BezierLine(
+          data: trend, lineColor: Colors.green, lineStrokeWidth: 0.5));
+    }
     return Container(
       height: min(MediaQuery.of(context).size.height / 2, 300),
       width: min(MediaQuery.of(context).size.width * 0.9, UIBloc.maxWidth - 50),
@@ -74,9 +86,7 @@ class StockCard extends StatelessWidget {
           displayYAxis: true,
           showDataPoints: false,
         ),
-        series: [
-          BezierLine(data: stockData, lineColor: Theme.of(context).accentColor)
-        ],
+        series: series,
         xAxisCustomValues: xAxisCustomValues,
         bezierChartScale: BezierChartScale.CUSTOM,
       ),
@@ -84,9 +94,9 @@ class StockCard extends StatelessWidget {
   }
 
   buildActionButtons(BuildContext context) {
-    if (Game.ui.idle) return Container();
+    if (!UIBloc.playing) return Container();
 
-    int playerStockAmount = (Game.data.player.stock["WORLD_STOCK"] ?? 0);
+    int playerStockAmount = (UIBloc.gamePlayer.stock["WORLD_STOCK"] ?? 0);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,

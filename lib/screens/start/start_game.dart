@@ -61,6 +61,25 @@ class _StartGameScreenState extends State<StartGameScreen> {
                         duration: Duration(milliseconds: 500),
                         curve: Curves.decelerate);
                     setState(() {});
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                            title: Text("Not enough players"),
+                            content: Text("Please add at least 2 players"),
+                            actions: [
+                              MaterialButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "close",
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor),
+                                  ))
+                            ]);
+                      },
+                    );
                   }
                 },
               ),
@@ -75,7 +94,7 @@ class _StartGameScreenState extends State<StartGameScreen> {
                       SettingsCard(),
                       PlayersCard(red: red),
                       ExtensionsCard(),
-                      OnlineExtensionsCard(),
+                      MainBloc.online ? OnlineExtensionsCard() : Container(),
                       EndOfList()
                     ];
                     return FractionallySizedBox(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plutopoly/bloc/online_extensions.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
+import 'package:plutopoly/screens/online_extension_page.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -96,10 +97,17 @@ class OnlineExtensionsCard extends StatelessWidget {
       ));
     });
     if (children.isEmpty) {
-      children.add(Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Text(
-            "You can add third party, online, extensions. Look online for more information."),
+      children.add(InkWell(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (c) {
+            return OnlineExtensionPage();
+          }));
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Text(
+              "You can add third party, online, extensions to make your game even better. Tap for more information."),
+        ),
       ));
     }
     return MyCard(

@@ -84,7 +84,7 @@ class _StockTestingScreenState extends State<StockTestingScreen> {
         shrinkWrap: true,
         children: [
           StockCard(
-            maxDots: 99,
+            showTrend: true,
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),

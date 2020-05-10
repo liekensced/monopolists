@@ -7,6 +7,7 @@ import 'package:flutter_material_color_picker/flutter_material_color_picker.dart
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/engine/ai/ai_type.dart';
 import 'package:plutopoly/widgets/my_card.dart';
+import 'package:plutopoly/widgets/share_tile.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/data/player.dart';
@@ -162,28 +163,7 @@ class AddPlayerButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (MainBloc.online) {
-      return ListTile(
-        title: Text("Share the game id"),
-        subtitle: Text(MainBloc.gameId ?? ""),
-        trailing: Column(
-          children: [
-            IconButton(
-              icon: Icon(Icons.content_copy),
-              onPressed: () {
-                try {
-                  Clipboard.setData(ClipboardData(
-                      text: MainBloc.gameId ?? "Something went wrong :/"));
-                } catch (e) {
-                  Alert.handle(
-                      () => Alert("Could not copy",
-                          "Did you give permission?\n" + e.toString()),
-                      context);
-                }
-              },
-            ),
-          ],
-        ),
-      );
+      return ShareTile();
     }
 
     return Padding(
@@ -247,7 +227,7 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Add player"),
+      title: widget.prefPlayer ? Text("Change account") : Text("Add player"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[

@@ -6,10 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:plutopoly/bloc/recent.dart';
-import 'package:plutopoly/engine/ai/ai_type.dart';
 
 import 'bloc/main_bloc.dart';
+import 'bloc/recent.dart';
+import 'engine/ai/ai_type.dart';
 import 'engine/data/deal_data.dart';
 import 'engine/data/extensions.dart';
 import 'engine/data/info.dart';
@@ -21,6 +21,7 @@ import 'engine/data/ui_actions.dart';
 import 'engine/extensions/bank/data/bank_data.dart';
 import 'engine/extensions/bank/data/loan.dart';
 import 'engine/extensions/bank/data/stock.dart';
+import 'helpers/route_helper.dart';
 import 'screens/home/home_screen.dart';
 
 Future<void> main() async {
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Plutopoly',
+            onGenerateRoute: RouteHelper.onGenerateRoute,
             theme: ThemeData(
                 brightness: Hive.box(MainBloc.PREFBOX)
                         .get("boolDark", defaultValue: true)

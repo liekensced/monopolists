@@ -65,15 +65,6 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                       title: Text("Show rules"),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      UIBloc.toggleDarkMode();
-                    },
-                    child: ListTile(
-                      leading: FaIcon(FontAwesomeIcons.adjust),
-                      title: Text("Toggle dark mode"),
-                    ),
-                  ),
                   Game.data.settings.hackerScreen
                       ? InkWell(
                           onTap: () {

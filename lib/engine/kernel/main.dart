@@ -219,11 +219,8 @@ class Game {
       data.currentPlayer++;
     }
 
-    if (!Game.ui.realPlayers) {
-    } else {
-      if (data.player.aiType == AIType.normal) {
-        NormalAI.onPlayerTurn();
-      }
+    if (data.player.aiType == AIType.normal && Game.ui.realPlayers) {
+      NormalAI.onPlayerTurn();
     }
     save();
     return null;
