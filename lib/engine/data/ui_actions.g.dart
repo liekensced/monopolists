@@ -6,6 +6,40 @@ part of 'ui_actions.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
+class ScreenAdapter extends TypeAdapter<Screen> {
+  @override
+  final typeId = 13;
+
+  @override
+  Screen read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return Screen.idle;
+      case 1:
+        return Screen.move;
+      case 2:
+        return Screen.active;
+      default:
+        return null;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, Screen obj) {
+    switch (obj) {
+      case Screen.idle:
+        writer.writeByte(0);
+        break;
+      case Screen.move:
+        writer.writeByte(1);
+        break;
+      case Screen.active:
+        writer.writeByte(2);
+        break;
+    }
+  }
+}
+
 class UIActionsDataAdapter extends TypeAdapter<UIActionsData> {
   @override
   final typeId = 5;
@@ -17,7 +51,7 @@ class UIActionsDataAdapter extends TypeAdapter<UIActionsData> {
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return UIActionsData()
-      ..shouldMove = fields[0] as bool
+      ..screenState = fields[0] as Screen
       ..showDealScreen = fields[1] as bool;
   }
 
@@ -26,7 +60,7 @@ class UIActionsDataAdapter extends TypeAdapter<UIActionsData> {
     writer
       ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.shouldMove)
+      ..write(obj.screenState)
       ..writeByte(1)
       ..write(obj.showDealScreen);
   }
@@ -38,12 +72,50 @@ class UIActionsDataAdapter extends TypeAdapter<UIActionsData> {
 
 UIActionsData _$UIActionsDataFromJson(Map<String, dynamic> json) {
   return UIActionsData()
-    ..shouldMove = json['shouldMove'] as bool
+    ..screenState = _$enumDecodeNullable(_$ScreenEnumMap, json['screenState'])
     ..showDealScreen = json['showDealScreen'] as bool;
 }
 
 Map<String, dynamic> _$UIActionsDataToJson(UIActionsData instance) =>
     <String, dynamic>{
-      'shouldMove': instance.shouldMove,
+      'screenState': _$ScreenEnumMap[instance.screenState],
       'showDealScreen': instance.showDealScreen,
     };
+
+T _$enumDecode<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    throw ArgumentError('A value must be provided. Supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+
+  final value = enumValues.entries
+      .singleWhere((e) => e.value == source, orElse: () => null)
+      ?.key;
+
+  if (value == null && unknownValue == null) {
+    throw ArgumentError('`$source` is not one of the supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+  return value ?? unknownValue;
+}
+
+T _$enumDecodeNullable<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+}
+
+const _$ScreenEnumMap = {
+  Screen.idle: 'idle',
+  Screen.move: 'move',
+  Screen.active: 'active',
+};

@@ -1,6 +1,6 @@
 import 'package:plutopoly/engine/kernel/main.dart';
 
-import 'main_bloc.dart';
+import '../bloc/main_bloc.dart';
 
 class OnlineExtensions {
   static Map<String, dynamic> extensionsData = {};

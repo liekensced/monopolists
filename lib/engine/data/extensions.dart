@@ -1,4 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:plutopoly/engine/extensions/bank/bank.dart';
+import 'package:plutopoly/engine/extensions/bank/stock_extension.dart';
+import 'package:plutopoly/engine/extensions/extension_data.dart';
+import 'package:plutopoly/engine/extensions/jurisdiction.dart';
 
 part 'extensions.g.dart';
 
@@ -7,27 +12,29 @@ enum Extension {
   @HiveField(0)
   bank,
   @HiveField(1)
-  bank2,
+  transportation,
+
   @HiveField(2)
-  jurisdiction,
+  legislation,
   @HiveField(3)
   stock
 }
 
-//This is an example extension:
-/* 
-  class GameExtension {
-   static bool get enabled =>
-       Game.data.extensions.contains(Extension.gameExtension);
-   static List<Info> getInfo() {
-     return [];
-   }
-   static Widget icon(double size) {
-     return Container(
-       height: size,
-       width: size,
-     );
-   }
-   static get available => false;
+class ExtensionsMap {
+  static Map<Extension, ExtensionData> call() {
+    return {
+      Extension.bank: BankExtension.data,
+      Extension.stock: StockExtension.data,
+      Extension.legislation: LegislationExtension.data,
+      Extension.transportation: ExtensionData(
+          ext: Extension.transportation,
+          name: "Transportation",
+          description: "Adds transportation",
+          icon: ({double size: 30}) => Icon(
+                Icons.train,
+                size: size,
+              ),
+          getInfo: () => [])
+    };
   }
-*/
+}

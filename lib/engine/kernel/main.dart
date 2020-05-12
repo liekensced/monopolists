@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:plutopoly/bloc/ui_bloc.dart';
+
 import '../../bloc/main_bloc.dart';
 import '../ai/ai_type.dart';
 import '../ai/normal/normal_ai.dart';
@@ -20,7 +22,7 @@ import 'game_setup.dart';
 class Game {
   static GameData data;
 
-  static Bank bank = Bank();
+  static BankExtension bank = BankExtension();
   static CoreActions act = CoreActions();
   static GameSetup setup = GameSetup();
   static GameHelpers helper = GameHelpers();
@@ -139,7 +141,7 @@ class Game {
 
   static void move(int dice1, int dice2) {
     data.rentPayed = false;
-    ui.shouldMove = false;
+
     Player player = data.player;
     data.currentDices = [dice1, dice2];
     int steps = dice1 + dice2;
@@ -176,6 +178,7 @@ class Game {
         default:
       }
     }
+
     save();
   }
 
@@ -203,13 +206,12 @@ class Game {
     return null;
   }
 
-  static Alert next({force: false}) {
+  static Alert next({force: false, changeS: false}) {
     data.findingsIndex = Random().nextInt(findings.length);
     data.eventIndex = Random().nextInt(events.length);
     Alert alert = nextCheck();
     if (alert != null && !force) return alert;
 
-    ui.shouldMove = true;
     if (data.currentDices[0] == data.currentDices[1] && !data.player.jailed) {
       data.doublesThrown++;
     } else if (data.currentPlayer == data.players.length - 1) {
@@ -219,15 +221,22 @@ class Game {
       data.currentPlayer++;
     }
 
+    if (changeS) UIBloc.changeScreen(Screen.move);
+
     if (data.player.aiType == AIType.normal && Game.ui.realPlayers) {
+      UIBloc.changeScreen(Screen.idle);
       NormalAI.onPlayerTurn();
     }
+    if (MainBloc.online && Game.data.ui.idle) {
+      UIBloc.changeScreen(Screen.idle);
+    }
+
     save();
     return null;
   }
 
   static onNewTurn() {
-    Bank.onNewTurn();
+    BankExtension.onNewTurn();
     data.turn++;
     //after here
     data.players.asMap().forEach((int i, _) {
@@ -235,7 +244,7 @@ class Game {
       addInfo(UpdateInfo(title: "turn ${data.turn}", leading: "time"), i);
       data.players[i].info[data.turn + 1] = [];
       data.players[i].info[data.turn + 2] = [];
-      Bank.onNewTurnPlayer(i);
+      BankExtension.onNewTurnPlayer(i);
 
       data.players[i].moneyHistory.add(mapPlayer.money);
     });
@@ -247,6 +256,6 @@ class Game {
 
     addInfo(UpdateInfo(title: "Received go bonus: $_goBonus"));
 
-    Bank.onPassGo();
+    BankExtension.onPassGo();
   }
 }

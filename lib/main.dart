@@ -1,54 +1,16 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:plutopoly/helpers/main_helper.dart';
 
 import 'bloc/main_bloc.dart';
-import 'bloc/recent.dart';
-import 'engine/ai/ai_type.dart';
-import 'engine/data/deal_data.dart';
-import 'engine/data/extensions.dart';
-import 'engine/data/info.dart';
-import 'engine/data/main.dart';
-import 'engine/data/map.dart';
-import 'engine/data/player.dart';
-import 'engine/data/settings.dart';
-import 'engine/data/ui_actions.dart';
-import 'engine/extensions/bank/data/bank_data.dart';
-import 'engine/extensions/bank/data/loan.dart';
-import 'engine/extensions/bank/data/stock.dart';
 import 'helpers/route_helper.dart';
 import 'screens/home/home_screen.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  if (!kIsWeb) {
-    var dir = await getApplicationDocumentsDirectory();
-    Hive.init(dir.path);
-  }
-
-  SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(statusBarColor: Colors.teal));
-  Hive.registerAdapter(GameDataAdapter());
-  Hive.registerAdapter(TileAdapter());
-  Hive.registerAdapter(TileTypeAdapter());
-  Hive.registerAdapter(PlayerAdapter());
-  Hive.registerAdapter(SettingsAdapter());
-  Hive.registerAdapter(UIActionsDataAdapter());
-  Hive.registerAdapter(ExtensionAdapter());
-  Hive.registerAdapter(UpdateInfoAdapter());
-  Hive.registerAdapter(DealDataAdapter());
-  Hive.registerAdapter(MapConfigurationAdapter());
-  Hive.registerAdapter(BankDataAdapter());
-  Hive.registerAdapter(ContractAdapter());
-  Hive.registerAdapter(StockAdapter());
-  Hive.registerAdapter(RecentAdapter());
-  Hive.registerAdapter(AITypeAdapter());
-  await Hive.openBox(MainBloc.PREFBOX);
+  await MainHelper.main();
   runApp(MyApp());
 }
 
@@ -62,17 +24,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Plutopoly',
             onGenerateRoute: RouteHelper.onGenerateRoute,
-            theme: ThemeData(
-                brightness: Hive.box(MainBloc.PREFBOX)
-                        .get("boolDark", defaultValue: true)
-                    ? Brightness.dark
-                    : Brightness.light,
-                primaryColor: Colors.teal,
-                accentColor: Colors.cyan,
-                inputDecorationTheme: InputDecorationTheme(
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  border: OutlineInputBorder(),
-                )),
+            theme: MainHelper.themeData,
             home: FutureBuilder(
                 future: Future.wait([
                   Hive.openBox(MainBloc.GAMESBOX),

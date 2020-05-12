@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/engine/extensions/extension_data.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/data/extensions.dart';
 import '../../engine/data/settings.dart';
 import '../../engine/data/tip.dart';
-import '../../engine/extensions/bank/bank.dart';
-import '../../engine/extensions/jurisdiction.dart';
 import '../../engine/kernel/main.dart';
 import '../../engine/ui/game_navigator.dart';
 import '../../widgets/end_of_list.dart';
@@ -80,19 +79,15 @@ class InfoScreen extends StatelessWidget {
         ),
       ),
     ]));
-    if (extensions.contains(Extension.bank)) {
-      infoWidgets.add(IconDivider(icon: Bank.icon(size: 40)));
-      Bank.getInfo().forEach((info) {
-        infoWidgets.add(GeneralInfoCard(info: info));
-      });
-    }
 
-    if (extensions.contains(Extension.jurisdiction)) {
-      infoWidgets.add(IconDivider(icon: Jurisdiction.icon(size: 40)));
-      Jurisdiction.getInfo().forEach((info) {
+    extensions.forEach((ext) {
+      ExtensionData extensionData = ExtensionsMap.call()[ext];
+      infoWidgets.add(IconDivider(icon: extensionData.icon()));
+      extensionData.getInfo().forEach((info) {
         infoWidgets.add(GeneralInfoCard(info: info));
       });
-    }
+    });
+
     if (infoWidgets.length > 3) {
       infoWidgets.add(EndOfList());
     }
@@ -176,7 +171,9 @@ class GeneralInfoCard extends StatelessWidget {
             title: Text("Random (average of +4%)"),
           ),
           ListTile(
-            title: Text("Difference in expenditure"),
+            title: Text("Expenditure, investing"),
+            subtitle: Text(
+                "If people built a lot or invest a lot the stock goes up."),
             trailing: Tooltip(
               child: Icon(Icons.info, color: Colors.grey),
               message: "Properties, houses, rent, ... NOT Fees, taxes",

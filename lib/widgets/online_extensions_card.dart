@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:plutopoly/bloc/online_extensions.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/screens/online_extension_page.dart';
-import 'package:plutopoly/widgets/my_card.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../bloc/ui_bloc.dart';
+import '../helpers/online_extensions.dart';
+import '../screens/online_extension_page.dart';
+import 'my_card.dart';
 
 class OnlineExtensionsCard extends StatelessWidget {
   final bool hide;

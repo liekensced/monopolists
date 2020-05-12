@@ -60,8 +60,7 @@ class StockCard extends StatelessWidget {
       double value = Game.data.bankData.worldStock.valueHistory[key];
 
       stockData.add(DataPoint(value: value, xAxis: key));
-      trend.add(DataPoint(
-          value: 100 + pow(10 * key, 1 + key / 600) * 1.8, xAxis: key));
+      trend.add(DataPoint(value: StockBloc.trend(key), xAxis: key));
       xAxisCustomValues.add(key.toDouble());
     }
 

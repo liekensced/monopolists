@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:plutopoly/engine/data/ui_actions.dart';
 
 import '../engine/data/map.dart';
 import '../engine/data/player.dart';
@@ -12,7 +14,14 @@ import 'main_bloc.dart';
 class UIBloc {
   static int posOveride;
 
+  static ValueNotifier screenUpdate = ValueNotifier<Screen>(Screen.idle);
+
   static List<Alert> alerts = [];
+
+  static changeScreen([Screen screen]) {
+    if (screen != null) Game.data.ui.screenState = screen;
+    screenUpdate.value = screen;
+  }
 
   static showAlerts(BuildContext context) {
     alerts.forEach((Alert alert) {
@@ -61,7 +70,7 @@ class UIBloc {
   static MapConfiguration get mapConfiguration {
     MapConfiguration config = Hive.box(MainBloc.MAPCONFBOX).get(
         Hive.box(MainBloc.METABOX)
-            .get("mapConfiguration", defaultValue: "classic"));
+            .get("mapConfiguration", defaultValue: "dense"));
 
     return config;
   }

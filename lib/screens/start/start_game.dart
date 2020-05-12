@@ -13,14 +13,13 @@ import '../../engine/ui/game_navigator.dart';
 import '../../widgets/end_of_list.dart';
 import '../../widgets/online_extensions_card.dart';
 import '../no_data_screen.dart';
-import 'extensions.dart';
+import 'extensions_card.dart';
+import 'extra_card.dart';
 import 'players.dart';
 import 'settings_card.dart';
 
 class StartGameScreen extends StatefulWidget {
-  final bool online;
-
-  const StartGameScreen({Key key, this.online}) : super(key: key);
+  const StartGameScreen({Key key}) : super(key: key);
   @override
   _StartGameScreenState createState() => _StartGameScreenState();
 }
@@ -31,11 +30,10 @@ class _StartGameScreenState extends State<StartGameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (Game.data == null) return NoDataScreen();
     return ValueListenableBuilder(
         valueListenable: Hive.box(MainBloc.METABOX).listenable(),
         builder: (context, Box box, __) {
-          if (widget.online != null) if (box.get("boolOnline") == false &&
-              widget.online) return NoDataScreen(cancel: true);
           return Scaffold(
               floatingActionButton: FloatingActionButton(
                 child: Icon(
@@ -43,14 +41,6 @@ class _StartGameScreenState extends State<StartGameScreen> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  if (Game.data.players[0].aiType != AIType.player &&
-                      Game.data.running == true) {
-                    Alert.handle(
-                        () => Alert(
-                            "Real player", "The first player can't be a bot"),
-                        context);
-                    return;
-                  }
                   if (Game.data.players.length >= 2 || MainBloc.online) {
                     Game.data.running = Game.data.running ?? false;
                     GameNavigator.navigate(context, loadGame: true);
@@ -81,6 +71,14 @@ class _StartGameScreenState extends State<StartGameScreen> {
                       },
                     );
                   }
+                  if (Game.data.players[0].aiType != AIType.player &&
+                      Game.data.running == true) {
+                    Alert.handle(
+                        () => Alert(
+                            "Real player", "The first player can't be a bot"),
+                        context);
+                    return;
+                  }
                 },
               ),
               appBar: AppBar(
@@ -94,6 +92,7 @@ class _StartGameScreenState extends State<StartGameScreen> {
                       SettingsCard(),
                       PlayersCard(red: red),
                       ExtensionsCard(),
+                      ExtraCard(),
                       MainBloc.online ? OnlineExtensionsCard() : Container(),
                       EndOfList()
                     ];

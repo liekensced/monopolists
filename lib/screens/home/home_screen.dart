@@ -1,9 +1,11 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/screens/start/start_game.dart';
 import '../../bloc/ui_bloc.dart';
 import 'landing_page.dart';
 import '../start/info_screen.dart';
@@ -120,19 +122,30 @@ class _MyHomePageState extends State<MyHomePage> {
                                   }),
                               Padding(
                                 padding: EdgeInsets.all(20),
-                                child: RaisedButton(
-                                  textColor: Colors.white,
-                                  color: Theme.of(context).primaryColor,
-                                  child: Container(
-                                      width: double.infinity,
-                                      child: Text(
-                                        "Start new local game",
-                                        textAlign: TextAlign.center,
-                                      )),
-                                  onPressed: () {
-                                    MainBloc.cancelOnline();
-                                    Game.newGame();
-                                    GameNavigator.navigate(context);
+                                child: OpenContainer(
+                                  closedColor: Theme.of(context).primaryColor,
+                                  openColor: Theme.of(context).canvasColor,
+                                  closedBuilder: (_, f) => InkWell(
+                                    child: Container(
+                                        width: double.infinity,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Text(
+                                            "Start new local game",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        )),
+                                    onTap: () {
+                                      MainBloc.cancelOnline();
+                                      Game.newGame();
+                                      f();
+                                    },
+                                  ),
+                                  openBuilder: (_, __) {
+                                    return StartGameScreen();
                                   },
                                 ),
                               ),

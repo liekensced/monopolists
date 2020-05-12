@@ -23,6 +23,7 @@ class _MapCarouselState extends State<MapCarousel> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!Game.data.ui.idle) UIBloc.posOveride = null;
       if (UIBloc.posOveride != null)
         widget.controller.jumpToPage(UIBloc.posOveride);
     });

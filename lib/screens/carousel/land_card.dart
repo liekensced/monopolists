@@ -31,13 +31,15 @@ class LandCard extends StatelessWidget {
               ),
               child: Container(
                 alignment: Alignment.bottomCenter,
-                padding: EdgeInsets.only(bottom: 10),
+                padding: EdgeInsets.only(bottom: 10, right: 5, left: 5),
                 child: Text(
                   tile.name,
                   style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),

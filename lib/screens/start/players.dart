@@ -232,6 +232,7 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           TextField(
+            autofocus: widget.prefPlayer ? true : false,
             maxLength: 15,
             textCapitalization: TextCapitalization.words,
             onChanged: (String value) => name = value,

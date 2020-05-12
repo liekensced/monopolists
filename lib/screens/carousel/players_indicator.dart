@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:plutopoly/engine/data/ui_actions.dart';
 
 import '../../engine/data/map.dart';
 import '../../engine/data/player.dart';
@@ -19,7 +20,7 @@ class PlayerIndicators extends StatelessWidget {
     tile.players.forEach((player) {
       if (player.jailed != jailed) return;
 
-      if (player == Game.data.player && !Game.ui.shouldMove) {
+      if (player == Game.data.player && Game.ui.screenState != Screen.move) {
         wrap.add(FadeIn(player));
       } else {
         wrap.add(Tooltip(
@@ -58,7 +59,7 @@ class _FadeInState extends State<FadeIn> {
   Widget build(BuildContext context) {
     return AnimationConfiguration.synchronized(
       child: FadeInAnimation(
-        duration: Game.ui.shouldMove
+        duration: Game.ui.screenState == Screen.move
             ? Duration(seconds: 0)
             : Duration(milliseconds: 500),
         delay: Duration(milliseconds: Game.ui.moveAnimationMillis),

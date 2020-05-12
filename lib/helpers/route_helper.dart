@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:plutopoly/engine/data/extensions.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
+import 'package:plutopoly/screens/extension_screen.dart';
 import 'package:uni_links/uni_links.dart';
 
 import '../bloc/main_bloc.dart';
@@ -13,12 +14,24 @@ import '../screens/testing/stock_testing_screen.dart';
 
 class RouteHelper {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
-    if (kIsWeb) _parseRoute(settings.name);
-    switch (settings.name) {
+    Uri uri = Uri.parse(settings.name);
+    if (kIsWeb) _parseRoute(uri);
+    switch (uri.path) {
       case "/stocktest":
         return MaterialPageRoute(builder: (BuildContext context) {
           return StockTestingScreen();
         });
+      case "/extensions":
+        String extString = uri.queryParameters["ext"];
+        Extension ext =
+            Extension.values.firstWhere((e) => e.toString() == extString);
+        if (ext != null) {
+          return MaterialPageRoute(builder: (BuildContext context) {
+            return ExtensionScreen(
+              ext: ext,
+            );
+          });
+        }
     }
     return null;
   }
@@ -31,13 +44,15 @@ class RouteHelper {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       String initialLink = await getInitialLink();
-      _parseRoute(initialLink);
-    } on PlatformException {
+      if (initialLink != null) {
+        _parseRoute(Uri.parse(initialLink));
+      }
+    } catch (e) {
       UIBloc.alerts.add(Alert("Link failed", "Couldn't parse deep link."));
     }
     // Attach a listener to the stream
     _sub = getLinksStream().listen((String link) {
-      _parseRoute(link);
+      _parseRoute(Uri.parse(link));
     }, onError: (err) {
       UIBloc.alerts.add(Alert("Link failed", "Couldn't parse deep link"));
     });
@@ -47,10 +62,8 @@ class RouteHelper {
     _sub.cancel();
   }
 
-  static _parseRoute(String name) {
-    if (name == null || name == "") return;
+  static _parseRoute(Uri uri) {
     try {
-      Uri uri = Uri.parse(name);
       Map<String, String> parameters = uri.queryParameters;
       print(parameters);
       if (parameters.containsKey("gamepin") &&

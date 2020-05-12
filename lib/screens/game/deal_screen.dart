@@ -133,7 +133,7 @@ class _DealScreenChildState extends State<DealScreenChild>
           title: Text("Deal Screen"),
         ),
         body: Center(
-          child: Text("Session terminated"),
+          child: Text("Session ended"),
         ),
       );
     }
@@ -443,10 +443,8 @@ class _DealScreenChildState extends State<DealScreenChild>
                                                     .players[Game
                                                         .data.dealData.dealer]
                                                     .code) {
-                                              Alert.handle(
-                                                  () => Alert("No permission",
-                                                      "You can not confirm this side."),
-                                                  context);
+                                              dealData.playerChecked =
+                                                  !dealData.playerChecked;
                                               return;
                                             }
                                           }
@@ -456,10 +454,8 @@ class _DealScreenChildState extends State<DealScreenChild>
                                           if (MainBloc.online &&
                                               MainBloc.player.code !=
                                                   Game.data.player.code) {
-                                            Alert.handle(
-                                                () => Alert("No permission",
-                                                    "You can not confirm this side."),
-                                                context);
+                                            dealData.dealerChecked =
+                                                !dealData.dealerChecked;
                                             return;
                                           }
                                           if (!(showedDealScreen ?? false)) {

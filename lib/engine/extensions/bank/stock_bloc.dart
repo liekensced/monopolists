@@ -104,8 +104,11 @@ class StockBloc {
   }
 
   static int correction(int turn, double value) {
-    double trend = 100 + Math.pow(10 * turn, 1 + turn / 600) * 1.8;
-    double dif = trend - value;
+    double dif = trend(turn) - value;
     return (-dif * 0.005 * Game.data.bankData.volatility).floor();
+  }
+
+  static double trend(int x) {
+    return 100 + Math.pow(8 * x, 1 + x / 1000) * 1.2;
   }
 }

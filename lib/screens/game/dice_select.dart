@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/engine/data/ui_actions.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/kernel/main.dart';
@@ -122,7 +123,7 @@ class _DiceSelectState extends State<DiceSelect> {
 
           return InkWell(
             onTap: () {
-              if (!Game.ui.shouldMove) return;
+              if (Game.ui.screenState != Screen.move) return;
               box.put("intDice$index", value);
             },
             child: FaIcon(

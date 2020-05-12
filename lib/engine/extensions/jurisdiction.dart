@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/engine/data/extensions.dart';
 
 import '../data/player.dart';
 import '../data/tip.dart';
 import '../kernel/main.dart';
+import 'extension_data.dart';
 
-class Jurisdiction {
+class LegislationExtension {
+  static ExtensionData data = ExtensionData(
+    ext: Extension.legislation,
+    name: "Jurisdiction",
+    description:
+        "You can add oral agreemants to deals but they have to follow the rules.",
+    icon: ({double size: 30}) {
+      return FaIcon(FontAwesomeIcons.balanceScale);
+    },
+    getInfo: getInfo,
+  );
   static Widget icon({double size: 30}) {
     return FaIcon(FontAwesomeIcons.balanceScaleLeft, size: size);
   }

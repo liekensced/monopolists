@@ -255,7 +255,7 @@ class _LandingPageState extends State<LandingPage>
                                     "You can add extensions to make your game more interesting, like:"),
                               ),
                               ListTile(
-                                leading: Bank.icon(),
+                                leading: BankExtension.data.icon(),
                                 title: Text("Banking"),
                                 subtitle: Text(
                                     "Adds loans and interests to the game."),

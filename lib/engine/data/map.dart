@@ -54,6 +54,9 @@ class Tile extends HiveObject {
   int idIndex = 1;
   @HiveField(11)
   bool mortaged = false;
+  @HiveField(12)
+  @JsonKey(defaultValue: "No info")
+  String description = "No info";
 
   factory Tile.fromJson(Map<String, dynamic> json) => _$TileFromJson(json);
 

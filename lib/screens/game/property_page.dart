@@ -30,6 +30,16 @@ class PropertyPage extends StatelessWidget {
               ),
             ),
           ),
+          MyCard(
+            title: "info",
+            smallTitle: true,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(property.description),
+              ),
+            ],
+          ),
           buildRentCard(),
           property.owner == UIBloc.gamePlayer
               ? PropertyCard(

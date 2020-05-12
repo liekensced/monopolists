@@ -192,7 +192,7 @@ T _$enumDecodeNullable<T>(
 
 const _$ExtensionEnumMap = {
   Extension.bank: 'bank',
-  Extension.bank2: 'bank2',
-  Extension.jurisdiction: 'jurisdiction',
+  Extension.transportation: 'transportation',
+  Extension.legislation: 'legislation',
   Extension.stock: 'stock',
 };

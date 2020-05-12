@@ -20,12 +20,12 @@ class Stock extends HiveObject {
   @HiveField(4)
   Map<int, double> valueHistory = {0: 100};
 
-  Stock(
-      {@required this.id,
-      @required this.value,
-      @required this.volume,
-      this.info: ""})
-      : valueHistory = {Game.data?.turn ?? 0: value};
+  Stock({
+    @required this.id,
+    @required this.value,
+    @required this.volume,
+    this.info: "",
+  }) : valueHistory = {Game.data?.turn ?? 0: value};
 
   Stock.world() {
     id = "WORLD_STOCK";

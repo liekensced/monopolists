@@ -5,7 +5,6 @@ import 'package:plutopoly/screens/game/win_screen.dart';
 import 'package:plutopoly/screens/no_data_screen.dart';
 
 import '../../screens/game/action_screen/action_screen.dart';
-import '../../screens/game/move_screen.dart';
 import '../../screens/start/info_screen.dart';
 import '../../screens/start/start_game.dart';
 import '../kernel/main.dart';
@@ -44,47 +43,18 @@ class GameNavigator {
     }
 
     //DURING GAME
-
-    if (Game.ui.idle) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) {
-          return ActionScreen();
-        }),
-      );
-      return;
-    }
-
     if (UIBloc.hideOverlays) SystemChrome.setEnabledSystemUIOverlays([]);
-    if (Game.ui.shouldMove) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, _, __) {
-            return MoveScreen();
-          },
-          transitionsBuilder: (context, animation, _, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-          transitionDuration: Duration(milliseconds: 500),
-        ),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, _, __) {
-            Game.ui.loadActionScreen();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) {
+        return ValueListenableBuilder(
+          valueListenable: UIBloc.screenUpdate,
+          builder: (BuildContext context, value, Widget child) {
             return ActionScreen();
           },
-          transitionsBuilder: (context, animation, _, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-          transitionDuration: Duration(milliseconds: 500),
-        ),
-      );
-    }
+        );
+      }),
+    );
   }
 }
-
-enum GamePage { auction, infoScreen, settings }

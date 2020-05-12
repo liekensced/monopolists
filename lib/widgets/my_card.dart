@@ -14,6 +14,7 @@ class MyCard extends StatefulWidget {
   final Function onTap;
   final double maxWidth;
   final bool animate;
+  final Widget leading;
 
   const MyCard({
     Key key,
@@ -24,7 +25,7 @@ class MyCard extends StatefulWidget {
     this.color,
     this.onTap,
     this.maxWidth,
-    this.animate: true,
+    this.animate: true, this.leading,
   }) : super(key: key);
 
   @override

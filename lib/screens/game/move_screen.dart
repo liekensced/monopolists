@@ -3,10 +3,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plutopoly/bloc/game_listener.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
+import 'package:plutopoly/engine/data/ui_actions.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/kernel/main.dart';
-import '../../engine/ui/game_navigator.dart';
 import '../carousel/map_carousel.dart';
 import 'dice_select.dart';
 
@@ -71,7 +72,8 @@ class MoveScreen extends StatelessWidget {
                                     Game.ui.moveAnimationMillis + 500), () {
                           box.delete("intDice0");
                           box.delete("intDice1");
-                          navigate(context);
+                          UIBloc.changeScreen(Screen.active);
+                          Game.save();
                         });
                       }
                     }
@@ -87,10 +89,6 @@ class MoveScreen extends StatelessWidget {
             ),
           ),
         ));
-  }
-
-  navigate(BuildContext context) {
-    GameNavigator.navigate(context);
   }
 }
 

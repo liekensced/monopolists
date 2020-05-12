@@ -1,34 +1,38 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
-import 'package:plutopoly/engine/data/tip.dart';
-import 'package:plutopoly/screens/start/info_screen.dart';
-import 'package:plutopoly/widgets/end_of_list.dart';
-import 'package:plutopoly/widgets/my_card.dart';
+
+import '../bloc/main_bloc.dart';
+import '../engine/data/tip.dart';
+import '../widgets/end_of_list.dart';
+import '../widgets/my_card.dart';
+import 'start/info_screen.dart';
 
 class VersionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MyCard(
-      title: "Version",
-      children: [
-        ListTile(
-          title: Text("Your current version:"),
-          trailing: Text(MainBloc.version),
-        ),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: FlatButton(
-            textColor: Theme.of(context).primaryColor,
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (BuildContext context) {
-                return VersionScreen();
-              }));
-            },
-            child: Text("More info"),
+    return OpenContainer(
+      openColor: Theme.of(context).canvasColor,
+      closedColor: Theme.of(context).canvasColor,
+      openBuilder: (_, __) => VersionScreen(),
+      closedBuilder: (_, f) => MyCard(
+        title: "Version",
+        children: [
+          ListTile(
+            title: Text("Your current version:"),
+            trailing: Text(MainBloc.version),
           ),
-        )
-      ],
+          Align(
+            alignment: Alignment.bottomRight,
+            child: FlatButton(
+              textColor: Theme.of(context).primaryColor,
+              onPressed: () {
+                f();
+              },
+              child: Text("More info"),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

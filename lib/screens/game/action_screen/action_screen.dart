@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plutopoly/engine/data/ui_actions.dart';
 
 import '../../../bloc/game_listener.dart';
 import '../../../bloc/main_bloc.dart';
@@ -9,7 +10,6 @@ import '../../../engine/data/map.dart';
 import '../../../engine/data/player.dart';
 import '../../../engine/kernel/main.dart';
 import '../../../engine/ui/alert.dart';
-import '../../../engine/ui/game_navigator.dart';
 import '../../../widgets/animated_count.dart';
 import '../../../widgets/end_of_list.dart';
 import '../../../widgets/slide_fab.dart';
@@ -19,6 +19,7 @@ import '../../actions.dart/property_action_card.dart';
 import '../../carousel/map_carousel.dart';
 import '../deal_screen.dart';
 import '../idle_screen.dart';
+import '../move_screen.dart';
 import 'bottom_sheet.dart';
 import 'default_card.dart';
 import 'info_card.dart';
@@ -26,18 +27,28 @@ import 'loan_card.dart';
 import 'property_card.dart';
 import 'stock_card.dart';
 
-class ActionScreen extends StatelessWidget {
+class ActionScreen extends StatefulWidget {
   ActionScreen() {
     MainBloc.dealOpen = false;
   }
 
   @override
+  _ActionScreenState createState() => _ActionScreenState();
+}
+
+class _ActionScreenState extends State<ActionScreen> {
+  @override
   Widget build(BuildContext context) {
+    if (Game.ui.screenState == Screen.move && !Game.ui.idle) {
+      return MoveScreen();
+    }
     double fraction = 200 / MediaQuery.of(context).size.width;
     PageController pageController = PageController(
       initialPage: Game.data.player.position,
       viewportFraction: fraction,
     );
+    bool idle = Game.ui.idle || Game.ui.screenState == Screen.idle;
+    Screen screenState = Game.ui.screenState;
     return DefaultTabController(
       length: 2,
       initialIndex: 1,
@@ -66,6 +77,9 @@ class ActionScreen extends StatelessWidget {
                       child: GameListener(
                         builder: (BuildContext context, _, __) {
                           try {
+                            if (screenState != Game.ui.screenState) {
+                              setState(() {});
+                            }
                             if (Game.data.dealData.dealer != null) {
                               if (Game.data.players[Game.data.dealData.dealer]
                                           .code ==
@@ -141,12 +155,11 @@ class ActionScreen extends StatelessWidget {
               ];
             },
             body: TabBarView(
-              physics: Game.ui.idle
-                  ? NeverScrollableScrollPhysics()
-                  : PageScrollPhysics(),
+              physics:
+                  idle ? NeverScrollableScrollPhysics() : PageScrollPhysics(),
               children: <Widget>[
                 GameListener(builder: (c, _, __) => buildHoldingCards(context)),
-                Game.ui.idle
+                idle
                     ? GameListener(
                         builder: (c, __, ___) => IdleScreen(pageController))
                     : GameListener(
@@ -258,77 +271,70 @@ class ActionFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool wasIdle = false;
+    bool idle = Game.ui.idle || Game.ui.screenState == Screen.idle;
     return GameListener(
       builder: (BuildContext context, _, __) {
-        if (Game.ui.idle || wasIdle) {
-          wasIdle = true;
+        if (idle) {
           return SlideFab(
             hide: Game.ui.idle,
             title: "Your turn",
             onTap: () {
-              GameNavigator.navigate(context);
+              UIBloc.changeScreen(Screen.move);
+              Game.save();
             },
           );
         }
 
-        return Game.ui.idle
-            ? Container()
-            : Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 12.0),
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      if (continueCheck(
-                          DefaultTabController.of(context).index, context)) {
-                        if (Alert.handle(Game.next, context)) {
-                          GameNavigator.navigate(context);
-                        }
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                                title: Text("Continue"),
-                                content: Text(
-                                    "Are you sure you want to go to the next turn?"),
-                                actions: [
-                                  MaterialButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        "close",
-                                        style: TextStyle(
-                                            color:
-                                                Theme.of(context).primaryColor),
-                                      )),
-                                  MaterialButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        if (Alert.handle(Game.next, context)) {
-                                          GameNavigator.navigate(context);
-                                        }
-                                      },
-                                      child: Text(
-                                        "continue",
-                                        style: TextStyle(
-                                            color:
-                                                Theme.of(context).primaryColor),
-                                      ))
-                                ]);
-                          },
-                        );
-                      }
+        return Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: FloatingActionButton(
+              onPressed: () {
+                if (continueCheck(
+                    DefaultTabController.of(context).index, context)) {
+                  if (Alert.handle(() => Game.next(changeS: true), context)) {}
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                          title: Text("Continue"),
+                          content: Text(
+                              "Are you sure you want to go to the next turn?"),
+                          actions: [
+                            MaterialButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  "close",
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor),
+                                )),
+                            MaterialButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Alert.handle(
+                                      () => Game.next(changeS: true), context);
+                                },
+                                child: Text(
+                                  "continue",
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor),
+                                ))
+                          ]);
                     },
-                    child: Icon(
-                      Icons.navigate_next,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              );
+                  );
+                }
+              },
+              child: Icon(
+                Icons.navigate_next,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        );
       },
     );
   }

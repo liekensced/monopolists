@@ -16,9 +16,9 @@ class ExtensionAdapter extends TypeAdapter<Extension> {
       case 0:
         return Extension.bank;
       case 1:
-        return Extension.bank2;
+        return Extension.transportation;
       case 2:
-        return Extension.jurisdiction;
+        return Extension.legislation;
       case 3:
         return Extension.stock;
       default:
@@ -32,10 +32,10 @@ class ExtensionAdapter extends TypeAdapter<Extension> {
       case Extension.bank:
         writer.writeByte(0);
         break;
-      case Extension.bank2:
+      case Extension.transportation:
         writer.writeByte(1);
         break;
-      case Extension.jurisdiction:
+      case Extension.legislation:
         writer.writeByte(2);
         break;
       case Extension.stock:

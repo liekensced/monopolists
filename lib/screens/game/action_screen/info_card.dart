@@ -75,7 +75,7 @@ Widget getLeading(String leading) {
       return Icon(Icons.home);
       break;
     case "bank":
-      return Bank.icon();
+      return BankExtension.data.icon();
     case "time":
       return FaIcon(FontAwesomeIcons.solidClock);
     case "alert":

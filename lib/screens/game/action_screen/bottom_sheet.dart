@@ -33,8 +33,8 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
         return BottomSheet(
             onClosing: () {},
             builder: (context) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
+              return ListView(
+                shrinkWrap: true,
                 children: <Widget>[
                   Container(
                     padding: const EdgeInsets.all(8),

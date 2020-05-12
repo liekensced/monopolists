@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+
 import 'package:plutopoly/engine/ai/ai_type.dart';
 
 import '../extensions/bank/data/loan.dart';
@@ -116,5 +117,10 @@ class Player extends HiveObject {
       name = "Player $id";
     }
     moneyHistory.add(money);
+  }
+
+  @override
+  String toString() {
+    return 'Player(name: $name, money: $money, position: $position, color: $color, properties: $properties, jailed: $jailed, jailTries: $jailTries, goojCards: $goojCards, moneyHistory: $moneyHistory, code: $code, debt: $debt, loans: $loans, aiType: $aiType)';
   }
 }

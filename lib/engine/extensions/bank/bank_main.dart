@@ -11,7 +11,7 @@ import 'data/loan.dart';
 class BankMain {
   static get enabled => Game.data.extensions.contains(Extension.bank);
 
-  static Bank get bank => Game.bank;
+  static BankExtension get bank => Game.bank;
 
   static List<Contract> getAllLoans() {
     return getLoans();

@@ -32,7 +32,7 @@ class _StockTestingScreenState extends State<StockTestingScreen> {
     while (Game.data.turn < turns) {
       Game.data.bankData.expendature =
           Random().nextInt(400 + 50 * Game.data.turn);
-      Bank.onNewTurn();
+      BankExtension.onNewTurn();
       bullPointsHistory.add(Game.data.bankData.bullPoints);
       Game.data.turn++;
     }

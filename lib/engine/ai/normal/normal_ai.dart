@@ -36,7 +36,9 @@ class NormalAI {
     Tile property = Game.data.gmap[prop];
     double value;
     value = property.price * (Game.data.turn / 20 + 1);
-    value += property.level * property.housePrice;
+    if (property.level != null && property.housePrice != null) {
+      value += property.level * property.housePrice;
+    }
     int missing = play.missing(property.idPrefix);
     switch (missing) {
       case 0:

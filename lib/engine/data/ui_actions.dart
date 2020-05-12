@@ -13,7 +13,7 @@ part 'ui_actions.g.dart';
 @HiveType(typeId: 5)
 class UIActionsData extends HiveObject {
   @HiveField(0)
-  bool shouldMove = true;
+  Screen screenState = Screen.idle;
 
   @HiveField(1)
   bool showDealScreen = false;
@@ -80,9 +80,17 @@ class UIActionsData extends HiveObject {
       _$UIActionsDataFromJson(json);
   Map<String, dynamic> toJson() => _$UIActionsDataToJson(this);
 
-  void loadActionScreen() {}
-
   int get moveAnimationMillis {
     return (Game.data.currentDices[0] + Game.data.currentDices[1] * 200 + 500);
   }
+}
+
+@HiveType(typeId: 13)
+enum Screen {
+  @HiveField(0)
+  idle,
+  @HiveField(1)
+  move,
+  @HiveField(2)
+  active,
 }

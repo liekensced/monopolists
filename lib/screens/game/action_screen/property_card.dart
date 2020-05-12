@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
+import 'package:plutopoly/helpers/sure_helper.dart';
 import 'package:plutopoly/screens/game/property_page.dart';
 
 import '../../../engine/data/map.dart';
@@ -69,20 +70,73 @@ class _PropertyCardState extends State<PropertyCard>
                               )
                             : Container(),
                         Expanded(
-                            child: Center(
-                                child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            child: Stack(
                           children: <Widget>[
-                            Text("Value: £" + tile.price.toString()),
-                            tile.mortaged
-                                ? Center(
-                                    child: Text(
-                                    "mortaged",
-                                    style: TextStyle(color: Colors.grey),
-                                  ))
-                                : Container()
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      String name = tile.name;
+                                      return AlertDialog(
+                                          title: Text("Edit name"),
+                                          content: TextField(
+                                            autofocus: true,
+                                            decoration: InputDecoration(
+                                              labelText: "Enter name",
+                                            ),
+                                            onChanged: (String val) {
+                                              name = val;
+                                            },
+                                          ),
+                                          actions: [
+                                            MaterialButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  "close",
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .primaryColor),
+                                                )),
+                                            MaterialButton(
+                                                onPressed: () {
+                                                  tile.name = name;
+                                                  Game.save();
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  "save",
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .primaryColor),
+                                                ))
+                                          ]);
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                            Center(
+                                child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Text("Value: £" + tile.price.toString()),
+                                tile.mortaged
+                                    ? Center(
+                                        child: Text(
+                                        "mortaged",
+                                        style: TextStyle(color: Colors.grey),
+                                      ))
+                                    : Container()
+                              ],
+                            )),
                           ],
-                        ))),
+                        )),
                       ],
                     ),
                   ),
@@ -107,9 +161,14 @@ class _PropertyCardState extends State<PropertyCard>
                                   color: Colors.orange),
                             ),
                             onPressed: () {
-                              Alert.handle(
-                                  () => Game.act.mortage(tile.mapIndex),
-                                  context);
+                              sure(
+                                  context,
+                                  Game.data.player.money > 400,
+                                  "Are you sure you want to mortage this property?",
+                                  () => Alert.handle(
+                                        () => Game.act.mortage(tile.mapIndex),
+                                        context,
+                                      ));
                             },
                           ),
                         ),
@@ -141,7 +200,14 @@ class _PropertyCardState extends State<PropertyCard>
                           ),
                           onPressed: _hasAll
                               ? () {
-                                  Alert.handle(() => Game.build(tile), context);
+                                  sure(
+                                    context,
+                                    Game.data.rentPayed ||
+                                        Game.data.player.money < 300,
+                                    "Are you sure you want to build a house",
+                                    () => Alert.handle(
+                                        () => Game.build(tile), context),
+                                  );
                                 }
                               : null,
                         ),

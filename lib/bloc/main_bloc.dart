@@ -7,21 +7,22 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:plutopoly/helpers/route_helper.dart';
+import 'package:plutopoly/engine/data/ui_actions.dart';
 
 import '../engine/data/main.dart';
 import '../engine/data/map.dart';
 import '../engine/data/player.dart';
 import '../engine/kernel/main.dart';
 import '../engine/ui/alert.dart';
-import 'online_extensions.dart';
+import '../helpers/online_extensions.dart';
+import '../helpers/route_helper.dart';
 import 'recent_bloc.dart';
 import 'ui_bloc.dart';
 
 class MainBloc {
   static const version = "0.2.6";
   static const _boxVersion = "1.1.2.8";
-  static const GAMESBOX = _boxVersion + "gamesbox";
+  static const GAMESBOX = _boxVersion + "gamesbox2";
 
   static const PREFBOX = _boxVersion + "prefbox";
   static const METABOX = _boxVersion + "metabox";
@@ -190,7 +191,11 @@ class MainBloc {
   }
 
   static update(DocumentSnapshot snap) {
+    Screen lastScreen = Game.data.ui.screenState;
     Game.data = GameData.fromJson(snap.data);
+    if (lastScreen != Game.data.ui.screenState) {
+      UIBloc.changeScreen();
+    }
     OnlineExtensions.setData(snap.data);
     print("== Received Data ==");
     Hive.box(UPDATEBOX).put("update", 0);
