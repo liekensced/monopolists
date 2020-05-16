@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/screens/home/start_online.dart';
 import 'package:plutopoly/screens/start/start_game.dart';
 import '../../bloc/ui_bloc.dart';
 import 'landing_page.dart';
@@ -19,8 +20,6 @@ import 'recent_card.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/kernel/main.dart';
-import '../../engine/ui/alert.dart';
-import '../../engine/ui/game_navigator.dart';
 import '../../widgets/drawer.dart';
 import '../games_card.dart';
 import 'account_card.dart';
@@ -33,7 +32,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final NativeAdmobController _adController = NativeAdmobController();
+  final NativeAdmobController _adController =
+      kIsWeb ? null : NativeAdmobController();
 
   @override
   void initState() {
@@ -150,28 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                               GamesCard(),
-                              Padding(
-                                padding: EdgeInsets.all(20),
-                                child: RaisedButton(
-                                  textColor: Colors.white,
-                                  color: Theme.of(context).primaryColor,
-                                  child: Container(
-                                      width: double.infinity,
-                                      child: Text(
-                                        "Start online game",
-                                        textAlign: TextAlign.center,
-                                      )),
-                                  onPressed: () async {
-                                    Alert alert =
-                                        await MainBloc.newOnlineGame();
-                                    if (Alert.handle(() => alert, context)) {
-                                      GameNavigator.navigate(
-                                        context,
-                                      );
-                                    }
-                                  },
-                                ),
-                              ),
+                              StartOnlineButton(),
                               JoinOnlineCard(),
                               ValueListenableBuilder(
                                   valueListenable:

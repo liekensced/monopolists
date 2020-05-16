@@ -28,11 +28,21 @@ class _PlayersCardState extends State<PlayersCard>
     with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    bool notJoined = MainBloc.online && Game.data.players.isEmpty;
     int _playersLength = Game.data.players.length;
     bool _noPlayers = _playersLength == 0;
     return MyCard(
       title: "Players:",
       children: <Widget>[
+        notJoined
+            ? Center(
+                child: Text(
+                  "You haven't joined!\nJoin again or start a new game to try again.",
+                  style: TextStyle(color: Colors.red),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            : Container(),
         _noPlayers
             ? Container(
                 height: 50,
@@ -60,7 +70,7 @@ class _PlayersCardState extends State<PlayersCard>
                           ),
                         ],
                       ),
-                      subtitle: player.aiType == AIType.normal
+                      subtitle: player.ai.type == AIType.normal
                           ? Text("Normal BOT")
                           : Text("Normal player"),
                       trailing: index == 0

@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:plutopoly/engine/data/extensions.dart';
-import 'package:plutopoly/engine/ui/game_navigator.dart';
 import 'package:plutopoly/screens/extension_screen.dart';
+import 'package:plutopoly/screens/home/recent_card.dart';
 import 'package:uni_links/uni_links.dart';
 
 import '../bloc/main_bloc.dart';
@@ -49,12 +50,14 @@ class RouteHelper {
       }
     } catch (e) {
       UIBloc.alerts.add(Alert("Link failed", "Couldn't parse deep link."));
+      MainBloc.prefbox.put("update", true);
     }
     // Attach a listener to the stream
     _sub = getLinksStream().listen((String link) {
       _parseRoute(Uri.parse(link));
     }, onError: (err) {
       UIBloc.alerts.add(Alert("Link failed", "Couldn't parse deep link"));
+      MainBloc.prefbox.put("update", true);
     });
   }
 
@@ -62,28 +65,27 @@ class RouteHelper {
     _sub.cancel();
   }
 
-  static _parseRoute(Uri uri) {
+  static _parseRoute(Uri uri) async {
     try {
       Map<String, String> parameters = uri.queryParameters;
+      print("\n Parsing route! \n");
       print(parameters);
       if (parameters.containsKey("gamepin") &&
           parameters["gamepin"] != null &&
           parameters["gamepin"] != "") {
+        await Hive.openBox(MainBloc.ACCOUNTBOX);
         if (MainBloc.player.name == "null") {
           UIBloc.alerts.add(Alert.join(parameters["gamepin"]));
+          MainBloc.prefbox.put("update", true);
         } else {
           UIBloc.alerts.add(Alert("Join game",
               "Do you want to join this game: " + parameters["gamepin"],
               actions: {
                 "join": (BuildContext context) async {
-                  Alert alert =
-                      await MainBloc.joinOnline(parameters["gamepin"]);
-                  Navigator.pop(context);
-                  if (Alert.handle(() => alert, context)) {
-                    GameNavigator.navigate(context);
-                  }
+                  RecentCard.joinOnline(context, parameters["gamepin"]);
                 }
               }));
+          MainBloc.prefbox.put("update", true);
         }
       }
       if (parameters.containsKey("authcode")) {
@@ -98,16 +100,16 @@ class RouteHelper {
         MainBloc.prefbox.put("update", true);
       }
       if (parameters.containsKey("name") && parameters.containsKey("color")) {
-        final int code = int.tryParse(parameters["color"]) ?? 0;
-        if (code != null) {
+        final int colorCode = int.tryParse(parameters["color"].trim()) ?? 0;
+        if (colorCode != null) {
           UIBloc.alerts.add(Alert(
-              "Change auth code",
+              "Update account",
               "Do you want to change your account settings to: " +
                   parameters["name"],
               actions: {
                 "change": (BuildContext context) {
-                  print(code);
-                  MainBloc.setPlayer(name: parameters["name"], color: code);
+                  MainBloc.setPlayer(
+                      name: parameters["name"], color: colorCode);
                   Navigator.pop(context);
                 }
               }));
@@ -115,7 +117,7 @@ class RouteHelper {
         }
       }
     } catch (e) {
-      print("failed");
+      print("failed to update account $e");
     }
   }
 }

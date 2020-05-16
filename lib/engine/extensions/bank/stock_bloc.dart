@@ -1,5 +1,6 @@
 import 'dart:math' as Math;
 
+import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/engine/kernel/core_actions.dart';
 
 import '../../data/extensions.dart';
@@ -43,12 +44,15 @@ class StockBloc {
   static Alert buyWorldStock() {
     Alert alert;
     alert = Game.act.pay(
-        PayType.bank, (Game.data.bankData.worldStock.value * 1.05).toInt(),
-        count: true);
+      PayType.bank,
+      (Game.data.bankData.worldStock.value * 1.05).toInt(),
+      count: true,
+      shouldSave: false,
+    );
     if (alert != null) return alert;
     Game.data.player.stock[Stock.world().id] =
         (Game.data.player.stock[Stock.world().id] ?? 0) + 1;
-    Game.save();
+    Game.save(excludeBasic: true);
     return null;
   }
 
@@ -59,7 +63,8 @@ class StockBloc {
     }
     Game.data.bankData.expendature -=
         (Game.data.bankData.worldStock.value * 1.1).toInt();
-    Game.save();
+    Game.save(
+        only: [SaveData.players.toString(), SaveData.bankData.toString()]);
     return null;
   }
 

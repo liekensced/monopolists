@@ -1,3 +1,5 @@
+import 'package:plutopoly/bloc/main_bloc.dart';
+
 import '../data/main.dart';
 import '../data/map.dart';
 import '../data/player.dart';
@@ -9,12 +11,14 @@ class GameHelpers {
 
   static GameData get data => Game.data;
 
-  jail(int player) {
+  jail(int player, {bool shouldSave: true}) {
     data.doublesThrown = 0;
     data.players[player].jailed = true;
     data.players[player].jailTries = 2;
     data.players[player].position = 10;
-    Game.save();
+    if (shouldSave) {
+      Game.save(only: ["doublesThrown", SaveData.players.toString()]);
+    }
   }
 
   birthDay() {
@@ -23,7 +27,7 @@ class GameHelpers {
       p.money -= 10;
       data.player.money += 10;
     });
-    Game.save();
+    Game.save(only: [SaveData.players.toString()]);
   }
 
   undoubleDices() {
@@ -42,6 +46,5 @@ class GameHelpers {
       _housesPay += tile.level * houseFactor;
     });
     Game.act.pay(PayType.bank, _housesPay, count: true);
-    Game.save();
   }
 }

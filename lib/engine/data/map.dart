@@ -57,6 +57,8 @@ class Tile extends HiveObject {
   @HiveField(12)
   @JsonKey(defaultValue: "No info")
   String description = "No info";
+  @HiveField(13)
+  int transportationPrice;
 
   factory Tile.fromJson(Map<String, dynamic> json) => _$TileFromJson(json);
 

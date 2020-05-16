@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../bloc/main_bloc.dart';
 import '../engine/data/tip.dart';
@@ -94,10 +95,42 @@ class VersionScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Text(
-                  "If you want to play on a older version of Plutopoly, to continue an already started game, you can visit oldplutopoly.web.app.",
+                  "If you want to play on a older version of Plutopoly, to continue an already started game for example, you can visit oldplutopoly.web.app.",
                   style: Theme.of(context).textTheme.subtitle1,
                 ),
               ),
+              RaisedButton(
+                child: Text("Open Old Plutopoly"),
+                textColor: Colors.white,
+                color: Theme.of(context).primaryColor,
+                onPressed: () async {
+                  String url =
+                      'https://oldplutopoly.web.app/?authcode=${MainBloc.code}&name=${MainBloc.player.name}&color=${MainBloc.player.color}';
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                            title: Text("Failed"),
+                            content: Text("Failed to open link"),
+                            actions: [
+                              MaterialButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "close",
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor),
+                                  ))
+                            ]);
+                      },
+                    );
+                  }
+                },
+              )
             ],
           ),
           EndOfList()

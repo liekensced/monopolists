@@ -29,18 +29,31 @@ class Game {
   static UIActionsData get ui => Game.data.ui;
 
   static bool testing = false;
-  static save({force: false}) {
+  static save({
+    force: false,
+    List<String> only,
+    List<String> exclude,
+    bool excludeBasic: false,
+  }) {
+    if (excludeBasic) {
+      exclude = [
+        SaveData.gmap.toString(),
+        SaveData.settings.toString(),
+        SaveData.dealData.toString(),
+        SaveData.lostPlayers.toString(),
+      ];
+    }
     if (Game.data.dealData.dealer != null) {
-      if (Game.data.players[Game.data.dealData.dealer].aiType ==
+      if (Game.data.players[Game.data.dealData.dealer].ai.type ==
           AIType.normal) {
         NormalAI.onDealUpdate();
         MainBloc.updateUI();
       }
     }
-    if (data.running == true && data.player?.aiType == AIType.normal && !force)
+    if (data.running == true && data.player.ai.type == AIType.normal && !force)
       return;
     if (!(testing ?? false)) {
-      MainBloc.save(data);
+      MainBloc.save(data, only: only, exclude: exclude);
     }
   }
 
@@ -86,9 +99,13 @@ class Game {
             "You can not remotely build houses. (You can change this in settings)");
       }
     }
-    act.pay(PayType.bank, tile.housePrice, count: true);
+    act.pay(PayType.bank, tile.housePrice, count: true, shouldSave: false);
     tile.level++;
-    save();
+    save(exclude: [
+      SaveData.settings.toString(),
+      SaveData.dealData.toString(),
+      SaveData.lostPlayers.toString(),
+    ]);
     return Alert.snackBar("Build 1 house", "house");
   }
 
@@ -128,18 +145,23 @@ class Game {
     return null;
   }
 
-  static void jump([int newPosition, bool passGo = true]) {
+  static void jump(
+      [int newPosition, bool passGo = true, bool inRentPayed = false]) {
     if (newPosition == null)
       newPosition = Random().nextInt(Game.data.gmap.length);
-    if (Game.data.player.position > newPosition && passGo) onPassGo();
+    bool passesGo = Game.data.player.position > newPosition && passGo;
+    if (passesGo) {
+      onPassGo();
+    }
 
     Game.data.player.position = newPosition;
 
-    data.rentPayed = false;
+    data.rentPayed = inRentPayed;
+
     Game.save();
   }
 
-  static void move(int dice1, int dice2) {
+  static void move(int dice1, int dice2, {bool shouldSave: true}) {
     data.rentPayed = false;
 
     Player player = data.player;
@@ -159,7 +181,7 @@ class Game {
       }
     }
     if (dice1 == dice2 && data.doublesThrown >= 2) {
-      helper.jail(data.currentPlayer);
+      helper.jail(data.currentPlayer, shouldSave: false);
     } else {
       if (dice1 != dice2) data.doublesThrown = 0;
       for (int i = 0; i < steps; i++) {
@@ -173,13 +195,17 @@ class Game {
 
       switch (data.gmap[player.position].type) {
         case TileType.police:
-          Game.helper.jail(player.index);
+          Game.helper.jail(player.index, shouldSave: false);
           break;
         default:
       }
     }
-
-    save();
+    if (shouldSave) {
+      save(exclude: [
+        SaveData.settings.toString(),
+        SaveData.dealData.toString(),
+      ]);
+    }
   }
 
   static Alert nextCheck() {
@@ -223,7 +249,7 @@ class Game {
 
     if (changeS) UIBloc.changeScreen(Screen.move);
 
-    if (data.player.aiType == AIType.normal && Game.ui.realPlayers) {
+    if (data.player.ai.type == AIType.normal && Game.ui.realPlayers) {
       UIBloc.changeScreen(Screen.idle);
       NormalAI.onPlayerTurn();
     }

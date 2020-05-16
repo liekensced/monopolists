@@ -53,7 +53,11 @@ class MoveScreen extends StatelessWidget {
                     if (MainBloc.randomDices) {
                       if (box.containsKey("intDice0") &&
                           box.containsKey("intDice1")) {
-                        Game.move(box.get("intDice0"), box.get("intDice1"));
+                        Game.move(
+                          box.get("intDice0"),
+                          box.get("intDice1"),
+                          shouldSave: false,
+                        );
 
                         int pos = Game.data.player.position;
 

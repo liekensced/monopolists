@@ -71,7 +71,7 @@ class _StartGameScreenState extends State<StartGameScreen> {
                       },
                     );
                   }
-                  if (Game.data.players[0].aiType != AIType.player &&
+                  if (Game.data.players[0].ai.type != AIType.player &&
                       Game.data.running == true) {
                     Alert.handle(
                         () => Alert(

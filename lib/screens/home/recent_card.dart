@@ -5,6 +5,7 @@ import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/bloc/recent.dart';
 import 'package:plutopoly/bloc/recent_bloc.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
+import 'package:plutopoly/engine/kernel/main.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
 import 'package:plutopoly/widgets/my_card.dart';
@@ -21,11 +22,8 @@ class RecentCard extends StatelessWidget {
     RecentBloc.getRecent().forEach((String key, Recent recentGame) {
       if (active && (recentGame.idle ?? true)) return;
       recents.add(InkWell(
-        onTap: () async {
-          Alert alert = await MainBloc.joinOnline(key);
-          if (Alert.handle(() => alert, context)) {
-            GameNavigator.navigate(context, loadGame: true);
-          }
+        onTap: () {
+          joinOnline(context, key);
         },
         child: ListTile(
           leading: Container(
@@ -137,5 +135,66 @@ class RecentCard extends StatelessWidget {
       title: active ? "Your turn!" : "Recent Keys",
       children: recents,
     );
+  }
+
+  static joinOnline(BuildContext context, [String key]) async {
+    bool cancel = false;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        cancelConnection() {
+          if (MainBloc.waiter != null) {
+            MainBloc.waiter.cancel();
+          }
+          MainBloc.cancelOnline();
+          cancel = true;
+        }
+
+        Future.delayed(Duration(seconds: 10), () {
+          if (cancel) return;
+          if ((MainBloc.waiter?.isPaused ?? true)) {
+            if (Game.data == null) {
+              cancelConnection();
+              UIBloc.alerts.add(Alert(
+                  "Couldn't join game", "Check your internet connection."));
+              MainBloc.prefbox.put("update", true);
+            }
+          }
+        });
+
+        return AlertDialog(
+            title: Text("Joining game"),
+            content: Container(
+              height: 100,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            actions: [
+              MaterialButton(
+                  onPressed: () {
+                    cancelConnection();
+                    UIBloc.navigatorKey.currentState.pop();
+                  },
+                  child: Text(
+                    "close",
+                    style: TextStyle(color: Theme.of(context).primaryColor),
+                  ))
+            ]);
+      },
+    );
+    Alert alert;
+    if (key == null) {
+      alert = await MainBloc.newOnlineGame();
+    } else {
+      alert = await MainBloc.joinOnline(key);
+    }
+    if (cancel) return;
+    Navigator.pop(context);
+    if (alert != null) cancel = true;
+    if (Alert.handle(() => alert, context)) {
+      GameNavigator.navigate(
+        context,
+      );
+    }
   }
 }

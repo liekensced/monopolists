@@ -1,4 +1,6 @@
 const List<String> MAP_NAMES = [
+  "Antwerp",
+  "Simply the center of the entire world ...",
   """Mount Wo""",
   """Mount Wo is a small town at the foot of a mountain. It is known for a great train robbery.""",
   """Royal Ledlanwol""",
@@ -16,7 +18,7 @@ const List<String> MAP_NAMES = [
   """Grand Mslow""",
   """Grand Mslow is a large city, known for the battle of Grand Mslow.""",
   """Red Grenyard""",
-  """Red Grenyard is a small city, known for its tech industry.""",
+  """Red Grenyard is a small city, known for its advanced tech industry.""",
   """Ldavangate""",
   """Ldavangate is a large town, known for a great train robbery.""",
   """Lesbeyan""",

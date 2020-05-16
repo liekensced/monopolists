@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/helpers/main_helper.dart';
 
 import 'bloc/main_bloc.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         valueListenable: Hive.box(MainBloc.PREFBOX).listenable(),
         builder: (context, Box box, _) {
           return MaterialApp(
+            navigatorKey: UIBloc.navigatorKey,
             debugShowCheckedModeBanner: false,
             title: 'Plutopoly',
             onGenerateRoute: RouteHelper.onGenerateRoute,

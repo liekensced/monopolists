@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:plutopoly/bloc/main_bloc.dart';
 
 import '../data/info.dart';
 import '../data/main.dart';
@@ -20,7 +21,7 @@ class CoreActions {
       return Alert("Couldn't mortage", "You can't mortage this tile.");
     bool _mortaged = tile.mortaged;
     if (_mortaged) {
-      alert = pay(PayType.bank, (tile.hyp * 1.1).toInt());
+      alert = pay(PayType.bank, (tile.hyp * 1.1).toInt(), shouldSave: false);
       if (alert != null) return alert;
       tile.mortaged = false;
       alert = Alert.snackBar("Lifted mortaged " + tile.name);
@@ -29,12 +30,17 @@ class CoreActions {
       tile.mortaged = true;
       alert = Alert.snackBar("Mortaged " + tile.name);
     }
-    Game.save();
+    Game.save(
+        exclude: [SaveData.dealData.toString(), SaveData.settings.toString()]);
     return alert;
   }
 
+  /// Doesn't update gmap, lostPlayers, dealData,
   Alert pay(PayType type, int amount,
-      {int receiver, bool count: false, bool force: false}) {
+      {int receiver,
+      bool count: false,
+      bool force: false,
+      bool shouldSave: true}) {
     if (!force) {
       if (amount > 0) {
         if (data.player.money < amount) return Alert.funds();
@@ -61,14 +67,16 @@ class CoreActions {
         break;
       default:
     }
-    Game.save();
+    if (shouldSave) {
+      Game.save(excludeBasic: true);
+    }
     return null;
   }
 
   Alert clearPot() {
     data.player.money += data.pot;
     data.pot = 0;
-    Game.save();
+    Game.save(only: [SaveData.players.toString(), "pot"]);
     return Alert.snackBar("Emptied pot");
   }
 
@@ -80,17 +88,17 @@ class CoreActions {
     Game.helper.undoubleDices();
     data.doublesThrown = 0;
     data.player.jailed = false;
-    Game.save();
+    Game.save(only: [SaveData.players.toString(), "doublesThrown"]);
     return null;
   }
 
   Alert buyOutJail() {
-    Alert alert = pay(PayType.pot, 50);
+    Alert alert = pay(PayType.pot, 50, shouldSave: false);
     if (alert == null) {
       Game.helper.undoubleDices();
       data.doublesThrown = 0;
       data.player.jailed = false;
-      Game.save();
+      Game.save(excludeBasic: true);
     }
 
     return alert;
@@ -111,7 +119,8 @@ class CoreActions {
     @required int dealer,
   }) {
     if (payAmount != null) {
-      Alert alert = pay(PayType.pay, payAmount, receiver: dealer);
+      Alert alert =
+          pay(PayType.pay, payAmount, receiver: dealer, shouldSave: false);
       if (alert != null) {
         return alert;
       }
@@ -130,7 +139,7 @@ class CoreActions {
     }
     data.player.properties.sort();
     data.players[dealer].properties.sort();
-    Game.save();
+    Game.save(excludeBasic: true);
     return null;
   }
 
@@ -144,11 +153,15 @@ class CoreActions {
     if (data.gmap[prop].type == TileType.land ||
         data.gmap[prop].type == TileType.trainstation ||
         data.gmap[prop].type == TileType.company) {
-      alert = pay(PayType.bank, price, count: true);
+      alert = pay(PayType.bank, price, count: true, shouldSave: false);
       if (alert != null) return alert;
       data.player.properties.add(prop);
       data.player.properties.sort();
-      Game.save();
+      Game.save(exclude: [
+        SaveData.settings.toString(),
+        SaveData.dealData.toString(),
+        SaveData.lostPlayers.toString(),
+      ]);
     } else {
       return Alert("Couldn't buy", "The property is from the wrong type.");
     }

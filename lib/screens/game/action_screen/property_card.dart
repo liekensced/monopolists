@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
+import 'package:plutopoly/engine/extensions/transportation.dart';
 import 'package:plutopoly/helpers/sure_helper.dart';
 import 'package:plutopoly/screens/game/property_page.dart';
 
@@ -106,7 +108,9 @@ class _PropertyCardState extends State<PropertyCard>
                                             MaterialButton(
                                                 onPressed: () {
                                                   tile.name = name;
-                                                  Game.save();
+                                                  Game.save(only: [
+                                                    SaveData.gmap.toString()
+                                                  ]);
                                                   Navigator.pop(context);
                                                 },
                                                 child: Text(
@@ -236,11 +240,86 @@ class _PropertyCardState extends State<PropertyCard>
       color = Colors.white;
       textColor = Colors.black;
       leading = Icon(Icons.train);
-      content = Container(
-          height: 200,
-          child: Center(
-            child: leading,
+      if (TransportationBloc.active) {
+        List<Tile> trains = Game.data.tile.owner?.transtationTiles ?? [];
+        List<Widget> children = [];
+
+        trains.forEach((Tile train) {
+          if (train == tile) return;
+          children.add(ListTile(
+            title: Text("Move to ${train.name}"),
+            subtitle: Text("Position: ${train.mapIndex}"),
+            trailing: RaisedButton(
+              color: Theme.of(context).primaryColor,
+              child: Text(
+                  "Price: £" + (train.transportationPrice ?? 0).toString()),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    String text = "";
+                    return AlertDialog(
+                        title: Text("Change price"),
+                        content: TextField(
+                          autofocus: true,
+                          onChanged: (val) {
+                            text = val;
+                          },
+                        ),
+                        actions: [
+                          MaterialButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                "close",
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor),
+                              )),
+                          MaterialButton(
+                              onPressed: () {
+                                int price = int.tryParse(text);
+                                train.transportationPrice = price;
+                                Game.save(only: [SaveData.gmap.toString()]);
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                "change",
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor),
+                              )),
+                        ]);
+                  },
+                );
+              },
+            ),
           ));
+        });
+        if (children.isEmpty) {
+          children.add(
+            Container(
+                height: 200,
+                child: Center(child: Text("Get more transations to move."))),
+          );
+        } else {
+          children.insert(
+              0,
+              Text(
+                  "You can change the price for transportation for other players."));
+        }
+        content = Container(
+            constraints: BoxConstraints(minHeight: 200),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: children,
+            ));
+      } else {
+        content = Container(
+            height: 200,
+            child: Center(
+              child: leading,
+            ));
+      }
     }
 
     return MyCard(
@@ -249,8 +328,15 @@ class _PropertyCardState extends State<PropertyCard>
           color: color,
           child: InkWell(
             onTap: () {
-              expanded = !expanded;
-              setState(() {});
+              if (widget.tile.owner != UIBloc.gamePlayer) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                  return PropertyPage(property: tile);
+                }));
+              } else {
+                expanded = !expanded;
+                setState(() {});
+              }
             },
             child: ListTile(
               leading: leading,
@@ -258,15 +344,9 @@ class _PropertyCardState extends State<PropertyCard>
                 widget.tile.name,
                 style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
               ),
-              trailing: IconButton(
-                icon: Icon(
-                  expanded ? Icons.expand_less : Icons.expand_more,
-                  color: textColor,
-                ),
-                onPressed: () {
-                  expanded = !expanded;
-                  setState(() {});
-                },
+              trailing: Icon(
+                expanded ? Icons.expand_less : Icons.expand_more,
+                color: textColor,
               ),
             ),
           ),

@@ -59,11 +59,15 @@ class BankMain {
   }
 
   static Alert payLoan(Contract loan) {
-    Alert alert = Game.act.pay(PayType.bank, loan.amount.toInt());
+    Alert alert = Game.act.pay(
+      PayType.bank,
+      loan.amount.toInt(),
+      shouldSave: false,
+    );
     if (alert != null) return alert;
     Game.data.player.loans.remove(loan);
     Game.data.player.debt -= loan.amount;
-    Game.save();
+    Game.save(excludeBasic: true);
     return alert;
   }
 
@@ -91,10 +95,14 @@ class BankMain {
     if (alert != null) return alert;
 
     if (loan.countToCap) Game.data.player.debt += loan.amount;
-    Game.act.pay(PayType.bank, (loan.amount * loan.fee).toInt());
+    Game.act.pay(
+      PayType.bank,
+      (loan.amount * loan.fee).toInt(),
+      shouldSave: false,
+    );
     Game.data.player.loans.add(Contract.copy(loan));
     _checkLoan(loan, player.index);
-    Game.save();
+    Game.save(excludeBasic: true);
     return Alert.snackBar("Loan available in ${loan.waitingTurns} turn(s).");
   }
 

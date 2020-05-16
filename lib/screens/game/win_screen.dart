@@ -4,13 +4,13 @@ import 'dart:math';
 import 'package:bezier_chart/bezier_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/engine/data/player.dart';
-import 'package:plutopoly/engine/kernel/main.dart';
-import 'package:plutopoly/engine/ui/game_navigator.dart';
-import 'package:plutopoly/widgets/my_card.dart';
 
+import '../../bloc/main_bloc.dart';
+import '../../bloc/ui_bloc.dart';
+import '../../engine/data/player.dart';
+import '../../engine/kernel/main.dart';
+import '../../engine/ui/game_navigator.dart';
+import '../../widgets/my_card.dart';
 import 'action_screen/bottom_sheet.dart';
 
 class WinScreen extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:plutopoly/engine/ai/ai_type.dart';
 import 'package:plutopoly/engine/data/actions.dart';
 import 'package:plutopoly/engine/data/player.dart';
 import 'package:plutopoly/engine/kernel/core_actions.dart';
@@ -204,6 +205,7 @@ class NormalAI {
         })
         .toList()
         .forEach((Tile prop) {
+          if (prop.owner.ai.type == AIType.player) return;
           int price = value(prop.mapIndex, player);
           if (player.money > price) {
             int mis = player.missing(prop.idPrefix);

@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/bloc/recent.dart';
+import 'package:plutopoly/engine/ai/ai.dart';
 import 'package:plutopoly/engine/ai/ai_type.dart';
 import 'package:plutopoly/engine/data/deal_data.dart';
 import 'package:plutopoly/engine/data/extensions.dart';
@@ -44,6 +45,7 @@ class MainHelper {
     Hive.registerAdapter(RecentAdapter());
     Hive.registerAdapter(AITypeAdapter());
     Hive.registerAdapter(ScreenAdapter());
+    Hive.registerAdapter(AIAdapter());
     await Hive.openBox(MainBloc.PREFBOX);
     return null;
   }

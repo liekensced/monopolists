@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/engine/extensions/bank/bank_main.dart';
 import 'package:plutopoly/engine/extensions/bank/stock_bloc.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
@@ -41,7 +42,7 @@ class BankExtension {
           actions: {
             "Change": (c) {
               Game.data.settings.startingMoney = 1000;
-              Game.save();
+              Game.save(only: [SaveData.settings.toString()]);
               Navigator.pop(c);
             }
           },

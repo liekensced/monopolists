@@ -3,7 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../bloc/ui_bloc.dart';
 import '../helpers/online_extensions.dart';
-import '../screens/online_extension_page.dart';
+// import '../screens/online_extension_page.dart';
 import 'my_card.dart';
 
 class OnlineExtensionsCard extends StatelessWidget {
@@ -98,18 +98,19 @@ class OnlineExtensionsCard extends StatelessWidget {
       ));
     });
     if (children.isEmpty) {
-      children.add(InkWell(
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (c) {
-            return OnlineExtensionPage();
-          }));
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Text(
-              "You can add third party, online, extensions to make your game even better. Tap for more information."),
-        ),
-      ));
+      return Container();
+      // children.add(InkWell(
+      //   onTap: () {
+      //     Navigator.push(context, MaterialPageRoute(builder: (c) {
+      //       return OnlineExtensionPage();
+      //     }));
+      //   },
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(12.0),
+      //     child: Text(
+      //         "You can add third party, online, extensions to make your game even better. Tap for more information."),
+      //   ),
+      // ));
     }
     return MyCard(
       title: "Online extensions",

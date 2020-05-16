@@ -35,7 +35,7 @@ class OnlineExtensions {
   static disableBot(Bot bot) {
     if (extensionsData[bot.projectName]["meta"] == null) return;
     extensionsData[bot.projectName]["meta"]["active"] = false;
-    MainBloc.save(Game.data, extensionsData);
+    MainBloc.save(Game.data, bots: extensionsData);
   }
 }
 

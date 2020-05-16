@@ -37,7 +37,6 @@ class ActionsCardChild extends StatelessWidget {
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               Game.data.dealData = DealData()..dealer = player.index;
-              Game.save();
               return DealScreen(
                 dealer: player.index,
               );

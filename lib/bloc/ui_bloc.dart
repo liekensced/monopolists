@@ -12,6 +12,9 @@ import '../engine/ui/alert.dart';
 import 'main_bloc.dart';
 
 class UIBloc {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   static int posOveride;
 
   static ValueNotifier screenUpdate = ValueNotifier<Screen>(Screen.idle);
@@ -54,9 +57,12 @@ class UIBloc {
 
   static Player get gamePlayer {
     if (!MainBloc.online) return Game.data.player;
-    return Game.data.players
-            .firstWhere((Player p) => p.code == MainBloc.code) ??
-        Game.data.player;
+    try {
+      return Game.data.players
+          .firstWhere((Player p) => p.code == MainBloc.code);
+    } catch (e) {
+      return Game.data.player;
+    }
   }
 
   static bool get playing {

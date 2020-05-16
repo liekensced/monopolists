@@ -87,7 +87,7 @@ class _DealScreenChildState extends State<DealScreenChild>
       dealData.receivableProperties =
           List.from(Game.data.players[dealData.dealer].properties);
       dealData.payableProperties = List.from(Game.data.player.properties);
-      Game.save();
+      Game.save(only: [SaveData.dealData.toString()]);
     }
   }
 
@@ -104,7 +104,7 @@ class _DealScreenChildState extends State<DealScreenChild>
     _controller.dispose();
     Game.data.dealData = DealData();
     Game.data.dealData.dealer = null;
-    Game.save();
+    Game.save(only: [SaveData.dealData.toString()]);
     MainBloc.dealOpen = false;
 
     super.dispose();
@@ -362,7 +362,8 @@ class _DealScreenChildState extends State<DealScreenChild>
                                     } else
                                       _dealerTextController.clear();
                                     Navigator.pop(context);
-                                    Game.save();
+                                    Game.save(
+                                        only: [SaveData.dealData.toString()]);
                                   },
                                 ),
                               );
@@ -467,7 +468,10 @@ class _DealScreenChildState extends State<DealScreenChild>
                                           dealData.playerChecked =
                                               !dealData.playerChecked;
                                         }
-                                        Game.save();
+                                        Game.save(only: [
+                                          SaveData.dealData.toString(),
+                                          "ui"
+                                        ]);
                                       },
                                     )
                                   : Container(),
@@ -538,7 +542,7 @@ class _DealScreenChildState extends State<DealScreenChild>
         .add(tile.mapIndex);
     dealData.dealerChecked = false;
     dealData.playerChecked = false;
-    Game.save();
+    Game.save(only: [SaveData.dealData.toString()]);
   }
 
   void removePay(int index, Tile tile, bool dealer) {
@@ -548,7 +552,7 @@ class _DealScreenChildState extends State<DealScreenChild>
         .add(tile.mapIndex);
     dealData.dealerChecked = false;
     dealData.playerChecked = false;
-    Game.save();
+    Game.save(only: [SaveData.dealData.toString()]);
   }
 
   bool checkPay() {

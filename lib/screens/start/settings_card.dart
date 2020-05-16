@@ -36,7 +36,7 @@ class _SettingsCardState extends State<SettingsCard>
             value: Game.data.settings.remotelyBuild,
             onChanged: (val) {
               Game.data.settings.remotelyBuild = val;
-              Game.save();
+              Game.save(only: [SaveData.settings.toString()]);
             },
           ),
         ),
@@ -54,7 +54,7 @@ class _SettingsCardState extends State<SettingsCard>
                   submit(_) {
                     Game.data.settings.startingMoney =
                         int.tryParse(amount) ?? 1500;
-                    Game.save();
+                    Game.save(only: [SaveData.settings.toString()]);
                     Navigator.pop(context);
                   }
 
@@ -138,7 +138,7 @@ class AdvancedSettings extends StatelessWidget {
                 builder: (context) {
                   submit(_) {
                     Game.data.settings.goBonus = int.tryParse(amount) ?? 200;
-                    Game.save();
+                    Game.save(only: [SaveData.settings.toString()]);
                     Navigator.pop(context);
                   }
 
@@ -189,7 +189,7 @@ class AdvancedSettings extends StatelessWidget {
                 builder: (context) {
                   submit(_) {
                     Game.data.settings.maxTurnes = int.tryParse(amount) ?? 200;
-                    Game.save();
+                    Game.save(only: [SaveData.settings.toString()]);
                     Navigator.pop(context);
                   }
 
@@ -235,7 +235,7 @@ class AdvancedSettings extends StatelessWidget {
             value: Game.data.settings.hackerScreen,
             onChanged: (val) {
               Game.data.settings.hackerScreen = val;
-              Game.save();
+              Game.save(only: [SaveData.settings.toString()]);
             },
           ),
         ),

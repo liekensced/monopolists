@@ -55,23 +55,35 @@ class UIActionsData extends HiveObject {
   bool get realPlayers {
     bool real = false;
     Game.data.players.forEach((Player p) {
-      if ((p.aiType ?? AIType.player) == AIType.player) real = true;
+      if ((p.ai.type ?? AIType.player) == AIType.player) real = true;
     });
     return real;
   }
 
-  bool get idle {
-    if (Game.data == null) if (!realPlayers && MainBloc.online) return false;
-    if (Game.data.player.aiType == AIType.normal) return true;
-    if (!MainBloc.online) {
-      return false;
-    }
-    bool lost = false;
-    Game.data.lostPlayers.forEach((element) {
-      if (element.code == MainBloc.player.code) lost = true;
+  int get amountRealPlayers {
+    int amount = 0;
+    Game.data.players.forEach((Player p) {
+      if ((p.ai.type ?? AIType.player) == AIType.player) amount++;
     });
-    if (lost) return true;
-    return Game.data.player?.code != MainBloc.player?.code;
+    return amount;
+  }
+
+  bool get idle {
+    try {
+      if (Game.data == null) if (!realPlayers && MainBloc.online) return false;
+      if (Game.data.player.ai?.type == AIType.normal) return true;
+      if (!MainBloc.online) {
+        return false;
+      }
+      bool lost = false;
+      Game.data.lostPlayers.forEach((element) {
+        if (element.code == MainBloc.player.code) lost = true;
+      });
+      if (lost) return true;
+      return Game.data.player?.code != MainBloc.player?.code;
+    } catch (e) {
+      return true;
+    }
   }
 
   UIActionsData();

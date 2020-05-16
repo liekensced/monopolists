@@ -20,9 +20,11 @@ import 'recent_bloc.dart';
 import 'ui_bloc.dart';
 
 class MainBloc {
-  static const version = "0.2.6";
+  static const version = "0.3.0";
+  static List<int> get versionCode =>
+      version.split(".").map<int>((e) => int.tryParse(e)).toList();
   static const _boxVersion = "1.1.2.8";
-  static const GAMESBOX = _boxVersion + "gamesbox2";
+  static const GAMESBOX = _boxVersion + "gamesbox3";
 
   static const PREFBOX = _boxVersion + "prefbox";
   static const METABOX = _boxVersion + "metabox";
@@ -46,33 +48,24 @@ class MainBloc {
     return Hive.box(METABOX);
   }
 
-  static Future<Alert> newOnlineGame() async {
+  static Future newOnlineGame() async {
     if (player.name == null || player.name == "null")
       return Alert.accountIncomplete();
-    Alert alert;
     online = true;
     Hive.box(METABOX).put("boolOnline", true);
+    Game.data = null;
     DocumentReference data =
         await Firestore.instance.collection("/games").add({"starting ...": ""});
     gameId = data.documentID;
     Game.newGame();
     Game.data.settings.name = "Game $getGameNumber";
 
-    waiter = await data.snapshots().listen((event) {
+    waiter = data.snapshots().listen((event) {
       if (event.exists) {
         Game.save();
         joinOnline(data.documentID);
       }
     });
-    if (alert != null) return alert;
-    Future.delayed(Duration(seconds: 10), () async {
-      if (waiter?.isPaused ?? true) {
-        waiter.cancel();
-        await cancelOnline();
-        alert = Alert("Failed to start game", "Check you internet connection.");
-      }
-    });
-    return alert;
   }
 
   static int get code {
@@ -135,6 +128,18 @@ class MainBloc {
       }
       List players = snapshot.data["players"];
       List lostPlayers = snapshot.data["lostPlayers"];
+      String joinVersion = snapshot.data["version"] ?? "0.0.0";
+      List<int> joinVersionCode =
+          joinVersion.split(".").map<int>((e) => int.tryParse(e)).toList();
+      if (joinVersionCode.length >= 2 && versionCode[0] != null) {
+        if (joinVersionCode[0] != versionCode[0] ||
+            joinVersionCode[1] != versionCode[1]) {
+          await cancelOnline();
+          return Alert("Versions not correct",
+              "The versions are not the same:\nYour version: ${version}\nGame version: $joinVersion");
+        }
+      }
+
       if (players != null) {
         players.forEach((iplayer) {
           if (iplayer["code"] == player.code) {
@@ -201,7 +206,8 @@ class MainBloc {
     Hive.box(UPDATEBOX).put("update", 0);
   }
 
-  static save(GameData data, [Map<String, dynamic> bots]) {
+  static save(GameData data,
+      {Map<String, dynamic> bots, List<String> only, List<String> exclude}) {
     if (!online) {
       print("== New Local Save ==");
       data.save();
@@ -211,10 +217,31 @@ class MainBloc {
       if (data != null) {
         data.bot = false;
         Map<String, dynamic> json = data.toJson();
+        Map<String, dynamic> saveJson = {};
         if (bots != null) {
           json["bots"] = bots;
         }
-        Firestore.instance.document("/games/$gameId").updateData(json);
+
+        if (only == null) {
+          saveJson = json;
+        } else {
+          only.forEach((String key) {
+            List<String> str = key.split(".");
+            if (json.containsKey(str.last)) {
+              saveJson[str.last] = json[str.last];
+            }
+          });
+        }
+        if (exclude != null) {
+          exclude.forEach((String key) {
+            List<String> str = key.split(".");
+            saveJson.remove(str.last);
+          });
+        }
+        if (saveJson.isNotEmpty) {
+          saveJson["updatedOn"] = DateTime.now().toString();
+          Firestore.instance.document("/games/$gameId").updateData(saveJson);
+        }
       }
       updateUI();
     }
@@ -284,4 +311,13 @@ class MainBloc {
   static bool get randomDices =>
       Hive.box(PREFBOX).get("boolDoneRandomSelect", defaultValue: true) ||
       online;
+}
+
+enum SaveData {
+  gmap,
+  players,
+  lostPlayers,
+  dealData,
+  settings,
+  bankData,
 }

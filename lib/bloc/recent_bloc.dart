@@ -18,8 +18,9 @@ class RecentBloc {
         }
         List players = snapshot.data["players"];
         if (players != null) {
-          if (players[snapshot.data["currentPlayer"]]["code"] ==
-              MainBloc.code) {
+          if (players.isNotEmpty &&
+              players[snapshot.data["currentPlayer"]]["code"] ==
+                  MainBloc.code) {
             recent.idle = false;
             recent.save();
           }

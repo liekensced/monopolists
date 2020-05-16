@@ -1,3 +1,5 @@
+import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/engine/ai/ai.dart';
 import 'package:plutopoly/engine/ai/ai_type.dart';
 import 'package:plutopoly/engine/data/main.dart';
 import 'package:plutopoly/screens/start/players.dart';
@@ -11,7 +13,7 @@ class GameSetup {
   GameSetup();
   setGameName(String name) {
     Game.data.settings.name = name;
-    Game.save();
+    Game.save(only: [SaveData.settings.toString()]);
   }
 
   void addPlayerCheck({String name: "", int color: 0, int code: -1}) {
@@ -40,9 +42,9 @@ class GameSetup {
       name: "$name",
       color: ColorHelper().randomColor,
       code: -2,
-      aiType: AIType.normal,
+      ai: AI(AIType.normal),
     ));
-    Game.save();
+    Game.save(only: [SaveData.players.toString()]);
     return null;
   }
 
@@ -58,15 +60,15 @@ class GameSetup {
       color: color,
       name: name,
       code: code,
-      aiType: AIType.player,
+      ai: AI(AIType.player),
     ));
-    Game.save();
+    Game.save(only: [SaveData.players.toString()]);
     return null;
   }
 
   deletePlayer(Player player) {
     Game.data.players.remove(player);
-    Game.save();
+    Game.save(only: [SaveData.players.toString()]);
   }
 
   defaultPlayer(Player player) {

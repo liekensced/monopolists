@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
 
 import '../../screens/start/players.dart';
@@ -106,7 +107,7 @@ class Alert {
       if (alert.closable) {
         actions.add(MaterialButton(
             onPressed: () {
-              Navigator.pop(context);
+              UIBloc.navigatorKey.currentState.pop();
             },
             child: Text(
               "close",

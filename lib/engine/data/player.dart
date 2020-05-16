@@ -1,7 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-import 'package:plutopoly/engine/ai/ai_type.dart';
+import 'package:plutopoly/engine/ai/ai.dart';
 
 import '../extensions/bank/data/loan.dart';
 import '../kernel/main.dart';
@@ -48,8 +47,7 @@ class Player extends HiveObject {
   @HiveField(14)
   Map<String, int> stock = {};
   @HiveField(15)
-  @JsonKey(defaultValue: AIType.player)
-  AIType aiType = AIType.player;
+  AI ai;
 
   factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
   Map<String, dynamic> toJson() => _$PlayerToJson(this);
@@ -62,6 +60,17 @@ class Player extends HiveObject {
       Tile tile = Game.data.gmap[i];
       if (tile.type == TileType.trainstation) {
         _trainsTations++;
+      }
+    });
+    return _trainsTations;
+  }
+
+  List<Tile> get transtationTiles {
+    List<Tile> _trainsTations = [];
+    properties.forEach((int i) {
+      Tile tile = Game.data.gmap[i];
+      if (tile.type == TileType.trainstation) {
+        _trainsTations.add(tile);
       }
     });
     return _trainsTations;
@@ -111,7 +120,7 @@ class Player extends HiveObject {
     this.position: 0,
     this.name,
     this.code,
-    this.aiType,
+    this.ai,
   }) {
     if (name == null) {
       name = "Player $id";
@@ -121,6 +130,6 @@ class Player extends HiveObject {
 
   @override
   String toString() {
-    return 'Player(name: $name, money: $money, position: $position, color: $color, properties: $properties, jailed: $jailed, jailTries: $jailTries, goojCards: $goojCards, moneyHistory: $moneyHistory, code: $code, debt: $debt, loans: $loans, aiType: $aiType)';
+    return 'Player(name: $name, money: $money, position: $position, color: $color, properties: $properties, jailed: $jailed, jailTries: $jailTries, goojCards: $goojCards, moneyHistory: $moneyHistory, code: $code, debt: $debt, loans: $loans, ai: $ai)';
   }
 }

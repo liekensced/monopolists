@@ -5,7 +5,7 @@ import 'package:hive/hive.dart';
 import 'main_bloc.dart';
 
 class AdBloc {
-  static const bool test = false;
+  static const bool test = true;
   static String rewardAdUID = test
       ? RewardedVideoAd.testAdUnitId
       : "ca-app-pub-3735790035510409/6907004457";

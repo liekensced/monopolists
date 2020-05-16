@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
+import 'package:plutopoly/screens/game/action_screen/move_card.dart';
 
 import '../../../bloc/game_listener.dart';
 import '../../../bloc/main_bloc.dart';
@@ -78,7 +79,8 @@ class _ActionScreenState extends State<ActionScreen> {
                         builder: (BuildContext context, _, __) {
                           try {
                             if (screenState != Game.ui.screenState) {
-                              setState(() {});
+                              Future.delayed(
+                                  Duration.zero, () => setState(() {}));
                             }
                             if (Game.data.dealData.dealer != null) {
                               if (Game.data.players[Game.data.dealData.dealer]
@@ -158,7 +160,7 @@ class _ActionScreenState extends State<ActionScreen> {
               physics:
                   idle ? NeverScrollableScrollPhysics() : PageScrollPhysics(),
               children: <Widget>[
-                GameListener(builder: (c, _, __) => buildHoldingCards(context)),
+                HoldingCards(),
                 idle
                     ? GameListener(
                         builder: (c, __, ___) => IdleScreen(pageController))
@@ -175,35 +177,6 @@ class _ActionScreenState extends State<ActionScreen> {
     );
   }
 
-  Widget buildHoldingCards(BuildContext context) {
-    List<int> _properties = Game.data.player.properties;
-    if (MainBloc.online) _properties = UIBloc.gamePlayer.properties;
-    if (_properties.isEmpty) {
-      return Container(
-        height: 100,
-        child: Center(
-            child: Card(
-                child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Text("You have no properties yet"),
-        ))),
-      );
-    }
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: _properties.length,
-        itemBuilder: (context, index) {
-          return Theme(
-            data: Theme.of(context).copyWith(brightness: Brightness.light),
-            child: GameListener(
-              builder: (BuildContext context, _, __) {
-                return PropertyCard(tile: Game.data.gmap[_properties[index]]);
-              },
-            ),
-          );
-        });
-  }
-
   Widget buildActionCards(BuildContext context, PageController pageController) {
     List<Widget> actions = [
       PropertyActionCard(pageController: pageController),
@@ -211,6 +184,12 @@ class _ActionScreenState extends State<ActionScreen> {
       ActionsCard(),
       InfoCard(),
     ];
+
+    if (Game.data.extensions.contains(Extension.transportation) &&
+        Game.data.tile.type == TileType.trainstation &&
+        (Game.data.tile.owner?.trainstations ?? 0) > 1) {
+      actions.insert(1, MoveCard());
+    }
 
     if (Game.data.extensions.contains(Extension.bank)) {
       actions.add(LoanCard());
@@ -264,6 +243,53 @@ class _ActionScreenState extends State<ActionScreen> {
   }
 }
 
+class HoldingCards extends StatelessWidget {
+  final List<int> properties;
+  const HoldingCards({
+    Key key,
+    this.properties,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GameListener(
+        builder: (c, _, __) => buildHoldingCards(context, properties));
+  }
+
+  Widget buildHoldingCards(BuildContext context, [List<int> properties]) {
+    List<int> _properties = Game.data.player.properties;
+    if (properties != null) {
+      _properties = properties;
+    } else {
+      if (MainBloc.online) _properties = UIBloc.gamePlayer.properties;
+    }
+    if (_properties.isEmpty) {
+      return Container(
+        height: 100,
+        child: Center(
+            child: Card(
+                child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Text("You have no properties yet"),
+        ))),
+      );
+    }
+    return ListView.builder(
+        shrinkWrap: true,
+        itemCount: _properties.length,
+        itemBuilder: (context, index) {
+          return Theme(
+            data: Theme.of(context).copyWith(brightness: Brightness.light),
+            child: GameListener(
+              builder: (BuildContext context, _, __) {
+                return PropertyCard(tile: Game.data.gmap[_properties[index]]);
+              },
+            ),
+          );
+        });
+  }
+}
+
 class ActionFab extends StatelessWidget {
   const ActionFab({
     Key key,
@@ -280,7 +306,7 @@ class ActionFab extends StatelessWidget {
             title: "Your turn",
             onTap: () {
               UIBloc.changeScreen(Screen.move);
-              Game.save();
+              Game.save(only: ["ui"]);
             },
           );
         }
