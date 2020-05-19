@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -26,7 +27,9 @@ class _JoinOnlineCardState extends State<JoinOnlineCard> {
         ClipboardData data = await Clipboard.getData("text/plain");
         if (data != null) {
           if (data.text.length == 20) {
-            textEditingController.text = data.text;
+            if (kIsWeb) {
+              textEditingController.text = data.text;
+            }
             gamePin = data.text;
           }
         }

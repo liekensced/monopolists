@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:plutopoly/bloc/ad_bloc.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/bloc/recent.dart';
 import 'package:plutopoly/engine/ai/ai.dart';
@@ -26,7 +27,7 @@ class MainHelper {
       var dir = await getApplicationDocumentsDirectory();
       Hive.init(dir.path);
     }
-
+    AdBloc.init();
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: Colors.teal));
     Hive.registerAdapter(GameDataAdapter());
@@ -50,7 +51,7 @@ class MainHelper {
     return null;
   }
 
-  static ThemeData themeData = ThemeData(
+  static ThemeData get themeData => ThemeData(
       brightness: Hive.box(MainBloc.PREFBOX).get("boolDark", defaultValue: true)
           ? Brightness.dark
           : Brightness.light,

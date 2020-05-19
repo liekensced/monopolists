@@ -5,7 +5,7 @@ import 'package:hive/hive.dart';
 import 'main_bloc.dart';
 
 class AdBloc {
-  static const bool test = true;
+  static const bool test = false;
   static String rewardAdUID = test
       ? RewardedVideoAd.testAdUnitId
       : "ca-app-pub-3735790035510409/6907004457";
@@ -14,7 +14,7 @@ class AdBloc {
 
   static MobileAdTargetingInfo targetingInfo =
       MobileAdTargetingInfo(keywords: <String>["boardgame"]);
-  void init() {
+  static void init() {
     if (kIsWeb) return;
     FirebaseAdMob.instance
         .initialize(appId: "ca-app-pub-3735790035510409~3556832676");

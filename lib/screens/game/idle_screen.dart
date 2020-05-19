@@ -5,27 +5,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:plutopoly/engine/ai/ai_type.dart';
-import 'package:plutopoly/engine/data/ui_actions.dart';
-import 'package:plutopoly/screens/game/action_screen/action_screen.dart';
-import 'package:zoom_widget/zoom_widget.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../bloc/ui_bloc.dart';
-import '../../engine/data/map.dart';
+import '../../engine/ai/ai_type.dart';
 import '../../engine/data/player.dart';
+import '../../engine/data/ui_actions.dart';
 import '../../engine/kernel/main.dart';
 import '../../widgets/ad.dart';
-import '../../widgets/eager_inkwell.dart';
 import '../../widgets/end_of_list.dart';
 import '../../widgets/my_card.dart';
 import '../../widgets/online_extensions_card.dart';
-import '../carousel/map_carousel.dart';
+import 'action_screen/action_screen.dart';
 import 'action_screen/info_card.dart';
 import 'action_screen/loan_card.dart';
 import 'action_screen/stock_card.dart';
 import 'idle_settings.dart';
-import 'property_page.dart';
+import 'zoom_map.dart';
 
 class IdleScreen extends StatelessWidget {
   final PageController carrouselController;
@@ -33,14 +29,6 @@ class IdleScreen extends StatelessWidget {
 
   final NativeAdmobController _admobController =
       kIsWeb ? null : NativeAdmobController();
-
-  void changePos(int index) {
-    UIBloc.posOveride = index;
-    if (carrouselController.hasClients) {
-      carrouselController.animateToPage(index,
-          duration: Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
-    }
-  }
 
   String getText(Player p) {
     int dealer = Game.data.dealData?.dealer;
@@ -75,6 +63,14 @@ class IdleScreen extends StatelessWidget {
       return "Bot";
     }
     return "";
+  }
+
+  void changePos(int index) {
+    UIBloc.posOveride = index;
+    if (carrouselController.hasClients) {
+      carrouselController.animateToPage(index,
+          duration: Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
+    }
   }
 
   @override
@@ -171,79 +167,9 @@ class IdleScreen extends StatelessWidget {
                   controller: _admobController,
                 ),
               ),
-              Builder(builder: (context) {
-                List<Tile> gmap = Game.data.gmap;
-                List<Widget> gridChildren = [];
-                UIBloc.mapConfiguration.configuration.forEach((int tileIndex) {
-                  if (0 > tileIndex) {
-                    gridChildren.add(Container());
-                    return;
-                  }
-                  if (tileIndex <= gmap.length - 1) {
-                    Tile tile = gmap[tileIndex];
-                    gridChildren.add(
-                      Theme(
-                        data: Theme.of(context).copyWith(
-                            cardTheme: CardTheme(
-                          elevation: 0,
-                          margin: EdgeInsets.zero,
-                          color: Colors.white,
-                          shape: Border.all(color: Colors.black, width: 0.5),
-                        )),
-                        child: EagerInkWell(
-                          onTap: () {
-                            if (tile.buyable) {
-                              Navigator.push(context, MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                                return PropertyPage(property: tile);
-                              }));
-                            } else {
-                              changePos(tile.mapIndex);
-                            }
-                          },
-                          child: buildCard(tile),
-                        ),
-                      ),
-                    );
-                  }
-                });
-
-                List<DropdownMenuItem> mapConfItems = [];
-                Hive.box(MainBloc.MAPCONFBOX).toMap().forEach((key, _) {
-                  mapConfItems.add(DropdownMenuItem(
-                    child: Text(key),
-                    value: key,
-                  ));
-                });
-
-                double size = min(MediaQuery.of(context).size.width,
-                    MediaQuery.of(context).size.height);
-                int width = UIBloc.mapConfiguration.width;
-                return MyCard(
-                  maxWidth: 900,
-                  children: <Widget>[
-                    Container(
-                      width: size,
-                      height: (gridChildren.length / pow(width.toDouble(), 2)) *
-                          size *
-                          (4 / 3),
-                      child:
-                          BoardZoom(width: width, gridChildren: gridChildren),
-                    ),
-                    ListTile(
-                      title: Text("Map configuration:"),
-                      trailing: DropdownButton(
-                          value: Hive.box(MainBloc.METABOX)
-                              .get("mapConfiguration"),
-                          items: mapConfItems,
-                          onChanged: (val) {
-                            Hive.box(MainBloc.METABOX)
-                                .put("mapConfiguration", val);
-                          }),
-                    )
-                  ],
-                );
-              }),
+              ZoomMap(
+                carrouselController: carrouselController,
+              ),
               InfoCard(
                 iplayer: UIBloc.gamePlayer,
                 short: false,
@@ -342,41 +268,6 @@ class IdleScreen extends StatelessWidget {
           child: Center(child: Text("You are idle...")),
         )
       ],
-    );
-  }
-}
-
-class BoardZoom extends StatelessWidget {
-  const BoardZoom({
-    Key key,
-    @required this.width,
-    @required this.gridChildren,
-  }) : super(key: key);
-
-  final int width;
-  final List<Widget> gridChildren;
-
-  @override
-  Widget build(BuildContext context) {
-    return Zoom(
-      initZoom: 0,
-      canvasColor: Theme.of(context).canvasColor,
-      enableScroll: true,
-      width: (width.toDouble() * 250),
-      height: (gridChildren.length / width.toDouble()) * 250 * (4 / 3),
-      backgroundColor: Colors.black,
-      child: buildGrid(),
-    );
-  }
-
-  GridView buildGrid() {
-    return GridView.count(
-      padding: EdgeInsets.zero,
-      childAspectRatio: 3 / 4,
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      crossAxisCount: width,
-      children: gridChildren,
     );
   }
 }

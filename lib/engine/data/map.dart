@@ -126,11 +126,17 @@ class Tile extends HiveObject {
         .toList();
   }
 
+  void reset() {
+    level = 0;
+    mortaged = false;
+  }
+
   Tile(
     this.type, {
     this.color,
     this.idPrefix,
     this.name,
+    this.description,
     this.price,
     this.housePrice,
     this.rent,

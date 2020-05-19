@@ -48,7 +48,7 @@ class MoveScreen extends StatelessWidget {
                   },
                 ),
                 ValueListenableBuilder(
-                  valueListenable: Hive.box(MainBloc.PREFBOX).listenable(),
+                  valueListenable: Hive.box(MainBloc.MOVEBOX).listenable(),
                   builder: (BuildContext context, Box box, Widget _) {
                     if (MainBloc.randomDices) {
                       if (box.containsKey("intDice0") &&
@@ -98,7 +98,7 @@ class MoveScreen extends StatelessWidget {
 
 void moveModalBottomSheet(BuildContext context) {
   if (MainBloc.online) return;
-  Box box = Hive.box(MainBloc.PREFBOX);
+  Box box = Hive.box(MainBloc.MOVEBOX);
   box.delete("intDice0");
   box.delete("intDice1");
   showModalBottomSheet(
@@ -116,14 +116,14 @@ void moveModalBottomSheet(BuildContext context) {
                   leading: FaIcon(FontAwesomeIcons.solidHandPointer),
                   title: Text('Select dices'),
                   onTap: () {
-                    Hive.box(MainBloc.PREFBOX).put("boolRandomDices", false);
+                    box.put("boolRandomDices", false);
                     Navigator.pop(context);
                   }),
               ListTile(
                 leading: FaIcon(FontAwesomeIcons.dice),
                 title: Text('Randomly pick dices'),
                 onTap: () {
-                  Hive.box(MainBloc.PREFBOX).put("boolRandomDices", true);
+                  box.put("boolRandomDices", true);
                   Navigator.pop(context);
                 },
               ),

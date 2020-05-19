@@ -36,13 +36,14 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..bankData = fields[16] as BankData
       ..version = fields[17] as String
       ..lostPlayers = (fields[18] as List)?.cast<Player>()
-      ..bot = fields[19] as bool;
+      ..bot = fields[19] as bool
+      ..transported = fields[20] as bool;
   }
 
   @override
   void write(BinaryWriter writer, GameData obj) {
     writer
-      ..writeByte(20)
+      ..writeByte(21)
       ..writeByte(0)
       ..write(obj.running)
       ..writeByte(1)
@@ -82,7 +83,9 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..writeByte(18)
       ..write(obj.lostPlayers)
       ..writeByte(19)
-      ..write(obj.bot);
+      ..write(obj.bot)
+      ..writeByte(20)
+      ..write(obj.transported);
   }
 }
 
@@ -131,7 +134,8 @@ GameData _$GameDataFromJson(Map<String, dynamic> json) {
         ?.map((e) =>
             e == null ? null : Player.fromJson(e as Map<String, dynamic>))
         ?.toList()
-    ..bot = json['bot'] as bool;
+    ..bot = json['bot'] as bool
+    ..transported = json['transported'] as bool ?? false;
 }
 
 Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
@@ -156,6 +160,7 @@ Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
       'version': instance.version,
       'lostPlayers': instance.lostPlayers?.map((e) => e?.toJson())?.toList(),
       'bot': instance.bot,
+      'transported': instance.transported,
     };
 
 T _$enumDecode<T>(
@@ -195,4 +200,5 @@ const _$ExtensionEnumMap = {
   Extension.transportation: 'transportation',
   Extension.legislation: 'legislation',
   Extension.stock: 'stock',
+  Extension.drainTheLake: 'drainTheLake',
 };

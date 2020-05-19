@@ -15,17 +15,20 @@ class MyCard extends StatefulWidget {
   final double maxWidth;
   final bool animate;
   final Widget leading;
+  final bool seperated;
 
   const MyCard({
     Key key,
     this.title,
     this.listen: false,
     @required this.children,
-    this.smallTitle: false,
+    this.smallTitle,
     this.color,
     this.onTap,
     this.maxWidth,
-    this.animate: true, this.leading,
+    this.animate: true,
+    this.leading,
+    this.seperated: false,
   }) : super(key: key);
 
   @override
@@ -65,7 +68,8 @@ class _MyCardState extends State<MyCard> with SingleTickerProviderStateMixin {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               widget.title,
-                              style: !widget.smallTitle
+                              style: !(widget.smallTitle ??
+                                      (widget.title.length > 10))
                                   ? Theme.of(context).textTheme.headline3
                                   : Theme.of(context).textTheme.headline4,
                               textAlign: TextAlign.start,
@@ -144,22 +148,5 @@ class _MyCardState extends State<MyCard> with SingleTickerProviderStateMixin {
     return Column(
       children: widget.children,
     );
-  }
-
-  Widget buildTitle() {
-    if (widget.title != null) {
-      return Container(
-        padding: const EdgeInsets.all(8),
-        alignment: Alignment.centerLeft,
-        child: Text(
-          widget.title,
-          style: !widget.smallTitle
-              ? Theme.of(context).textTheme.headline3
-              : Theme.of(context).textTheme.headline4,
-          textAlign: TextAlign.start,
-        ),
-      );
-    }
-    return Container();
   }
 }

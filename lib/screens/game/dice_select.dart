@@ -21,7 +21,7 @@ class _DiceSelectState extends State<DiceSelect> {
   List<int> dices = [-1, -1];
   @override
   Widget build(BuildContext context) {
-    Box box = Hive.box(MainBloc.PREFBOX);
+    Box box = Hive.box(MainBloc.MOVEBOX);
     if (box.get("boolRandomDices") == null && !MainBloc.online) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,

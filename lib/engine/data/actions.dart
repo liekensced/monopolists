@@ -31,6 +31,7 @@ List<CardAction> events = [
       () => Game.jump(null, false)),
 ];
 List<CardAction> findings = [
+  CardAction("Repare your houses", () => Game.helper.repareHouses()),
   CardAction("Go to prison", () => Game.helper.jail(Game.data.currentPlayer)),
   CardAction("You win a game: +£100", () => Game.data.player.money += 100),
   CardAction("You win a bet: +50", () => Game.data.player.money += 50),

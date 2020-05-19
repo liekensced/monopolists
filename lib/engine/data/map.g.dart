@@ -116,6 +116,7 @@ class TileAdapter extends TypeAdapter<Tile> {
       color: fields[1] as int,
       idPrefix: fields[2] as String,
       name: fields[3] as String,
+      description: fields[12] as String,
       price: fields[4] as int,
       housePrice: fields[6] as int,
       rent: (fields[7] as List)?.cast<int>(),
@@ -124,13 +125,13 @@ class TileAdapter extends TypeAdapter<Tile> {
       idIndex: fields[10] as int,
     )
       ..level = fields[9] as int
-      ..description = fields[12] as String;
+      ..transportationPrice = fields[13] as int;
   }
 
   @override
   void write(BinaryWriter writer, Tile obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.type)
       ..writeByte(1)
@@ -154,7 +155,9 @@ class TileAdapter extends TypeAdapter<Tile> {
       ..writeByte(11)
       ..write(obj.mortaged)
       ..writeByte(12)
-      ..write(obj.description);
+      ..write(obj.description)
+      ..writeByte(13)
+      ..write(obj.transportationPrice);
   }
 }
 
@@ -181,6 +184,7 @@ Tile _$TileFromJson(Map<String, dynamic> json) {
     color: json['color'] as int,
     idPrefix: json['idPrefix'] as String,
     name: json['name'] as String,
+    description: json['description'] as String ?? 'No info',
     price: json['price'] as int,
     housePrice: json['housePrice'] as int,
     rent: (json['rent'] as List)?.map((e) => e as int)?.toList(),
@@ -189,7 +193,7 @@ Tile _$TileFromJson(Map<String, dynamic> json) {
     idIndex: json['idIndex'] as int,
   )
     ..level = json['level'] as int
-    ..description = json['description'] as String ?? 'No info';
+    ..transportationPrice = json['transportationPrice'] as int;
 }
 
 Map<String, dynamic> _$TileToJson(Tile instance) => <String, dynamic>{
@@ -205,6 +209,7 @@ Map<String, dynamic> _$TileToJson(Tile instance) => <String, dynamic>{
       'idIndex': instance.idIndex,
       'mortaged': instance.mortaged,
       'description': instance.description,
+      'transportationPrice': instance.transportationPrice,
     };
 
 T _$enumDecode<T>(

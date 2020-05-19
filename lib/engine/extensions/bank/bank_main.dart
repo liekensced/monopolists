@@ -53,22 +53,25 @@ class BankMain {
 
   static rent() {
     if (!enabled) return;
-    double rent = Game.data.player.money * 0.10;
+    double rent = Game.data.player.money * Game.data.settings.interest / 100;
     Game.data.player.money += rent;
     Game.addInfo(UpdateInfo(title: "Received rent: +£${rent.floor()}"));
   }
 
   static Alert payLoan(Contract loan) {
-    Alert alert = Game.act.pay(
-      PayType.bank,
-      loan.amount.toInt(),
-      shouldSave: false,
-    );
-    if (alert != null) return alert;
+    try {
+      Game.act.pay(
+        PayType.bank,
+        loan.amount.toInt(),
+        shouldSave: false,
+      );
+    } on Alert catch (e) {
+      return e;
+    }
     Game.data.player.loans.remove(loan);
     Game.data.player.debt -= loan.amount;
     Game.save(excludeBasic: true);
-    return alert;
+    return null;
   }
 
   static List<Contract> getLoans([Player player]) {
@@ -99,6 +102,7 @@ class BankMain {
       PayType.bank,
       (loan.amount * loan.fee).toInt(),
       shouldSave: false,
+      force: true,
     );
     Game.data.player.loans.add(Contract.copy(loan));
     _checkLoan(loan, player.index);

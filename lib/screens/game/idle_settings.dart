@@ -63,53 +63,53 @@ class IdleSettings extends StatelessWidget {
           trailing: Switch(
             value: UIBloc.gamePlayer.ai.type == AIType.normal,
             onChanged: (bool val) {
-              if (!Game.data.ui.idle) {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                        title: Text("Failed"),
-                        content:
-                            Text("You have to be idle to change this setting."),
-                        actions: [
-                          MaterialButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                "close",
-                                style: TextStyle(
-                                    color: Theme.of(context).primaryColor),
-                              ))
-                        ]);
-                  },
-                );
-                return;
-              }
-              if (Game.data.ui.amountRealPlayers <= 1) {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                        title: Text("Failed"),
-                        content: Text("There has to be at least 1 real player"),
-                        actions: [
-                          MaterialButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                "close",
-                                style: TextStyle(
-                                    color: Theme.of(context).primaryColor),
-                              ))
-                        ]);
-                  },
-                );
-                return;
-              }
-
               if (UIBloc.gamePlayer.ai.type == AIType.player) {
+                if (!Game.data.ui.idle) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                          title: Text("Failed"),
+                          content: Text(
+                              "You have to be idle to change this setting."),
+                          actions: [
+                            MaterialButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  "close",
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor),
+                                ))
+                          ]);
+                    },
+                  );
+                  return;
+                }
+                if (Game.data.ui.amountRealPlayers <= 1) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                          title: Text("Failed"),
+                          content:
+                              Text("There has to be at least 1 real player"),
+                          actions: [
+                            MaterialButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  "close",
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor),
+                                ))
+                          ]);
+                    },
+                  );
+                  return;
+                }
                 UIBloc.gamePlayer.ai.type = AIType.normal;
               } else {
                 UIBloc.gamePlayer.ai.type = AIType.player;

@@ -86,7 +86,10 @@ class NormalAI {
           case TileType.trainstation:
             if (!isOwner) {
               if (player.money > tile.price) {
-                if (chance(0.8)) print(Game.act.buy());
+                if (chance(0.8)) {
+                  print(Game.act.buy());
+                  tile.transportationPrice = 150 + Random().nextInt(100);
+                }
               }
             }
             break;
@@ -115,6 +118,7 @@ class NormalAI {
       remotelyBuild();
       trade();
       checkJail();
+
       mortage();
     } finally {
       Alert nextAlert = Game.next();
@@ -201,6 +205,7 @@ class NormalAI {
     Game.data.gmap
         .where((Tile t) {
           if (!t.buyable) return false;
+          if (t.owner == null) return false;
           return !player.properties.contains(t);
         })
         .toList()

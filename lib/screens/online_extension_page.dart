@@ -69,6 +69,11 @@ class OnlineExtensionPage extends StatelessWidget {
           ),
           GeneralInfoCard(
               info: Info(
+                  "Broken",
+                  "The online extensions are not compatible with\nversions > 0.3.0",
+                  InfoType.alert)),
+          GeneralInfoCard(
+              info: Info(
                   "Proof of concept",
                   "The online extensions are in early acces. It is not stable yet. You can already create your own map but live updating is very unstable.",
                   InfoType.alert)),

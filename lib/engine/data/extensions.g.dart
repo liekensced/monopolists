@@ -21,6 +21,8 @@ class ExtensionAdapter extends TypeAdapter<Extension> {
         return Extension.legislation;
       case 3:
         return Extension.stock;
+      case 4:
+        return Extension.drainTheLake;
       default:
         return null;
     }
@@ -40,6 +42,9 @@ class ExtensionAdapter extends TypeAdapter<Extension> {
         break;
       case Extension.stock:
         writer.writeByte(3);
+        break;
+      case Extension.drainTheLake:
+        writer.writeByte(4);
         break;
     }
   }

@@ -10,9 +10,10 @@ import 'extension_data.dart';
 class LegislationExtension {
   static ExtensionData data = ExtensionData(
     ext: Extension.legislation,
-    name: "Jurisdiction",
+    name: "Legislation",
+    hotAdd: true,
     description:
-        "You can add oral agreemants to deals but they have to follow the rules.",
+        "You can add oral agreemants to deals, but they have to follow the rules.",
     icon: ({double size: 30}) {
       return FaIcon(FontAwesomeIcons.balanceScale);
     },
@@ -33,11 +34,6 @@ class LegislationExtension {
           "You can get creative with deals if the rules allow it. Ask for exemption of rent, free travel, rent money, ... be creative!",
           InfoType.tip),
     ];
-  }
-
-  static bool get showJurisdictionScreen {
-    int turn = Game.data.turn;
-    return turn % 4 == 0;
   }
 
   static Player get speaker {

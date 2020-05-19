@@ -27,12 +27,13 @@ class OwnerText extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     "Owner: ",
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.black, fontSize: 18),
                   ),
                   Text(tile.owner.name,
                       style: TextStyle(
                           color: Color(tile.owner.color),
-                          fontWeight: FontWeight.bold)),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20)),
                 ],
               ),
               Container(height: 2),

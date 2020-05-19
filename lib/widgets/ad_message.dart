@@ -80,8 +80,9 @@ class DailyAdsMessage extends StatelessWidget {
                     );
                   });
               RewardedVideoAd.instance.load(
-                  adUnitId: AdBloc.rewardAdUID,
-                  targetingInfo: AdBloc.targetingInfo);
+                adUnitId: AdBloc.rewardAdUID,
+                targetingInfo: AdBloc.targetingInfo,
+              );
             },
             child: ListTile(
               title: Text(

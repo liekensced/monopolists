@@ -42,14 +42,17 @@ class StockBloc {
   }
 
   static Alert buyWorldStock() {
-    Alert alert;
-    alert = Game.act.pay(
-      PayType.bank,
-      (Game.data.bankData.worldStock.value * 1.05).toInt(),
-      count: true,
-      shouldSave: false,
-    );
-    if (alert != null) return alert;
+    try {
+      Game.act.pay(
+        PayType.bank,
+        (Game.data.bankData.worldStock.value * 1.05).toInt(),
+        count: true,
+        shouldSave: false,
+      );
+    } on Alert catch (e) {
+      return e;
+    }
+
     Game.data.player.stock[Stock.world().id] =
         (Game.data.player.stock[Stock.world().id] ?? 0) + 1;
     Game.save(excludeBasic: true);

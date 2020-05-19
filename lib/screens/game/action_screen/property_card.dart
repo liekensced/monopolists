@@ -341,7 +341,7 @@ class _PropertyCardState extends State<PropertyCard>
             child: ListTile(
               leading: leading,
               title: Text(
-                widget.tile.name,
+                widget.tile.name ?? "",
                 style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
               ),
               trailing: Icon(

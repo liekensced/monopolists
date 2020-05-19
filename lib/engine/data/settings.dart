@@ -20,6 +20,12 @@ class Settings extends HiveObject {
   int startingMoney = 1500;
   @HiveField(6)
   bool hackerScreen = false;
+  @HiveField(7)
+  @JsonKey(defaultValue: 10)
+  int interest = 10;
+  @JsonKey(defaultValue: 1000)
+  @HiveField(8)
+  int dtlPrice = 1000;
 
   Settings();
 

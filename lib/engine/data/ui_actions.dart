@@ -17,6 +17,8 @@ class UIActionsData extends HiveObject {
 
   @HiveField(1)
   bool showDealScreen = false;
+  @HiveField(2)
+  bool shouldMove = true;
 
   bool get ended {
     if (Game.data == null) return false;

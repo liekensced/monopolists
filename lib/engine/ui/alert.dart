@@ -33,6 +33,10 @@ class Alert {
     snackbar = true;
     failed = false;
   }
+  Alert.exception(e) {
+    title = "Something went wrong :/";
+    content = e.toString();
+  }
   Alert.join(String gamePin) {
     if (gamePin == null) {
       title = "failed alert";
@@ -58,10 +62,12 @@ class Alert {
       }
     };
   }
-  Alert.funds([Player player]) {
+  Alert.funds([Player player, int needed]) {
     title = "Not enough funds";
+    double money = player?.money ?? Game.data.player.money;
     content = (player?.name ?? Game.data.player.name) +
-        " does not have enough money.";
+        " does not have enough money" +
+        (needed == null ? "." : ":\n£$needed > £${money.floor()}");
   }
 
   static void handleAndPop(Alert Function() f, BuildContext context) {
@@ -85,8 +91,17 @@ class Alert {
     }
   }
 
-  static bool handle(Alert Function() function, BuildContext context) {
-    Alert alert = function();
+  static bool handle(Function() function, BuildContext context) {
+    Alert alert;
+    try {
+      alert = function();
+    } catch (e) {
+      if (e is Alert) {
+        alert = e;
+      } else {
+        alert = Alert.exception(e);
+      }
+    }
     if (alert != null) {
       if (alert.title == FASTJOIN) {
         joinOnline(context, alert.content);

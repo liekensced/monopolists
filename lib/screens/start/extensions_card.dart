@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:plutopoly/engine/extensions/extension_data.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
@@ -41,58 +42,75 @@ class ExtensionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return closedBuilder(context, () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (BuildContext context) {
+          return ExtensionScreen(ext: ext);
+        }));
+      });
+    }
     return OpenContainer(
-      closedColor: Theme.of(context).cardColor,
-      openColor: Theme.of(context).backgroundColor,
-      openBuilder: (_, __) {
-        return ExtensionScreen(ext: ext);
-      },
-      closedBuilder: (_, f) => ListTile(
+        closedColor: Theme.of(context).cardColor,
+        openColor: Theme.of(context).backgroundColor,
+        openBuilder: (_, __) {
+          return ExtensionScreen(ext: ext);
+        },
+        closedBuilder: (_, f) => closedBuilder(context, f));
+  }
+
+  closedBuilder(BuildContext context, f) => ListTile(
         title: Text(title),
         leading: icon,
         trailing: Wrap(children: <Widget>[
           Switch(
             value: Game.data.extensions.contains(ext),
-            onChanged: (val) {
-              if (Game.data.running == true) {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                        title: Text("Game is running"),
-                        content: Text(
-                            "You can't change extensions while the game is running."),
-                        actions: [
-                          MaterialButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                "close",
-                                style: TextStyle(
-                                    color: Theme.of(context).primaryColor),
-                              ))
-                        ]);
-                  },
-                );
-              } else {
-                ExtensionData extensionData = ExtensionsMap.call()[ext];
-                if (val) {
-                  if (Alert.handle(extensionData.onAdded, context)) {
-                    Game.data.extensions.add(ext);
-                  }
-                } else {
-                  ExtensionsMap.call().forEach((key, ExtensionData dependant) {
-                    if (dependant.dependencies.contains(ext) &&
-                        Game.data.extensions.contains(key)) {
-                      Game.data.extensions.remove(key);
+            onChanged: (Game.data.running == true &&
+                    !ExtensionsMap.call()[ext].hotAdd)
+                ? null
+                : (val) {
+                    if (Game.data.running == true &&
+                        !ExtensionsMap.call()[ext].hotAdd) {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                              title: Text("Game is running"),
+                              content: Text(
+                                  "You can't change this extensions while the game is running."),
+                              actions: [
+                                MaterialButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(
+                                      "close",
+                                      style: TextStyle(
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                    ))
+                              ]);
+                        },
+                      );
+                    } else {
+                      ExtensionData extensionData = ExtensionsMap.call()[ext];
+                      if (val) {
+                        if (Alert.handle(extensionData.onAdded, context)) {
+                          Game.data.extensions.add(ext);
+                        }
+                      } else {
+                        ExtensionsMap.call()
+                            .forEach((key, ExtensionData dependant) {
+                          if (dependant.dependencies.contains(ext) &&
+                              Game.data.extensions.contains(key)) {
+                            Game.data.extensions.remove(key);
+                          }
+                        });
+                        Game.data.extensions.remove(ext);
+                      }
+                      Game.save();
                     }
-                  });
-                  Game.data.extensions.remove(ext);
-                }
-                Game.save();
-              }
-            },
+                  },
           ),
           IconButton(
             icon: Icon(Icons.navigate_next),
@@ -101,7 +119,5 @@ class ExtensionTile extends StatelessWidget {
             },
           )
         ]),
-      ),
-    );
-  }
+      );
 }

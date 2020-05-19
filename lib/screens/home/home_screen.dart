@@ -42,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
         UIBloc.showAlerts(context);
       });
     });
+
     super.initState();
   }
 
@@ -152,6 +153,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               GamesCard(),
                               StartOnlineButton(),
                               JoinOnlineCard(),
+                              ADView(
+                                controller: _adController,
+                              ),
                               ValueListenableBuilder(
                                   valueListenable:
                                       Hive.box(MainBloc.RECENTBOX).listenable(),
@@ -163,9 +167,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Icons.settings,
                                   size: 40,
                                 ),
-                              ),
-                              ADView(
-                                controller: _adController,
                               ),
                               AccountCard(),
                               SettingsCard(),

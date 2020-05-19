@@ -15,20 +15,28 @@ class CoreActions {
   CoreActions();
 
   Alert mortage(int tileIndex) {
-    Alert alert;
     Tile tile = data.gmap[tileIndex];
     if (tile.hyp == null)
       return Alert("Couldn't mortage", "You can't mortage this tile.");
     bool _mortaged = tile.mortaged;
-    if (_mortaged) {
-      alert = pay(PayType.bank, (tile.hyp * 1.1).toInt(), shouldSave: false);
-      if (alert != null) return alert;
-      tile.mortaged = false;
-      alert = Alert.snackBar("Lifted mortaged " + tile.name);
-    } else {
-      pay(PayType.bank, -tile.hyp);
-      tile.mortaged = true;
-      alert = Alert.snackBar("Mortaged " + tile.name);
+    Alert alert;
+    try {
+      if (_mortaged) {
+        pay(PayType.bank, (tile.hyp * 1.1).toInt(), shouldSave: false);
+        if (alert != null) return alert;
+        tile.mortaged = false;
+        alert = Alert.snackBar("Lifted mortaged " + tile.name);
+      } else {
+        pay(PayType.bank, -tile.hyp);
+        tile.mortaged = true;
+        alert = Alert.snackBar("Mortaged " + tile.name);
+      }
+    } catch (e) {
+      if (e is Alert) {
+        return e;
+      } else {
+        return Alert.exception(e);
+      }
     }
     Game.save(
         exclude: [SaveData.dealData.toString(), SaveData.settings.toString()]);
@@ -36,17 +44,18 @@ class CoreActions {
   }
 
   /// Doesn't update gmap, lostPlayers, dealData,
-  Alert pay(PayType type, int amount,
+  /// THROWS EXCEPTIONS > -- - - -- ]
+  void pay(PayType type, int amount,
       {int receiver,
       bool count: false,
       bool force: false,
       bool shouldSave: true}) {
     if (!force) {
       if (amount > 0) {
-        if (data.player.money < amount) return Alert.funds();
+        if (data.player.money < amount) throw Alert.funds(null, amount);
       } else if (amount < 0 && receiver != null) {
         Player _player = data.players[receiver];
-        if (_player.money < -amount) return Alert.funds(_player);
+        if (_player.money < -amount) throw Alert.funds(_player, amount);
       }
     }
     if (count) Game.bank.onCountedPay(amount);
@@ -70,7 +79,6 @@ class CoreActions {
     if (shouldSave) {
       Game.save(excludeBasic: true);
     }
-    return null;
   }
 
   Alert clearPot() {
@@ -93,23 +101,30 @@ class CoreActions {
   }
 
   Alert buyOutJail() {
-    Alert alert = pay(PayType.pot, 50, shouldSave: false);
-    if (alert == null) {
-      Game.helper.undoubleDices();
-      data.doublesThrown = 0;
-      data.player.jailed = false;
-      Game.save(excludeBasic: true);
+    try {
+      pay(PayType.pot, 50, shouldSave: false);
+    } on Alert catch (e) {
+      return e;
     }
 
-    return alert;
+    Game.helper.undoubleDices();
+    data.doublesThrown = 0;
+    data.player.jailed = false;
+    Game.save(excludeBasic: true);
+
+    return null;
   }
 
   Alert payRent(int tileIndex, [int payPrice, bool force = false]) {
     Tile tile = data.gmap[tileIndex];
     int price = payPrice ?? tile.currentRent;
     int receiver = tile.owner.index;
-    return pay(PayType.rent, price,
-        receiver: receiver, count: true, force: force);
+    try {
+      pay(PayType.rent, price, receiver: receiver, count: true, force: force);
+    } on Alert catch (e) {
+      return e;
+    }
+    return null;
   }
 
   Alert deal({
@@ -119,10 +134,10 @@ class CoreActions {
     @required int dealer,
   }) {
     if (payAmount != null) {
-      Alert alert =
-          pay(PayType.pay, payAmount, receiver: dealer, shouldSave: false);
-      if (alert != null) {
-        return alert;
+      try {
+        pay(PayType.pay, payAmount, receiver: dealer, shouldSave: false);
+      } on Alert catch (e) {
+        return e;
       }
     }
     if (payProperties != null) {
@@ -144,7 +159,6 @@ class CoreActions {
   }
 
   Alert buy([int price, int prop]) {
-    Alert alert;
     if (prop == null) prop = data.player.position;
     if (price == null) price = data.gmap[prop].price;
     if (data.gmap[prop].owner != null) {
@@ -153,8 +167,11 @@ class CoreActions {
     if (data.gmap[prop].type == TileType.land ||
         data.gmap[prop].type == TileType.trainstation ||
         data.gmap[prop].type == TileType.company) {
-      alert = pay(PayType.bank, price, count: true, shouldSave: false);
-      if (alert != null) return alert;
+      try {
+        pay(PayType.bank, price, count: true, shouldSave: false);
+      } on Alert catch (e) {
+        return e;
+      }
       data.player.properties.add(prop);
       data.player.properties.sort();
       Game.save(exclude: [

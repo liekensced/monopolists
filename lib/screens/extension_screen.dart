@@ -1,11 +1,14 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:plutopoly/bloc/game_listener.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/data/extensions.dart';
 import 'package:plutopoly/engine/extensions/extension_data.dart';
+import 'package:plutopoly/engine/extensions/setting.dart';
 import 'package:plutopoly/screens/start/info_screen.dart';
 import 'package:plutopoly/widgets/end_of_list.dart';
 import 'package:plutopoly/widgets/my_card.dart';
+import 'package:plutopoly/widgets/setting_tile.dart';
 
 class ExtensionScreen extends StatelessWidget {
   final Extension ext;
@@ -58,8 +61,9 @@ class ExtensionScreen extends StatelessWidget {
               ),
             ),
           ),
+          buildSettings(extensionData),
           IconDivider(icon: extensionData.icon()),
-          ...getInfo(extensionData),
+          GameListener(builder: (_, __, ___) => getInfo(extensionData)),
           IconDivider(
               icon: Icon(
             Icons.info,
@@ -84,13 +88,16 @@ class ExtensionScreen extends StatelessWidget {
         children.add(Divider());
       }
     });
-    if (children.isEmpty)
-      return MyCard(
-        title: "No dependents",
-        smallTitle: true,
-        children: [],
+    if (children.isEmpty) {
+      children.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0, top: 8.0),
+          child: Text("No dependents"),
+        ),
       );
-    children.removeLast();
+    } else {
+      children.removeLast();
+    }
     return MyCard(
       title: "Dependents:",
       smallTitle: true,
@@ -107,13 +114,16 @@ class ExtensionScreen extends StatelessWidget {
       ));
       children.add(Divider());
     });
-    if (children.isEmpty)
-      return MyCard(
-        title: "No dependencies",
-        smallTitle: true,
-        children: [],
+    if (children.isEmpty) {
+      children.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0, top: 8.0),
+          child: Text("No dependencies"),
+        ),
       );
-    children.removeLast();
+    } else {
+      children.removeLast();
+    }
     return MyCard(
       title: "Requires:",
       smallTitle: true,
@@ -121,12 +131,29 @@ class ExtensionScreen extends StatelessWidget {
     );
   }
 
-  List<Widget> getInfo(ExtensionData extensionData) {
+  Widget getInfo(ExtensionData extensionData) {
     List<Widget> out = [];
     extensionData.getInfo().forEach((info) {
       out.add(GeneralInfoCard(info: info));
     });
-    return out;
+    return Column(children: out);
+  }
+
+  buildSettings(ExtensionData extensionData) {
+    if (extensionData.settings?.isEmpty ?? true) {
+      return Container();
+    }
+    return MyCard(
+      title: "Settings",
+      children: [
+        for (Setting setting in extensionData.settings)
+          SettingTile(
+            setting: setting,
+            ext: extensionData.ext,
+          ),
+        Container(height: 10),
+      ],
+    );
   }
 }
 

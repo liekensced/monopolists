@@ -16,6 +16,7 @@ import '../engine/kernel/main.dart';
 import '../engine/ui/alert.dart';
 import '../helpers/online_extensions.dart';
 import '../helpers/route_helper.dart';
+import 'dailyBloc.dart';
 import 'recent_bloc.dart';
 import 'ui_bloc.dart';
 
@@ -32,6 +33,7 @@ class MainBloc {
   static const MAPCONFBOX = _boxVersion + "mapconfBox";
   static const ACCOUNTBOX = _boxVersion + "accountBox";
   static const RECENTBOX = _boxVersion + "recentBox";
+  static const MOVEBOX = _boxVersion + "moveBox";
 
   static bool initialized = false;
   static int currentGame = 0;
@@ -257,6 +259,7 @@ class MainBloc {
     if (initialized) return;
     initialized = true;
     code;
+    DailyBloc.checkNewDay();
 
     currentGame = Hive.box(METABOX).get("intCurrentGame");
     if (Hive.box(MAPCONFBOX).isEmpty) {

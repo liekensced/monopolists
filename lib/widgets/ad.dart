@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_admob/flutter_native_admob.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:flutter_native_admob/native_admob_options.dart';
-import 'package:plutopoly/bloc/ad_bloc.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/jokes.dart';
+
+import '../bloc/ad_bloc.dart';
+import '../bloc/ui_bloc.dart';
+import '../jokes.dart';
 
 class ADView extends StatefulWidget {
   final bool large;

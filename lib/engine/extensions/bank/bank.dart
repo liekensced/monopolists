@@ -9,6 +9,7 @@ import '../../data/extensions.dart';
 import '../../data/tip.dart';
 import '../../kernel/main.dart';
 import '../extension_data.dart';
+import '../setting.dart';
 import 'data/loan.dart';
 
 class BankExtension {
@@ -20,20 +21,27 @@ class BankExtension {
       ext: Extension.bank,
       getInfo: () {
         List<Info> info = <Info>[];
-        if (Game.data.extensions.contains(Extension.bank)) {
-          info.add(
-            Info(
-                "Interest",
-                "You get 10% interest on the money you have in the bank (minus debt) if you pass go.",
-                InfoType.rule),
-          );
-        }
+        info.add(
+          Info(
+              "Interest",
+              "You get ${Game.data?.settings?.interest ?? 10}% interest on the money you have in the bank (minus debt) if you pass go.",
+              InfoType.rule),
+        );
 
         return info;
       },
       icon: ({double size: 30}) {
         return FaIcon(FontAwesomeIcons.university, size: size);
       },
+      settings: [
+        Setting<int>(
+          onChanged: onChanged,
+          value: () => Game.data?.settings?.interest ?? 10,
+          title: "Interest in percentage",
+          subtitle:
+              "Amount of interest you get for your cash for passing the start. Default: 10%",
+        ),
+      ],
       onAdded: () {
         if (Game.data.settings.startingMoney <= 1000) return null;
         return Alert(
@@ -49,6 +57,11 @@ class BankExtension {
           failed: false,
         );
       });
+
+  static onChanged(interest) {
+    Game.data.settings.interest = interest;
+    Game.save(only: [SaveData.settings.toString()]);
+  }
 
   static onNewTurn() {
     if (!data.enabled) return;

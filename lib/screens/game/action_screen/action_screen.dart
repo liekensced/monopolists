@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
+import 'package:plutopoly/screens/game/action_screen/drain_the_lake_card.dart';
 import 'package:plutopoly/screens/game/action_screen/move_card.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../bloc/game_listener.dart';
 import '../../../bloc/main_bloc.dart';
@@ -21,6 +24,7 @@ import '../../carousel/map_carousel.dart';
 import '../deal_screen.dart';
 import '../idle_screen.dart';
 import '../move_screen.dart';
+import '../zoom_map.dart';
 import 'bottom_sheet.dart';
 import 'default_card.dart';
 import 'info_card.dart';
@@ -202,6 +206,10 @@ class _ActionScreenState extends State<ActionScreen> {
       actions.add(StockCard());
     }
 
+    if (Game.data.extensions.contains(Extension.drainTheLake)) {
+      actions.add(DrainTheLakeCard());
+    }
+
     //END
     actions.add(DefaultCard());
 
@@ -274,19 +282,32 @@ class HoldingCards extends StatelessWidget {
         ))),
       );
     }
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: _properties.length,
-        itemBuilder: (context, index) {
-          return Theme(
-            data: Theme.of(context).copyWith(brightness: Brightness.light),
-            child: GameListener(
-              builder: (BuildContext context, _, __) {
-                return PropertyCard(tile: Game.data.gmap[_properties[index]]);
-              },
-            ),
-          );
-        });
+    return ListView(
+      children: [
+        ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: _properties.length,
+            itemBuilder: (context, index) {
+              return Theme(
+                data: Theme.of(context).copyWith(brightness: Brightness.light),
+                child: GameListener(
+                  builder: (BuildContext context, _, __) {
+                    return PropertyCard(
+                        tile: Game.data.gmap[_properties[index]]);
+                  },
+                ),
+              );
+            }),
+        Container(height: 20),
+        ValueListenableBuilder(
+            valueListenable: MainBloc.metaBox.listenable(),
+            builder: (context, snapshot, _) {
+              return ZoomMap();
+            }),
+        EndOfList()
+      ],
+    );
   }
 }
 

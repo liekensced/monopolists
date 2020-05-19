@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:plutopoly/bloc/ui_bloc.dart';
+import 'package:plutopoly/engine/extensions/transportation.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../ai/ai_type.dart';
@@ -99,7 +100,11 @@ class Game {
             "You can not remotely build houses. (You can change this in settings)");
       }
     }
-    act.pay(PayType.bank, tile.housePrice, count: true, shouldSave: false);
+    try {
+      act.pay(PayType.bank, tile.housePrice, count: true, shouldSave: false);
+    } on Alert catch (e) {
+      return e;
+    }
     tile.level++;
     save(exclude: [
       SaveData.settings.toString(),
@@ -136,7 +141,12 @@ class Game {
 
   static Alert executeEvent(Function func) {
     data.rentPayed = true;
-    var r = func();
+    var r;
+    try {
+      r = func();
+    } on Alert catch (e) {
+      return e;
+    }
     if (r is Alert) {
       return r;
     }
@@ -162,6 +172,8 @@ class Game {
   }
 
   static void move(int dice1, int dice2, {bool shouldSave: true}) {
+    if (!ui.shouldMove) return;
+    ui.shouldMove = false;
     data.rentPayed = false;
 
     Player player = data.player;
@@ -248,6 +260,8 @@ class Game {
     }
 
     if (changeS) UIBloc.changeScreen(Screen.move);
+    Game.data.ui.shouldMove = true;
+    ExtensionsMap.event((data) => data.onNext);
 
     if (data.player.ai.type == AIType.normal && Game.ui.realPlayers) {
       UIBloc.changeScreen(Screen.idle);
@@ -263,6 +277,7 @@ class Game {
 
   static onNewTurn() {
     BankExtension.onNewTurn();
+    TransportationBloc.data.onNewTurn();
     data.turn++;
     //after here
     data.players.asMap().forEach((int i, _) {

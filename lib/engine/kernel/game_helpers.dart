@@ -45,6 +45,6 @@ class GameHelpers {
       }
       _housesPay += tile.level * houseFactor;
     });
-    Game.act.pay(PayType.bank, _housesPay, count: true);
+    Game.act.pay(PayType.bank, _housesPay, count: true, force: true);
   }
 }

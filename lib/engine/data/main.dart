@@ -55,6 +55,9 @@ class GameData extends HiveObject {
   List<Player> lostPlayers = [];
   @HiveField(19)
   bool bot = false;
+  @HiveField(20)
+  @JsonKey(defaultValue: false)
+  bool transported = false;
 
   GameData() {
     version = MainBloc.version;
