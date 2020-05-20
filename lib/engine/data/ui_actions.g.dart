@@ -36,6 +36,9 @@ class ScreenAdapter extends TypeAdapter<Screen> {
       case Screen.active:
         writer.writeByte(2);
         break;
+      case Screen.parlement:
+        writer.writeByte(2);
+        break;
     }
   }
 }

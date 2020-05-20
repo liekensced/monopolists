@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:plutopoly/engine/data/extensions.dart';
-import 'package:plutopoly/engine/data/tip.dart';
-import 'package:plutopoly/engine/extensions/setting.dart';
-import 'package:plutopoly/engine/kernel/main.dart';
-import 'package:plutopoly/engine/ui/alert.dart';
+import '../data/extensions.dart';
+import '../data/tip.dart';
+import '../kernel/main.dart';
+import '../ui/alert.dart';
+import 'setting.dart';
 
 class ExtensionData {
   final Extension ext;

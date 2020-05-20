@@ -57,6 +57,9 @@ class IdleScreen extends StatelessWidget {
             return "Threw ${dices[0]} and ${dices[1]}";
           }
           break;
+        case Screen.parlement:
+          return "parlement";
+          break;
       }
     }
     if (p.ai.type == AIType.normal) {

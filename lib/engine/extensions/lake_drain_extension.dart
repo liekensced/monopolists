@@ -93,10 +93,8 @@ class LakeDrain {
         idIndex: 2,
       )
     ]);
-    Game.data.player.properties.addAll([
-      Game.data.player.properties.length - 2,
-      Game.data.player.properties.length - 1
-    ]);
+    Game.data.player.properties
+        .addAll([Game.data.gmap.length - 2, Game.data.gmap.length - 1]);
     Game.save();
     return Alert("Drained the lake!",
         "You drained the lake, you now own a new street with 2 properties",

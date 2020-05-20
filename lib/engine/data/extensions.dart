@@ -1,11 +1,12 @@
 import 'package:hive/hive.dart';
-import 'package:plutopoly/engine/extensions/bank/bank.dart';
-import 'package:plutopoly/engine/extensions/bank/stock_extension.dart';
-import 'package:plutopoly/engine/extensions/extension_data.dart';
-import 'package:plutopoly/engine/extensions/jurisdiction.dart';
-import 'package:plutopoly/engine/extensions/lake_drain_extension.dart';
-import 'package:plutopoly/engine/extensions/transportation.dart';
-import 'package:plutopoly/engine/kernel/main.dart';
+
+import '../extensions/bank/bank.dart';
+import '../extensions/bank/stock_extension.dart';
+import '../extensions/extension_data.dart';
+import '../extensions/jurisdiction.dart';
+import '../extensions/lake_drain_extension.dart';
+import '../extensions/transportation.dart';
+import '../kernel/main.dart';
 
 part 'extensions.g.dart';
 

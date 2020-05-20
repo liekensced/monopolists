@@ -107,4 +107,6 @@ enum Screen {
   move,
   @HiveField(2)
   active,
+  @HiveField(3)
+  parlement,
 }
