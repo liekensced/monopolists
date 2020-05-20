@@ -9,7 +9,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
 
-import '../engine/data/main.dart';
+import '../engine/data/main_data.dart';
 import '../engine/data/map.dart';
 import '../engine/data/player.dart';
 import '../engine/kernel/main.dart';

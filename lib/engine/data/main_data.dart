@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+import '../../bloc/main_bloc.dart';
 import '../data/extensions.dart';
 import '../extensions/bank/data/bank_data.dart';
 import 'deal_data.dart';
@@ -8,9 +9,8 @@ import 'map.dart';
 import 'player.dart';
 import 'settings.dart';
 import 'ui_actions.dart';
-import 'package:json_annotation/json_annotation.dart';
 
-part 'main.g.dart';
+part 'main_data.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 0)

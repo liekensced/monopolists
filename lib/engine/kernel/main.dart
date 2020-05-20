@@ -9,7 +9,7 @@ import '../ai/normal/normal_ai.dart';
 import '../data/actions.dart';
 import '../data/extensions.dart';
 import '../data/info.dart';
-import '../data/main.dart';
+import '../data/main_data.dart';
 import '../data/map.dart';
 import '../data/player.dart';
 import '../data/ui_actions.dart';

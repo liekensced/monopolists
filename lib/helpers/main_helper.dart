@@ -11,7 +11,7 @@ import 'package:plutopoly/engine/ai/ai_type.dart';
 import 'package:plutopoly/engine/data/deal_data.dart';
 import 'package:plutopoly/engine/data/extensions.dart';
 import 'package:plutopoly/engine/data/info.dart';
-import 'package:plutopoly/engine/data/main.dart';
+import 'package:plutopoly/engine/data/main_data.dart';
 import 'package:plutopoly/engine/data/map.dart';
 import 'package:plutopoly/engine/data/player.dart';
 import 'package:plutopoly/engine/data/settings.dart';

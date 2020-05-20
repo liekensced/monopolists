@@ -1,7 +1,7 @@
 import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/engine/ai/ai.dart';
 import 'package:plutopoly/engine/ai/ai_type.dart';
-import 'package:plutopoly/engine/data/main.dart';
+import 'package:plutopoly/engine/data/main_data.dart';
 import 'package:plutopoly/screens/start/players.dart';
 
 import '../data/player.dart';

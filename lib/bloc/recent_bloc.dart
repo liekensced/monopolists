@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 import 'package:plutopoly/bloc/recent.dart';
-import 'package:plutopoly/engine/data/main.dart';
+import 'package:plutopoly/engine/data/main_data.dart';
 
 import 'main_bloc.dart';
 

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
 
 import '../data/info.dart';
-import '../data/main.dart';
+import '../data/main_data.dart';
 import '../data/map.dart';
 import '../data/player.dart';
 import '../ui/alert.dart';

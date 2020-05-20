@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 
 import '../bloc/main_bloc.dart';
-import '../engine/data/main.dart';
+import '../engine/data/main_data.dart';
 import '../engine/kernel/main.dart';
 import '../engine/ui/game_navigator.dart';
 

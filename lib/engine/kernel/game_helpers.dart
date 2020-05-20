@@ -1,6 +1,6 @@
 import 'package:plutopoly/bloc/main_bloc.dart';
 
-import '../data/main.dart';
+import '../data/main_data.dart';
 import '../data/map.dart';
 import '../data/player.dart';
 import 'core_actions.dart';
