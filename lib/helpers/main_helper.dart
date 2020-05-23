@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:plutopoly/bloc/ad_bloc.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/bloc/recent.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/ai/ai.dart';
 import 'package:plutopoly/engine/ai/ai_type.dart';
 import 'package:plutopoly/engine/data/deal_data.dart';
@@ -52,9 +53,7 @@ class MainHelper {
   }
 
   static ThemeData get themeData => ThemeData(
-      brightness: Hive.box(MainBloc.PREFBOX).get("boolDark", defaultValue: true)
-          ? Brightness.dark
-          : Brightness.light,
+      brightness: UIBloc.darkMode ? Brightness.dark : Brightness.light,
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: <TargetPlatform, PageTransitionsBuilder>{
           TargetPlatform.android: ZoomPageTransitionsBuilder(),

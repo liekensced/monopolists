@@ -1,30 +1,29 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:plutopoly/screens/home/start_online.dart';
-import 'package:plutopoly/screens/start/start_game.dart';
+
+import '../../bloc/main_bloc.dart';
 import '../../bloc/ui_bloc.dart';
-import 'landing_page.dart';
-import '../start/info_screen.dart';
-import '../version_screen.dart';
+import '../../engine/kernel/main.dart';
 import '../../widgets/ad.dart';
 import '../../widgets/ad_message.dart';
+import '../../widgets/drawer.dart';
 import '../../widgets/end_of_list.dart';
 import '../../widgets/my_card.dart';
 import '../../widgets/settings_card.dart';
-import 'recent_card.dart';
-
-import '../../bloc/main_bloc.dart';
-import '../../engine/kernel/main.dart';
-import '../../widgets/drawer.dart';
 import '../games_card.dart';
+import '../start/info_screen.dart';
+import '../start/start_game.dart';
+import '../version_screen.dart';
 import 'account_card.dart';
 import 'join_online_card.dart';
+import 'landing_page.dart';
 import 'offline_page.dart';
+import 'recent_card.dart';
+import 'start_online.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -123,30 +122,27 @@ class _MyHomePageState extends State<MyHomePage> {
                                   }),
                               Padding(
                                 padding: EdgeInsets.all(20),
-                                child: OpenContainer(
-                                  closedColor: Theme.of(context).primaryColor,
-                                  openColor: Theme.of(context).canvasColor,
-                                  closedBuilder: (_, f) => InkWell(
-                                    child: Container(
-                                        width: double.infinity,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(12.0),
-                                          child: Text(
-                                            "Start new local game",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        )),
-                                    onTap: () {
-                                      MainBloc.cancelOnline();
-                                      Game.newGame();
-                                      f();
-                                    },
-                                  ),
-                                  openBuilder: (_, __) {
-                                    return StartGameScreen();
+                                child: RaisedButton(
+                                  color: Theme.of(context).primaryColor,
+                                  child: Container(
+                                      width: double.infinity,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: Text(
+                                          "Start new local game",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      )),
+                                  onPressed: () {
+                                    MainBloc.cancelOnline();
+                                    Game.newGame();
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: (BuildContext context) {
+                                      return StartGameScreen();
+                                    }));
                                   },
                                 ),
                               ),

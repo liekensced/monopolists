@@ -44,8 +44,7 @@ class _SettingsCardState extends State<SettingsCard> {
         ListTile(
           title: Text("Dark mode"),
           trailing: Switch(
-            value:
-                Hive.box(MainBloc.PREFBOX).get("boolDark", defaultValue: true),
+            value: UIBloc.darkMode,
             onChanged: (value) {
               UIBloc.toggleDarkMode();
             },

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:plutopoly/engine/extensions/extension_data.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/data/extensions.dart';
 import '../../engine/data/settings.dart';
 import '../../engine/data/tip.dart';
+import '../../engine/extensions/extension_data.dart';
 import '../../engine/kernel/main.dart';
 import '../../engine/ui/game_navigator.dart';
 import '../../widgets/end_of_list.dart';
@@ -30,6 +30,12 @@ class InfoScreen extends StatelessWidget {
       prefs.add(ListTile(
         leading: Icon(Icons.info),
         title: Text("You must auction a property if you don't buy it"),
+      ));
+    }
+    if (settings.startProperties != Null) {
+      prefs.add(ListTile(
+        leading: Icon(Icons.info),
+        title: Text("You get ${settings.startProperties} start properties."),
       ));
     }
     if (settings.remotelyBuild) {

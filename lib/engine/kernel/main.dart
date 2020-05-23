@@ -126,6 +126,30 @@ class Game {
     if (Game.data.extensions.contains(Extension.bank)) {
       Game.data.bankData = BankData();
     }
+    try {
+      if (Game.data.settings.startProperties != 0) {
+        List<Tile> buyables =
+            Game.data.gmap.where((element) => element.buyable).toList();
+        Game.data.settings.startProperties = min(
+          Game.data.settings.startProperties,
+          buyables.length / Game.data.players.length,
+        ).floor();
+        for (int i = 0; i < Game.data.settings.startProperties; i++) {
+          Game.data.players.forEach((Player p) {
+            var where = buyables
+                .where((element) => element.owner == null)
+                .map<int>((e) => e.mapIndex);
+            int r = Random().nextInt(where.length);
+            p.properties.add(where.toList()[r]);
+          });
+        }
+        Game.data.players.forEach((Player p) {
+          p.properties.sort();
+        });
+      }
+    } catch (e) {
+      UIBloc.alerts.add(Alert("Start properties failed", "$e"));
+    }
 
     data.findingsIndex = Random().nextInt(findings.length);
     data.eventIndex = Random().nextInt(events.length);

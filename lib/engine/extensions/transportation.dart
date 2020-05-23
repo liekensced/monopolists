@@ -38,11 +38,10 @@ class TransportationBloc {
       Game.data.extensions.contains(Extension.transportation);
   static Alert move(Tile destination) {
     Tile tile = Game.data.tile;
-    int price = tile.transportationPrice;
+    int price = tile.transportationPrice ?? 200;
     if (Game.data.transported) {
       return Alert("Already transported", "You have already moved this turn.");
     }
-    Game.data.transported = true;
     if (tile.owner != Game.data.player) {
       if (price == null)
         return Alert("No price specified",
@@ -58,7 +57,10 @@ class TransportationBloc {
         return e;
       }
     }
+    Game.data.transported = true;
+
     Game.jump(destination.mapIndex, true, true);
+    Game.save();
     return null;
   }
 }

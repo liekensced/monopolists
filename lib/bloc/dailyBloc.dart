@@ -32,7 +32,7 @@ class DailyBloc {
         }
         box.put("intProDays", proDays);
       } else {
-        box.put("intAdDays", box.get("intAdDays", defaultValue: 0) + 1);
+        box.put("intAdDays", box.get("intAdDays", defaultValue: -1) + 1);
       }
       box.put("lastDate", today.toString());
     }

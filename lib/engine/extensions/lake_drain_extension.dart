@@ -36,7 +36,7 @@ class LakeDrain {
       settings: [
         Setting<int>(
           title: "Drain price",
-          subtitle: "The price it costs to drain the lake. Default: £1000",
+          subtitle: "The price it costs to drain the lake. Default: £1500",
           onChanged: (dynamic price) {
             Game.data.settings.dtlPrice = price;
             Game.save(only: [SaveData.settings.toString()]);
@@ -60,7 +60,7 @@ class LakeDrain {
 
     Game.act.pay(
       PayType.bank,
-      Game.data.settings.dtlPrice ?? 1000,
+      Game.data.settings.dtlPrice ?? 1500,
       shouldSave: false,
     );
 

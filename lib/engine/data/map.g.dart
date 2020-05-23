@@ -193,7 +193,7 @@ Tile _$TileFromJson(Map<String, dynamic> json) {
     idIndex: json['idIndex'] as int,
   )
     ..level = json['level'] as int
-    ..transportationPrice = json['transportationPrice'] as int;
+    ..transportationPrice = json['transportationPrice'] as int ?? 200;
 }
 
 Map<String, dynamic> _$TileToJson(Tile instance) => <String, dynamic>{

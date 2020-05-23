@@ -2,8 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:plutopoly/engine/data/map.dart';
+import 'package:plutopoly/engine/extensions/setting.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
 import 'package:plutopoly/widgets/my_card.dart';
+import 'package:plutopoly/widgets/setting_tile.dart';
 
 import '../../places.dart';
 
@@ -46,6 +48,14 @@ class ExtraCard extends StatelessWidget {
             },
           ),
         ),
+        SettingTile(
+          setting: Setting<int>(
+              title: "Starting properties",
+              subtitle: "Amount of properties every player starts with.",
+              onChanged: (dynamic val) =>
+                  Game.data.settings.startProperties = val,
+              value: () => Game.data.settings.startProperties),
+        )
       ],
     );
   }

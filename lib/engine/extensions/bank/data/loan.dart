@@ -19,16 +19,20 @@ class Contract extends HiveObject {
   double fee;
   @HiveField(5)
   String id = "";
+  @HiveField(6)
+  String position;
 
   String get fullId => id + ":$waitingTurns:$amount";
 
-  Contract(
-      {this.interest,
-      @required this.amount,
-      this.waitingTurns,
-      @required this.id,
-      this.fee: 0,
-      this.countToCap: true});
+  Contract({
+    this.interest,
+    @required this.amount,
+    this.waitingTurns,
+    @required this.id,
+    this.fee: 0,
+    this.countToCap: true,
+    this.position,
+  });
   @override
   bool operator ==(o) => o is Contract && o.fullId == fullId;
 

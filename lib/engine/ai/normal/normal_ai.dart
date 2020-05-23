@@ -1,13 +1,12 @@
 import 'dart:math';
 
-import 'package:plutopoly/engine/ai/ai_type.dart';
-import 'package:plutopoly/engine/data/actions.dart';
-import 'package:plutopoly/engine/data/player.dart';
-import 'package:plutopoly/engine/kernel/core_actions.dart';
-import 'package:plutopoly/engine/ui/alert.dart';
-
+import '../../data/actions.dart';
 import '../../data/map.dart';
+import '../../data/player.dart';
+import '../../kernel/core_actions.dart';
 import '../../kernel/main.dart';
+import '../../ui/alert.dart';
+import '../ai_type.dart';
 
 class NormalAI {
   static Tile get tile => Game.data.tile;
@@ -26,8 +25,7 @@ class NormalAI {
 
     /// Properties ai will receive
     Game.data.dealData.payProperties.forEach((int index) {
-      price -= max(value(index, Game.data.players[Game.data.dealData.dealer]),
-          value(index, Game.data.player));
+      price -= value(index, Game.data.players[Game.data.dealData.dealer]);
     });
     Game.data.dealData.price = price.floor();
     Game.data.dealData.dealerChecked = true;
@@ -46,11 +44,11 @@ class NormalAI {
         value *= 20;
         break;
       case 1:
-        value *= 1.8;
-        value += 300;
+        value *= 1.6;
+        value += 250;
         break;
       case 2:
-        value *= 1.3;
+        value *= 1.2;
         value += 100;
         break;
       case 3:
@@ -201,30 +199,32 @@ class NormalAI {
   }
 
   static trade() {
-    if (Game.data.turn > 10 && chance(player.money / 1000)) return;
-    Game.data.gmap
-        .where((Tile t) {
-          if (!t.buyable) return false;
-          if (t.owner == null) return false;
-          return !player.properties.contains(t);
-        })
-        .toList()
-        .forEach((Tile prop) {
-          if (prop.owner.ai.type == AIType.player) return;
-          int price = value(prop.mapIndex, player);
-          if (player.money > price) {
-            int mis = player.missing(prop.idPrefix);
-            if (mis == 0) return;
-            if (mis == 1) {
-              if (chance(0.8)) deal(prop, price);
-            } else {
-              if (mis == 3) return;
-              if (chance(0.1)) {
-                deal(prop, price);
+    if (Game.data.turn < 5 || chance(1 - player.money / 1000)) {
+      return;
+    } else
+      Game.data.gmap
+          .where((Tile t) {
+            if (!t.buyable) return false;
+            if (t.owner == null) return false;
+            return !player.properties.contains(t);
+          })
+          .toList()
+          .forEach((Tile prop) {
+            if (prop.owner.ai.type == AIType.player) return;
+            int price = value(prop.mapIndex, player);
+            if (player.money > price) {
+              int mis = player.missing(prop.idPrefix);
+              if (mis == 0) return;
+              if (mis == 1) {
+                if (chance(0.8)) deal(prop, price);
+              } else {
+                if (mis == 3) return;
+                if (chance(0.1)) {
+                  deal(prop, price);
+                }
               }
             }
-          }
-        });
+          });
   }
 
   static deal(Tile prop, int price) {

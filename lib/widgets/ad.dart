@@ -24,7 +24,7 @@ class _ADViewState extends State<ADView> {
   @override
   Widget build(BuildContext context) {
     final NativeAdmobController _controller =
-        widget.controller ?? NativeAdmobController();
+        widget.controller ?? (kIsWeb ? null : NativeAdmobController());
     bool dark = UIBloc.darkMode;
     NativeTextStyle textStyle =
         NativeTextStyle(color: dark ? Colors.white : Colors.black);

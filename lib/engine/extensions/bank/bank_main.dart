@@ -113,8 +113,8 @@ class BankMain {
   static double lendingCap([Player player]) {
     if (player == null) player = Game.data.player;
     return (netMoney(player) * 2) +
-        propertiesValue(player) +
-        stocksValue(player);
+        (propertiesValue(player) / 2) +
+        (stocksValue(player) / 2);
   }
 
   static netMoney(Player player) {

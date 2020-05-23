@@ -89,9 +89,10 @@ class BankExtension {
 final List<Contract> standardLoans = [
   Contract(
     amount: 100,
-    interest: 0.05,
+    interest: 0.06,
     waitingTurns: 1,
     id: "std:0",
+    fee: 0.05,
   ),
   Contract(
     amount: 100,
@@ -101,9 +102,17 @@ final List<Contract> standardLoans = [
   ),
   Contract(
     amount: 200,
-    interest: 0.03,
+    interest: 0.04,
     waitingTurns: 4,
     id: "std:2",
     fee: 0.10,
   ),
+  // Contract(
+  //   amount: 500,
+  //   interest: 0.02,
+  //   waitingTurns: 4,
+  //   id: "std:2",
+  //   fee: 0.10,
+  //   position: "db",
+  // ),
 ];

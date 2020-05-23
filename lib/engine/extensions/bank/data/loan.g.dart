@@ -23,13 +23,14 @@ class ContractAdapter extends TypeAdapter<Contract> {
       id: fields[5] as String,
       fee: fields[4] as double,
       countToCap: fields[3] as bool,
+      position: fields[6] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Contract obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.interest)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class ContractAdapter extends TypeAdapter<Contract> {
       ..writeByte(4)
       ..write(obj.fee)
       ..writeByte(5)
-      ..write(obj.id);
+      ..write(obj.id)
+      ..writeByte(6)
+      ..write(obj.position);
   }
 }
 
@@ -57,6 +60,7 @@ Contract _$ContractFromJson(Map<String, dynamic> json) {
     id: json['id'] as String,
     fee: (json['fee'] as num)?.toDouble(),
     countToCap: json['countToCap'] as bool,
+    position: json['position'] as String,
   );
 }
 
@@ -67,4 +71,5 @@ Map<String, dynamic> _$ContractToJson(Contract instance) => <String, dynamic>{
       'countToCap': instance.countToCap,
       'fee': instance.fee,
       'id': instance.id,
+      'position': instance.position,
     };

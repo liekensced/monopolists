@@ -23,9 +23,12 @@ class Settings extends HiveObject {
   @HiveField(7)
   @JsonKey(defaultValue: 10)
   int interest = 10;
-  @JsonKey(defaultValue: 1000)
+  @JsonKey(defaultValue: 1500)
   @HiveField(8)
-  int dtlPrice = 1000;
+  int dtlPrice = 1500;
+  @JsonKey(defaultValue: 0)
+  @HiveField(9)
+  int startProperties = 0;
 
   Settings();
 

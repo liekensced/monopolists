@@ -241,7 +241,7 @@ class _PropertyCardState extends State<PropertyCard>
       textColor = Colors.black;
       leading = Icon(Icons.train);
       if (TransportationBloc.active) {
-        List<Tile> trains = Game.data.tile.owner?.transtationTiles ?? [];
+        List<Tile> trains = tile.owner?.transtationTiles ?? [];
         List<Widget> children = [];
 
         trains.forEach((Tile train) {
@@ -251,8 +251,8 @@ class _PropertyCardState extends State<PropertyCard>
             subtitle: Text("Position: ${train.mapIndex}"),
             trailing: RaisedButton(
               color: Theme.of(context).primaryColor,
-              child: Text(
-                  "Price: £" + (train.transportationPrice ?? 0).toString()),
+              child: Text("Change price: £" +
+                  (train.transportationPrice ?? 0).toString()),
               onPressed: () {
                 showDialog(
                   context: context,

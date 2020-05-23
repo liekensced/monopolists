@@ -28,7 +28,7 @@ class LoanCard extends StatelessWidget {
             Text(" / £" + BankMain.lendingCap().toInt().toString() + " lend ",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             Tooltip(
-              message: "This is the maximum you can lend. (Cash * 2 + assets)",
+              message: "This is the maximum you can lend. (Cash * 2 + assets / 2)",
               child: Icon(
                 Icons.info,
                 color: Colors.grey,

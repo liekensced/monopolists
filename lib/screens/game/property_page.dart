@@ -24,9 +24,12 @@ class PropertyPage extends StatelessWidget {
             padding: EdgeInsets.all(20),
             height: MediaQuery.of(context).size.height / 2,
             child: Center(
-              child: Container(
-                child: buildCard(property),
-                constraints: BoxConstraints(maxWidth: 250),
+              child: Theme(
+                data: ThemeData.light(),
+                child: Container(
+                  child: buildCard(property),
+                  constraints: BoxConstraints(maxWidth: 250),
+                ),
               ),
             ),
           ),

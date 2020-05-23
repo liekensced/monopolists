@@ -8,7 +8,7 @@ class SettingTile extends StatefulWidget {
   final Setting setting;
   final Extension ext;
 
-  const SettingTile({Key key, @required this.setting, @required this.ext})
+  const SettingTile({Key key, @required this.setting, this.ext})
       : super(key: key);
   @override
   _SettingTileState createState() => _SettingTileState();
@@ -27,10 +27,12 @@ class _SettingTileState extends State<SettingTile> {
 
   Widget buildTrailing() {
     if (Game.data == null) return Container();
-    if (!Game.data.extensions.contains(widget.ext)) {
-      return Container(
-        width: 0,
-      );
+    if (widget.ext != null) {
+      if (!Game.data.extensions.contains(widget.ext)) {
+        return Container(
+          width: 0,
+        );
+      }
     }
     if (setting.value is bool Function()) {
       bool val = setting.value() as bool;

@@ -20,9 +20,11 @@ class MoveCard extends StatelessWidget {
           color: Theme.of(context).primaryColor,
           child: Text(
               "Pay £" + (Game.data.tile.transportationPrice ?? 0).toString()),
-          onPressed: () {
-            Alert.handle(() => TransportationBloc.move(tile), context);
-          },
+          onPressed: Game.data.transported
+              ? null
+              : () {
+                  Alert.handle(() => TransportationBloc.move(tile), context);
+                },
         ),
       ));
     });

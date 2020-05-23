@@ -1,10 +1,12 @@
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:hive/hive.dart';
 
 import 'main_bloc.dart';
 
 class AdBloc {
+  static NativeAdmobController idleAdController;
   static const bool test = false;
   static String rewardAdUID = test
       ? RewardedVideoAd.testAdUnitId
@@ -14,10 +16,12 @@ class AdBloc {
 
   static MobileAdTargetingInfo targetingInfo =
       MobileAdTargetingInfo(keywords: <String>["boardgame"]);
-  static void init() {
+  static void init() async {
     if (kIsWeb) return;
-    FirebaseAdMob.instance
+    idleAdController = NativeAdmobController();
+    bool b = await FirebaseAdMob.instance
         .initialize(appId: "ca-app-pub-3735790035510409~3556832676");
+    print("Very epic thing $b");
   }
 
   Continent get continent {

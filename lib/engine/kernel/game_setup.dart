@@ -66,9 +66,10 @@ class GameSetup {
     return null;
   }
 
-  deletePlayer(Player player) {
+  deletePlayer(Player player, [bool shouldSave = true]) {
     Game.data.players.remove(player);
-    Game.save(only: [SaveData.players.toString()]);
+
+    if (shouldSave) Game.save(only: [SaveData.players.toString()]);
   }
 
   defaultPlayer(Player player) {
@@ -76,7 +77,7 @@ class GameSetup {
     player.properties.forEach((int index) {
       Game.data.gmap[index].reset();
     });
-    deletePlayer(player);
+    deletePlayer(player, false);
     Game.data.currentPlayer--;
     if (Game.data.currentPlayer < 0) {
       Game.data.currentPlayer = Game.data.players.last.index;

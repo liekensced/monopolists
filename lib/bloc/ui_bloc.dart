@@ -88,11 +88,11 @@ class UIBloc {
 
   static toggleDarkMode() {
     Hive.box(MainBloc.PREFBOX).put("boolDark",
-        !Hive.box(MainBloc.PREFBOX).get("boolDark", defaultValue: false));
+        !Hive.box(MainBloc.PREFBOX).get("boolDark", defaultValue: true));
   }
 
   static bool get darkMode =>
-      Hive.box(MainBloc.PREFBOX).get("boolDark", defaultValue: false);
+      Hive.box(MainBloc.PREFBOX).get("boolDark", defaultValue: true);
 
   static bool get hideOverlays =>
       Hive.box(MainBloc.PREFBOX).get("boolOverlays", defaultValue: true);

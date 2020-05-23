@@ -16,7 +16,7 @@ import 'action_screen/bottom_sheet.dart';
 class WinScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Game.data.currentPlayer = Game.data.ui.winner.index;
+    Game.data.currentPlayer = Game.data.ui.winner?.index ?? 0;
     return Scaffold(
       body: FractionallySizedBox(
         heightFactor: 1,

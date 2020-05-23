@@ -19,6 +19,8 @@ class ScreenAdapter extends TypeAdapter<Screen> {
         return Screen.move;
       case 2:
         return Screen.active;
+      case 3:
+        return Screen.parlement;
       default:
         return null;
     }
@@ -37,7 +39,7 @@ class ScreenAdapter extends TypeAdapter<Screen> {
         writer.writeByte(2);
         break;
       case Screen.parlement:
-        writer.writeByte(2);
+        writer.writeByte(3);
         break;
     }
   }
@@ -55,17 +57,20 @@ class UIActionsDataAdapter extends TypeAdapter<UIActionsData> {
     };
     return UIActionsData()
       ..screenState = fields[0] as Screen
-      ..showDealScreen = fields[1] as bool;
+      ..showDealScreen = fields[1] as bool
+      ..shouldMove = fields[2] as bool;
   }
 
   @override
   void write(BinaryWriter writer, UIActionsData obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.screenState)
       ..writeByte(1)
-      ..write(obj.showDealScreen);
+      ..write(obj.showDealScreen)
+      ..writeByte(2)
+      ..write(obj.shouldMove);
   }
 }
 
@@ -76,13 +81,15 @@ class UIActionsDataAdapter extends TypeAdapter<UIActionsData> {
 UIActionsData _$UIActionsDataFromJson(Map<String, dynamic> json) {
   return UIActionsData()
     ..screenState = _$enumDecodeNullable(_$ScreenEnumMap, json['screenState'])
-    ..showDealScreen = json['showDealScreen'] as bool;
+    ..showDealScreen = json['showDealScreen'] as bool
+    ..shouldMove = json['shouldMove'] as bool;
 }
 
 Map<String, dynamic> _$UIActionsDataToJson(UIActionsData instance) =>
     <String, dynamic>{
       'screenState': _$ScreenEnumMap[instance.screenState],
       'showDealScreen': instance.showDealScreen,
+      'shouldMove': instance.shouldMove,
     };
 
 T _$enumDecode<T>(
@@ -121,4 +128,5 @@ const _$ScreenEnumMap = {
   Screen.idle: 'idle',
   Screen.move: 'move',
   Screen.active: 'active',
+  Screen.parlement: 'parlement',
 };

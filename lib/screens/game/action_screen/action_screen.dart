@@ -1,5 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_admob/native_admob_controller.dart';
+import 'package:plutopoly/bloc/ad_bloc.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
+import 'package:plutopoly/engine/ui/game_navigator.dart';
 import 'package:plutopoly/screens/game/action_screen/drain_the_lake_card.dart';
 import 'package:plutopoly/screens/game/action_screen/move_card.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -43,6 +47,9 @@ class ActionScreen extends StatefulWidget {
 class _ActionScreenState extends State<ActionScreen> {
   @override
   Widget build(BuildContext context) {
+    if (Game.data.ui.ended) {
+      Future.delayed(Duration.zero, () => GameNavigator.navigate(context));
+    }
     if (Game.ui.screenState == Screen.move && !Game.ui.idle) {
       return MoveScreen();
     }
@@ -252,8 +259,10 @@ class _ActionScreenState extends State<ActionScreen> {
 
 class HoldingCards extends StatelessWidget {
   final List<int> properties;
+  final bool only;
   const HoldingCards({
     Key key,
+    this.only: false,
     this.properties,
   }) : super(key: key);
 
@@ -281,6 +290,20 @@ class HoldingCards extends StatelessWidget {
         ))),
       );
     }
+    if (only)
+      return ListView.builder(
+          shrinkWrap: true,
+          itemCount: _properties.length,
+          itemBuilder: (context, index) {
+            return Theme(
+              data: Theme.of(context).copyWith(brightness: Brightness.light),
+              child: GameListener(
+                builder: (BuildContext context, _, __) {
+                  return PropertyCard(tile: Game.data.gmap[_properties[index]]);
+                },
+              ),
+            );
+          });
     return ListView(
       children: [
         ListView.builder(
@@ -339,7 +362,10 @@ class ActionFab extends StatelessWidget {
               onPressed: () {
                 if (continueCheck(
                     DefaultTabController.of(context).index, context)) {
-                  if (Alert.handle(() => Game.next(changeS: true), context)) {}
+                  if (Alert.handle(() => Game.next(changeS: true), context)) {
+                    if (!kIsWeb)
+                      AdBloc.idleAdController = NativeAdmobController();
+                  }
                 } else {
                   showDialog(
                     context: context,

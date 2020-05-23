@@ -1,10 +1,10 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/bloc/ad_bloc.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../bloc/ui_bloc.dart';
@@ -27,8 +27,7 @@ class IdleScreen extends StatelessWidget {
   final PageController carrouselController;
   IdleScreen(this.carrouselController);
 
-  final NativeAdmobController _admobController =
-      kIsWeb ? null : NativeAdmobController();
+  final NativeAdmobController _admobController = AdBloc.idleAdController;
 
   String getText(Player p) {
     int dealer = Game.data.dealData?.dealer;
@@ -109,6 +108,7 @@ class IdleScreen extends StatelessWidget {
                             height: MediaQuery.of(context).size.height * 0.7,
                             child: HoldingCards(
                               properties: p.properties,
+                              only: true,
                             ),
                           ),
                           actions: [

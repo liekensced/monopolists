@@ -24,13 +24,15 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..mustAuction = fields[4] as bool
       ..startingMoney = fields[5] as int
       ..hackerScreen = fields[6] as bool
-      ..interest = fields[7] as int;
+      ..interest = fields[7] as int
+      ..dtlPrice = fields[8] as int
+      ..startProperties = fields[9] as int;
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -46,7 +48,11 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(6)
       ..write(obj.hackerScreen)
       ..writeByte(7)
-      ..write(obj.interest);
+      ..write(obj.interest)
+      ..writeByte(8)
+      ..write(obj.dtlPrice)
+      ..writeByte(9)
+      ..write(obj.startProperties);
   }
 }
 
@@ -63,7 +69,9 @@ Settings _$SettingsFromJson(Map<String, dynamic> json) {
     ..mustAuction = json['mustAuction'] as bool
     ..startingMoney = json['startingMoney'] as int
     ..hackerScreen = json['hackerScreen'] as bool
-    ..interest = json['interest'] as int ?? 10;
+    ..interest = json['interest'] as int ?? 10
+    ..dtlPrice = json['dtlPrice'] as int ?? 1500
+    ..startProperties = json['startProperties'] as int ?? 0;
 }
 
 Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
@@ -75,4 +83,6 @@ Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
       'startingMoney': instance.startingMoney,
       'hackerScreen': instance.hackerScreen,
       'interest': instance.interest,
+      'dtlPrice': instance.dtlPrice,
+      'startProperties': instance.startProperties,
     };
