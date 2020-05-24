@@ -164,10 +164,12 @@ class IdleScreen extends StatelessWidget {
                 height: 5,
               ),
               buildIdleActionCard(context),
-              Container(
-                constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
-                child: ADView(
-                  controller: _admobController,
+              Center(
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
+                  child: ADView(
+                    controller: _admobController,
+                  ),
                 ),
               ),
               ZoomMap(

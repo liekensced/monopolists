@@ -2,15 +2,16 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/engine/data/map.dart';
-import 'package:plutopoly/engine/kernel/main.dart';
-import 'package:plutopoly/screens/carousel/map_carousel.dart';
-import 'package:plutopoly/screens/game/property_page.dart';
-import 'package:plutopoly/widgets/eager_inkwell.dart';
-import 'package:plutopoly/widgets/my_card.dart';
 import 'package:zoom_widget/zoom_widget.dart';
+
+import '../../bloc/main_bloc.dart';
+import '../../bloc/ui_bloc.dart';
+import '../../engine/data/map.dart';
+import '../../engine/kernel/main.dart';
+import '../../widgets/eager_inkwell.dart';
+import '../../widgets/my_card.dart';
+import '../carousel/map_carousel.dart';
+import 'property_page.dart';
 
 class ZoomMap extends StatelessWidget {
   final PageController carrouselController;

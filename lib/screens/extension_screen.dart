@@ -28,36 +28,39 @@ class ExtensionScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          Container(
-            constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
-            child: Card(
-              child: Row(
-                children: [
-                  Expanded(child: Center(child: extensionData.icon(size: 50))),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      alignment: Alignment.centerLeft,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            extensionData.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline4
-                                .copyWith(color: Colors.white),
-                            textAlign: TextAlign.start,
-                          ),
-                          Container(height: 4),
-                          Text(extensionData.description)
-                        ],
+          Center(
+            child: Container(
+              constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
+              child: Card(
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Center(child: extensionData.icon(size: 50))),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              extensionData.name,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline4
+                                  .copyWith(color: Colors.white),
+                              textAlign: TextAlign.start,
+                            ),
+                            Container(height: 4),
+                            Text(extensionData.description)
+                          ],
+                        ),
                       ),
+                      flex: 3,
                     ),
-                    flex: 3,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

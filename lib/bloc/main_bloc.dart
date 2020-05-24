@@ -21,7 +21,7 @@ import 'recent_bloc.dart';
 import 'ui_bloc.dart';
 
 class MainBloc {
-  static const version = "0.3.0";
+  static const version = "0.3.1";
   static List<int> get versionCode =>
       version.split(".").map<int>((e) => int.tryParse(e)).toList();
   static const _boxVersion = "1.1.2.8";

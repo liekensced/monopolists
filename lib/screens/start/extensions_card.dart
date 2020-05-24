@@ -42,14 +42,6 @@ class ExtensionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (kIsWeb) {
-      return closedBuilder(context, () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext context) {
-          return ExtensionScreen(ext: ext);
-        }));
-      });
-    }
     return OpenContainer(
         closedColor: Theme.of(context).cardColor,
         openColor: Theme.of(context).backgroundColor,
