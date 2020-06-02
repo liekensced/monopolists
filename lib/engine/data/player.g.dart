@@ -24,7 +24,7 @@ class PlayerAdapter extends TypeAdapter<Player> {
       code: fields[11] as int,
       ai: fields[15] as AI,
     )
-      ..properties = (fields[5] as List)?.cast<int>()
+      ..properties = (fields[5] as List)?.cast<String>()
       ..jailed = fields[6] as bool
       ..jailTries = fields[7] as int
       ..goojCards = fields[8] as int
@@ -88,7 +88,8 @@ Player _$PlayerFromJson(Map<String, dynamic> json) {
         ? null
         : AI.fromJson(json['ai'] as Map<String, dynamic>),
   )
-    ..properties = (json['properties'] as List)?.map((e) => e as int)?.toList()
+    ..properties =
+        (json['properties'] as List)?.map((e) => e as String)?.toList()
     ..jailed = json['jailed'] as bool
     ..jailTries = json['jailTries'] as int
     ..goojCards = json['goojCards'] as int

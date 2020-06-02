@@ -81,6 +81,17 @@ class _ActionScreenState extends State<ActionScreen> {
                     },
                   ),
                   actions: [
+                    IconButton(
+                      icon: Icon(Icons.location_searching),
+                      onPressed: () {
+                        if (pageController.hasClients) {
+                          pageController.animateToPage(
+                              Game.data.player.position,
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeInOutCubic);
+                        }
+                      },
+                    ),
                     Center(
                         child: Card(
                             child: Padding(
@@ -119,9 +130,7 @@ class _ActionScreenState extends State<ActionScreen> {
                             children: <Widget>[
                               Text("£"),
                               AnimatedCount(
-                                count: (MainBloc.online
-                                    ? (UIBloc.gamePlayer.money.toInt())
-                                    : (Game.data.player.money.round())),
+                                count: ((UIBloc.gamePlayer.money.toInt())),
                                 duration: Duration(seconds: 1),
                               ),
                             ],
@@ -258,7 +267,7 @@ class _ActionScreenState extends State<ActionScreen> {
 }
 
 class HoldingCards extends StatelessWidget {
-  final List<int> properties;
+  final List<String> properties;
   final bool only;
   const HoldingCards({
     Key key,
@@ -272,8 +281,8 @@ class HoldingCards extends StatelessWidget {
         builder: (c, _, __) => buildHoldingCards(context, properties));
   }
 
-  Widget buildHoldingCards(BuildContext context, [List<int> properties]) {
-    List<int> _properties = Game.data.player.properties;
+  Widget buildHoldingCards(BuildContext context, [List<String> properties]) {
+    List<String> _properties = Game.data.player.properties;
     if (properties != null) {
       _properties = properties;
     } else {
@@ -299,7 +308,9 @@ class HoldingCards extends StatelessWidget {
               data: Theme.of(context).copyWith(brightness: Brightness.light),
               child: GameListener(
                 builder: (BuildContext context, _, __) {
-                  return PropertyCard(tile: Game.data.gmap[_properties[index]]);
+                  return PropertyCard(
+                      tile: Game.data.gmap.firstWhere(
+                          (element) => element.id == _properties[index]));
                 },
               ),
             );
@@ -316,7 +327,8 @@ class HoldingCards extends StatelessWidget {
                 child: GameListener(
                   builder: (BuildContext context, _, __) {
                     return PropertyCard(
-                        tile: Game.data.gmap[_properties[index]]);
+                        tile: Game.data.gmap.firstWhere(
+                            (element) => element.id == _properties[index]));
                   },
                 ),
               );

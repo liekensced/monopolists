@@ -211,7 +211,8 @@ class IdleScreen extends StatelessWidget {
         ),
       );
     }
-    if (UIBloc.gamePlayer.properties.contains(Game.data.player.position) &&
+    if (UIBloc.gamePlayer.properties
+            .contains(Game.data.player.positionTile.id) &&
         Game.data.ui.screenState == Screen.active) {
       return MyCard(
         children: [

@@ -156,7 +156,7 @@ class PropertyActionCard extends StatelessWidget {
           );
         }
         if (tile.owner?.id == Game.data.player.id) {
-          return PropertyCard(tile: tile);
+          return PropertyCard(tile: tile, expanded: true);
         }
         return PropertyActionCardChild();
       },

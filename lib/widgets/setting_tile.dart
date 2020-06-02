@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/bloc/game_listener.dart';
 import 'package:plutopoly/engine/data/extensions.dart';
 import 'package:plutopoly/engine/extensions/setting.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
@@ -26,7 +27,10 @@ class _SettingTileState extends State<SettingTile> {
   }
 
   Widget buildTrailing() {
-    if (Game.data == null) return Container();
+    if (Game.data == null)
+      return Container(
+        width: 0,
+      );
     if (widget.ext != null) {
       if (!Game.data.extensions.contains(widget.ext)) {
         return Container(
@@ -35,8 +39,10 @@ class _SettingTileState extends State<SettingTile> {
       }
     }
     if (setting.value is bool Function()) {
-      bool val = setting.value() as bool;
-      return Switch(value: val, onChanged: setting.onChanged);
+      return GameListener(builder: (c, _, __) {
+        bool val = setting.value() as bool;
+        return Switch(value: val, onChanged: setting.onChanged);
+      });
     }
 
     if (setting.value is int Function()) {

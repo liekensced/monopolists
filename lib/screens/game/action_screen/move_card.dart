@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plutopoly/engine/data/map.dart';
+import 'package:plutopoly/engine/data/player.dart';
 import 'package:plutopoly/engine/extensions/transportation.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
@@ -8,7 +9,8 @@ import 'package:plutopoly/widgets/my_card.dart';
 class MoveCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<Tile> trains = Game.data.tile.owner.transtationTiles;
+    Player owner = Game.data.tile.owner;
+    List<Tile> trains = owner.transtationTiles;
     List<Widget> children = [];
 
     trains.forEach((Tile tile) {
@@ -18,8 +20,9 @@ class MoveCard extends StatelessWidget {
         subtitle: Text("Position: ${tile.mapIndex}"),
         trailing: RaisedButton(
           color: Theme.of(context).primaryColor,
-          child: Text(
-              "Pay £" + (Game.data.tile.transportationPrice ?? 0).toString()),
+          child: Text(owner == Game.data.player
+              ? "move"
+              : "Pay £" + (Game.data.tile.transportationPrice ?? 0).toString()),
           onPressed: Game.data.transported
               ? null
               : () {

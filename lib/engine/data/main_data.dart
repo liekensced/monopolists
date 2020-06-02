@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:plutopoly/engine/ai/ai_type.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../data/extensions.dart';
@@ -66,6 +67,17 @@ class GameData extends HiveObject {
   factory GameData.fromJson(Map<String, dynamic> json) =>
       _$GameDataFromJson(json);
   Map<String, dynamic> toJson() => _$GameDataToJson(this);
+
+  Player get nextRealPlayer {
+    for (int i = 0; i < players.length; i++) {
+      int index = (i + currentPlayer) % players.length;
+      if (players[index].ai.type == AIType.player) {
+        return players[index];
+      }
+    }
+
+    return players.first;
+  }
 
   Tile get tile {
     return player.positionTile;

@@ -29,8 +29,7 @@ class MainHelper {
       Hive.init(dir.path);
     }
     AdBloc.init();
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.teal));
+
     Hive.registerAdapter(GameDataAdapter());
     Hive.registerAdapter(TileAdapter());
     Hive.registerAdapter(TileTypeAdapter());
@@ -49,6 +48,7 @@ class MainHelper {
     Hive.registerAdapter(ScreenAdapter());
     Hive.registerAdapter(AIAdapter());
     await Hive.openBox(MainBloc.PREFBOX);
+
     return null;
   }
 
@@ -59,10 +59,19 @@ class MainHelper {
           TargetPlatform.android: ZoomPageTransitionsBuilder(),
         },
       ),
-      primaryColor: Colors.teal,
-      accentColor: Colors.cyan,
+      primaryColor: primaryColor,
+      accentColor: accentColor,
       inputDecorationTheme: InputDecorationTheme(
         floatingLabelBehavior: FloatingLabelBehavior.auto,
         border: OutlineInputBorder(),
       ));
+  static Color get primaryColor {
+    return Color(
+        Hive.box(MainBloc.PREFBOX).get("primaryColor") ?? Colors.teal.value);
+  }
+
+  static Color get accentColor {
+    return Color(
+        Hive.box(MainBloc.PREFBOX).get("accentColor") ?? Colors.cyan.value);
+  }
 }

@@ -9,13 +9,13 @@ class DealData extends HiveObject {
   @HiveField(0)
   int payAmount = 0;
   @HiveField(1)
-  List<int> receivableProperties = [];
+  List<String> receivableProperties = [];
   @HiveField(2)
-  List<int> receiveProperties = [];
+  List<String> receiveProperties = [];
   @HiveField(3)
-  List<int> payableProperties = [];
+  List<String> payableProperties = [];
   @HiveField(4)
-  List<int> payProperties = [];
+  List<String> payProperties = [];
 
   @HiveField(5)
   int price = 0;

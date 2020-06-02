@@ -170,7 +170,7 @@ class _PropertyCardState extends State<PropertyCard>
                                   Game.data.player.money > 400,
                                   "Are you sure you want to mortage this property?",
                                   () => Alert.handle(
-                                        () => Game.act.mortage(tile.mapIndex),
+                                        () => Game.act.mortage(tile.id),
                                         context,
                                       ));
                             },

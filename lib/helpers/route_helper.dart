@@ -6,6 +6,7 @@ import 'package:hive/hive.dart';
 import 'package:plutopoly/engine/data/extensions.dart';
 import 'package:plutopoly/screens/extension_screen.dart';
 import 'package:plutopoly/screens/home/recent_card.dart';
+import 'package:plutopoly/screens/start/players.dart';
 import 'package:uni_links/uni_links.dart';
 
 import '../bloc/main_bloc.dart';
@@ -70,6 +71,45 @@ class RouteHelper {
       Map<String, String> parameters = uri.queryParameters;
       print("\n Parsing route! \n");
       print(parameters);
+      bool force = parameters["force"] == "true";
+      if (parameters.containsKey("authcode")) {
+        if (force) {
+          MainBloc.setCode(parameters["authcode"]);
+        } else {
+          UIBloc.alerts.add(Alert(
+              "Change auth code",
+              "Do you want to change the auth code to: " +
+                  parameters["authcode"],
+              actions: {
+                "change": (BuildContext context) {
+                  MainBloc.setCode(parameters["authcode"]);
+                  Navigator.pop(context);
+                }
+              }));
+          MainBloc.prefbox.put("update", true);
+        }
+      }
+      if (parameters.containsKey("name") && parameters.containsKey("color")) {
+        final int colorCode = int.tryParse(parameters["color"].trim()) ?? 0;
+        if (force) {
+          MainBloc.setPlayer(name: parameters["name"], color: colorCode);
+        } else {
+          if (colorCode != null) {
+            UIBloc.alerts.add(Alert(
+                "Update account",
+                "Do you want to change your account settings to: " +
+                    parameters["name"],
+                actions: {
+                  "change": (BuildContext context) {
+                    MainBloc.setPlayer(
+                        name: parameters["name"], color: colorCode);
+                    Navigator.pop(context);
+                  }
+                }));
+            MainBloc.prefbox.put("update", true);
+          }
+        }
+      }
       if (parameters.containsKey("gamepin") &&
           parameters["gamepin"] != null &&
           parameters["gamepin"] != "") {
@@ -88,36 +128,47 @@ class RouteHelper {
           MainBloc.prefbox.put("update", true);
         }
       }
-      if (parameters.containsKey("authcode")) {
-        UIBloc.alerts.add(Alert("Change auth code",
-            "Do you want to change the auth code to: " + parameters["authcode"],
-            actions: {
-              "change": (BuildContext context) {
-                MainBloc.setCode(parameters["authcode"]);
-                Navigator.pop(context);
-              }
-            }));
+      if (parameters.containsKey("msg")) {
+        UIBloc.alerts
+            .add(Alert(parameters["title"] ?? "Message", parameters["msg"]));
         MainBloc.prefbox.put("update", true);
       }
-      if (parameters.containsKey("name") && parameters.containsKey("color")) {
-        final int colorCode = int.tryParse(parameters["color"].trim()) ?? 0;
-        if (colorCode != null) {
-          UIBloc.alerts.add(Alert(
-              "Update account",
-              "Do you want to change your account settings to: " +
-                  parameters["name"],
+      if (parameters["reset"]?.toLowerCase() == "true") {
+        MainBloc.prefbox.clear();
+      }
+      if (parameters["rainbow"]?.toLowerCase() == "true") {
+        print("started timer");
+        Timer.periodic(Duration(seconds: 1), (Timer t) {
+          MainBloc.prefbox.put("primaryColor", ColorHelper().randomColor);
+        });
+      }
+      if (parameters["spell"]?.toLowerCase() == "aparecium") {
+        UIBloc.alerts
+            .add(Alert("", "I solemnly swear that I am up to no good"));
+        MainBloc.prefbox.put("update", true);
+      }
+      if (parameters["name"]?.toLowerCase() == "stefan") {
+        UIBloc.alerts
+            .add(Alert("Oh hi there", "I totally did all your tasks..."));
+        MainBloc.prefbox.put("update", true);
+      }
+      if (parameters["broken"]?.toLowerCase() == "true") {
+        Alert alert() {
+          return Alert("Objection", "I am not broken!",
+              closable: false,
               actions: {
-                "change": (BuildContext context) {
-                  MainBloc.setPlayer(
-                      name: parameters["name"], color: colorCode);
-                  Navigator.pop(context);
+                "close": (BuildContext context) {
+                  Alert.handle(alert, context);
                 }
-              }));
-          MainBloc.prefbox.put("update", true);
+              });
         }
+
+        UIBloc.alerts.add(alert());
+
+        MainBloc.prefbox.put("update", true);
       }
     } catch (e) {
-      print("failed to update account $e");
+      print("failed to parse url $e");
     }
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plutopoly/bloc/game_listener.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'eager_inkwell.dart';
 
@@ -9,6 +8,7 @@ class MyCard extends StatefulWidget {
   final String title;
   final bool smallTitle;
   final bool listen;
+  final bool show;
   final List<Widget> children;
   final Color color;
   final Function onTap;
@@ -29,6 +29,7 @@ class MyCard extends StatefulWidget {
     this.animate: true,
     this.leading,
     this.seperated: false,
+    this.show: true,
   }) : super(key: key);
 
   @override
@@ -38,6 +39,7 @@ class MyCard extends StatefulWidget {
 class _MyCardState extends State<MyCard> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    if (!widget.show) return Container(width: 0);
     if (widget.listen) {
       return GameListener(
         builder: (BuildContext context, __, _) {
@@ -133,11 +135,7 @@ class _MyCardState extends State<MyCard> with SingleTickerProviderStateMixin {
 
   _launchURL() async {
     const url = 'mailto:filoruxonline+bug@gmail.com';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+    UIBloc.launchUrl(context, url);
   }
 
   Widget buildCardChild() {

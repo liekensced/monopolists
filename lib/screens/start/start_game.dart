@@ -56,7 +56,8 @@ class _StartGameScreenState extends State<StartGameScreen> {
                       builder: (context) {
                         return AlertDialog(
                             title: Text("Not enough players"),
-                            content: Text("Please add at least 2 players"),
+                            content:
+                                Text("Please add at least 2 players or bots"),
                             actions: [
                               MaterialButton(
                                   onPressed: () {

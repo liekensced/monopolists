@@ -18,10 +18,10 @@ class DealDataAdapter extends TypeAdapter<DealData> {
     };
     return DealData()
       ..payAmount = fields[0] as int
-      ..receivableProperties = (fields[1] as List)?.cast<int>()
-      ..receiveProperties = (fields[2] as List)?.cast<int>()
-      ..payableProperties = (fields[3] as List)?.cast<int>()
-      ..payProperties = (fields[4] as List)?.cast<int>()
+      ..receivableProperties = (fields[1] as List)?.cast<String>()
+      ..receiveProperties = (fields[2] as List)?.cast<String>()
+      ..payableProperties = (fields[3] as List)?.cast<String>()
+      ..payProperties = (fields[4] as List)?.cast<String>()
       ..price = fields[5] as int
       ..valid = (fields[6] as List)?.cast<bool>()
       ..playerChecked = fields[7] as bool
@@ -63,14 +63,15 @@ class DealDataAdapter extends TypeAdapter<DealData> {
 DealData _$DealDataFromJson(Map<String, dynamic> json) {
   return DealData()
     ..payAmount = json['payAmount'] as int
-    ..receivableProperties =
-        (json['receivableProperties'] as List)?.map((e) => e as int)?.toList()
+    ..receivableProperties = (json['receivableProperties'] as List)
+        ?.map((e) => e as String)
+        ?.toList()
     ..receiveProperties =
-        (json['receiveProperties'] as List)?.map((e) => e as int)?.toList()
+        (json['receiveProperties'] as List)?.map((e) => e as String)?.toList()
     ..payableProperties =
-        (json['payableProperties'] as List)?.map((e) => e as int)?.toList()
+        (json['payableProperties'] as List)?.map((e) => e as String)?.toList()
     ..payProperties =
-        (json['payProperties'] as List)?.map((e) => e as int)?.toList()
+        (json['payProperties'] as List)?.map((e) => e as String)?.toList()
     ..price = json['price'] as int
     ..valid = (json['valid'] as List)?.map((e) => e as bool)?.toList()
     ..playerChecked = json['playerChecked'] as bool

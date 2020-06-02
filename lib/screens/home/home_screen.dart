@@ -41,7 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
         UIBloc.showAlerts(context);
       });
     });
-
     super.initState();
   }
 
@@ -56,7 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-
     return Scaffold(
       drawer: MyDrawer(),
       body: Stack(
@@ -79,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 fontSize: 16.0,
                               )),
                           background: Padding(
-                            padding: const EdgeInsets.all(75.0),
+                            padding: const EdgeInsets.symmetric(vertical: 75.0),
                             child: Center(
                               child: ClipRRect(
                                 borderRadius:
@@ -174,52 +172,31 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                               MyCard(
-                                title: "Add ad",
+                                show: kIsWeb,
+                                title: "Android app",
                                 children: [
                                   InkWell(
-                                    onTap: () {
-                                      if (kIsWeb) {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                                title: Text("No ads on web"),
-                                                content: Text(
-                                                    "There are no daily ads on the web version."),
-                                                actions: [
-                                                  MaterialButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Text(
-                                                        "close",
-                                                        style: TextStyle(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .primaryColor),
-                                                      ))
-                                                ]);
-                                          },
-                                        );
-                                        return;
-                                      }
-                                      int amount = Hive.box(MainBloc.METABOX)
-                                          .get("intAdDays", defaultValue: 0);
-                                      Hive.box(MainBloc.METABOX)
-                                          .put("intAdDays", amount + 1);
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(12.0),
-                                      child: Text(
-                                          "Tap to add an ad to daily ads."),
-                                    ),
-                                  )
+                                      onTap: () async {
+                                        UIBloc.launchUrl(context,
+                                            "https://play.google.com/store/apps/details?id=web.filorux.plutopoly");
+                                      },
+                                      child: ListTile(
+                                        title: Text("Download android app"),
+                                        subtitle: Text(
+                                            "Download the android app for Faster performance and less bugs!"),
+                                        trailing: Icon(Icons.open_in_new),
+                                        onTap: () async {
+                                          String url = MainBloc.website;
+                                          UIBloc.launchUrl(context, url);
+                                        },
+                                      ))
                                 ],
                               ),
                               ADView(
                                 large: true,
                                 controller: _adController,
                               ),
+                              Image.asset("assets/wide.png"),
                               EndOfList()
                             ],
                           );

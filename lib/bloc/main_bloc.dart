@@ -21,11 +21,12 @@ import 'recent_bloc.dart';
 import 'ui_bloc.dart';
 
 class MainBloc {
-  static const version = "0.3.1";
+  static const version = "0.4.0";
+  static const website = "https://filorux.web.app/Plutopoly.html";
   static List<int> get versionCode =>
       version.split(".").map<int>((e) => int.tryParse(e)).toList();
   static const _boxVersion = "1.1.2.8";
-  static const GAMESBOX = _boxVersion + "gamesbox3";
+  static const GAMESBOX = _boxVersion + "gamesbox4";
 
   static const PREFBOX = _boxVersion + "prefbox";
   static const METABOX = _boxVersion + "metabox";
@@ -264,11 +265,12 @@ class MainBloc {
     currentGame = Hive.box(METABOX).get("intCurrentGame");
     if (Hive.box(MAPCONFBOX).isEmpty) {
       Hive.box(MAPCONFBOX).put("classic", MapConfiguration.standard());
+      Hive.box(MAPCONFBOX).put("wide", MapConfiguration.wide());
       Hive.box(MAPCONFBOX).put("dense", MapConfiguration.dense());
     }
-    if (Hive.box(MainBloc.PREFBOX).get("mapConfiguration") == null) {
-      Hive.box(MainBloc.PREFBOX).put(
-          "mapConfiguration", UIBloc.isWide(context) ? "classic" : "dense");
+    if (Hive.box(MainBloc.METABOX).get("mapConfiguration") == null) {
+      Hive.box(MainBloc.METABOX)
+          .put("mapConfiguration", UIBloc.isWide(context) ? "wide" : "dense");
     }
 
     RecentBloc.checkRecent();

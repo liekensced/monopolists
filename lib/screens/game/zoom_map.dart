@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:zoom_widget/zoom_widget.dart';
@@ -72,8 +70,7 @@ class ZoomMap extends StatelessWidget {
       ));
     });
 
-    double size = min(
-        MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
+    double size = MediaQuery.of(context).size.width;
     int width = UIBloc.mapConfiguration.width;
     double heigth = size *
         (4 / 3) *
@@ -81,7 +78,7 @@ class ZoomMap extends StatelessWidget {
             width.toDouble())));
 
     return MyCard(
-      maxWidth: 900,
+      maxWidth: 1500,
       children: <Widget>[
         Container(
           width: size,

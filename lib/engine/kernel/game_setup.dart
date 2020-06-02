@@ -74,8 +74,10 @@ class GameSetup {
 
   defaultPlayer(Player player) {
     Game.data.lostPlayers.add(player);
-    player.properties.forEach((int index) {
-      Game.data.gmap[index].reset();
+    player.properties.forEach((String index) {
+      Game.data.gmap
+          .where((element) => element.id == index)
+          .forEach((element) => element.reset());
     });
     deletePlayer(player, false);
     Game.data.currentPlayer--;

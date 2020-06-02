@@ -73,7 +73,7 @@ void main() {
 
     double moneyDealer = Game.data.players[1].money;
     double moneyPlayer = Game.data.player.money;
-    Game.act.deal(payAmount: 200, receiveProperties: [5], dealer: 1);
+    Game.act.deal(payAmount: 200, dealer: 1);
     expect(Game.data.players[1].properties.contains(5), false, reason: "deal");
     expect(Game.data.player.properties.contains(5), true, reason: "deal");
     expect(Game.data.players[1].money, moneyDealer + 200);

@@ -1,6 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 
 import '../bloc/main_bloc.dart';
 import '../engine/data/tip.dart';
@@ -106,29 +106,7 @@ class VersionScreen extends StatelessWidget {
                 onPressed: () async {
                   String url =
                       'https://oldplutopoly.web.app/?authcode=${MainBloc.code}&name=${MainBloc.player.name}&color=${MainBloc.player.color}';
-                  if (await canLaunch(url)) {
-                    await launch(url);
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                            title: Text("Failed"),
-                            content: Text("Failed to open link"),
-                            actions: [
-                              MaterialButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    "close",
-                                    style: TextStyle(
-                                        color: Theme.of(context).primaryColor),
-                                  ))
-                            ]);
-                      },
-                    );
-                  }
+                  UIBloc.launchUrl(context, url);
                 },
               )
             ],

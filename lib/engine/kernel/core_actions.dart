@@ -14,8 +14,8 @@ class CoreActions {
   GameData get data => Game.data;
   CoreActions();
 
-  Alert mortage(int tileIndex) {
-    Tile tile = data.gmap[tileIndex];
+  Alert mortage(String tileIndex) {
+    Tile tile = data.gmap.firstWhere((element) => element.id == tileIndex);
     if (tile.hyp == null)
       return Alert("Couldn't mortage", "You can't mortage this tile.");
     bool _mortaged = tile.mortaged;
@@ -129,8 +129,8 @@ class CoreActions {
 
   Alert deal({
     int payAmount: 0,
-    List<int> payProperties: const <int>[],
-    List<int> receiveProperties: const <int>[],
+    List<String> payProperties: const <String>[],
+    List<String> receiveProperties: const <String>[],
     @required int dealer,
   }) {
     if (payAmount != null) {
@@ -142,18 +142,20 @@ class CoreActions {
     }
     if (payProperties != null) {
       for (int i = 0; i < payProperties.length | 0; i++) {
-        data.player.properties.remove(payProperties[i]);
+        data.player.properties
+            .removeWhere((String id) => payProperties[i] == id);
         data.players[dealer].properties.add(payProperties[i]);
       }
     }
     if (receiveProperties != null) {
       for (int i = 0; i < receiveProperties.length; i++) {
-        data.players[dealer].properties.remove(receiveProperties[i]);
+        data.players[dealer].properties
+            .removeWhere((String id) => id == receiveProperties[i]);
         data.player.properties.add(receiveProperties[i]);
       }
     }
-    data.player.properties.sort();
-    data.players[dealer].properties.sort();
+    data.player.properties.sort((a, b) => a.compareTo(b));
+    data.players[dealer].properties.sort((a, b) => a.compareTo(b));
     Game.save(excludeBasic: true);
     return null;
   }
@@ -172,8 +174,8 @@ class CoreActions {
       } on Alert catch (e) {
         return e;
       }
-      data.player.properties.add(prop);
-      data.player.properties.sort();
+      data.player.properties.add(Game.data.gmap[prop].id);
+      data.player.properties.sort((a, b) => a.compareTo(b));
       Game.save(exclude: [
         SaveData.settings.toString(),
         SaveData.dealData.toString(),

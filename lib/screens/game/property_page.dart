@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plutopoly/bloc/game_listener.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/data/map.dart';
 import 'package:plutopoly/screens/carousel/map_carousel.dart';
@@ -17,42 +18,44 @@ class PropertyPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(property.name),
       ),
-      body: ListView(
-        shrinkWrap: true,
-        children: [
-          Container(
-            padding: EdgeInsets.all(20),
-            height: MediaQuery.of(context).size.height / 2,
-            child: Center(
-              child: Theme(
-                data: ThemeData.light(),
-                child: Container(
-                  child: buildCard(property),
-                  constraints: BoxConstraints(maxWidth: 250),
+      body: GameListener(builder: (context, _, snapshot) {
+        return ListView(
+          shrinkWrap: true,
+          children: [
+            Container(
+              padding: EdgeInsets.all(20),
+              height: MediaQuery.of(context).size.height / 2,
+              child: Center(
+                child: Theme(
+                  data: ThemeData.light(),
+                  child: Container(
+                    child: buildCard(property),
+                    constraints: BoxConstraints(maxWidth: 250),
+                  ),
                 ),
               ),
             ),
-          ),
-          MyCard(
-            title: "info",
-            smallTitle: true,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(property.description ?? "no info"),
-              ),
-            ],
-          ),
-          buildRentCard(),
-          property.owner == UIBloc.gamePlayer
-              ? PropertyCard(
-                  tile: property,
-                  expanded: true,
-                )
-              : Container(),
-          EndOfList(),
-        ],
-      ),
+            MyCard(
+              title: "info",
+              smallTitle: true,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(property.description ?? "no info"),
+                ),
+              ],
+            ),
+            buildRentCard(),
+            property.owner == UIBloc.gamePlayer
+                ? PropertyCard(
+                    tile: property,
+                    expanded: true,
+                  )
+                : Container(),
+            EndOfList(),
+          ],
+        );
+      }),
     );
   }
 

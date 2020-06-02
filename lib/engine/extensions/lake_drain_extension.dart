@@ -18,7 +18,7 @@ class LakeDrain {
       getInfo: () => [
             Info(
               "Drain the lake",
-              "You can drain the lake for £${Game.data.settings.dtlPrice}. This will add 2 properties to the map that you will own and can upgrade.",
+              "You can drain the lake for £${Game?.data?.settings?.dtlPrice ?? 1500}. This will add 2 properties to the map that you will own and can upgrade.",
               InfoType.rule,
             ),
             Info(
@@ -93,8 +93,7 @@ class LakeDrain {
         idIndex: 2,
       )
     ]);
-    Game.data.player.properties
-        .addAll([Game.data.gmap.length - 2, Game.data.gmap.length - 1]);
+    Game.data.player.properties.addAll(["dtl.fl:1", "dtl.fl:2"]);
     Game.save();
     return Alert("Drained the lake!",
         "You drained the lake, you now own a new street with 2 properties",

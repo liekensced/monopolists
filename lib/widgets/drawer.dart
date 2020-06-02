@@ -73,7 +73,19 @@ class MyDrawer extends StatelessWidget {
                     "assets/logo.png",
                     width: 40,
                     height: 40,
-                  ));
+                  ),
+                  children: [
+                    ListTile(
+                      title: Text("Open website"),
+                      subtitle: Text(
+                          "Visit our website for extra information, news and more"),
+                      trailing: Icon(Icons.open_in_new),
+                      onTap: () async {
+                        String url = MainBloc.website;
+                        UIBloc.launchUrl(context, url);
+                      },
+                    )
+                  ]);
             },
             child: ListTile(
               title: Text("About plutopoly"),

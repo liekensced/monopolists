@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/data/tip.dart';
 import 'package:plutopoly/screens/start/info_screen.dart';
 import 'package:plutopoly/widgets/end_of_list.dart';
 import 'package:plutopoly/widgets/my_card.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class OnlineExtensionPage extends StatelessWidget {
   @override
@@ -85,27 +85,6 @@ class OnlineExtensionPage extends StatelessWidget {
 
   _launchURL(BuildContext context) async {
     const url = 'https://github.com/filoruxonline/plutopoly-bot';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-              title: Text("Couldn't open url"),
-              content: Text(url),
-              actions: [
-                MaterialButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      "close",
-                      style: TextStyle(color: Theme.of(context).primaryColor),
-                    ))
-              ]);
-        },
-      );
-    }
+    UIBloc.launchUrl(context, url);
   }
 }

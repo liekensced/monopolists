@@ -148,7 +148,7 @@ class AddBotButton extends StatelessWidget {
         alignment: Alignment.centerRight,
         child: RaisedButton.icon(
           textColor: Colors.white,
-          color: Colors.teal,
+          color: Theme.of(context).primaryColor,
           icon: FaIcon(FontAwesomeIcons.robot),
           label: Text(
             "Add bot",
@@ -180,7 +180,7 @@ class AddPlayerButton extends StatelessWidget {
       padding: EdgeInsets.all(20).copyWith(top: 10),
       child: RaisedButton(
         textColor: Colors.white,
-        color: Colors.teal,
+        color: Theme.of(context).primaryColor,
         child: Container(
             width: double.maxFinite,
             child: Text(
@@ -373,7 +373,8 @@ class ColorHelper {
     assert(exampleAccentColors.length == exampleColors.length);
     if (exampleColors.contains(color)) {
       int index = exampleColors.indexOf(color);
-      return Color(exampleAccentColors[index]);
+      if (exampleAccentColors.length > index)
+        return Color(exampleAccentColors[index]);
     }
     return Color(color);
   }

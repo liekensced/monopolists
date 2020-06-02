@@ -50,36 +50,34 @@ class MoveScreen extends StatelessWidget {
                 ValueListenableBuilder(
                   valueListenable: Hive.box(MainBloc.MOVEBOX).listenable(),
                   builder: (BuildContext context, Box box, Widget _) {
-                    if (MainBloc.randomDices) {
-                      if (box.containsKey("intDice0") &&
-                          box.containsKey("intDice1")) {
-                        Game.move(
-                          box.get("intDice0"),
-                          box.get("intDice1"),
-                          shouldSave: false,
-                        );
+                    if (box.containsKey("intDice0") &&
+                        box.containsKey("intDice1")) {
+                      Game.move(
+                        box.get("intDice0"),
+                        box.get("intDice1"),
+                        shouldSave: false,
+                      );
 
-                        int pos = Game.data.player.position;
+                      int pos = Game.data.player.position;
 
-                        int mapLength = Game.data.gmap.length;
-                        pageController.animateToPage(
-                          (pageController.page ?? 0) > pos
-                              ? pos + mapLength
-                              : pos,
-                          duration: Duration(
-                              milliseconds: Game.ui.moveAnimationMillis),
-                          curve: Curves.decelerate,
-                        );
-                        Future.delayed(
-                            Duration(
-                                milliseconds:
-                                    Game.ui.moveAnimationMillis + 500), () {
-                          box.delete("intDice0");
-                          box.delete("intDice1");
-                          UIBloc.changeScreen(Screen.active);
-                          Game.save();
-                        });
-                      }
+                      int mapLength = Game.data.gmap.length;
+                      pageController.animateToPage(
+                        (pageController.page ?? 0) > pos
+                            ? pos + mapLength
+                            : pos,
+                        duration:
+                            Duration(milliseconds: Game.ui.moveAnimationMillis),
+                        curve: Curves.decelerate,
+                      );
+                      Future.delayed(
+                          Duration(
+                              milliseconds: Game.ui.moveAnimationMillis + 500),
+                          () {
+                        box.delete("intDice0");
+                        box.delete("intDice1");
+                        UIBloc.changeScreen(Screen.active);
+                        Game.save();
+                      });
                     }
 
                     return GameListener(builder: (context, _, __) {

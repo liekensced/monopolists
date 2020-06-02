@@ -9,7 +9,7 @@ class Settings extends HiveObject {
   @HiveField(0)
   String name = "";
   @HiveField(1)
-  bool remotelyBuild = false;
+  bool remotelyBuild = true;
   @HiveField(2)
   int goBonus = 200;
   @HiveField(3)
@@ -29,6 +29,9 @@ class Settings extends HiveObject {
   @JsonKey(defaultValue: 0)
   @HiveField(9)
   int startProperties = 0;
+  @HiveField(10)
+  @JsonKey(defaultValue: true)
+  bool transportPassGo = true;
 
   Settings();
 

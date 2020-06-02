@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/engine/extensions/setting.dart';
 
 import '../data/extensions.dart';
 import '../data/map.dart';
@@ -14,6 +16,19 @@ class TransportationBloc {
       name: "Transportation",
       description: "Adds transportation",
       hotAdd: true,
+      settings: [
+        Setting<bool>(
+          onChanged: (dynamic val) {
+            Game.data.settings.transportPassGo =
+                !(Game.data.settings.transportPassGo ?? true);
+            Game.save(only: [SaveData.settings.toString()]);
+          },
+          value: () => Game.data?.settings?.transportPassGo ?? true,
+          title: "Pass go bonus",
+          subtitle:
+              "If you should get a go bonus for passing go when you transport.",
+        ),
+      ],
       icon: ({double size: 30}) => Icon(
             Icons.train,
             size: size,
@@ -59,7 +74,8 @@ class TransportationBloc {
     }
     Game.data.transported = true;
 
-    Game.jump(destination.mapIndex, true, true);
+    Game.jump(
+        destination.mapIndex, Game.data.settings.transportPassGo ?? true, true);
     Game.save();
     return null;
   }

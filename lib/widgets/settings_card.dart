@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:hive/hive.dart';
+import 'package:plutopoly/helpers/main_helper.dart';
 
 import '../bloc/main_bloc.dart';
 import '../bloc/ui_bloc.dart';
@@ -120,6 +122,104 @@ class _SettingsCardState extends State<SettingsCard> {
                     }
                     MainBloc.prefbox.put("doubleWideWidth",
                         MediaQuery.of(context).size.width - 10);
+                  },
+                ),
+              )
+            : Container(),
+        expanded
+            ? ListTile(
+                title: Text("Primary color"),
+                subtitle: Text("The primary color of this app"),
+                trailing: CircleColor(
+                  color: MainHelper.primaryColor,
+                  circleSize: 40,
+                  onColorChoose: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        Color newColor = Colors.teal;
+                        return AlertDialog(
+                            title: Text("Select primary color"),
+                            content: MaterialColorPicker(
+                              selectedColor: Colors.teal,
+                              onColorChange: (Color c) {
+                                newColor = c;
+                              },
+                            ),
+                            actions: [
+                              MaterialButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "cancel",
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor),
+                                  )),
+                              MaterialButton(
+                                  onPressed: () {
+                                    if (newColor == null) return;
+                                    MainBloc.prefbox
+                                        .put("primaryColor", newColor.value);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "select",
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor),
+                                  )),
+                            ]);
+                      },
+                    );
+                  },
+                ),
+              )
+            : Container(),
+        expanded
+            ? ListTile(
+                title: Text("Accent color"),
+                subtitle: Text("The accent color of this app"),
+                trailing: CircleColor(
+                  color: MainHelper.accentColor,
+                  circleSize: 40,
+                  onColorChoose: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        Color newColor = Colors.cyan;
+                        return AlertDialog(
+                            title: Text("Select accent color"),
+                            content: MaterialColorPicker(
+                              selectedColor: Colors.cyan,
+                              onColorChange: (Color c) {
+                                newColor = c;
+                              },
+                            ),
+                            actions: [
+                              MaterialButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "cancel",
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor),
+                                  )),
+                              MaterialButton(
+                                  onPressed: () {
+                                    if (newColor == null) return;
+                                    MainBloc.prefbox
+                                        .put("accentColor", newColor.value);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "select",
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor),
+                                  )),
+                            ]);
+                      },
+                    );
                   },
                 ),
               )

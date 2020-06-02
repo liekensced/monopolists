@@ -24,6 +24,12 @@ class MapConfiguration extends HiveObject {
     width = 5;
     configuration = denseConfiguration;
   }
+
+  MapConfiguration.wide() {
+    width = 10;
+    configuration = denseConfiguration;
+  }
+
   factory MapConfiguration.fromJson(Map<String, dynamic> json) =>
       _$MapConfigurationFromJson(json);
   Map<String, dynamic> toJson() => _$MapConfigurationToJson(this);
@@ -113,7 +119,7 @@ class Tile extends HiveObject {
   Player get owner {
     Player owner;
     Game.data.players.forEach((Player player) {
-      if (player.properties.contains(mapIndex)) {
+      if (player.properties.contains(Game.data.gmap[mapIndex].id)) {
         owner = player;
         return;
       }

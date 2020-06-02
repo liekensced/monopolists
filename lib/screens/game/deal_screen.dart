@@ -396,9 +396,11 @@ class _DealScreenChildState extends State<DealScreenChild>
                             .length,
                         itemBuilder: (context, index) {
                           return _buildPropertyCard(
-                              Game.data.gmap[(dealer
-                                  ? dealData.receiveProperties
-                                  : dealData.payProperties)[index]],
+                              Game.data.gmap.firstWhere((element) =>
+                                  element.id ==
+                                  (dealer
+                                      ? dealData.receiveProperties
+                                      : dealData.payProperties)[index]),
                               index,
                               dealer);
                         }),
@@ -519,9 +521,11 @@ class _DealScreenChildState extends State<DealScreenChild>
                 );
               }
               return _buildPropertyCard(
-                  Game.data.gmap[(dealer
-                      ? dealData.receivableProperties
-                      : dealData.payableProperties)[index]],
+                  Game.data.gmap.firstWhere((element) =>
+                      element.id ==
+                      (dealer
+                          ? dealData.receivableProperties
+                          : dealData.payableProperties)[index]),
                   index,
                   dealer,
                   selected: false);
@@ -538,8 +542,7 @@ class _DealScreenChildState extends State<DealScreenChild>
   void addPay(int index, Tile tile, bool dealer) {
     (dealer ? dealData.receivableProperties : dealData.payableProperties)
         .removeAt(index);
-    (dealer ? dealData.receiveProperties : dealData.payProperties)
-        .add(tile.mapIndex);
+    (dealer ? dealData.receiveProperties : dealData.payProperties).add(tile.id);
     dealData.dealerChecked = false;
     dealData.playerChecked = false;
     Game.save(only: [SaveData.dealData.toString()]);
@@ -549,7 +552,7 @@ class _DealScreenChildState extends State<DealScreenChild>
     (dealer ? dealData.receiveProperties : dealData.payProperties)
         .removeAt(index);
     (dealer ? dealData.receivableProperties : dealData.payableProperties)
-        .add(tile.mapIndex);
+        .add(tile.id);
     dealData.dealerChecked = false;
     dealData.playerChecked = false;
     Game.save(only: [SaveData.dealData.toString()]);

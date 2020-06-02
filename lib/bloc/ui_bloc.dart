@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../engine/data/map.dart';
 import '../engine/data/player.dart';
@@ -24,6 +25,31 @@ class UIBloc {
   static changeScreen([Screen screen]) {
     if (screen != null) Game.data.ui.screenState = screen;
     screenUpdate.value = screen;
+  }
+
+  static launchUrl(BuildContext context, String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: Text("Couldn't open url"),
+              content: Text(url),
+              actions: [
+                MaterialButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "close",
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    ))
+              ]);
+        },
+      );
+    }
   }
 
   static showAlerts(BuildContext context) {
@@ -56,7 +82,7 @@ class UIBloc {
       Hive.box(MainBloc.PREFBOX).put("doubleMaxWidth", max(maxWidth, 400.0));
 
   static Player get gamePlayer {
-    if (!MainBloc.online) return Game.data.player;
+    if (!MainBloc.online) return Game.data.nextRealPlayer;
     try {
       return Game.data.players
           .firstWhere((Player p) => p.code == MainBloc.code);

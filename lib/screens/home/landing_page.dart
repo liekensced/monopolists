@@ -20,9 +20,11 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+  ScrollController _scrollController;
   @override
   void initState() {
     _tabController = TabController(vsync: this, length: 2);
+    _scrollController = ScrollController();
 
     super.initState();
   }
@@ -43,8 +45,14 @@ class _LandingPageState extends State<LandingPage>
         ),
         onPressed: () {
           if (_tabController.index == 0) {
-            _tabController.animateTo(1);
-            setState(() {});
+            if (_scrollController.offset < 400) {
+              _scrollController.animateTo(600,
+                  duration: Duration(milliseconds: 600),
+                  curve: Curves.easeInOutCubic);
+            } else {
+              _tabController.animateTo(1);
+              setState(() {});
+            }
           } else {
             if (MainBloc.player.name == "null") {
               showDialog(
@@ -81,6 +89,7 @@ class _LandingPageState extends State<LandingPage>
           FractionallySizedBox(
             heightFactor: 1,
             child: NestedScrollView(
+              controller: _scrollController,
               headerSliverBuilder:
                   (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
@@ -111,11 +120,14 @@ class _LandingPageState extends State<LandingPage>
                                 ClipRRect(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(20)),
-                                  child: Image.asset(
-                                    UIBloc.isWide(context)
-                                        ? "assets/wide.png"
-                                        : "assets/logo.png",
-                                    fit: BoxFit.scaleDown,
+                                  child: Container(
+                                    constraints: BoxConstraints(maxWidth: 700),
+                                    child: Image.asset(
+                                      UIBloc.isWide(context)
+                                          ? "assets/wide.png"
+                                          : "assets/logo.png",
+                                      fit: BoxFit.fitHeight,
+                                    ),
                                   ),
                                 ),
                                 Icon(Icons.arrow_downward)
@@ -158,6 +170,20 @@ class _LandingPageState extends State<LandingPage>
                                       leading: Icon(Icons.file_download),
                                     ),
                                   ],
+                                )
+                              : Container(),
+                          kIsWeb
+                              ? InkWell(
+                                  onTap: () async {
+                                    UIBloc.launchUrl(context,
+                                        "https://play.google.com/store/apps/details?id=web.filorux.plutopoly");
+                                  },
+                                  child: GeneralInfoCard(
+                                    info: Info(
+                                        "Donwload the app",
+                                        "If you have an android phone, download the app for Much faster performance and less bugs! This app has been build mobile-first. Tap here to open.",
+                                        InfoType.tip),
+                                  ),
                                 )
                               : Container(),
                           MyCard(
@@ -265,6 +291,28 @@ class _LandingPageState extends State<LandingPage>
                                 title: Text("Stocks"),
                                 subtitle:
                                     Text("Invest extra cash in the market."),
+                              ),
+                            ],
+                          ),
+                          MyCard(
+                            title: "Website",
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text(
+                                    "Visit our website for more information, updates and more:"),
+                              ),
+                              InkWell(
+                                onTap: () async {
+                                  String url = MainBloc.website;
+                                  UIBloc.launchUrl(context, url);
+                                },
+                                child: ListTile(
+                                  leading: BankExtension.data.icon(),
+                                  title: Text("Plutopoly"),
+                                  subtitle: Text("Tap here to open website"),
+                                  trailing: Icon(Icons.open_in_new),
+                                ),
                               ),
                             ],
                           ),

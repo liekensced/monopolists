@@ -114,7 +114,7 @@ class _DiceSelectState extends State<DiceSelect> {
 
   Widget buildIcon(IconData icon, BuildContext context, int index, int value) {
     return ValueListenableBuilder(
-        valueListenable: Hive.box(MainBloc.PREFBOX).listenable(),
+        valueListenable: Hive.box(MainBloc.MOVEBOX).listenable(),
         builder: (context, Box box, _) {
           Color color = Colors.white;
           if (box.get("intDice$index") == value || dices[index] == value) {

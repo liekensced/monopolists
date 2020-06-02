@@ -38,11 +38,13 @@ class ShareTile extends StatelessWidget {
                 return;
               }
               String text =
-                  "https://plutopoly.web.app/?gamepin=" + MainBloc.gameId;
+                  "https://plutopoly.web.app/#/?gamepin=" + MainBloc.gameId;
               if (kIsWeb) {
                 try {
                   Clipboard.setData(
                       ClipboardData(text: text ?? "Something went wrong :/"));
+                  Alert.handle(() => Alert.snackBar("Copied link to clipboard"),
+                      context);
                 } catch (e) {
                   Alert.handle(
                       () => Alert("Could not copy",

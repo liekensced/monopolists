@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../bloc/ui_bloc.dart';
 import '../helpers/online_extensions.dart';
@@ -53,7 +52,7 @@ class OnlineExtensionsCard extends StatelessWidget {
                                 trailing: IconButton(
                                   icon: Icon(Icons.open_in_new),
                                   onPressed: () {
-                                    _launchURL(bot.website);
+                                    UIBloc.launchUrl(context, bot.website);
                                   },
                                 ),
                               ),
@@ -117,13 +116,5 @@ class OnlineExtensionsCard extends StatelessWidget {
       smallTitle: true,
       children: children,
     );
-  }
-
-  _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 }

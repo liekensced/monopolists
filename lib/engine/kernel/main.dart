@@ -68,6 +68,13 @@ class Game {
   static loadGame(GameData loadData) {
     if (!(testing ?? false)) assert(loadData.isInBox || MainBloc.online);
     data = loadData;
+    if (MainBloc.online) {
+      ///RETURNS
+      if (Game.data.nextRealPlayer.code != UIBloc.gamePlayer.code) return;
+    }
+    if (Game.data.player.ai.type == AIType.normal) {
+      NormalAI.onPlayerTurn();
+    }
   }
 
   static addInfo(UpdateInfo updateInfo, [int playerIndex, int minus = 1]) {
@@ -140,11 +147,11 @@ class Game {
                 .where((element) => element.owner == null)
                 .map<int>((e) => e.mapIndex);
             int r = Random().nextInt(where.length);
-            p.properties.add(where.toList()[r]);
+            p.properties.add(Game.data.gmap[where.toList()[r]].id);
           });
         }
         Game.data.players.forEach((Player p) {
-          p.properties.sort();
+          p.properties.sort((a, b) => a.compareTo(b));
         });
       }
     } catch (e) {

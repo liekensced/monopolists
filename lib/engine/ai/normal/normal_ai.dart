@@ -11,28 +11,28 @@ import '../ai_type.dart';
 class NormalAI {
   static Tile get tile => Game.data.tile;
   static Player get player => Game.data.player;
-  static bool get isOwner => player.properties.contains(player.position);
+  static bool get isOwner => player.properties.contains(player.positionTile.id);
 
   static onDealUpdate() {
     double price = 0;
 
     /// Properties ai will pay
-    Game.data.dealData.receiveProperties.forEach((int index) {
+    Game.data.dealData.receiveProperties.forEach((String index) {
       price += max(value(index, Game.data.players[Game.data.dealData.dealer]),
               value(index, Game.data.player)) *
           1.1;
     });
 
     /// Properties ai will receive
-    Game.data.dealData.payProperties.forEach((int index) {
+    Game.data.dealData.payProperties.forEach((String index) {
       price -= value(index, Game.data.players[Game.data.dealData.dealer]);
     });
     Game.data.dealData.price = price.floor();
     Game.data.dealData.dealerChecked = true;
   }
 
-  static int value(int prop, Player play) {
-    Tile property = Game.data.gmap[prop];
+  static int value(String prop, Player play) {
+    Tile property = Game.data.gmap.firstWhere((element) => element.id == prop);
     double value;
     value = property.price * (Game.data.turn / 20 + 1);
     if (property.level != null && property.housePrice != null) {
@@ -140,15 +140,16 @@ class NormalAI {
 
   static mortage() {
     while (player.money < 0) {
-      List<int> streetless = player.properties.where((int i) {
-        Tile property = Game.data.gmap[i];
+      List<String> streetless = player.properties.where((String i) {
+        Tile property = Game.data.gmap.firstWhere((element) => element.id == i);
         if (property.hyp == null) return false;
         if (property.mortaged) return false;
         if (player.hasAll(property.idPrefix)) return false;
         return true;
       }).toList();
-      List<int> streets = player.properties.where((int i) {
-        Tile property = Game.data.gmap[i];
+      List<String> streets = player.properties.where((String i) {
+        Tile property = Game.data.gmap.firstWhere((element) => element.id == i);
+        ;
         if (property.hyp == null) return false;
         if (property.mortaged) return false;
         if (!player.hasAll(property.idPrefix)) return false;
@@ -206,12 +207,12 @@ class NormalAI {
           .where((Tile t) {
             if (!t.buyable) return false;
             if (t.owner == null) return false;
-            return !player.properties.contains(t);
+            return !player.properties.contains(t.id);
           })
           .toList()
           .forEach((Tile prop) {
             if (prop.owner.ai.type == AIType.player) return;
-            int price = value(prop.mapIndex, player);
+            int price = value(prop.id, player);
             if (player.money > price) {
               int mis = player.missing(prop.idPrefix);
               if (mis == 0) return;
@@ -232,14 +233,15 @@ class NormalAI {
     Game.act.deal(
         dealer: prop.owner.index,
         payAmount: price,
-        receiveProperties: [prop.mapIndex]);
+        receiveProperties: [prop.id]);
   }
 
   static remotelyBuild() {
     if (Game.data.settings.remotelyBuild &&
         ((chance(0.5) && player.money > 200) || player.money > 800)) {
-      for (int i in player.properties) {
-        Tile property = Game.data.gmap[i];
+      for (String i in player.properties) {
+        Tile property = Game.data.gmap.firstWhere((element) => element.id == i);
+        if (property.housePrice == null || property.rent.isEmpty) return;
         if (player.hasAll(property.idPrefix)) {
           if (player.money < property.housePrice) break;
           while (player.money > property.housePrice) {

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
-import 'package:plutopoly/bloc/recent.dart';
-import 'package:plutopoly/bloc/recent_bloc.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/engine/kernel/main.dart';
-import 'package:plutopoly/engine/ui/alert.dart';
-import 'package:plutopoly/engine/ui/game_navigator.dart';
-import 'package:plutopoly/widgets/my_card.dart';
+
+import '../../bloc/main_bloc.dart';
+import '../../bloc/recent.dart';
+import '../../bloc/recent_bloc.dart';
+import '../../bloc/ui_bloc.dart';
+import '../../engine/kernel/main.dart';
+import '../../engine/ui/alert.dart';
+import '../../engine/ui/game_navigator.dart';
+import '../../widgets/my_card.dart';
 
 class RecentCard extends StatelessWidget {
   final Box box;
@@ -192,9 +193,7 @@ class RecentCard extends StatelessWidget {
     Navigator.pop(context);
     if (alert != null) cancel = true;
     if (Alert.handle(() => alert, context)) {
-      GameNavigator.navigate(
-        context,
-      );
+      GameNavigator.navigate(context, loadGame: true);
     }
   }
 }

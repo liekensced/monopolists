@@ -24,7 +24,7 @@ class Player extends HiveObject {
   @HiveField(4)
   int color = 0;
   @HiveField(5)
-  List<int> properties = [];
+  List<String> properties = [];
   @HiveField(6)
   bool jailed = false;
   @HiveField(7)
@@ -56,8 +56,8 @@ class Player extends HiveObject {
   int get index => Game.data.players.indexOf(this);
   int get trainstations {
     int _trainsTations = 0;
-    properties.forEach((int i) {
-      Tile tile = Game.data.gmap[i];
+    properties.forEach((String i) {
+      Tile tile = Game.data.gmap.firstWhere((element) => element.id == i);
       if (tile.type == TileType.trainstation) {
         _trainsTations++;
       }
@@ -67,8 +67,8 @@ class Player extends HiveObject {
 
   List<Tile> get transtationTiles {
     List<Tile> _trainsTations = [];
-    properties.forEach((int i) {
-      Tile tile = Game.data.gmap[i];
+    properties.forEach((String i) {
+      Tile tile = Game.data.gmap.firstWhere((element) => element.id == i);
       if (tile.type == TileType.trainstation) {
         _trainsTations.add(tile);
       }
@@ -78,8 +78,9 @@ class Player extends HiveObject {
 
   int get companies {
     int _companies = 0;
-    properties.forEach((int i) {
-      Tile tile = Game.data.gmap[i];
+    properties.forEach((String i) {
+      Tile tile = Game.data.gmap.firstWhere((element) => element.id == i);
+      ;
       if (tile.type == TileType.company) _companies++;
     });
     return _companies;
@@ -91,9 +92,9 @@ class Player extends HiveObject {
 
   bool hasAllUnmortaged(String idPrefix) {
     bool has = true;
-    Game.data.gmap.asMap().forEach((int i, Tile tile) {
+    Game.data.gmap.forEach((Tile tile) {
       if (tile.idPrefix == idPrefix) {
-        if (!properties.contains(i)) {
+        if (!properties.contains(tile.id)) {
           has = false;
           return;
         } else {
@@ -106,8 +107,8 @@ class Player extends HiveObject {
 
   int missing(String idPrefix) {
     int mis = 0;
-    Game.data.gmap.asMap().forEach((int i, Tile tile) {
-      if (tile.idPrefix == idPrefix && !properties.contains(i)) {
+    Game.data.gmap.forEach((Tile tile) {
+      if (tile.idPrefix == idPrefix && !properties.contains(tile.id)) {
         mis++;
       }
     });

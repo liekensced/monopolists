@@ -37,13 +37,14 @@ class GameHelpers {
 
   repareHouses({int houseFactor: 25, hotelFactor: 100}) {
     int _housesPay = 0;
-    Game.data.player.properties.forEach((int i) {
-      Tile tile = Game.data.gmap[i];
+    Game.data.player.properties.forEach((String i) {
+      Tile tile = Game.data.gmap.firstWhere((element) => element.id == i);
       if (tile.level == 5) {
         _housesPay += hotelFactor;
         return;
+      } else {
+        _housesPay += tile.level * houseFactor;
       }
-      _housesPay += tile.level * houseFactor;
     });
     Game.act.pay(PayType.bank, _housesPay, count: true, force: true);
   }

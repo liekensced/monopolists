@@ -90,7 +90,7 @@ Widget buildCard(Tile tile) {
                 flex: 2,
                 child: Center(
                     child: FaIcon(FontAwesomeIcons.handPaper,
-                        color: Colors.blue, size: 50))),
+                        color: tile.color ?? Colors.blue, size: 50))),
             Expanded(
               child: PlayerIndicators(tile: tile),
             ),
@@ -109,7 +109,7 @@ Widget buildCard(Tile tile) {
                   children: <Widget>[
                     Spacer(),
                     FaIcon(FontAwesomeIcons.mugHot,
-                        color: Colors.brown, size: 50),
+                        color: tile.color ?? Colors.brown, size: 50),
                     Spacer(),
                     Text(
                       "£" + Game.data.pot.floor().toString() + " ",
@@ -137,10 +137,10 @@ Widget buildCard(Tile tile) {
                         ? FaIcon(
                             FontAwesomeIcons.bolt,
                             size: 50,
-                            color: Colors.orange,
+                            color: tile.color ?? Colors.orange,
                           )
                         : FaIcon(FontAwesomeIcons.faucet,
-                            size: 50, color: Colors.blue),
+                            size: 50, color: tile.color ?? Colors.blue),
                     OwnerText(tile: tile),
                   ],
                 )),
@@ -160,7 +160,7 @@ Widget buildCard(Tile tile) {
                     child: FaIcon(
                   FontAwesomeIcons.solidGem,
                   size: 50,
-                  color: Colors.cyan,
+                  color: tile.color ?? Colors.cyan,
                 ))),
             Expanded(
               child: PlayerIndicators(tile: tile),
@@ -178,7 +178,7 @@ Widget buildCard(Tile tile) {
                     child: FaIcon(
                   FontAwesomeIcons.question,
                   size: 50,
-                  color: Colors.red,
+                  color: tile.color ?? Colors.red,
                 ))),
             Expanded(
               child: PlayerIndicators(tile: tile),
@@ -198,7 +198,7 @@ Widget buildCard(Tile tile) {
                     FaIcon(
                       FontAwesomeIcons.train,
                       size: 50,
-                      color: Colors.black,
+                      color: tile.color ?? Colors.black,
                     ),
                     OwnerText(tile: tile),
                   ],
