@@ -11,7 +11,7 @@ part 'ui_actions.g.dart';
 
 @JsonSerializable()
 @HiveType(typeId: 5)
-class UIActionsData extends HiveObject {
+class UIActionsData {
   @HiveField(0)
   Screen screenState = Screen.idle;
 

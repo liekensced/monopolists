@@ -6,7 +6,7 @@ part 'ai.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 16)
-class AI extends HiveObject {
+class AI {
   @HiveField(0)
   AIType type;
 

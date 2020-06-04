@@ -16,8 +16,6 @@ class UIBloc {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
 
-  static int posOveride;
-
   static ValueNotifier screenUpdate = ValueNotifier<Screen>(Screen.idle);
 
   static List<Alert> alerts = [];
@@ -72,10 +70,7 @@ class UIBloc {
   }
 
   static int get carrouselPosition {
-    if (posOveride == null)
-      return Game.data.player.position;
-    else
-      return posOveride;
+    return Game.data.player.position;
   }
 
   static set maxWidth(double maxWidth) =>

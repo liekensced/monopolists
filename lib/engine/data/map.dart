@@ -9,7 +9,7 @@ part 'map.g.dart';
 
 @JsonSerializable(nullable: true)
 @HiveType(typeId: 9)
-class MapConfiguration extends HiveObject {
+class MapConfiguration {
   @HiveField(0)
   List<int> configuration;
   @HiveField(1)
@@ -37,7 +37,7 @@ class MapConfiguration extends HiveObject {
 
 @JsonSerializable(nullable: true)
 @HiveType(typeId: 1)
-class Tile extends HiveObject {
+class Tile {
   @HiveField(0)
   TileType type = TileType.land;
   @HiveField(1)
@@ -150,7 +150,9 @@ class Tile extends HiveObject {
     this.hyp,
     this.mortaged: false,
     @required this.idIndex,
-  });
+  }) {
+    idPrefix ??= type.toString();
+  }
 }
 
 @HiveType(typeId: 2)

@@ -3,10 +3,8 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
 
 import '../engine/data/main_data.dart';
@@ -21,12 +19,12 @@ import 'recent_bloc.dart';
 import 'ui_bloc.dart';
 
 class MainBloc {
-  static const version = "0.4.0";
+  static const version = "0.4.2";
   static const website = "https://filorux.web.app/Plutopoly.html";
   static List<int> get versionCode =>
       version.split(".").map<int>((e) => int.tryParse(e)).toList();
   static const _boxVersion = "1.1.2.8";
-  static const GAMESBOX = _boxVersion + "gamesbox4";
+  static const GAMESBOX = "gamesbox4";
 
   static const PREFBOX = _boxVersion + "prefbox";
   static const METABOX = _boxVersion + "metabox";
@@ -37,7 +35,7 @@ class MainBloc {
   static const MOVEBOX = _boxVersion + "moveBox";
 
   static bool initialized = false;
-  static int currentGame = 0;
+  static int currentGame = null;
   static bool online = false;
   static String gameId;
   static StreamSubscription<DocumentSnapshot> listener;
@@ -213,7 +211,7 @@ class MainBloc {
       {Map<String, dynamic> bots, List<String> only, List<String> exclude}) {
     if (!online) {
       print("== New Local Save ==");
-      data.save();
+      Hive.box(GAMESBOX).put(currentGame, data.toString());
     } else {
       print("== New Online Save ==");
       RecentBloc.update(data);
@@ -265,8 +263,10 @@ class MainBloc {
     currentGame = Hive.box(METABOX).get("intCurrentGame");
     if (Hive.box(MAPCONFBOX).isEmpty) {
       Hive.box(MAPCONFBOX).put("classic", MapConfiguration.standard());
-      Hive.box(MAPCONFBOX).put("wide", MapConfiguration.wide());
       Hive.box(MAPCONFBOX).put("dense", MapConfiguration.dense());
+    }
+    if (!Hive.box(MAPCONFBOX).containsKey("wide")) {
+      Hive.box(MAPCONFBOX).put("wide", MapConfiguration.wide());
     }
     if (Hive.box(MainBloc.METABOX).get("mapConfiguration") == null) {
       Hive.box(MainBloc.METABOX)
@@ -284,8 +284,8 @@ class MainBloc {
   static resetGame([GameData data]) {
     GameData newData = data ?? GameData();
     if (!MainBloc.online) {
-      Hive.box(GAMESBOX).put(getGameNumber, newData);
-      if (!newData.isInBox)
+      Hive.box(GAMESBOX).put(getGameNumber, newData.toString());
+      if (currentGame == null)
         throw Alert("New offline data not in box", "My bad, sorry");
     }
     Game.data = newData;
@@ -298,19 +298,11 @@ class MainBloc {
       Hive.box(METABOX).put("intTotalGames", getGameNumber + 1);
       newGameData.settings.name = "Game $getGameNumber";
 
-      Hive.box(GAMESBOX).add(newGameData);
+      Hive.box(GAMESBOX).add(newGameData.toString());
 
       Hive.box(METABOX).put("intCurrentGame", getGameNumber);
     }
     return newGameData;
-  }
-
-  ///Use GameListener
-  @deprecated
-  static listen() {
-    return Listenable.merge(
-            [Hive.box(GAMESBOX).listenable(), Hive.box(UPDATEBOX).listenable()])
-        as ValueListenable;
   }
 
   static bool get randomDices =>

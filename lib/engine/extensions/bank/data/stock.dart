@@ -8,7 +8,7 @@ part 'stock.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 12)
-class Stock extends HiveObject {
+class Stock {
   @HiveField(0)
   String id = "";
   @HiveField(1)

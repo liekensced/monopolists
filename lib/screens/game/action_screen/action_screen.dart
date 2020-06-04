@@ -73,7 +73,8 @@ class _ActionScreenState extends State<ActionScreen> {
                 (BuildContext context, bool innerBoxIsScrolled) {
               return [
                 SliverAppBar(
-                  title: Text(Game.data.player.name),
+                  title: GameListener(
+                      builder: (c, _, __) => Text(Game.data.player.name)),
                   leading: IconButton(
                     icon: Icon(Icons.menu),
                     onPressed: () {

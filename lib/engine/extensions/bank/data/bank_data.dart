@@ -9,7 +9,7 @@ part 'bank_data.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 11)
-class BankData extends HiveObject {
+class BankData {
   @HiveField(0)
   int expendature = 0;
   @HiveField(1)

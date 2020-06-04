@@ -7,6 +7,7 @@ import '../../kernel/core_actions.dart';
 import '../../kernel/main.dart';
 import '../../ui/alert.dart';
 import '../ai_type.dart';
+import '../../data/main_data.dart';
 
 class NormalAI {
   static Tile get tile => Game.data.tile;
@@ -20,7 +21,7 @@ class NormalAI {
     Game.data.dealData.receiveProperties.forEach((String index) {
       price += max(value(index, Game.data.players[Game.data.dealData.dealer]),
               value(index, Game.data.player)) *
-          1.1;
+          1.05;
     });
 
     /// Properties ai will receive
@@ -34,7 +35,7 @@ class NormalAI {
   static int value(String prop, Player play) {
     Tile property = Game.data.gmap.firstWhere((element) => element.id == prop);
     double value;
-    value = property.price * (Game.data.turn / 20 + 1);
+    value = property.price * (Game.data.turn / 40 + 1);
     if (property.level != null && property.housePrice != null) {
       value += property.level * property.housePrice;
     }
@@ -44,7 +45,7 @@ class NormalAI {
         value *= 20;
         break;
       case 1:
-        value *= 1.6;
+        value *= 1.5;
         value += 250;
         break;
       case 2:
@@ -62,11 +63,14 @@ class NormalAI {
 
   static onPlayerTurn() async {
     try {
+      Game.save(force: true);
+      await Future.delayed(Duration(milliseconds: 1000));
       Random r = Random();
       Game.move(r.nextInt(6) + 1, r.nextInt(6) + 1);
-      Game.save(force: true);
-      await Future.delayed(Duration(seconds: 1));
 
+      GameData check = Game.data;
+
+      if (check != Game.data) return;
       if (tile.owner != null) {
         Game.act.payRent(player.position, null, true);
       } else {
@@ -119,6 +123,9 @@ class NormalAI {
 
       mortage();
     } finally {
+      Game.save(force: true);
+      await Future.delayed(Duration(seconds: 1));
+
       Alert nextAlert = Game.next();
       if (nextAlert?.failed ?? false) {
         Game.next(force: true);
@@ -149,7 +156,7 @@ class NormalAI {
       }).toList();
       List<String> streets = player.properties.where((String i) {
         Tile property = Game.data.gmap.firstWhere((element) => element.id == i);
-        ;
+
         if (property.hyp == null) return false;
         if (property.mortaged) return false;
         if (!player.hasAll(property.idPrefix)) return false;
@@ -206,13 +213,15 @@ class NormalAI {
       Game.data.gmap
           .where((Tile t) {
             if (!t.buyable) return false;
-            if (t.owner == null) return false;
             return !player.properties.contains(t.id);
           })
           .toList()
           .forEach((Tile prop) {
-            if (prop.owner.ai.type == AIType.player) return;
-            int price = value(prop.id, player);
+            Player owner = prop.owner;
+            if (owner == null) return;
+            if (owner.ai.type == AIType.player) return;
+            if (owner.hasAll(prop.idPrefix)) return;
+            int price = max(value(prop.id, player), value(prop.id, prop.owner));
             if (player.money > price) {
               int mis = player.missing(prop.idPrefix);
               if (mis == 0) return;
@@ -239,21 +248,22 @@ class NormalAI {
   static remotelyBuild() {
     if (Game.data.settings.remotelyBuild &&
         ((chance(0.5) && player.money > 200) || player.money > 800)) {
-      for (String i in player.properties) {
-        Tile property = Game.data.gmap.firstWhere((element) => element.id == i);
+      Game.data.gmap.forEach((property) {
+        if (!player.properties.contains(property.id)) return;
+        print("bot owns " + property.id);
         if (property.housePrice == null || property.rent.isEmpty) return;
         if (player.hasAll(property.idPrefix)) {
-          if (player.money < property.housePrice) break;
+          if (player.money < property.housePrice) return;
           while (player.money > property.housePrice) {
             if (chance(player.money / property.housePrice * 4) &&
                 chance(0.95)) {
               Alert alert = Game.build(property);
-              if (alert?.failed ?? false) break;
+              if (alert?.failed ?? false) return;
             } else
-              break;
+              return;
           }
         }
-      }
+      });
     }
   }
 }

@@ -15,7 +15,7 @@ part 'main_data.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 0)
-class GameData extends HiveObject {
+class GameData {
   @HiveField(0)
   bool running;
   @HiveField(1)

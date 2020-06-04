@@ -6,8 +6,10 @@ import 'players_indicator.dart';
 
 class LandCard extends StatelessWidget {
   final Tile tile;
+  final bool zoom;
   const LandCard({
     Key key,
+    this.zoom = false,
     @required this.tile,
   }) : super(key: key);
 
@@ -21,13 +23,15 @@ class LandCard extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: Color(tile.color),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    offset: Offset(0.0, 1.0), //(x,y)
-                    blurRadius: 6.0,
-                  ),
-                ],
+                boxShadow: zoom
+                    ? []
+                    : [
+                        BoxShadow(
+                          color: Colors.grey,
+                          offset: Offset(0.0, 1.0), //(x,y)
+                          blurRadius: 6.0,
+                        ),
+                      ],
               ),
               child: Container(
                 alignment: Alignment.bottomCenter,

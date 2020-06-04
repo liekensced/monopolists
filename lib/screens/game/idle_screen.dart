@@ -68,7 +68,6 @@ class IdleScreen extends StatelessWidget {
   }
 
   void changePos(int index) {
-    UIBloc.posOveride = index;
     if (carrouselController.hasClients) {
       carrouselController.animateToPage(index,
           duration: Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
@@ -143,6 +142,10 @@ class IdleScreen extends StatelessWidget {
         ),
       ));
     });
+    Future.delayed(Duration.zero, () {
+      playersController.animateToPage(Game.data.currentPlayer,
+          duration: Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
+    });
 
     return ValueListenableBuilder(
         valueListenable: Hive.box(MainBloc.METABOX).listenable(),
@@ -150,7 +153,6 @@ class IdleScreen extends StatelessWidget {
           return ListView(
             shrinkWrap: true,
             children: [
-              Container(height: 10),
               Container(
                 height: 200,
                 child: PageView.builder(
@@ -160,10 +162,6 @@ class IdleScreen extends StatelessWidget {
                   itemBuilder: (context, index) => listItems[index],
                 ),
               ),
-              Container(
-                height: 5,
-              ),
-              buildIdleActionCard(context),
               Center(
                 child: Container(
                   constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
@@ -172,6 +170,10 @@ class IdleScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              Container(
+                height: 5,
+              ),
+              buildIdleActionCard(context),
               ZoomMap(
                 carrouselController: carrouselController,
               ),

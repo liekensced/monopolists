@@ -5,7 +5,7 @@ part 'settings.g.dart';
 
 @JsonSerializable()
 @HiveType(typeId: 4)
-class Settings extends HiveObject {
+class Settings {
   @HiveField(0)
   String name = "";
   @HiveField(1)

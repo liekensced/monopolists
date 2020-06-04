@@ -11,8 +11,6 @@ import '../kernel/main.dart';
 
 class GameNavigator {
   static void navigate(BuildContext context, {bool loadGame: false}) {
-    UIBloc.posOveride = null;
-
     if (Game.data == null) {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {

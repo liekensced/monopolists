@@ -16,7 +16,6 @@ class ZoomMap extends StatelessWidget {
 
   const ZoomMap({Key key, this.carrouselController}) : super(key: key);
   void changePos(int index) {
-    UIBloc.posOveride = index;
     if (carrouselController == null) return;
     if (carrouselController.hasClients) {
       carrouselController.animateToPage(index,
@@ -55,7 +54,7 @@ class ZoomMap extends StatelessWidget {
                   changePos(tile.mapIndex);
                 }
               },
-              child: buildCard(tile),
+              child: buildCard(tile, zoom: true),
             ),
           ),
         );

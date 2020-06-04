@@ -3,45 +3,6 @@
 part of 'stock.dart';
 
 // **************************************************************************
-// TypeAdapterGenerator
-// **************************************************************************
-
-class StockAdapter extends TypeAdapter<Stock> {
-  @override
-  final typeId = 12;
-
-  @override
-  Stock read(BinaryReader reader) {
-    var numOfFields = reader.readByte();
-    var fields = <int, dynamic>{
-      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
-    return Stock(
-      id: fields[0] as String,
-      value: fields[1] as double,
-      volume: fields[2] as int,
-      info: fields[3] as String,
-    )..valueHistory = (fields[4] as Map)?.cast<int, double>();
-  }
-
-  @override
-  void write(BinaryWriter writer, Stock obj) {
-    writer
-      ..writeByte(5)
-      ..writeByte(0)
-      ..write(obj.id)
-      ..writeByte(1)
-      ..write(obj.value)
-      ..writeByte(2)
-      ..write(obj.volume)
-      ..writeByte(3)
-      ..write(obj.info)
-      ..writeByte(4)
-      ..write(obj.valueHistory);
-  }
-}
-
-// **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 

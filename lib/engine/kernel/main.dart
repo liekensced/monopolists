@@ -66,8 +66,8 @@ class Game {
   }
 
   static loadGame(GameData loadData) {
-    if (!(testing ?? false)) assert(loadData.isInBox || MainBloc.online);
     data = loadData;
+    if (Game.data == null || !(Game.data.running ?? false)) return;
     if (MainBloc.online) {
       ///RETURNS
       if (Game.data.nextRealPlayer.code != UIBloc.gamePlayer.code) return;
@@ -213,7 +213,7 @@ class Game {
 
     if (player.jailed) {
       data.doublesThrown = 0;
-      if (dice1 == dice2 || player.jailTries == 1) {
+      if (dice1 == dice2 || player.jailTries == 0) {
         player.jailed = false;
         dice1 -= 10;
         dice2 += 10;

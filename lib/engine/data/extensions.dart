@@ -8,8 +8,6 @@ import '../extensions/lake_drain_extension.dart';
 import '../extensions/transportation.dart';
 import '../kernel/main.dart';
 
-part 'extensions.g.dart';
-
 @HiveType(typeId: 6)
 enum Extension {
   @HiveField(0)

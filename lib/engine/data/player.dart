@@ -11,7 +11,7 @@ part 'player.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 3)
-class Player extends HiveObject {
+class Player {
   @HiveField(0)
   String name = "null";
   @HiveField(1)

@@ -1,7 +1,5 @@
 import 'package:hive/hive.dart';
 
-part 'recent.g.dart';
-
 @HiveType(typeId: 14)
 class Recent extends HiveObject {
   @HiveField(0)

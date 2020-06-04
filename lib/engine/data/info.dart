@@ -5,7 +5,7 @@ part 'info.g.dart';
 
 @JsonSerializable()
 @HiveType(typeId: 7)
-class UpdateInfo extends HiveObject {
+class UpdateInfo {
   @HiveField(0)
   String title = "";
   @HiveField(1)

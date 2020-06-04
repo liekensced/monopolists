@@ -6,7 +6,7 @@ part 'loan.g.dart';
 
 @JsonSerializable()
 @HiveType(typeId: 10)
-class Contract extends HiveObject {
+class Contract {
   @HiveField(0)
   double interest = 0.05;
   @HiveField(1)

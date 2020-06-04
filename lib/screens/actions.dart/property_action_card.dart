@@ -2,7 +2,6 @@ import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/bloc/game_listener.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/screens/game/action_screen/property_card.dart';
 
 import '../../bloc/main_bloc.dart';
@@ -81,9 +80,6 @@ class PropertyActionCard extends StatelessWidget {
                                         Game.data.player.position,
                                         duration: Duration(milliseconds: 500),
                                         curve: Curves.easeInOutCubic);
-                                  } else {
-                                    UIBloc.posOveride =
-                                        Game.data.player.position;
                                   }
                                 },
                               ),
@@ -188,17 +184,30 @@ class PropertyActionCardChild extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(8.0),
         width: double.maxFinite,
-        child: RaisedButton(
-          padding: const EdgeInsets.all(8.0),
-          color: Colors.green,
-          child: Text(
-            "Empty  £" + Game.data.pot.floor().toString(),
-            style: TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          onPressed: () {
-            Alert.handle(() => Game.act.clearPot(), context);
-          },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Padding(
+                  padding: const EdgeInsets.all(12.0).copyWith(top: 0),
+                  child: Text(tile.description ??
+                      "Congrats! You can empty the pot and enjoy your coffee break.")),
+            ),
+            RaisedButton(
+              padding: const EdgeInsets.all(8.0),
+              color: Colors.green,
+              child: Text(
+                "Empty  £" + Game.data.pot.floor().toString(),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              onPressed: () {
+                Alert.handle(() => Game.act.clearPot(), context);
+              },
+            ),
+          ],
         ),
       );
     }
@@ -216,17 +225,30 @@ class PropertyActionCardChild extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(8.0),
         width: double.maxFinite,
-        child: RaisedButton(
-          padding: const EdgeInsets.all(8.0),
-          color: Colors.red,
-          child: Text(
-            "Pay taxes £" + price.toString(),
-            style: TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          onPressed: () {
-            Alert.handle(() => Game.act.pay(PayType.pot, price), context);
-          },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Padding(
+                  padding: const EdgeInsets.all(12.0).copyWith(top: 0),
+                  child:
+                      Text(tile.description ?? "You have to pay your taxes.")),
+            ),
+            RaisedButton(
+              padding: const EdgeInsets.all(8.0),
+              color: Colors.red,
+              child: Text(
+                "Pay taxes £" + price.toString(),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              onPressed: () {
+                Alert.handle(() => Game.act.pay(PayType.pot, price), context);
+              },
+            ),
+          ],
         ),
       );
     }
@@ -236,7 +258,7 @@ class PropertyActionCardChild extends StatelessWidget {
         return Container(
           height: 100,
           child: Center(
-            child: Text("Your visiting prison"),
+            child: Text(tile.description ?? "Your visiting prison"),
           ),
         );
       return Container(
@@ -246,6 +268,11 @@ class PropertyActionCardChild extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            Center(
+              child: Padding(
+                  padding: const EdgeInsets.all(12.0).copyWith(top: 0),
+                  child: Text(tile.description ?? "You are in prison")),
+            ),
             RaisedButton(
               padding: const EdgeInsets.all(8.0),
               color: Colors.orange,
@@ -289,32 +316,56 @@ class PropertyActionCardChild extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(8.0),
         width: double.maxFinite,
-        child: RaisedButton(
-          padding: const EdgeInsets.all(8.0),
-          color: Colors.green,
-          child: Text(
-            "Buy £" + Game.data.player.positionTile.price.toString(),
-            style: TextStyle(
-                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return MyTextField();
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Padding(
+                  padding: const EdgeInsets.all(12.0).copyWith(top: 0),
+                  child: Text(tile.description ?? "This property is for sale")),
+            ),
+            RaisedButton(
+              padding: const EdgeInsets.all(8.0),
+              color: Colors.green,
+              child: Text(
+                "Buy £" + Game.data.player.positionTile.price.toString(),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return MyTextField();
+                  },
+                );
               },
-            );
-          },
+            ),
+          ],
         ),
       );
     }
 
     if (Game.data.rentPayed ?? false) {
-      return Container(
-        padding: const EdgeInsets.all(8.0),
-        width: double.maxFinite,
-        height: 60,
-        child: Center(child: Text("Rent payed")),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          tile.description == null
+              ? Container(width: 0)
+              : Center(
+                  child: Padding(
+                      padding: const EdgeInsets.all(12.0).copyWith(top: 0),
+                      child: Text(tile.description)),
+                ),
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            width: double.maxFinite,
+            height: 60,
+            child: Center(child: Text("Rent payed")),
+          ),
+        ],
       );
     }
     return Container(

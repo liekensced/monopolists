@@ -3,6 +3,7 @@ import 'package:plutopoly/bloc/main_bloc.dart';
 import '../data/main_data.dart';
 import '../data/map.dart';
 import '../data/player.dart';
+import '../ui/alert.dart';
 import 'core_actions.dart';
 import 'main.dart';
 
@@ -14,8 +15,10 @@ class GameHelpers {
   jail(int player, {bool shouldSave: true}) {
     data.doublesThrown = 0;
     data.players[player].jailed = true;
-    data.players[player].jailTries = 2;
-    data.players[player].position = 10;
+    data.players[player].position = data.gmap
+        .firstWhere((element) => element.type == TileType.jail)
+        .mapIndex;
+    data.players[player].jailTries = data.tile.price ?? 2;
     if (shouldSave) {
       Game.save(only: ["doublesThrown", SaveData.players.toString()]);
     }
@@ -35,7 +38,7 @@ class GameHelpers {
     data.currentDices[1] += 10;
   }
 
-  repareHouses({int houseFactor: 25, hotelFactor: 100}) {
+  Alert repareHouses({int houseFactor: 25, hotelFactor: 100}) {
     int _housesPay = 0;
     Game.data.player.properties.forEach((String i) {
       Tile tile = Game.data.gmap.firstWhere((element) => element.id == i);
@@ -46,6 +49,11 @@ class GameHelpers {
         _housesPay += tile.level * houseFactor;
       }
     });
-    Game.act.pay(PayType.bank, _housesPay, count: true, force: true);
+    try {
+      Game.act.pay(PayType.bank, _housesPay, count: true);
+    } on Alert catch (e) {
+      return e;
+    }
+    return null;
   }
 }

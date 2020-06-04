@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
 
 import '../../engine/data/map.dart';
 import '../../engine/kernel/main.dart';
@@ -22,12 +21,9 @@ class MapCarousel extends StatefulWidget {
 class _MapCarouselState extends State<MapCarousel> {
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!Game.data.ui.idle) UIBloc.posOveride = null;
-      if (UIBloc.posOveride != null)
-        widget.controller.jumpToPage(UIBloc.posOveride);
-    });
   }
+
+  int lastPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +31,24 @@ class _MapCarouselState extends State<MapCarousel> {
     for (int i = 0; i < Game.data.gmap.length; i++) {
       listItems.add(buildCard(Game.data.gmap[i]));
     }
+
+    Future.delayed(Duration.zero, () {
+      lastPosition ??= Game.data.player.position;
+      if (lastPosition != Game.data.player.position) {
+        if (Game.data.ui.shouldMove) {
+          widget.controller.jumpToPage(Game.data.player.position);
+        } else {
+          int position2 = Game.data.player.position;
+          if (lastPosition > position2) {
+            position2 += Game.data.gmap.length;
+          }
+          widget.controller.animateToPage(position2,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.easeInOutCubic);
+        }
+        lastPosition = Game.data.player.position;
+      }
+    });
 
     return PageView.builder(
       scrollDirection: Axis.horizontal,
@@ -44,11 +58,12 @@ class _MapCarouselState extends State<MapCarousel> {
   }
 }
 
-Widget buildCard(Tile tile) {
+Widget buildCard(Tile tile, {zoom: false}) {
   switch (tile.type) {
     case TileType.land:
       return LandCard(
         tile: tile,
+        zoom: zoom,
       );
     case TileType.start:
       return StartCard(tile: tile);
