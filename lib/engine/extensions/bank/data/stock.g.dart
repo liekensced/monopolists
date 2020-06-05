@@ -45,14 +45,14 @@ class StockAdapter extends TypeAdapter<Stock> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Stock _$StockFromJson(Map<String, dynamic> json) {
+Stock _$StockFromJson(Map json) {
   return Stock(
     id: json['id'] as String,
     value: (json['value'] as num)?.toDouble(),
     volume: json['volume'] as int,
     info: json['info'] as String,
-  )..valueHistory = (json['valueHistory'] as Map<String, dynamic>)?.map(
-      (k, e) => MapEntry(int.parse(k), (e as num)?.toDouble()),
+  )..valueHistory = (json['valueHistory'] as Map)?.map(
+      (k, e) => MapEntry(int.parse(k as String), (e as num)?.toDouble()),
     );
 }
 

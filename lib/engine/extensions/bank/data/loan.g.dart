@@ -52,7 +52,7 @@ class ContractAdapter extends TypeAdapter<Contract> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Contract _$ContractFromJson(Map<String, dynamic> json) {
+Contract _$ContractFromJson(Map json) {
   return Contract(
     interest: (json['interest'] as num)?.toDouble(),
     amount: (json['amount'] as num)?.toDouble(),

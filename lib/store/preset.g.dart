@@ -16,19 +16,23 @@ class PresetAdapter extends TypeAdapter<Preset> {
     var fields = <int, dynamic>{
       for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Preset()
-      ..title = fields[0] as String
-      ..description = fields[1] as String
-      ..author = fields[2] as String
-      ..projectName = fields[3] as String
-      ..version = fields[4] as String
-      ..data = fields[5] as GameData;
+    return Preset(
+      projectName: fields[3] as String,
+      title: fields[0] as String,
+      description: fields[1] as String,
+      author: fields[2] as String,
+      version: fields[4] as String,
+      dataCache: fields[5] as GameData,
+    )
+      ..infoCards = (fields[6] as List)?.cast<Info>()
+      ..primaryColor = fields[7] as int
+      ..accentColor = fields[8] as int;
   }
 
   @override
   void write(BinaryWriter writer, Preset obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
@@ -40,7 +44,13 @@ class PresetAdapter extends TypeAdapter<Preset> {
       ..writeByte(4)
       ..write(obj.version)
       ..writeByte(5)
-      ..write(obj.data);
+      ..write(obj.dataCache)
+      ..writeByte(6)
+      ..write(obj.infoCards)
+      ..writeByte(7)
+      ..write(obj.primaryColor)
+      ..writeByte(8)
+      ..write(obj.accentColor);
   }
 }
 
@@ -48,16 +58,28 @@ class PresetAdapter extends TypeAdapter<Preset> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Preset _$PresetFromJson(Map<String, dynamic> json) {
-  return Preset()
-    ..title = json['title'] as String
-    ..description = json['description'] as String
-    ..author = json['author'] as String
-    ..projectName = json['projectName'] as String
-    ..version = json['version'] as String
-    ..data = json['data'] == null
+Preset _$PresetFromJson(Map json) {
+  return Preset(
+    projectName: json['projectName'] as String,
+    title: json['title'] as String,
+    description: json['description'] as String,
+    author: json['author'] as String,
+    version: json['version'] as String,
+    dataCache: json['dataCache'] == null
         ? null
-        : GameData.fromJson(json['data'] as Map<String, dynamic>);
+        : GameData.fromJson((json['dataCache'] as Map)?.map(
+            (k, e) => MapEntry(k as String, e),
+          )),
+  )
+    ..infoCards = (json['infoCards'] as List)
+        ?.map((e) => e == null
+            ? null
+            : Info.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
+        ?.toList()
+    ..primaryColor = json['primaryColor'] as int
+    ..accentColor = json['accentColor'] as int;
 }
 
 Map<String, dynamic> _$PresetToJson(Preset instance) => <String, dynamic>{
@@ -66,5 +88,8 @@ Map<String, dynamic> _$PresetToJson(Preset instance) => <String, dynamic>{
       'author': instance.author,
       'projectName': instance.projectName,
       'version': instance.version,
-      'data': instance.data?.toJson(),
+      'dataCache': instance.dataCache?.toJson(),
+      'infoCards': instance.infoCards?.map((e) => e?.toJson())?.toList(),
+      'primaryColor': instance.primaryColor,
+      'accentColor': instance.accentColor,
     };

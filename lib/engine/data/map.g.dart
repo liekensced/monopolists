@@ -168,7 +168,7 @@ class TileAdapter extends TypeAdapter<Tile> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-MapConfiguration _$MapConfigurationFromJson(Map<String, dynamic> json) {
+MapConfiguration _$MapConfigurationFromJson(Map json) {
   return MapConfiguration()
     ..configuration =
         (json['configuration'] as List)?.map((e) => e as int)?.toList()
@@ -181,7 +181,7 @@ Map<String, dynamic> _$MapConfigurationToJson(MapConfiguration instance) =>
       'width': instance.width,
     };
 
-Tile _$TileFromJson(Map<String, dynamic> json) {
+Tile _$TileFromJson(Map json) {
   return Tile(
     _$enumDecodeNullable(_$TileTypeEnumMap, json['type']),
     color: json['color'] as int,

@@ -60,7 +60,7 @@ class DealDataAdapter extends TypeAdapter<DealData> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-DealData _$DealDataFromJson(Map<String, dynamic> json) {
+DealData _$DealDataFromJson(Map json) {
   return DealData()
     ..payAmount = json['payAmount'] as int
     ..receivableProperties = (json['receivableProperties'] as List)

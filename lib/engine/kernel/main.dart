@@ -59,8 +59,8 @@ class Game {
   }
 
   //launching
-  static newGame() {
-    data = MainBloc.newGame();
+  static newGame([GameData preset]) {
+    data = MainBloc.newGame(preset);
 
     loadGame(data);
   }

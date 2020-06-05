@@ -46,7 +46,7 @@ class UpdateInfoAdapter extends TypeAdapter<UpdateInfo> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-UpdateInfo _$UpdateInfoFromJson(Map<String, dynamic> json) {
+UpdateInfo _$UpdateInfoFromJson(Map json) {
   return UpdateInfo(
     title: json['title'] as String,
     leading: json['leading'] as String,

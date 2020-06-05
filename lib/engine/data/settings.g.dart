@@ -69,7 +69,7 @@ class SettingsAdapter extends TypeAdapter<Settings> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Settings _$SettingsFromJson(Map<String, dynamic> json) {
+Settings _$SettingsFromJson(Map json) {
   return Settings()
     ..name = json['name'] as String
     ..remotelyBuild = json['remotelyBuild'] as bool

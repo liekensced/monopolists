@@ -78,7 +78,7 @@ class UIActionsDataAdapter extends TypeAdapter<UIActionsData> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-UIActionsData _$UIActionsDataFromJson(Map<String, dynamic> json) {
+UIActionsData _$UIActionsDataFromJson(Map json) {
   return UIActionsData()
     ..screenState = _$enumDecodeNullable(_$ScreenEnumMap, json['screenState'])
     ..showDealScreen = json['showDealScreen'] as bool

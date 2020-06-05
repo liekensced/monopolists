@@ -45,7 +45,7 @@ class BankDataAdapter extends TypeAdapter<BankData> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-BankData _$BankDataFromJson(Map<String, dynamic> json) {
+BankData _$BankDataFromJson(Map json) {
   return BankData()
     ..expendature = json['expendature'] as int
     ..expandatureList =
@@ -54,7 +54,9 @@ BankData _$BankDataFromJson(Map<String, dynamic> json) {
     ..volatility = json['volatility'] as int
     ..worldStock = json['worldStock'] == null
         ? null
-        : Stock.fromJson(json['worldStock'] as Map<String, dynamic>);
+        : Stock.fromJson((json['worldStock'] as Map)?.map(
+            (k, e) => MapEntry(k as String, e),
+          ));
 }
 
 Map<String, dynamic> _$BankDataToJson(BankData instance) => <String, dynamic>{

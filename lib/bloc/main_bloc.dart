@@ -49,7 +49,7 @@ class MainBloc {
     return Hive.box(METABOX);
   }
 
-  static Future newOnlineGame() async {
+  static Future newOnlineGame([GameData preset]) async {
     if (player.name == null || player.name == "null")
       return Alert.accountIncomplete();
     online = true;
@@ -58,7 +58,7 @@ class MainBloc {
     DocumentReference data =
         await Firestore.instance.collection("/games").add({"starting ...": ""});
     gameId = data.documentID;
-    Game.newGame();
+    Game.newGame(preset);
     Game.data.settings.name = "Game $getGameNumber";
 
     waiter = data.snapshots().listen((event) {

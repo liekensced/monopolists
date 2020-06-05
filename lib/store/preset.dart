@@ -1,6 +1,10 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:hive/hive.dart';
+import 'package:json_annotation/json_annotation.dart';
+
 import 'package:plutopoly/engine/data/main_data.dart';
+import 'package:plutopoly/engine/data/tip.dart';
+
+import 'default_presets_data.dart';
 
 part 'preset.g.dart';
 
@@ -12,15 +16,38 @@ class Preset extends HiveObject {
   @HiveField(1)
   String description = "";
   @HiveField(2)
-  String author;
+  String author = "";
   @HiveField(3)
-  String projectName;
+  String projectName = "";
   @HiveField(4)
-  String version;
+  String version = "1.0.0";
   @HiveField(5)
-  GameData data;
+  GameData dataCache;
+  @HiveField(6)
+  List<Info> infoCards = [];
+  @HiveField(7)
+  int primaryColor;
+  @HiveField(8)
+  int accentColor;
 
-  Preset();
+  Future<GameData> get data async {
+    if (dataCache != null) return dataCache;
+
+    if (presetsMap.containsKey(projectName)) {
+      dataCache = GameData.fromJson(presetsMap[projectName]);
+      return dataCache;
+    }
+    return null;
+  }
+
+  Preset({
+    this.projectName,
+    this.title,
+    this.description,
+    this.author,
+    this.version,
+    this.dataCache,
+  });
 
   factory Preset.fromJson(Map<String, dynamic> json) => _$PresetFromJson(json);
   Map<String, dynamic> toJson() => _$PresetToJson(this);

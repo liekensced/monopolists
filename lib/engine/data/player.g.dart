@@ -6,7 +6,7 @@ part of 'player.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Player _$PlayerFromJson(Map<String, dynamic> json) {
+Player _$PlayerFromJson(Map json) {
   return Player(
     money: (json['money'] as num)?.toDouble(),
     color: json['color'] as int,
@@ -15,7 +15,9 @@ Player _$PlayerFromJson(Map<String, dynamic> json) {
     code: json['code'] as int,
     ai: json['ai'] == null
         ? null
-        : AI.fromJson(json['ai'] as Map<String, dynamic>),
+        : AI.fromJson((json['ai'] as Map)?.map(
+            (k, e) => MapEntry(k as String, e),
+          )),
   )
     ..properties =
         (json['properties'] as List)?.map((e) => e as String)?.toList()
@@ -23,19 +25,25 @@ Player _$PlayerFromJson(Map<String, dynamic> json) {
     ..jailTries = json['jailTries'] as int
     ..goojCards = json['goojCards'] as int
     ..info = (json['info'] as List)
-        ?.map((e) =>
-            e == null ? null : UpdateInfo.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : UpdateInfo.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList()
     ..moneyHistory = (json['moneyHistory'] as List)
         ?.map((e) => (e as num)?.toDouble())
         ?.toList()
     ..debt = (json['debt'] as num)?.toDouble()
     ..loans = (json['loans'] as List)
-        ?.map((e) =>
-            e == null ? null : Contract.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : Contract.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList()
-    ..stock = (json['stock'] as Map<String, dynamic>)?.map(
-      (k, e) => MapEntry(k, e as int),
+    ..stock = (json['stock'] as Map)?.map(
+      (k, e) => MapEntry(k as String, e as int),
     );
 }
 

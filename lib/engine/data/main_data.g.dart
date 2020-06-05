@@ -93,12 +93,15 @@ class GameDataAdapter extends TypeAdapter<GameData> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-GameData _$GameDataFromJson(Map<String, dynamic> json) {
+GameData _$GameDataFromJson(Map json) {
   return GameData()
     ..running = json['running'] as bool
     ..players = (json['players'] as List)
-        ?.map((e) =>
-            e == null ? null : Player.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : Player.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList()
     ..currentPlayer = json['currentPlayer'] as int
     ..turn = json['turn'] as int
@@ -107,32 +110,46 @@ GameData _$GameDataFromJson(Map<String, dynamic> json) {
     ..doublesThrown = json['doublesThrown'] as int
     ..pot = (json['pot'] as num)?.toDouble()
     ..gmap = (json['gmap'] as List)
-        ?.map(
-            (e) => e == null ? null : Tile.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : Tile.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList()
     ..settings = json['settings'] == null
         ? null
-        : Settings.fromJson(json['settings'] as Map<String, dynamic>)
+        : Settings.fromJson((json['settings'] as Map)?.map(
+            (k, e) => MapEntry(k as String, e),
+          ))
     ..extensions = (json['extensions'] as List)
         ?.map((e) => _$enumDecodeNullable(_$ExtensionEnumMap, e))
         ?.toList()
     ..ui = json['ui'] == null
         ? null
-        : UIActionsData.fromJson(json['ui'] as Map<String, dynamic>)
+        : UIActionsData.fromJson((json['ui'] as Map)?.map(
+            (k, e) => MapEntry(k as String, e),
+          ))
     ..rentPayed = json['rentPayed'] as bool
     ..findingsIndex = json['findingsIndex'] as int
     ..eventIndex = json['eventIndex'] as int
     ..mapConfiguration = json['mapConfiguration'] as String
     ..dealData = json['dealData'] == null
         ? null
-        : DealData.fromJson(json['dealData'] as Map<String, dynamic>)
+        : DealData.fromJson((json['dealData'] as Map)?.map(
+            (k, e) => MapEntry(k as String, e),
+          ))
     ..bankData = json['bankData'] == null
         ? null
-        : BankData.fromJson(json['bankData'] as Map<String, dynamic>)
+        : BankData.fromJson((json['bankData'] as Map)?.map(
+            (k, e) => MapEntry(k as String, e),
+          ))
     ..version = json['version'] as String
     ..lostPlayers = (json['lostPlayers'] as List)
-        ?.map((e) =>
-            e == null ? null : Player.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : Player.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
         ?.toList()
     ..bot = json['bot'] as bool
     ..transported = json['transported'] as bool ?? false;

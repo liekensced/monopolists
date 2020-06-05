@@ -34,7 +34,7 @@ class AIAdapter extends TypeAdapter<AI> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-AI _$AIFromJson(Map<String, dynamic> json) {
+AI _$AIFromJson(Map json) {
   return AI(
     _$enumDecodeNullable(_$AITypeEnumMap, json['type']),
   );
