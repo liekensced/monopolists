@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/screens/store/store_list.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../bloc/ui_bloc.dart';
@@ -156,6 +157,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                   builder: (context, Box box, _) {
                                     return RecentCard(box: box);
                                   }),
+                              IconDivider(
+                                icon: Icon(Icons.store),
+                              ),
+                              StoreList(),
                               IconDivider(
                                 icon: Icon(
                                   Icons.settings,

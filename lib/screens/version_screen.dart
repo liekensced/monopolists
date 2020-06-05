@@ -16,8 +16,26 @@ class VersionCard extends StatelessWidget {
       closedColor: Theme.of(context).canvasColor,
       openBuilder: (_, __) => VersionScreen(),
       closedBuilder: (_, f) => MyCard(
-        title: "Version",
+        title: "More info",
         children: [
+          ListTile(
+            onTap: () {
+              UIBloc.launchUrl(context, MainBloc.website);
+            },
+            title: Text("Website and feedback:"),
+            subtitle:
+                Text("Check the website for news, to give feedback and more!"),
+            trailing: Icon(Icons.open_in_new),
+          ),
+          ListTile(
+            onTap: () {
+              UIBloc.launchUrl(
+                  context, "https://trello.com/b/hU3y6Adc/plutopoly");
+            },
+            title: Text("The Future of plutopoly:"),
+            subtitle: Text("Check the trello board for the futre plans!"),
+            trailing: Icon(Icons.open_in_new),
+          ),
           ListTile(
             title: Text("Your current version:"),
             trailing: Text(MainBloc.version),
@@ -29,7 +47,7 @@ class VersionCard extends StatelessWidget {
               onPressed: () {
                 f();
               },
-              child: Text("More info"),
+              child: Text("More version info"),
             ),
           )
         ],

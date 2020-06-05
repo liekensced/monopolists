@@ -3,6 +3,34 @@
 part of 'ai.dart';
 
 // **************************************************************************
+// TypeAdapterGenerator
+// **************************************************************************
+
+class AIAdapter extends TypeAdapter<AI> {
+  @override
+  final typeId = 16;
+
+  @override
+  AI read(BinaryReader reader) {
+    var numOfFields = reader.readByte();
+    var fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return AI(
+      fields[0] as AIType,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, AI obj) {
+    writer
+      ..writeByte(1)
+      ..writeByte(0)
+      ..write(obj.type);
+  }
+}
+
+// **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 

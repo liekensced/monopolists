@@ -16,6 +16,7 @@ class MyCard extends StatefulWidget {
   final bool animate;
   final Widget leading;
   final bool seperated;
+  final bool shrinkwrap;
 
   const MyCard({
     Key key,
@@ -30,6 +31,7 @@ class MyCard extends StatefulWidget {
     this.leading,
     this.seperated: false,
     this.show: true,
+    this.shrinkwrap: false,
   }) : super(key: key);
 
   @override
@@ -51,37 +53,37 @@ class _MyCardState extends State<MyCard> with SingleTickerProviderStateMixin {
   }
 
   Widget buildCenter() {
-    return Center(
-      child: Container(
-          constraints:
-              BoxConstraints(maxWidth: widget.maxWidth ?? UIBloc.maxWidth),
-          child: EagerInkWell(
-            onTap: widget.onTap,
-            child: Card(
-                clipBehavior: Clip.hardEdge,
-                color: widget.color,
-                child: Column(
-                  children: <Widget>[
-                    widget.title == null
-                        ? Container()
-                        : Container(
-                            key: Key("title key"),
-                            padding: const EdgeInsets.all(8),
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              widget.title,
-                              style: !(widget.smallTitle ??
-                                      (widget.title.length > 10))
-                                  ? Theme.of(context).textTheme.headline3
-                                  : Theme.of(context).textTheme.headline4,
-                              textAlign: TextAlign.start,
-                            ),
+    return Container(
+        constraints:
+            BoxConstraints(maxWidth: widget.maxWidth ?? UIBloc.maxWidth),
+        child: EagerInkWell(
+          onTap: widget.onTap,
+          child: Card(
+              clipBehavior: Clip.hardEdge,
+              color: widget.color,
+              child: Column(
+                mainAxisSize:
+                    widget.shrinkwrap ? MainAxisSize.min : MainAxisSize.max,
+                children: <Widget>[
+                  widget.title == null
+                      ? Container()
+                      : Container(
+                          key: Key("title key"),
+                          padding: const EdgeInsets.all(8),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            widget.title,
+                            style: !(widget.smallTitle ??
+                                    (widget.title.length > 10))
+                                ? Theme.of(context).textTheme.headline3
+                                : Theme.of(context).textTheme.headline4,
+                            textAlign: TextAlign.start,
                           ),
-                    animatedSizeWrapper(),
-                  ],
-                )),
-          )),
-    );
+                        ),
+                  animatedSizeWrapper(),
+                ],
+              )),
+        ));
   }
 
   Widget animatedSizeWrapper() {

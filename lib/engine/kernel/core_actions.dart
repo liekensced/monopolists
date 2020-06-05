@@ -65,10 +65,14 @@ class CoreActions {
       case PayType.rent:
         data.rentPayed = true;
         Game.addInfo(
-            UpdateInfo(
-                title: "Rent received from ${data.player.name}: £$amount",
-                leading: "rent"),
-            receiver);
+          UpdateInfo(
+              title: "You received rent!",
+              subtitle: "From ${data.player.name}.",
+              trailing: "£$amount",
+              leading: "rent",
+              show: true),
+          receiver,
+        );
         break;
       case PayType.pot:
         data.rentPayed = true;

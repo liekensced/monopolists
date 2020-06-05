@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/engine/extensions/setting.dart';
+import 'package:plutopoly/widgets/my_card.dart';
+import 'package:plutopoly/widgets/setting_tile.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../bloc/game_listener.dart';
@@ -94,7 +97,60 @@ class _StartGameScreenState extends State<StartGameScreen> {
                       PlayersCard(red: red),
                       ExtensionsCard(),
                       ExtraCard(),
-                      MainBloc.online ? OnlineExtensionsCard() : Container(),
+                      MainBloc.online
+                          ? OnlineExtensionsCard()
+                          : MyCard(
+                              title: "Playing with board",
+                              listen: true,
+                              children: [
+                                SettingTile(
+                                  setting: Setting<bool>(
+                                      onChanged: (dynamic val) {
+                                        Game.data.settings.allowDiceSelect =
+                                            val;
+                                        Game.save(only: [
+                                          SaveData.settings.toString()
+                                        ]);
+                                      },
+                                      value: () =>
+                                          Game.data.settings.allowDiceSelect ??
+                                          false,
+                                      title: "Allow dice select",
+                                      subtitle:
+                                          "For when your playing with real dices."),
+                                ),
+                                SettingTile(
+                                  setting: Setting<bool>(
+                                      onChanged: (dynamic val) {
+                                        Game.data.settings.allowPriceChanges =
+                                            val;
+                                        Game.save(only: [
+                                          SaveData.settings.toString()
+                                        ]);
+                                      },
+                                      value: () =>
+                                          Game.data.settings
+                                              .allowPriceChanges ??
+                                          false,
+                                      title: "Allow price changes",
+                                      subtitle: "If you have other prices"),
+                                )
+                              ],
+                            ),
+                      Container(
+                        height: 100,
+                        child: Center(
+                          child: MaterialButton(
+                            onPressed: () => UIBloc.launchUrl(
+                                context, MainBloc.website + "#h.xyloj3nibgrj"),
+                            textColor: Theme.of(context).primaryColor,
+                            child: Text(
+                              "Missing a feature?\nSuggest it!",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
                       EndOfList()
                     ];
                     return FractionallySizedBox(

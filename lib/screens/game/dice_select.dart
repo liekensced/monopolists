@@ -22,7 +22,8 @@ class _DiceSelectState extends State<DiceSelect> {
   @override
   Widget build(BuildContext context) {
     Box box = Hive.box(MainBloc.MOVEBOX);
-    if (box.get("boolRandomDices") == null && !MainBloc.online) {
+    bool allow = Game.data.settings.allowDiceSelect ?? false;
+    if (box.get("boolRandomDices") == null && allow) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -35,7 +36,7 @@ class _DiceSelectState extends State<DiceSelect> {
         ],
       );
     }
-    if ((box.get("boolRandomDices", defaultValue: true) || MainBloc.online) &&
+    if ((box.get("boolRandomDices", defaultValue: true) || !allow) &&
         !started) {
       return Center(
         child: GestureDetector(

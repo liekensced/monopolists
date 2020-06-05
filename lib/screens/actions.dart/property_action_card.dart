@@ -4,7 +4,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/bloc/game_listener.dart';
 import 'package:plutopoly/screens/game/action_screen/property_card.dart';
 
-import '../../bloc/main_bloc.dart';
 import '../../engine/data/actions.dart';
 import '../../engine/data/map.dart';
 import '../../engine/data/player.dart';
@@ -14,9 +13,7 @@ import '../../engine/kernel/main.dart';
 import '../../widgets/my_card.dart';
 
 class PropertyActionCard extends StatelessWidget {
-  final PageController pageController;
-
-  const PropertyActionCard({Key key, this.pageController}) : super(key: key);
+  const PropertyActionCard({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return GameListener(
@@ -75,12 +72,6 @@ class PropertyActionCard extends StatelessWidget {
                                   Alert.handle(
                                       () => Game.executeEvent(action.func),
                                       context);
-                                  if (pageController.hasClients) {
-                                    pageController.animateToPage(
-                                        Game.data.player.position,
-                                        duration: Duration(milliseconds: 500),
-                                        curve: Curves.easeInOutCubic);
-                                  }
                                 },
                               ),
                       )
@@ -139,10 +130,6 @@ class PropertyActionCard extends StatelessWidget {
                                   Alert.handle(
                                       () => Game.executeEvent(action.func),
                                       context);
-                                  pageController.animateToPage(
-                                      Game.data.player.position,
-                                      duration: Duration(milliseconds: 500),
-                                      curve: Curves.easeInOutCubic);
                                 },
                               ),
                       )
@@ -405,7 +392,7 @@ class _MyTextFieldState extends State<MyTextField> {
     return AlertDialog(
         title: Text("Buy ${tile.name}"),
         content: TextFormField(
-          readOnly: MainBloc.online,
+          readOnly: !(Game.data.settings.allowPriceChanges ?? false),
           initialValue: tile.price.toString(),
           keyboardType:
               TextInputType.numberWithOptions(signed: false, decimal: false),
@@ -465,7 +452,7 @@ class _MyPayTextFieldState extends State<MyPayTextField> {
     return AlertDialog(
         title: Text("Pay rent for ${tile.name}"),
         content: TextFormField(
-          readOnly: MainBloc.online,
+          readOnly: !(Game.data.settings.allowPriceChanges ?? false),
           initialValue: tile.currentRent.toString(),
           keyboardType:
               TextInputType.numberWithOptions(signed: false, decimal: false),

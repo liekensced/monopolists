@@ -13,12 +13,13 @@ class JailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Color(tile.backgroundColor ?? Colors.white.value),
       child: Column(
         children: <Widget>[
           Expanded(
             flex: 2,
             child: Container(
-              color: Colors.orange,
+              color: Color(tile.color ?? Colors.orange.value),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[

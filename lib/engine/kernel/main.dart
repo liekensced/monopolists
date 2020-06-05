@@ -77,12 +77,9 @@ class Game {
     }
   }
 
-  static addInfo(UpdateInfo updateInfo, [int playerIndex, int minus = 1]) {
-    if (playerIndex == null) playerIndex = Game.data.currentPlayer;
-    if (Game.data.players[playerIndex].info[Game.data.turn - minus] == null) {
-      Game.data.players[playerIndex].info[Game.data.turn - minus] = [];
-    }
-    Game.data.players[playerIndex].info[Game.data.turn - minus].add(updateInfo);
+  static addInfo(UpdateInfo updateInfo, [int playerIndex]) {
+    Game.data.players[playerIndex ?? Game.data.currentPlayer].info
+        .add(updateInfo);
   }
 
   static Alert build([Tile property]) {
@@ -133,6 +130,13 @@ class Game {
     if (Game.data.extensions.contains(Extension.bank)) {
       Game.data.bankData = BankData();
     }
+    Game.data.players.forEach((p) {
+      p.position = Game?.data?.gmap
+              ?.firstWhere((element) => element.type == TileType.start,
+                  orElse: () => null)
+              ?.mapIndex ??
+          0;
+    });
     try {
       if (Game.data.settings.startProperties != 0) {
         List<Tile> buyables =
@@ -238,7 +242,9 @@ class Game {
 
       switch (data.gmap[player.position].type) {
         case TileType.police:
-          Game.helper.jail(player.index, shouldSave: false);
+          Game.save(only: [SaveData.players.toString()]);
+          Future.delayed(Duration(seconds: 1)).then(
+              (value) => Game.helper.jail(player.index, shouldSave: false));
           break;
         default:
       }
@@ -314,8 +320,7 @@ class Game {
     data.players.asMap().forEach((int i, _) {
       Player mapPlayer = data.players[i];
       addInfo(UpdateInfo(title: "turn ${data.turn}", leading: "time"), i);
-      data.players[i].info[data.turn + 1] = [];
-      data.players[i].info[data.turn + 2] = [];
+
       BankExtension.onNewTurnPlayer(i);
 
       data.players[i].moneyHistory.add(mapPlayer.money);

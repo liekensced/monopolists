@@ -3,6 +3,52 @@
 part of 'loan.dart';
 
 // **************************************************************************
+// TypeAdapterGenerator
+// **************************************************************************
+
+class ContractAdapter extends TypeAdapter<Contract> {
+  @override
+  final typeId = 10;
+
+  @override
+  Contract read(BinaryReader reader) {
+    var numOfFields = reader.readByte();
+    var fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Contract(
+      interest: fields[0] as double,
+      amount: fields[1] as double,
+      waitingTurns: fields[2] as int,
+      id: fields[5] as String,
+      fee: fields[4] as double,
+      countToCap: fields[3] as bool,
+      position: fields[6] as String,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Contract obj) {
+    writer
+      ..writeByte(7)
+      ..writeByte(0)
+      ..write(obj.interest)
+      ..writeByte(1)
+      ..write(obj.amount)
+      ..writeByte(2)
+      ..write(obj.waitingTurns)
+      ..writeByte(3)
+      ..write(obj.countToCap)
+      ..writeByte(4)
+      ..write(obj.fee)
+      ..writeByte(5)
+      ..write(obj.id)
+      ..writeByte(6)
+      ..write(obj.position);
+  }
+}
+
+// **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 

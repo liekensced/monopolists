@@ -32,6 +32,12 @@ class Settings {
   @HiveField(10)
   @JsonKey(defaultValue: true)
   bool transportPassGo = true;
+  @JsonKey(defaultValue: false)
+  @HiveField(11)
+  bool allowDiceSelect = false;
+  @JsonKey(defaultValue: false)
+  @HiveField(12)
+  bool allowPriceChanges = false;
 
   Settings();
 

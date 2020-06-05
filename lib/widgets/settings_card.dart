@@ -224,6 +224,18 @@ class _SettingsCardState extends State<SettingsCard> {
                 ),
               )
             : Container(),
+        expanded
+            ? ListTile(
+                title: Text("Reset settings"),
+                subtitle:
+                    Text("This will reset the settings. Not your account."),
+                trailing: IconButton(
+                  icon: Icon(Icons.restore),
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/?reset=true");
+                  },
+                ))
+            : Container(),
       ],
     );
   }

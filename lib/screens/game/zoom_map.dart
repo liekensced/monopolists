@@ -40,7 +40,7 @@ class ZoomMap extends StatelessWidget {
                 cardTheme: CardTheme(
               elevation: 0,
               margin: EdgeInsets.zero,
-              color: Colors.white,
+              color: Color(tile.backgroundColor ?? Colors.white.value),
               shape: Border.all(color: Colors.black, width: 0.5),
             )),
             child: EagerInkWell(

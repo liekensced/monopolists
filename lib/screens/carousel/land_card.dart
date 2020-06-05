@@ -16,13 +16,14 @@ class LandCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white,
+      color: Color(tile.backgroundColor ?? Colors.white.value),
       child: Column(
         children: <Widget>[
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Color(tile.color),
+                color:
+                    Color(tile.color ?? Theme.of(context).primaryColor.value),
                 boxShadow: zoom
                     ? []
                     : [

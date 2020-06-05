@@ -22,15 +22,10 @@ Player _$PlayerFromJson(Map<String, dynamic> json) {
     ..jailed = json['jailed'] as bool
     ..jailTries = json['jailTries'] as int
     ..goojCards = json['goojCards'] as int
-    ..info = (json['info'] as Map<String, dynamic>)?.map(
-      (k, e) => MapEntry(
-          int.parse(k),
-          (e as List)
-              ?.map((e) => e == null
-                  ? null
-                  : UpdateInfo.fromJson(e as Map<String, dynamic>))
-              ?.toList()),
-    )
+    ..info = (json['info'] as List)
+        ?.map((e) =>
+            e == null ? null : UpdateInfo.fromJson(e as Map<String, dynamic>))
+        ?.toList()
     ..moneyHistory = (json['moneyHistory'] as List)
         ?.map((e) => (e as num)?.toDouble())
         ?.toList()
@@ -53,8 +48,7 @@ Map<String, dynamic> _$PlayerToJson(Player instance) => <String, dynamic>{
       'jailed': instance.jailed,
       'jailTries': instance.jailTries,
       'goojCards': instance.goojCards,
-      'info': instance.info?.map((k, e) =>
-          MapEntry(k.toString(), e?.map((e) => e?.toJson())?.toList())),
+      'info': instance.info?.map((e) => e?.toJson())?.toList(),
       'moneyHistory': instance.moneyHistory,
       'code': instance.code,
       'debt': instance.debt,

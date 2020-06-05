@@ -83,8 +83,7 @@ class GameEvents {
     data.players.asMap().forEach((int i, _) {
       Player mapPlayer = data.players[i];
       Game.addInfo(UpdateInfo(title: "turn ${data.turn}", leading: "time"), i);
-      data.players[i].info[data.turn + 1] = [];
-      data.players[i].info[data.turn + 2] = [];
+
       BankExtension.onNewTurnPlayer(i);
 
       data.players[i].moneyHistory.add(mapPlayer.money);

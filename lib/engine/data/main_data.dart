@@ -15,7 +15,7 @@ part 'main_data.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 0)
-class GameData {
+class GameData extends HiveObject {
   @HiveField(0)
   bool running;
   @HiveField(1)
@@ -31,7 +31,7 @@ class GameData {
   @HiveField(6)
   double pot = 0;
   @HiveField(7)
-  List<Tile> gmap = defaultMap;
+  List<Tile> gmap = List.of(defaultMap);
   @HiveField(8)
   Settings settings = Settings();
   @HiveField(9)

@@ -53,6 +53,7 @@ dev_dependencies:
   analyzer: ^0.39.4
   json_serializable: ^3.3.0
   flutter_launcher_icons: ^0.7.4
+  hive_generator: ^0.7.0+2
 dependency_overrides:
   dartx: ^0.4.0
   path: any

@@ -1,39 +1,33 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
-import 'package:plutopoly/bloc/ad_bloc.dart';
-import 'package:plutopoly/engine/data/ui_actions.dart';
-import 'package:plutopoly/engine/ui/game_navigator.dart';
-import 'package:plutopoly/screens/game/action_screen/drain_the_lake_card.dart';
-import 'package:plutopoly/screens/game/action_screen/move_card.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/engine/data/info.dart';
+import 'package:plutopoly/screens/game/zoom_map.dart';
+import 'package:plutopoly/widgets/end_of_list.dart';
+import 'package:plutopoly/widgets/my_card.dart';
 
+import '../../../bloc/ad_bloc.dart';
 import '../../../bloc/game_listener.dart';
 import '../../../bloc/main_bloc.dart';
 import '../../../bloc/ui_bloc.dart';
-import '../../../engine/data/extensions.dart';
 import '../../../engine/data/main_data.dart';
 import '../../../engine/data/map.dart';
 import '../../../engine/data/player.dart';
+import '../../../engine/data/ui_actions.dart';
 import '../../../engine/kernel/main.dart';
 import '../../../engine/ui/alert.dart';
+import '../../../engine/ui/game_navigator.dart';
 import '../../../widgets/animated_count.dart';
-import '../../../widgets/end_of_list.dart';
 import '../../../widgets/slide_fab.dart';
-import '../../actions.dart/actions.dart';
-import '../../actions.dart/money_card.dart';
-import '../../actions.dart/property_action_card.dart';
 import '../../carousel/map_carousel.dart';
 import '../deal_screen.dart';
 import '../idle_screen.dart';
 import '../move_screen.dart';
-import '../zoom_map.dart';
+import 'action_cards.dart';
 import 'bottom_sheet.dart';
-import 'default_card.dart';
-import 'info_card.dart';
-import 'loan_card.dart';
-import 'property_card.dart';
-import 'stock_card.dart';
+import 'holding_cards.dart';
 
 class ActionScreen extends StatefulWidget {
   ActionScreen() {
@@ -45,12 +39,35 @@ class ActionScreen extends StatefulWidget {
 }
 
 class _ActionScreenState extends State<ActionScreen> {
+  ScrollController controller;
+  PageController actionPageController;
+  @override
+  void initState() {
+    actionPageController = PageController(initialPage: 1, keepPage: true);
+
+    super.initState();
+  }
+
+  bool first = true;
+  @override
+  void dispose() {
+    actionPageController.dispose();
+    controller.dispose();
+    super.dispose();
+  }
+
+  int pageIndex = 1;
+
   @override
   Widget build(BuildContext context) {
     if (Game.data.ui.ended) {
       Future.delayed(Duration.zero, () => GameNavigator.navigate(context));
     }
     if (Game.ui.screenState == Screen.move && !Game.ui.idle) {
+      //for action screen
+      pageIndex = 1;
+      actionPageController.jumpToPage(pageIndex);
+
       return MoveScreen();
     }
     double fraction = 200 / MediaQuery.of(context).size.width;
@@ -59,297 +76,285 @@ class _ActionScreenState extends State<ActionScreen> {
       viewportFraction: fraction,
     );
     bool idle = Game.ui.idle || Game.ui.screenState == Screen.idle;
+    controller = ScrollController(
+        initialScrollOffset: idle ? UIBloc.scrollOffset ?? 0 : 0);
+    Future.delayed(Duration.zero, () {
+      if (idle && first) {
+        first = false;
+
+        controller.jumpTo(UIBloc.scrollOffset);
+      }
+    });
+
     Screen screenState = Game.ui.screenState;
-    return DefaultTabController(
-      length: 2,
-      initialIndex: 1,
-      child: Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: ActionFab(),
-        body: FractionallySizedBox(
-          heightFactor: 1,
-          child: NestedScrollView(
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              return [
-                SliverAppBar(
-                  title: GameListener(
-                      builder: (c, _, __) => Text(Game.data.player.name)),
-                  leading: IconButton(
-                    icon: Icon(Icons.menu),
+
+    return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: ActionFab(
+        controller: controller,
+        onPressed: () {
+          first = true;
+        },
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: pageIndex,
+        onTap: (i) {
+          if (i == 3) {
+            showModalBottomSheet(
+                context: context,
+                builder: (c) {
+                  return BottomSheet(
+                      onClosing: () {},
+                      builder: (c) {
+                        return Column(children: [
+                          Container(
+                            child: Center(child: Text("Action screen")),
+                            height: 50,
+                          ),
+                          ListTile(title: Text("ds")),
+                        ]);
+                      });
+                });
+          } else {
+            if (i == 2) {
+              controller.jumpTo(450);
+            }
+            actionPageController.jumpToPage(i);
+          }
+        },
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.list), title: Text("Holdings")),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home), title: Text("Actions")),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.grid_on), title: Text("Gridview"))
+          // BottomNavigationBarItem(
+          //     icon: FaIcon(FontAwesomeIcons.compass), title: Text("Open item"))
+        ],
+      ),
+      body: FractionallySizedBox(
+        heightFactor: 1,
+        child: NestedScrollView(
+          controller: controller,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                title: GameListener(
+                    builder: (c, _, __) => Text(Game.data.player.name)),
+                leading: IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    showSettingsSheet(context, pageController);
+                  },
+                ),
+                actions: [
+                  IconButton(
+                    icon: Icon(Icons.location_searching),
                     onPressed: () {
-                      showSettingsSheet(context, pageController);
+                      if (pageController.hasClients) {
+                        pageController.animateToPage(Game.data.player.position,
+                            duration: Duration(milliseconds: 500),
+                            curve: Curves.easeInOutCubic);
+                      }
                     },
                   ),
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.location_searching),
-                      onPressed: () {
-                        if (pageController.hasClients) {
-                          pageController.animateToPage(
-                              Game.data.player.position,
-                              duration: Duration(milliseconds: 500),
-                              curve: Curves.easeInOutCubic);
+                  Center(
+                      child: Card(
+                          child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GameListener(
+                      builder: (BuildContext context, _, __) {
+                        try {
+                          if (screenState != Game.ui.screenState) {
+                            Future.delayed(
+                                Duration.zero, () => setState(() {}));
+                          }
+                          if (Game.data.dealData.dealer != null) {
+                            if (Game.data.players[Game.data.dealData.dealer]
+                                        .code ==
+                                    MainBloc.code &&
+                                MainBloc.online &&
+                                !MainBloc.dealOpen &&
+                                Game.ui.showDealScreen) {
+                              Future.delayed(Duration.zero, () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return DealScreen(
+                                    dealer: Game.data.dealData.dealer,
+                                    visit: true,
+                                  );
+                                }));
+                                ;
+                              });
+                            }
+                          }
+                        } catch (e) {
+                          Game.data.dealData == GameData();
                         }
+
+                        return Row(
+                          children: <Widget>[
+                            Text("£"),
+                            AnimatedCount(
+                              count: ((UIBloc.gamePlayer.money.toInt())),
+                              duration: Duration(seconds: 1),
+                            ),
+                          ],
+                        );
                       },
                     ),
-                    Center(
-                        child: Card(
-                            child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GameListener(
-                        builder: (BuildContext context, _, __) {
-                          try {
-                            if (screenState != Game.ui.screenState) {
-                              Future.delayed(
-                                  Duration.zero, () => setState(() {}));
-                            }
-                            if (Game.data.dealData.dealer != null) {
-                              if (Game.data.players[Game.data.dealData.dealer]
-                                          .code ==
-                                      MainBloc.code &&
-                                  MainBloc.online &&
-                                  !MainBloc.dealOpen &&
-                                  Game.ui.showDealScreen) {
-                                Future.delayed(Duration.zero, () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return DealScreen(
-                                      dealer: Game.data.dealData.dealer,
-                                      visit: true,
-                                    );
-                                  }));
-                                  ;
-                                });
-                              }
-                            }
-                          } catch (e) {
-                            Game.data.dealData == GameData();
-                          }
-
-                          return Row(
-                            children: <Widget>[
-                              Text("£"),
-                              AnimatedCount(
-                                count: ((UIBloc.gamePlayer.money.toInt())),
-                                duration: Duration(seconds: 1),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ))),
-                    Container(
-                      width: 5,
-                    )
-                  ],
-                  automaticallyImplyLeading: false,
-                  expandedHeight: 450.0,
-                  floating: false,
-                  pinned: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Padding(
-                      padding: const EdgeInsets.only(bottom: 20.0),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          padding: EdgeInsets.only(bottom: 10),
-                          height: 300,
-                          child: Theme(
-                            data: ThemeData.light(),
-                            child: GameListener(
-                              builder: (_, __, ___) {
-                                return MapCarousel(controller: pageController);
-                              },
-                            ),
-                          ),
+                  ))),
+                  Container(
+                    width: 5,
+                  )
+                ],
+                automaticallyImplyLeading: false,
+                expandedHeight:
+                    max(min(MediaQuery.of(context).size.height / 2, 450), 300),
+                floating: false,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Container(
+                    padding: EdgeInsets.only(top: 50),
+                    alignment: Alignment.center,
+                    child: Container(
+                      height: 300,
+                      child: Theme(
+                        data: ThemeData.light(),
+                        child: GameListener(
+                          builder: (_, __, ___) {
+                            return MapCarousel(controller: pageController);
+                          },
                         ),
                       ),
                     ),
                   ),
-                  bottom: TabBar(
-                    tabs: [
-                      Tab(child: Text("Holdings")),
-                      Tab(child: Text("Actions"))
+                ),
+              )
+            ];
+          },
+          body: Stack(
+            children: [
+              PageView(
+                onPageChanged: (int indx) {
+                  pageIndex = indx;
+                  setState(() {});
+                },
+                controller: actionPageController,
+                physics:
+                    idle ? NeverScrollableScrollPhysics() : PageScrollPhysics(),
+                children: <Widget>[
+                  HoldingCards(),
+                  idle
+                      ? GameListener(
+                          builder: (c, __, ___) =>
+                              IdleScreen(pageController, controller))
+                      : GameListener(
+                          builder: (BuildContext context, _, __) {
+                            return ActionCards();
+                          },
+                        ),
+                  ListView(
+                    children: [
+                      ZoomMap(),
+                      EndOfList(),
                     ],
-                  ),
-                )
-              ];
-            },
-            body: TabBarView(
-              physics:
-                  idle ? NeverScrollableScrollPhysics() : PageScrollPhysics(),
-              children: <Widget>[
-                HoldingCards(),
-                idle
-                    ? GameListener(
-                        builder: (c, __, ___) => IdleScreen(pageController))
-                    : GameListener(
-                        builder: (BuildContext context, _, __) {
-                          return buildActionCards(context, pageController);
-                        },
-                      ),
-              ],
-            ),
+                  )
+                ],
+              ),
+              Theme(
+                  child: GameListener(builder: (context, snapshot, _) {
+                    return Notification();
+                  }),
+                  data: ThemeData.light())
+            ],
           ),
         ),
       ),
     );
   }
-
-  Widget buildActionCards(BuildContext context, PageController pageController) {
-    List<Widget> actions = [
-      PropertyActionCard(pageController: pageController),
-      MoneyCard(),
-      ActionsCard(),
-      InfoCard(),
-    ];
-
-    if (Game.data.extensions.contains(Extension.transportation) &&
-        Game.data.tile.type == TileType.trainstation &&
-        (Game.data.tile.owner?.trainstations ?? 0) > 1) {
-      actions.insert(1, MoveCard());
-    }
-
-    if (Game.data.extensions.contains(Extension.bank)) {
-      actions.add(LoanCard());
-      if ((Game.data.player.loans ?? []).isNotEmpty) {
-        actions.add(DebtCard());
-      }
-    }
-
-    if (Game.data.extensions.contains(Extension.stock)) {
-      actions.add(StockCard());
-    }
-
-    if (Game.data.extensions.contains(Extension.drainTheLake)) {
-      actions.add(DrainTheLakeCard());
-    }
-
-    //END
-    actions.add(DefaultCard());
-
-    List<Widget> evenActions = [];
-
-    List<Widget> oddActions = [];
-    actions.asMap().forEach((index, w) {
-      if (index.isEven)
-        evenActions.add(w);
-      else
-        oddActions.add(w);
-    });
-
-    if (UIBloc.isWide(context)) {
-      return SingleChildScrollView(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                children: evenActions,
-              ),
-            ),
-            Expanded(
-              child: Column(
-                children: oddActions,
-              ),
-            )
-          ],
-        ),
-      );
-    }
-    actions.add(EndOfList());
-    return ListView(
-      shrinkWrap: true,
-      children: actions,
-    );
-  }
 }
 
-class HoldingCards extends StatelessWidget {
-  final List<String> properties;
-  final bool only;
-  const HoldingCards({
-    Key key,
-    this.only: false,
-    this.properties,
-  }) : super(key: key);
+class Notification extends StatefulWidget {
+  @override
+  _NotificationState createState() => _NotificationState();
+}
 
+class _NotificationState extends State<Notification> {
+  int length;
   @override
   Widget build(BuildContext context) {
-    return GameListener(
-        builder: (c, _, __) => buildHoldingCards(context, properties));
-  }
-
-  Widget buildHoldingCards(BuildContext context, [List<String> properties]) {
-    List<String> _properties = Game.data.player.properties;
-    if (properties != null) {
-      _properties = properties;
-    } else {
-      if (MainBloc.online) _properties = UIBloc.gamePlayer.properties;
+    if (length == null) {
+      length = UIBloc.gamePlayer.info.length;
     }
-    if (_properties.isEmpty) {
-      return Container(
-        height: 100,
-        child: Center(
-            child: Card(
-                child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Text("You have no properties yet"),
-        ))),
-      );
-    }
-    if (only)
-      return ListView.builder(
-          shrinkWrap: true,
-          itemCount: _properties.length,
-          itemBuilder: (context, index) {
-            return Theme(
-              data: Theme.of(context).copyWith(brightness: Brightness.light),
-              child: GameListener(
-                builder: (BuildContext context, _, __) {
-                  return PropertyCard(
-                      tile: Game.data.gmap.firstWhere(
-                          (element) => element.id == _properties[index]));
-                },
-              ),
-            );
-          });
-    return ListView(
-      children: [
-        ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: _properties.length,
-            itemBuilder: (context, index) {
-              return Theme(
-                data: Theme.of(context).copyWith(brightness: Brightness.light),
-                child: GameListener(
-                  builder: (BuildContext context, _, __) {
-                    return PropertyCard(
-                        tile: Game.data.gmap.firstWhere(
-                            (element) => element.id == _properties[index]));
-                  },
+    UIBloc.gamePlayer.info.asMap().forEach((index, UpdateInfo info) {
+      if (index > length - 1) {
+        if (info.show ?? false) {
+          Future.delayed(Duration.zero, () {
+            Scaffold.of(context).showSnackBar(SnackBar(
+              behavior: SnackBarBehavior.fixed,
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              content: Container(
+                child: MyCard(
+                  shrinkwrap: true,
+                  color: Colors.green,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        info.title ?? "",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline4
+                            .copyWith(color: Colors.white),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        info.subtitle ?? "",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline5
+                            .copyWith(color: Colors.white),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      alignment: Alignment.bottomRight,
+                      child: Text(
+                        info.trailing ?? "",
+                        style: Theme.of(context).textTheme.headline4.copyWith(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.end,
+                      ),
+                    )
+                  ],
                 ),
-              );
-            }),
-        Container(height: 20),
-        ValueListenableBuilder(
-            valueListenable: MainBloc.metaBox.listenable(),
-            builder: (context, snapshot, _) {
-              return ZoomMap();
-            }),
-        EndOfList()
-      ],
-    );
+              ),
+            ));
+          });
+        }
+      }
+    });
+    length = UIBloc.gamePlayer.info.length;
+    return Container();
   }
 }
 
 class ActionFab extends StatelessWidget {
-  const ActionFab({
-    Key key,
-  }) : super(key: key);
+  final Function onPressed;
+  const ActionFab(
+      {Key key, @required this.controller, @required this.onPressed})
+      : super(key: key);
+  final ScrollController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -357,10 +362,17 @@ class ActionFab extends StatelessWidget {
     return GameListener(
       builder: (BuildContext context, _, __) {
         if (idle) {
+          if (Game.ui.idle) {
+            return Container();
+          }
           return SlideFab(
             hide: Game.ui.idle,
             title: "Your turn",
             onTap: () {
+              try {
+                UIBloc.scrollOffset = controller.offset + 100;
+                onPressed();
+              } catch (e) {}
               UIBloc.changeScreen(Screen.move);
               Game.save(only: ["ui"]);
             },
@@ -373,8 +385,7 @@ class ActionFab extends StatelessWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: FloatingActionButton(
               onPressed: () {
-                if (continueCheck(
-                    DefaultTabController.of(context).index, context)) {
+                if (continueCheck(1, context)) {
                   if (Alert.handle(() => Game.next(changeS: true), context)) {
                     if (!kIsWeb)
                       AdBloc.idleAdController = NativeAdmobController();

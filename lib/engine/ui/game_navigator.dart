@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/screens/game/win_screen.dart';
 import 'package:plutopoly/screens/no_data_screen.dart';
@@ -19,7 +20,10 @@ class GameNavigator {
       return;
     }
 
-    if (Game.data.running == null) {
+    if (Game.data.running == null &&
+        (Game.data.players.isEmpty ||
+            (!MainBloc.online ||
+                UIBloc.gamePlayer == Game.data.nextRealPlayer))) {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
         return StartGameScreen();

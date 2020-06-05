@@ -48,6 +48,28 @@ class ExtraCard extends StatelessWidget {
             },
           ),
         ),
+        ListTile(
+          title: Text("Shuffle tiles"),
+          subtitle: Text("This will shuffle the tiles in a random order."),
+          trailing: RaisedButton(
+            textColor: Colors.white,
+            color: Theme.of(context).primaryColor,
+            child: Text("Shuffle"),
+            onPressed: () {
+              if (Game.data?.gmap != null) {
+                Game.data.gmap.shuffle();
+
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text("Shuffeld map!"),
+                ));
+              } else {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text("Couldn't shuffle map"),
+                ));
+              }
+            },
+          ),
+        ),
         SettingTile(
           setting: Setting<int>(
               title: "Starting properties",

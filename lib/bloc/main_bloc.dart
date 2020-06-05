@@ -24,7 +24,7 @@ class MainBloc {
   static List<int> get versionCode =>
       version.split(".").map<int>((e) => int.tryParse(e)).toList();
   static const _boxVersion = "1.1.2.8";
-  static const GAMESBOX = "gamesbox4";
+  static const GAMESBOX = _boxVersion + "gamesbox4";
 
   static const PREFBOX = _boxVersion + "prefbox";
   static const METABOX = _boxVersion + "metabox";
@@ -35,7 +35,7 @@ class MainBloc {
   static const MOVEBOX = _boxVersion + "moveBox";
 
   static bool initialized = false;
-  static int currentGame = null;
+  static int currentGame = 0;
   static bool online = false;
   static String gameId;
   static StreamSubscription<DocumentSnapshot> listener;
@@ -211,7 +211,7 @@ class MainBloc {
       {Map<String, dynamic> bots, List<String> only, List<String> exclude}) {
     if (!online) {
       print("== New Local Save ==");
-      Hive.box(GAMESBOX).put(currentGame, data.toString());
+      data.save();
     } else {
       print("== New Online Save ==");
       RecentBloc.update(data);
@@ -284,7 +284,7 @@ class MainBloc {
   static resetGame([GameData data]) {
     GameData newData = data ?? GameData();
     if (!MainBloc.online) {
-      Hive.box(GAMESBOX).put(getGameNumber, newData.toString());
+      Hive.box(GAMESBOX).put(getGameNumber, newData);
       if (currentGame == null)
         throw Alert("New offline data not in box", "My bad, sorry");
     }
@@ -292,13 +292,13 @@ class MainBloc {
     Game.save();
   }
 
-  static GameData newGame() {
-    GameData newGameData = GameData();
+  static GameData newGame([GameData preset]) {
+    GameData newGameData = preset ?? GameData();
     if (!online && !Game.testing) {
       Hive.box(METABOX).put("intTotalGames", getGameNumber + 1);
       newGameData.settings.name = "Game $getGameNumber";
 
-      Hive.box(GAMESBOX).add(newGameData.toString());
+      Hive.box(GAMESBOX).add(newGameData);
 
       Hive.box(METABOX).put("intCurrentGame", getGameNumber);
     }

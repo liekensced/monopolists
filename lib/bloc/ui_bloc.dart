@@ -86,6 +86,8 @@ class UIBloc {
     }
   }
 
+  static double scrollOffset = 0;
+
   static bool get playing {
     return Game.data.players.firstWhere(
             (Player p) => p.code == MainBloc.code || p.code == -1, orElse: () {

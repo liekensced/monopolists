@@ -51,12 +51,12 @@ class _HackerScreenState extends State<HackerScreen> {
                     Game.data.players.forEach((Player p) {
                       int index = p.index;
                       Game.addInfo(
-                          UpdateInfo(
-                              title: UIBloc.gamePlayer.name +
-                                  " changed the game data!",
-                              leading: "alert"),
-                          index,
-                          0);
+                        UpdateInfo(
+                            title: UIBloc.gamePlayer.name +
+                                " changed the game data!",
+                            leading: "alert"),
+                        index,
+                      );
                       Game.addInfo(
                           UpdateInfo(
                               title: UIBloc.gamePlayer.name +

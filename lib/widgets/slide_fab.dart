@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 class SlideFab extends StatefulWidget {
   final bool hide;
   final String title;
+  final Widget child;
   final Function onTap;
 
-  const SlideFab({
-    Key key,
-    @required this.hide,
-    @required this.title,
-    @required this.onTap,
-  }) : super(key: key);
+  const SlideFab(
+      {Key key,
+      @required this.hide,
+      @required this.title,
+      @required this.onTap,
+      this.child})
+      : super(key: key);
 
   @override
   _SlideFabState createState() => _SlideFabState();
@@ -54,17 +56,19 @@ class _SlideFabState extends State<SlideFab>
         position: _offsetAnimation,
         child: AbsorbPointer(
           absorbing: widget.hide,
-          child: FloatingActionButton.extended(
-            backgroundColor: Theme.of(context).accentColor,
-            label: Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: Center(
-                    child: Text(
-                  widget.title,
-                  style: TextStyle(color: Colors.white),
-                ))),
-            onPressed: widget.onTap,
-          ),
+          child: widget.child == null
+              ? FloatingActionButton.extended(
+                  backgroundColor: Theme.of(context).accentColor,
+                  label: Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: Center(
+                          child: Text(
+                        widget.title,
+                        style: TextStyle(color: Colors.white),
+                      ))),
+                  onPressed: widget.onTap,
+                )
+              : widget.child,
         ));
   }
 }

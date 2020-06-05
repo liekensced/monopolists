@@ -66,6 +66,8 @@ class Tile {
   @HiveField(13)
   @JsonKey(defaultValue: 200)
   int transportationPrice = 200;
+  @HiveField(14)
+  int backgroundColor;
 
   factory Tile.fromJson(Map<String, dynamic> json) => _$TileFromJson(json);
 
@@ -149,6 +151,7 @@ class Tile {
     this.rent,
     this.hyp,
     this.mortaged: false,
+    this.backgroundColor,
     @required this.idIndex,
   }) {
     idPrefix ??= type.toString();
@@ -233,7 +236,11 @@ List<Tile> defaultMap = [
       housePrice: 50,
       rent: [6, 30, 90, 270, 400, 550],
       hyp: 50),
-  Tile(TileType.chance, idPrefix: "Ch", idIndex: 1),
+  Tile(
+    TileType.chance,
+    idPrefix: "Ch",
+    idIndex: 1,
+  ),
   Tile(TileType.land,
       color: Colors.lightBlue.value,
       idPrefix: "LB",
@@ -297,7 +304,7 @@ List<Tile> defaultMap = [
       housePrice: 100,
       rent: [14, 70, 200, 550, 750, 950],
       hyp: 90),
-  Tile(TileType.chest, idPrefix: "CC", idIndex: 2),
+  Tile(TileType.chest, idPrefix: "CC", idIndex: 2, color: Colors.white.value),
   Tile(TileType.land,
       color: Colors.orange.value,
       idPrefix: "O",
@@ -410,7 +417,7 @@ List<Tile> defaultMap = [
       housePrice: 200,
       rent: [26, 130, 390, 900, 1100, 1250],
       hyp: 150),
-  Tile(TileType.chest, idPrefix: "CC", idIndex: 3),
+  Tile(TileType.chest, idPrefix: "CC", idIndex: 3, color: Colors.white.value),
   Tile(TileType.land,
       color: Colors.green.value,
       idPrefix: "G",

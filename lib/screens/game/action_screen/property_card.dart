@@ -33,7 +33,9 @@ class _PropertyCardState extends State<PropertyCard>
 
   @override
   Widget build(BuildContext context) {
-    if (expanded == null) expanded = widget.expanded;
+    if (expanded == null) {
+      expanded = widget.expanded;
+    }
     Color color = Colors.white;
     Widget leading = Container(width: 0);
     Color textColor = Colors.black;
@@ -41,7 +43,7 @@ class _PropertyCardState extends State<PropertyCard>
 
     if (tile.type == TileType.land) {
       bool _hasAll = UIBloc.gamePlayer.hasAllUnmortaged(tile.idPrefix);
-      color = Color(tile.color);
+      color = Color(tile.color ?? Theme.of(context).primaryColor.value);
       textColor = Colors.white;
       if (tile.mortaged ?? false)
         leading = Icon(Icons.turned_in, color: Colors.white);
@@ -129,7 +131,15 @@ class _PropertyCardState extends State<PropertyCard>
                                 child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                Text("Value: £" + tile.price.toString()),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                      "Value: £" +
+                                          tile.price.toString() +
+                                          "\nRent: " +
+                                          tile.currentRent.toString(),
+                                      textAlign: TextAlign.center),
+                                ),
                                 tile.mortaged
                                     ? Center(
                                         child: Text(

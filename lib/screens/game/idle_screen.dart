@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:plutopoly/bloc/ad_bloc.dart';
 
+import '../../bloc/ad_bloc.dart';
 import '../../bloc/main_bloc.dart';
 import '../../bloc/ui_bloc.dart';
 import '../../engine/ai/ai_type.dart';
@@ -16,7 +16,7 @@ import '../../widgets/ad.dart';
 import '../../widgets/end_of_list.dart';
 import '../../widgets/my_card.dart';
 import '../../widgets/online_extensions_card.dart';
-import 'action_screen/action_screen.dart';
+import 'action_screen/holding_cards.dart';
 import 'action_screen/info_card.dart';
 import 'action_screen/loan_card.dart';
 import 'action_screen/stock_card.dart';
@@ -25,7 +25,8 @@ import 'zoom_map.dart';
 
 class IdleScreen extends StatelessWidget {
   final PageController carrouselController;
-  IdleScreen(this.carrouselController);
+  final ScrollController listViewController;
+  IdleScreen(this.carrouselController, this.listViewController);
 
   final NativeAdmobController _admobController = AdBloc.idleAdController;
 
@@ -79,6 +80,7 @@ class IdleScreen extends StatelessWidget {
     double fraction = 300 / MediaQuery.of(context).size.width;
     PageController playersController =
         PageController(viewportFraction: fraction);
+
     List<Widget> listItems = [];
     Game.data.players.forEach((Player p) {
       listItems.add(InkWell(
@@ -143,8 +145,11 @@ class IdleScreen extends StatelessWidget {
       ));
     });
     Future.delayed(Duration.zero, () {
-      playersController.animateToPage(Game.data.currentPlayer,
-          duration: Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
+      if (playersController.hasClients) {
+        playersController.animateToPage(Game.data.currentPlayer,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeInOutCubic);
+      }
     });
 
     return ValueListenableBuilder(
@@ -173,7 +178,7 @@ class IdleScreen extends StatelessWidget {
               Container(
                 height: 5,
               ),
-              buildIdleActionCard(context),
+              buildIdleActionCard(context, listViewController),
               ZoomMap(
                 carrouselController: carrouselController,
               ),
@@ -192,7 +197,8 @@ class IdleScreen extends StatelessWidget {
         });
   }
 
-  Widget buildIdleActionCard(BuildContext context) {
+  Widget buildIdleActionCard(
+      BuildContext context, ScrollController controller) {
     if (!Game.ui.idle) {
       return Padding(
         padding: const EdgeInsets.all(12.0),

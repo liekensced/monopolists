@@ -35,16 +35,18 @@ class _MapCarouselState extends State<MapCarousel> {
     Future.delayed(Duration.zero, () {
       lastPosition ??= Game.data.player.position;
       if (lastPosition != Game.data.player.position) {
-        if (Game.data.ui.shouldMove) {
+        if (Game.data.ui.shouldMove && widget.controller.hasClients) {
           widget.controller.jumpToPage(Game.data.player.position);
         } else {
           int position2 = Game.data.player.position;
           if (lastPosition > position2) {
             position2 += Game.data.gmap.length;
           }
-          widget.controller.animateToPage(position2,
-              duration: Duration(milliseconds: 500),
-              curve: Curves.easeInOutCubic);
+          if (widget.controller.hasClients) {
+            widget.controller.animateToPage(position2,
+                duration: Duration(milliseconds: 500),
+                curve: Curves.easeInOutCubic);
+          }
         }
         lastPosition = Game.data.player.position;
       }
@@ -73,6 +75,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       break;
     case TileType.tax:
       return Card(
+        color: Color(tile.color ?? Colors.orange.value),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -83,11 +86,12 @@ Widget buildCard(Tile tile, {zoom: false}) {
                   children: <Widget>[
                     Spacer(),
                     FaIcon(FontAwesomeIcons.handHoldingUsd,
-                        color: Colors.orange, size: 50),
+                        color: Color(tile.color ?? Colors.white.value),
+                        size: 50),
                     Spacer(),
                     Text(
                       "£" + tile.price.toString(),
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(color: Colors.white, fontSize: 27),
                     )
                   ],
                 ))),
@@ -99,13 +103,15 @@ Widget buildCard(Tile tile, {zoom: false}) {
       );
     case TileType.police:
       return Card(
+        color: Color(tile.backgroundColor ?? Colors.blue[900].value),
         child: Column(
           children: <Widget>[
             Expanded(
                 flex: 2,
                 child: Center(
                     child: FaIcon(FontAwesomeIcons.handPaper,
-                        color: tile.color ?? Colors.blue, size: 50))),
+                        color: Color(tile.color ?? Colors.white.value),
+                        size: 50))),
             Expanded(
               child: PlayerIndicators(tile: tile),
             ),
@@ -114,6 +120,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       );
     case TileType.parking:
       return Card(
+        color: Color(tile.backgroundColor ?? Colors.white.value),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -124,11 +131,12 @@ Widget buildCard(Tile tile, {zoom: false}) {
                   children: <Widget>[
                     Spacer(),
                     FaIcon(FontAwesomeIcons.mugHot,
-                        color: tile.color ?? Colors.brown, size: 50),
+                        color: Color(tile.color ?? Colors.brown.value),
+                        size: 50),
                     Spacer(),
                     Text(
                       "£" + Game.data.pot.floor().toString() + " ",
-                      style: TextStyle(color: Colors.green),
+                      style: TextStyle(color: Colors.green, fontSize: 25),
                     ),
                     Spacer(),
                   ],
@@ -141,6 +149,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       );
     case TileType.company:
       return Card(
+        color: Color(tile.backgroundColor ?? Colors.white.value),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -152,10 +161,11 @@ Widget buildCard(Tile tile, {zoom: false}) {
                         ? FaIcon(
                             FontAwesomeIcons.bolt,
                             size: 50,
-                            color: tile.color ?? Colors.orange,
+                            color: Color(tile.color ?? Colors.orange.value),
                           )
                         : FaIcon(FontAwesomeIcons.faucet,
-                            size: 50, color: tile.color ?? Colors.blue),
+                            size: 50,
+                            color: Color(tile.color ?? Colors.blue.value)),
                     OwnerText(tile: tile),
                   ],
                 )),
@@ -167,6 +177,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       );
     case TileType.chest:
       return Card(
+        color: Color(tile.backgroundColor ?? Colors.cyan.value),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -175,7 +186,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
                     child: FaIcon(
                   FontAwesomeIcons.solidGem,
                   size: 50,
-                  color: tile.color ?? Colors.cyan,
+                  color: Color(tile.color ?? Colors.white.value),
                 ))),
             Expanded(
               child: PlayerIndicators(tile: tile),
@@ -185,6 +196,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       );
     case TileType.chance:
       return Card(
+        color: Color(tile.backgroundColor ?? Colors.red.value),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -193,7 +205,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
                     child: FaIcon(
                   FontAwesomeIcons.question,
                   size: 50,
-                  color: tile.color ?? Colors.red,
+                  color: Color(tile.color ?? Colors.white.value),
                 ))),
             Expanded(
               child: PlayerIndicators(tile: tile),
@@ -203,6 +215,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       );
     case TileType.trainstation:
       return Card(
+        color: Color(tile.backgroundColor ?? Colors.white.value),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -213,7 +226,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
                     FaIcon(
                       FontAwesomeIcons.train,
                       size: 50,
-                      color: tile.color ?? Colors.black,
+                      color: Color(tile.color ?? Colors.black.value),
                     ),
                     OwnerText(tile: tile),
                   ],
@@ -227,6 +240,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       break;
     default:
       return Card(
+        color: Color(tile.backgroundColor ?? Colors.white.value),
         child: PlayerIndicators(
           tile: tile,
         ),

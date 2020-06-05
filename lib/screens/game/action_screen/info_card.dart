@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/bloc/game_listener.dart';
@@ -23,22 +25,10 @@ class InfoCard extends StatelessWidget {
         GameListener(
           builder: (BuildContext context, _, __) {
             //check it exists
+            int length = player.info.length;
+            List<UpdateInfo> info =
+                player.info.sublist(max(length - (short ? 5 : 10), 0));
 
-            List<UpdateInfo> info = [];
-            if (player.info.containsKey(Game.data.turn - 1)) {
-              info.addAll(player.info[Game.data.turn - 1]);
-            }
-            if (player.info.containsKey(Game.data.turn - 2)) {
-              info.addAll(player.info[Game.data.turn - 2]);
-            }
-            if (!short) {
-              if (player.info.containsKey(Game.data.turn - 3)) {
-                info.addAll(player.info[Game.data.turn - 3]);
-              }
-              if (player.info.containsKey(Game.data.turn - 4)) {
-                info.addAll(player.info[Game.data.turn - 4]);
-              }
-            }
             if (info.isEmpty)
               return Container(
                 height: 80,

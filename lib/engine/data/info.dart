@@ -10,7 +10,20 @@ class UpdateInfo {
   String title = "";
   @HiveField(1)
   String leading = "i";
-  UpdateInfo({this.title, this.leading: "i"});
+  @HiveField(2)
+  String subtitle = "";
+  @HiveField(3)
+  String trailing = "";
+  @HiveField(4)
+  bool show = false;
+
+  UpdateInfo({
+    this.title,
+    this.leading: "i",
+    this.subtitle,
+    this.trailing,
+    this.show,
+  });
 
   factory UpdateInfo.fromJson(Map<String, dynamic> json) =>
       _$UpdateInfoFromJson(json);

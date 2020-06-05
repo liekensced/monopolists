@@ -23,61 +23,95 @@ class StartOnlineButton extends StatelessWidget {
               "Start online game",
               textAlign: TextAlign.center,
             )),
-        onPressed: () async {
-          bool cancel = false;
-
+        onPressed: () {
           showDialog(
             context: context,
             builder: (context) {
-              cancelConnection() {
-                if (MainBloc.waiter != null) {
-                  MainBloc.waiter.cancel();
-                }
-                MainBloc.cancelOnline();
-                cancel = true;
-              }
-
-              Future.delayed(Duration(seconds: 10), () {
-                if (cancel) return;
-                if ((MainBloc.waiter?.isPaused ?? true)) {
-                  if (Game.data == null) {
-                    cancelConnection();
-                    UIBloc.alerts.add(Alert("Couldn't create game",
-                        "Check your internet connection."));
-                    MainBloc.prefbox.put("update", true);
-                  }
-                }
-              });
-
               return AlertDialog(
-                  title: Text("Creating game"),
-                  content: Container(
-                    height: 100,
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
+                  title: Text("Start online game"),
+                  content: Text(
+                      "Are you sure you want to start an online game? If you're playing alone you should start a local game."),
                   actions: [
                     MaterialButton(
                         onPressed: () {
-                          cancelConnection();
-                          UIBloc.navigatorKey.currentState.pop();
+                          Navigator.pop(context);
                         },
                         child: Text(
-                          "close",
+                          "cancel",
+                          style:
+                              TextStyle(color: Theme.of(context).primaryColor),
+                        )),
+                    MaterialButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          bool cancel = false;
+
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              cancelConnection() {
+                                if (MainBloc.waiter != null) {
+                                  MainBloc.waiter.cancel();
+                                }
+                                MainBloc.cancelOnline();
+                                cancel = true;
+                              }
+
+                              Future.delayed(Duration(seconds: 10), () {
+                                if (cancel) return;
+                                if ((MainBloc.waiter?.isPaused ?? true)) {
+                                  if (Game.data == null) {
+                                    cancelConnection();
+                                    UIBloc.alerts.add(Alert(
+                                        "Couldn't create game",
+                                        "Check your internet connection."));
+                                    MainBloc.prefbox.put("update", true);
+                                  }
+                                }
+                              });
+
+                              return AlertDialog(
+                                  title: Text("Creating game"),
+                                  content: Container(
+                                    height: 100,
+                                    child: Center(
+                                        child: CircularProgressIndicator()),
+                                  ),
+                                  actions: [
+                                    MaterialButton(
+                                        onPressed: () {
+                                          cancelConnection();
+                                          UIBloc.navigatorKey.currentState
+                                              .pop();
+                                        },
+                                        child: Text(
+                                          "close",
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                        ))
+                                  ]);
+                            },
+                          );
+
+                          Alert alert = await MainBloc.newOnlineGame();
+                          if (cancel) return;
+                          UIBloc.navigatorKey.currentState.pop();
+
+                          if (Alert.handle(() => alert, context)) {
+                            GameNavigator.navigate(
+                              context,
+                            );
+                          }
+                        },
+                        child: Text(
+                          "yes",
                           style:
                               TextStyle(color: Theme.of(context).primaryColor),
                         ))
                   ]);
             },
           );
-
-          Alert alert = await MainBloc.newOnlineGame();
-          if (cancel) return;
-          Navigator.pop(context);
-          if (Alert.handle(() => alert, context)) {
-            GameNavigator.navigate(
-              context,
-            );
-          }
         },
       ),
     );

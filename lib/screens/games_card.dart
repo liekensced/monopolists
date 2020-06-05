@@ -33,7 +33,8 @@ class _GamesCardState extends State<GamesCard>
           child: ValueListenableBuilder(
               valueListenable: Hive.box(MainBloc.GAMESBOX).listenable(),
               builder: (context, Box box, __) {
-                List<GameData> games = box.values.toList().cast<GameData>();
+                List<GameData> games =
+                    box.values.toList().whereType<GameData>().toList();
                 if (games.length == 0)
                   return Container(
                       height: 80, child: Center(child: Text("No open games")));
