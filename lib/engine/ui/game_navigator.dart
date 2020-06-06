@@ -13,8 +13,8 @@ import '../kernel/main.dart';
 class GameNavigator {
   static void navigate(BuildContext context, {bool loadGame: false}) {
     if (Game.data == null) {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (BuildContext context) {
+      UIBloc.navigatorKey.currentState
+          .push(MaterialPageRoute(builder: (BuildContext context) {
         return NoDataScreen();
       }));
       return;
@@ -24,8 +24,8 @@ class GameNavigator {
         (Game.data.players.isEmpty ||
             (!MainBloc.online ||
                 UIBloc.gamePlayer == Game.data.nextRealPlayer))) {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (BuildContext context) {
+      UIBloc.navigatorKey.currentState
+          .push(MaterialPageRoute(builder: (BuildContext context) {
         return StartGameScreen();
       }));
       return;

@@ -59,13 +59,14 @@ class GameData extends HiveObject {
   @HiveField(20)
   @JsonKey(defaultValue: false)
   bool transported = false;
+  @HiveField(21)
+  String preset = "";
 
   GameData() {
     version = MainBloc.version;
   }
 
-  factory GameData.fromJson(Map<String, dynamic> json) =>
-      _$GameDataFromJson(json);
+  factory GameData.fromJson(Map json) => _$GameDataFromJson(json);
   Map<String, dynamic> toJson() => _$GameDataToJson(this);
 
   Player get nextRealPlayer {

@@ -47,6 +47,7 @@ class StartOnlineButton extends StatelessWidget {
                           bool cancel = false;
 
                           showDialog(
+                            barrierDismissible: false,
                             context: context,
                             builder: (context) {
                               cancelConnection() {

@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
+import 'package:plutopoly/engine/ui/game_navigator.dart';
 
 import '../engine/data/main_data.dart';
 import '../engine/data/map.dart';
@@ -19,7 +20,8 @@ import 'recent_bloc.dart';
 import 'ui_bloc.dart';
 
 class MainBloc {
-  static const version = "0.4.2";
+  static const version = "0.5.0";
+  static const List<int> supported = [4];
   static const website = "https://filorux.web.app/Plutopoly.html";
   static List<int> get versionCode =>
       version.split(".").map<int>((e) => int.tryParse(e)).toList();
@@ -105,7 +107,8 @@ class MainBloc {
         .put("playerPlayer", Player(color: color, name: name, code: code));
   }
 
-  static Future<Alert> joinOnline(String gameIdInput) async {
+  static Future<Alert> joinOnline(String gameIdInput,
+      [bool force = false]) async {
     if (player.name == null || player.name == "null")
       return Alert.accountIncomplete();
 
@@ -132,12 +135,28 @@ class MainBloc {
       String joinVersion = snapshot.data["version"] ?? "0.0.0";
       List<int> joinVersionCode =
           joinVersion.split(".").map<int>((e) => int.tryParse(e)).toList();
-      if (joinVersionCode.length >= 2 && versionCode[0] != null) {
-        if (joinVersionCode[0] != versionCode[0] ||
-            joinVersionCode[1] != versionCode[1]) {
-          await cancelOnline();
-          return Alert("Versions not correct",
-              "The versions are not the same:\nYour version: ${version}\nGame version: $joinVersion");
+      if (!force) {
+        if (joinVersionCode.length >= 2 && versionCode[0] != null) {
+          if (joinVersionCode[0] != versionCode[0] ||
+              joinVersionCode[1] != versionCode[1]) {
+            await cancelOnline();
+            if (supported.contains(joinVersionCode[1])) {
+              return Alert("Upgrade game?",
+                  "The versions are not the same:\nYour version: ${version}\nGame version: $joinVersion\nDo you want to upgrade the version?",
+                  actions: {
+                    "yes": (BuildContext context) async {
+                      Navigator.pop(context);
+                      Alert alert =
+                          await MainBloc.joinOnline(gameIdInput, true);
+                      if (Alert.handle(() => alert, context)) {
+                        GameNavigator.navigate(context, loadGame: true);
+                      }
+                    }
+                  });
+            }
+            return Alert("Versions not correct",
+                "The versions are not the same:\nYour version: ${version}\nGame version: $joinVersion");
+          }
         }
       }
 
@@ -185,6 +204,7 @@ class MainBloc {
     }
     Hive.box(METABOX).put("boolOnline", true);
     RecentBloc.update(Game.data);
+    if (force) Game.save();
     return null;
   }
 
@@ -208,14 +228,17 @@ class MainBloc {
   }
 
   static save(GameData data,
-      {Map<String, dynamic> bots, List<String> only, List<String> exclude}) {
+      {Map<String, dynamic> bots,
+      List<String> only,
+      List<String> exclude,
+      bool local: false}) {
     if (!online) {
       print("== New Local Save ==");
       data.save();
     } else {
       print("== New Online Save ==");
       RecentBloc.update(data);
-      if (data != null) {
+      if (data != null && !local) {
         data.bot = false;
         Map<String, dynamic> json = data.toJson();
         Map<String, dynamic> saveJson = {};
@@ -241,6 +264,7 @@ class MainBloc {
         }
         if (saveJson.isNotEmpty) {
           saveJson["updatedOn"] = DateTime.now().toString();
+          saveJson["version"] = MainBloc.version;
           Firestore.instance.document("/games/$gameId").updateData(saveJson);
         }
       }

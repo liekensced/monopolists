@@ -16,16 +16,17 @@ class UpdateInfo {
   String trailing = "";
   @HiveField(4)
   bool show = false;
+  @HiveField(5)
+  int color;
 
-  UpdateInfo({
-    this.title,
-    this.leading: "i",
-    this.subtitle,
-    this.trailing,
-    this.show,
-  });
+  UpdateInfo(
+      {this.title,
+      this.leading: "i",
+      this.subtitle,
+      this.trailing,
+      this.show,
+      this.color});
 
-  factory UpdateInfo.fromJson(Map<String, dynamic> json) =>
-      _$UpdateInfoFromJson(json);
+  factory UpdateInfo.fromJson(Map json) => _$UpdateInfoFromJson(json);
   Map<String, dynamic> toJson() => _$UpdateInfoToJson(this);
 }

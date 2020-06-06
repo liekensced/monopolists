@@ -67,6 +67,15 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                         title: Text("Show rules"),
                       ),
                     ),
+                    InkWell(
+                      onTap: () {
+                        UIBloc.resetColors();
+                      },
+                      child: ListTile(
+                        leading: Icon(Icons.colorize),
+                        title: Text("Reset colors"),
+                      ),
+                    ),
                     Game.data.settings.hackerScreen
                         ? InkWell(
                             onTap: () {

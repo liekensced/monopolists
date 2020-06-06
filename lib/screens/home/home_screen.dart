@@ -5,6 +5,7 @@ import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plutopoly/screens/store/store_list.dart';
+import 'package:plutopoly/store/store_page.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../bloc/ui_bloc.dart';
@@ -34,9 +35,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final NativeAdmobController _adController =
       kIsWeb ? null : NativeAdmobController();
-
+  PageController pageController;
   @override
   void initState() {
+    pageController = PageController();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Future.delayed(Duration.zero, () {
         UIBloc.showAlerts(context);
@@ -44,6 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     super.initState();
   }
+
+  int currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +60,21 @@ class _MyHomePageState extends State<MyHomePage> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
     return Scaffold(
+      floatingActionButton: ColorActionButton(),
       drawer: MyDrawer(),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentPage,
+        onTap: (int page) {
+          currentPage = page;
+          pageController.jumpToPage(page);
+        },
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("Home")),
+          BottomNavigationBarItem(icon: Icon(Icons.shop), title: Text("Store")),
+        ],
+      ),
       body: Stack(
         children: <Widget>[
           FractionallySizedBox(
@@ -95,118 +112,135 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ];
                 },
-                body: Center(
-                  child: Container(
-                    constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
-                    child: ValueListenableBuilder(
-                        valueListenable:
-                            Hive.box(MainBloc.METABOX).listenable(),
-                        builder: (BuildContext context, Box box, __) {
-                          if (box.get("boolOnline", defaultValue: false)) {
-                            if (MainBloc.gameId != null) return OfflinePage();
-                          }
-                          return ListView(
-                            children: <Widget>[
-                              SizedBox(
-                                height: 10,
-                              ),
-                              ValueListenableBuilder(
-                                  valueListenable:
-                                      Hive.box(MainBloc.RECENTBOX).listenable(),
-                                  builder: (context, Box box, _) {
-                                    return RecentCard(
-                                      box: box,
-                                      active: true,
-                                    );
-                                  }),
-                              Padding(
-                                padding: EdgeInsets.all(20),
-                                child: RaisedButton(
-                                  color: Theme.of(context).primaryColor,
-                                  child: Container(
-                                      width: double.infinity,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(12.0),
-                                        child: Text(
-                                          "Start new local game",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      )),
-                                  onPressed: () {
-                                    MainBloc.cancelOnline();
-                                    Game.newGame();
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (BuildContext context) {
-                                      return StartGameScreen();
-                                    }));
-                                  },
-                                ),
-                              ),
-                              GamesCard(),
-                              StartOnlineButton(),
-                              JoinOnlineCard(),
-                              ADView(
-                                controller: _adController,
-                              ),
-                              ValueListenableBuilder(
-                                  valueListenable:
-                                      Hive.box(MainBloc.RECENTBOX).listenable(),
-                                  builder: (context, Box box, _) {
-                                    return RecentCard(box: box);
-                                  }),
-                              IconDivider(
-                                icon: Icon(Icons.store),
-                              ),
-                              StoreList(),
-                              IconDivider(
-                                icon: Icon(
-                                  Icons.settings,
-                                  size: 40,
-                                ),
-                              ),
-                              AccountCard(),
-                              SettingsCard(),
-                              VersionCard(),
-                              IconDivider(
-                                icon: Icon(
-                                  Icons.whatshot,
-                                  size: 40,
-                                ),
-                              ),
-                              MyCard(
-                                show: kIsWeb,
-                                title: "Android app",
-                                children: [
-                                  InkWell(
-                                      onTap: () async {
-                                        UIBloc.launchUrl(context,
-                                            "https://play.google.com/store/apps/details?id=web.filorux.plutopoly");
+                body: PageView(
+                  controller: pageController,
+                  onPageChanged: (int newPage) {
+                    currentPage = newPage;
+                    setState(() {});
+                  },
+                  children: [
+                    Center(
+                      child: Container(
+                        constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
+                        child: ValueListenableBuilder(
+                            valueListenable:
+                                Hive.box(MainBloc.METABOX).listenable(),
+                            builder: (BuildContext context, Box box, __) {
+                              if (box.get("boolOnline", defaultValue: false)) {
+                                if (MainBloc.gameId != null)
+                                  return OfflinePage();
+                              }
+                              return ListView(
+                                children: <Widget>[
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  ValueListenableBuilder(
+                                      valueListenable:
+                                          Hive.box(MainBloc.RECENTBOX)
+                                              .listenable(),
+                                      builder: (context, Box box, _) {
+                                        return RecentCard(
+                                          box: box,
+                                          active: true,
+                                        );
+                                      }),
+                                  Padding(
+                                    padding: EdgeInsets.all(20),
+                                    child: RaisedButton(
+                                      color: Theme.of(context).primaryColor,
+                                      child: Container(
+                                          width: double.infinity,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Text(
+                                              "Start new local game",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          )),
+                                      onPressed: () {
+                                        MainBloc.cancelOnline();
+                                        Game.newGame();
+                                        Navigator.push(context,
+                                            MaterialPageRoute(builder:
+                                                (BuildContext context) {
+                                          return StartGameScreen();
+                                        }));
                                       },
-                                      child: ListTile(
-                                        title: Text("Download android app"),
-                                        subtitle: Text(
-                                            "Download the android app for Faster performance and less bugs!"),
-                                        trailing: Icon(Icons.open_in_new),
-                                        onTap: () async {
-                                          String url = MainBloc.website;
-                                          UIBloc.launchUrl(context, url);
-                                        },
-                                      ))
+                                    ),
+                                  ),
+                                  GamesCard(),
+                                  StartOnlineButton(),
+                                  JoinOnlineCard(),
+                                  ADView(
+                                    controller: _adController,
+                                  ),
+                                  ValueListenableBuilder(
+                                      valueListenable:
+                                          Hive.box(MainBloc.RECENTBOX)
+                                              .listenable(),
+                                      builder: (context, Box box, _) {
+                                        return RecentCard(box: box);
+                                      }),
+                                  IconDivider(
+                                    icon: Icon(
+                                      Icons.store,
+                                      size: 40,
+                                    ),
+                                  ),
+                                  StoreList(),
+                                  IconDivider(
+                                    icon: Icon(
+                                      Icons.settings,
+                                      size: 40,
+                                    ),
+                                  ),
+                                  AccountCard(),
+                                  SettingsCard(),
+                                  VersionCard(),
+                                  IconDivider(
+                                    icon: Icon(
+                                      Icons.whatshot,
+                                      size: 40,
+                                    ),
+                                  ),
+                                  MyCard(
+                                    show: kIsWeb,
+                                    title: "Android app",
+                                    children: [
+                                      InkWell(
+                                          onTap: () async {
+                                            UIBloc.launchUrl(context,
+                                                "https://play.google.com/store/apps/details?id=web.filorux.plutopoly");
+                                          },
+                                          child: ListTile(
+                                            title: Text("Download android app"),
+                                            subtitle: Text(
+                                                "Download the android app for Faster performance and less bugs!"),
+                                            trailing: Icon(Icons.open_in_new),
+                                            onTap: () async {
+                                              String url = MainBloc.website;
+                                              UIBloc.launchUrl(context, url);
+                                            },
+                                          ))
+                                    ],
+                                  ),
+                                  ADView(
+                                    large: true,
+                                    controller: _adController,
+                                  ),
+                                  Image.asset("assets/wide.png"),
+                                  EndOfList()
                                 ],
-                              ),
-                              ADView(
-                                large: true,
-                                controller: _adController,
-                              ),
-                              Image.asset("assets/wide.png"),
-                              EndOfList()
-                            ],
-                          );
-                        }),
-                  ),
+                              );
+                            }),
+                      ),
+                    ),
+                    StorePage()
+                  ],
                 )),
           ),
           Column(
@@ -248,5 +282,22 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+}
+
+class ColorActionButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    if (Theme.of(context).primaryColor.value != Colors.teal.value ||
+        Theme.of(context).accentColor.value != Colors.cyan.value) {
+      return Tooltip(
+        message: "Reset colors",
+        child: FloatingActionButton(
+          child: Icon(Icons.colorize, color: Colors.white),
+          onPressed: UIBloc.resetColors,
+        ),
+      );
+    }
+    return Container();
   }
 }

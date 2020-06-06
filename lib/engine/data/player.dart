@@ -47,7 +47,7 @@ class Player {
   @HiveField(15)
   AI ai;
 
-  factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);
+  factory Player.fromJson(Map json) => _$PlayerFromJson(json);
   Map<String, dynamic> toJson() => _$PlayerToJson(this);
 
   Tile get positionTile => Game.data.gmap[position];

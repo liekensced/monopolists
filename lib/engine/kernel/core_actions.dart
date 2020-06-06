@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
 
 import '../data/info.dart';
@@ -44,12 +45,13 @@ class CoreActions {
   }
 
   /// Doesn't update gmap, lostPlayers, dealData,
-  /// THROWS EXCEPTIONS > -- - - -- ]
+  /// THROWS EXCEPTIONS
   void pay(PayType type, int amount,
       {int receiver,
       bool count: false,
       bool force: false,
-      bool shouldSave: true}) {
+      bool shouldSave: true,
+      String message: "Payed to pot"}) {
     if (!force) {
       if (amount > 0) {
         if (data.player.money < amount) throw Alert.funds(null, amount);
@@ -77,6 +79,16 @@ class CoreActions {
       case PayType.pot:
         data.rentPayed = true;
         data.pot += amount;
+        if (message != null) {
+          Game.addInfo(
+            UpdateInfo(
+                title: message,
+                trailing: "£$amount",
+                show: true,
+                color: Colors.red.value),
+            receiver,
+          );
+        }
         break;
       default:
     }

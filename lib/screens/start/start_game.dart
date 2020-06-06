@@ -45,6 +45,14 @@ class _StartGameScreenState extends State<StartGameScreen> {
                 ),
                 onPressed: () {
                   if (Game.data.players.length >= 2 || MainBloc.online) {
+                    if (Game.data.players[0].ai.type != AIType.player &&
+                        Game.data.running == true) {
+                      Alert.handle(
+                          () => Alert(
+                              "Real player", "The first player can't be a bot"),
+                          context);
+                      return;
+                    }
                     Game.data.running = Game.data.running ?? false;
                     GameNavigator.navigate(context, loadGame: true);
                   } else {
@@ -54,34 +62,11 @@ class _StartGameScreenState extends State<StartGameScreen> {
                         duration: Duration(milliseconds: 500),
                         curve: Curves.decelerate);
                     setState(() {});
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                            title: Text("Not enough players"),
-                            content:
-                                Text("Please add at least 2 players or bots"),
-                            actions: [
-                              MaterialButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    "close",
-                                    style: TextStyle(
-                                        color: Theme.of(context).primaryColor),
-                                  ))
-                            ]);
-                      },
-                    );
-                  }
-                  if (Game.data.players[0].ai.type != AIType.player &&
-                      Game.data.running == true) {
                     Alert.handle(
-                        () => Alert(
-                            "Real player", "The first player can't be a bot"),
+                        () => Alert("Not enough players",
+                            "Please add at least 2 players or bots",
+                            failed: false),
                         context);
-                    return;
                   }
                 },
               ),

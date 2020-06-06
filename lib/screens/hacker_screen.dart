@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_json_widget/flutter_json_widget.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
@@ -44,7 +45,8 @@ class _HackerScreenState extends State<HackerScreen> {
                     MainBloc.resetGame(newGameData);
                     Alert.handle(
                         () => Alert(
-                            "Changed data", "Data was changed succesfully!"),
+                            "Changed data", "Data was changed succesfully!",
+                            type: DialogType.SUCCES),
                         context);
                     editMode = false;
 

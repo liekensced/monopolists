@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plutopoly/bloc/game_listener.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
+import 'package:plutopoly/screens/game/action_screen/action_screen.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/kernel/main.dart';
@@ -61,14 +62,16 @@ class MoveScreen extends StatelessWidget {
                       int pos = Game.data.player.position;
 
                       int mapLength = Game.data.gmap.length;
-                      pageController.animateToPage(
-                        (pageController.page ?? 0) > pos
-                            ? pos + mapLength
-                            : pos,
-                        duration:
-                            Duration(milliseconds: Game.ui.moveAnimationMillis),
-                        curve: Curves.decelerate,
-                      );
+                      Future.delayed(Duration.zero, () {
+                        pageController.animateToPage(
+                          (pageController.page ?? 0) > pos
+                              ? pos + mapLength
+                              : pos,
+                          duration: Duration(
+                              milliseconds: Game.ui.moveAnimationMillis),
+                          curve: Curves.decelerate,
+                        );
+                      });
                       Future.delayed(
                           Duration(
                               milliseconds: Game.ui.moveAnimationMillis + 500),
@@ -87,6 +90,11 @@ class MoveScreen extends StatelessWidget {
                     });
                   },
                 ),
+                Theme(
+                    child: GameListener(builder: (context, snapshot, _) {
+                      return NotificationHandler();
+                    }),
+                    data: ThemeData.light())
               ],
             ),
           ),

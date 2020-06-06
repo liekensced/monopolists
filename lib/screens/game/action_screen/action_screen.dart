@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
+
 import 'package:plutopoly/engine/data/info.dart';
 import 'package:plutopoly/screens/game/zoom_map.dart';
 import 'package:plutopoly/widgets/end_of_list.dart';
@@ -64,10 +65,6 @@ class _ActionScreenState extends State<ActionScreen> {
       Future.delayed(Duration.zero, () => GameNavigator.navigate(context));
     }
     if (Game.ui.screenState == Screen.move && !Game.ui.idle) {
-      //for action screen
-      pageIndex = 1;
-      actionPageController.jumpToPage(pageIndex);
-
       return MoveScreen();
     }
     double fraction = 200 / MediaQuery.of(context).size.width;
@@ -81,7 +78,6 @@ class _ActionScreenState extends State<ActionScreen> {
     Future.delayed(Duration.zero, () {
       if (idle && first) {
         first = false;
-
         controller.jumpTo(UIBloc.scrollOffset);
       }
     });
@@ -150,7 +146,10 @@ class _ActionScreenState extends State<ActionScreen> {
                 ),
                 actions: [
                   IconButton(
-                    icon: Icon(Icons.location_searching),
+                    icon: Tooltip(
+                      child: Icon(Icons.location_searching),
+                      message: "Locate player",
+                    ),
                     onPressed: () {
                       if (pageController.hasClients) {
                         pageController.animateToPage(Game.data.player.position,
@@ -160,51 +159,69 @@ class _ActionScreenState extends State<ActionScreen> {
                     },
                   ),
                   Center(
-                      child: Card(
-                          child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GameListener(
-                      builder: (BuildContext context, _, __) {
-                        try {
-                          if (screenState != Game.ui.screenState) {
-                            Future.delayed(
-                                Duration.zero, () => setState(() {}));
-                          }
-                          if (Game.data.dealData.dealer != null) {
-                            if (Game.data.players[Game.data.dealData.dealer]
-                                        .code ==
-                                    MainBloc.code &&
-                                MainBloc.online &&
-                                !MainBloc.dealOpen &&
-                                Game.ui.showDealScreen) {
-                              Future.delayed(Duration.zero, () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return DealScreen(
-                                    dealer: Game.data.dealData.dealer,
-                                    visit: true,
+                      child: InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return ListView.builder(
+                                itemCount:
+                                    UIBloc.gamePlayer.moneyHistory.length,
+                                itemBuilder: (context, int index) {
+                                  return ListTile(
+                                    title: Text(UIBloc
+                                        .gamePlayer.moneyHistory[index]
+                                        .toString()),
                                   );
-                                }));
-                                ;
-                              });
+                                });
+                          });
+                    },
+                    child: Card(
+                        child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GameListener(
+                        builder: (BuildContext context, _, __) {
+                          try {
+                            if (screenState != Game.ui.screenState) {
+                              Future.delayed(
+                                  Duration.zero, () => setState(() {}));
                             }
+                            if (Game.data.dealData.dealer != null) {
+                              if (Game.data.players[Game.data.dealData.dealer]
+                                          .code ==
+                                      MainBloc.code &&
+                                  MainBloc.online &&
+                                  !MainBloc.dealOpen &&
+                                  Game.ui.showDealScreen) {
+                                Future.delayed(Duration.zero, () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return DealScreen(
+                                      dealer: Game.data.dealData.dealer,
+                                      visit: true,
+                                    );
+                                  }));
+                                  ;
+                                });
+                              }
+                            }
+                          } catch (e) {
+                            Game.data.dealData == GameData();
                           }
-                        } catch (e) {
-                          Game.data.dealData == GameData();
-                        }
 
-                        return Row(
-                          children: <Widget>[
-                            Text("£"),
-                            AnimatedCount(
-                              count: ((UIBloc.gamePlayer.money.toInt())),
-                              duration: Duration(seconds: 1),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ))),
+                          return Row(
+                            children: <Widget>[
+                              Text("£"),
+                              AnimatedCount(
+                                count: ((UIBloc.gamePlayer.money.toInt())),
+                                duration: Duration(seconds: 1),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    )),
+                  )),
                   Container(
                     width: 5,
                   )
@@ -257,7 +274,7 @@ class _ActionScreenState extends State<ActionScreen> {
                         ),
                   ListView(
                     children: [
-                      ZoomMap(),
+                      GameListener(builder: (context, _, __) => ZoomMap()),
                       EndOfList(),
                     ],
                   )
@@ -265,7 +282,7 @@ class _ActionScreenState extends State<ActionScreen> {
               ),
               Theme(
                   child: GameListener(builder: (context, snapshot, _) {
-                    return Notification();
+                    return NotificationHandler();
                   }),
                   data: ThemeData.light())
             ],
@@ -276,12 +293,12 @@ class _ActionScreenState extends State<ActionScreen> {
   }
 }
 
-class Notification extends StatefulWidget {
+class NotificationHandler extends StatefulWidget {
   @override
-  _NotificationState createState() => _NotificationState();
+  _NotificationHandlerState createState() => _NotificationHandlerState();
 }
 
-class _NotificationState extends State<Notification> {
+class _NotificationHandlerState extends State<NotificationHandler> {
   int length;
   @override
   Widget build(BuildContext context) {
@@ -293,52 +310,11 @@ class _NotificationState extends State<Notification> {
         if (info.show ?? false) {
           Future.delayed(Duration.zero, () {
             Scaffold.of(context).showSnackBar(SnackBar(
+              duration: Duration(seconds: 3),
               behavior: SnackBarBehavior.fixed,
               elevation: 0,
               backgroundColor: Colors.transparent,
-              content: Container(
-                child: MyCard(
-                  shrinkwrap: true,
-                  color: Colors.green,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        info.title ?? "",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline4
-                            .copyWith(color: Colors.white),
-                        textAlign: TextAlign.start,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        info.subtitle ?? "",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5
-                            .copyWith(color: Colors.white),
-                        textAlign: TextAlign.start,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      alignment: Alignment.bottomRight,
-                      child: Text(
-                        info.trailing ?? "",
-                        style: Theme.of(context).textTheme.headline4.copyWith(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.end,
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              content: InfoSnackbar(info: info),
             ));
           });
         }
@@ -346,6 +322,67 @@ class _NotificationState extends State<Notification> {
     });
     length = UIBloc.gamePlayer.info.length;
     return Container();
+  }
+}
+
+class InfoSnackbar extends StatelessWidget {
+  final UpdateInfo info;
+  const InfoSnackbar({
+    Key key,
+    @required this.info,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: MyCard(
+        shadowColor: Color(info.color ?? Colors.green.value),
+        elevation: 10,
+        shrinkwrap: true,
+        color: Color(info.color ?? Colors.green.value),
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              info.title ?? "",
+              style: Theme.of(context)
+                  .textTheme
+                  .headline5
+                  .copyWith(color: Colors.white),
+              textAlign: TextAlign.start,
+            ),
+          ),
+          info.subtitle == null
+              ? Container()
+              : Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    info.subtitle ?? "",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        .copyWith(color: Colors.white),
+                    textAlign: TextAlign.start,
+                  ),
+                ),
+          Container(
+            padding: const EdgeInsets.all(8),
+            alignment: Alignment.bottomRight,
+            child: Text(
+              info.trailing ?? "",
+              style: Theme.of(context)
+                  .textTheme
+                  .headline4
+                  .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.end,
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -370,7 +407,7 @@ class ActionFab extends StatelessWidget {
             title: "Your turn",
             onTap: () {
               try {
-                UIBloc.scrollOffset = controller.offset + 100;
+                UIBloc.scrollOffset = controller.offset;
                 onPressed();
               } catch (e) {}
               UIBloc.changeScreen(Screen.move);

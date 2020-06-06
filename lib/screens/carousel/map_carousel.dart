@@ -75,7 +75,8 @@ Widget buildCard(Tile tile, {zoom: false}) {
       break;
     case TileType.tax:
       return Card(
-        color: Color(tile.color ?? Colors.orange.value),
+        color: Color(tile.backgroundColor ??
+            (tile.price < 0 ? Colors.green.value : Colors.orange.value)),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -90,7 +91,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
                         size: 50),
                     Spacer(),
                     Text(
-                      "£" + tile.price.toString(),
+                      "£" + tile.price.abs().toString(),
                       style: TextStyle(color: Colors.white, fontSize: 27),
                     )
                   ],
@@ -157,7 +158,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    tile.idIndex == 1
+                    tile.icon == "bolt"
                         ? FaIcon(
                             FontAwesomeIcons.bolt,
                             size: 50,

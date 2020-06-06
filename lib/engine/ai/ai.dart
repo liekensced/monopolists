@@ -16,6 +16,6 @@ class AI {
     type = AIType.player;
   }
 
-  factory AI.fromJson(Map<String, dynamic> json) => _$AIFromJson(json);
+  factory AI.fromJson(Map json) => _$AIFromJson(json);
   Map<String, dynamic> toJson() => _$AIToJson(this);
 }

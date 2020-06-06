@@ -86,6 +86,9 @@ class IdleScreen extends StatelessWidget {
       listItems.add(InkWell(
         splashColor: Theme.of(context).primaryColor,
         onTap: () {
+          // Game.addInfo(UpdateInfo(
+          //     title: "test", subtitle: "test", trailing: "t", show: true));
+          // Game.save();
           changePos(p.position);
         },
         child: Padding(

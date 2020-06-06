@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -204,7 +205,7 @@ class PropertyActionCardChild extends StatelessWidget {
         return Container(
           height: 100,
           child: Center(
-            child: Text("Rent payed"),
+            child: Text(tile.price > 0 ? "Rent payed" : "Received"),
           ),
         );
       }
@@ -223,9 +224,10 @@ class PropertyActionCardChild extends StatelessWidget {
             ),
             RaisedButton(
               padding: const EdgeInsets.all(8.0),
-              color: Colors.red,
+              color: price > 0 ? Colors.red : Colors.green,
               child: Text(
-                "Pay taxes £" + price.toString(),
+                (price > 0 ? "Pay taxes £" : "You receive £") +
+                    price.abs().toString(),
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -322,12 +324,25 @@ class PropertyActionCardChild extends StatelessWidget {
                     color: Colors.white),
               ),
               onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return MyTextField();
-                  },
-                );
+                if (!(Game.data.settings.allowPriceChanges ?? false)) {
+                  Alert.handle(
+                      () =>
+                          Game.act.buy() ??
+                          Alert(
+                              "Bought succesfully",
+                              "You bought " +
+                                  Game.data.player.positionTile.name +
+                                  ".",
+                              type: DialogType.SUCCES),
+                      context);
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return MyTextField();
+                    },
+                  );
+                }
               },
             ),
           ],

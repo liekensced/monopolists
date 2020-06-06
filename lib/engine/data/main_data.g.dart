@@ -37,13 +37,14 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..version = fields[17] as String
       ..lostPlayers = (fields[18] as List)?.cast<Player>()
       ..bot = fields[19] as bool
-      ..transported = fields[20] as bool;
+      ..transported = fields[20] as bool
+      ..preset = fields[21] as String;
   }
 
   @override
   void write(BinaryWriter writer, GameData obj) {
     writer
-      ..writeByte(21)
+      ..writeByte(22)
       ..writeByte(0)
       ..write(obj.running)
       ..writeByte(1)
@@ -85,7 +86,9 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..writeByte(19)
       ..write(obj.bot)
       ..writeByte(20)
-      ..write(obj.transported);
+      ..write(obj.transported)
+      ..writeByte(21)
+      ..write(obj.preset);
   }
 }
 
@@ -97,11 +100,7 @@ GameData _$GameDataFromJson(Map json) {
   return GameData()
     ..running = json['running'] as bool
     ..players = (json['players'] as List)
-        ?.map((e) => e == null
-            ? null
-            : Player.fromJson((e as Map)?.map(
-                (k, e) => MapEntry(k as String, e),
-              )))
+        ?.map((e) => e == null ? null : Player.fromJson(e as Map))
         ?.toList()
     ..currentPlayer = json['currentPlayer'] as int
     ..turn = json['turn'] as int
@@ -110,49 +109,32 @@ GameData _$GameDataFromJson(Map json) {
     ..doublesThrown = json['doublesThrown'] as int
     ..pot = (json['pot'] as num)?.toDouble()
     ..gmap = (json['gmap'] as List)
-        ?.map((e) => e == null
-            ? null
-            : Tile.fromJson((e as Map)?.map(
-                (k, e) => MapEntry(k as String, e),
-              )))
+        ?.map((e) => e == null ? null : Tile.fromJson(e as Map))
         ?.toList()
     ..settings = json['settings'] == null
         ? null
-        : Settings.fromJson((json['settings'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          ))
+        : Settings.fromJson(json['settings'] as Map)
     ..extensions = (json['extensions'] as List)
         ?.map((e) => _$enumDecodeNullable(_$ExtensionEnumMap, e))
         ?.toList()
-    ..ui = json['ui'] == null
-        ? null
-        : UIActionsData.fromJson((json['ui'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          ))
+    ..ui = json['ui'] == null ? null : UIActionsData.fromJson(json['ui'] as Map)
     ..rentPayed = json['rentPayed'] as bool
     ..findingsIndex = json['findingsIndex'] as int
     ..eventIndex = json['eventIndex'] as int
     ..mapConfiguration = json['mapConfiguration'] as String
     ..dealData = json['dealData'] == null
         ? null
-        : DealData.fromJson((json['dealData'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          ))
+        : DealData.fromJson(json['dealData'] as Map)
     ..bankData = json['bankData'] == null
         ? null
-        : BankData.fromJson((json['bankData'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          ))
+        : BankData.fromJson(json['bankData'] as Map)
     ..version = json['version'] as String
     ..lostPlayers = (json['lostPlayers'] as List)
-        ?.map((e) => e == null
-            ? null
-            : Player.fromJson((e as Map)?.map(
-                (k, e) => MapEntry(k as String, e),
-              )))
+        ?.map((e) => e == null ? null : Player.fromJson(e as Map))
         ?.toList()
     ..bot = json['bot'] as bool
-    ..transported = json['transported'] as bool ?? false;
+    ..transported = json['transported'] as bool ?? false
+    ..preset = json['preset'] as String;
 }
 
 Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
@@ -178,6 +160,7 @@ Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
       'lostPlayers': instance.lostPlayers?.map((e) => e?.toJson())?.toList(),
       'bot': instance.bot,
       'transported': instance.transported,
+      'preset': instance.preset,
     };
 
 T _$enumDecode<T>(

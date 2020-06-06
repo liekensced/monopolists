@@ -30,12 +30,11 @@ class Preset extends HiveObject {
   @HiveField(8)
   int accentColor;
 
-  Future<GameData> get data async {
+  GameData get data {
     if (dataCache != null) return dataCache;
 
-    if (presetsMap.containsKey(projectName)) {
-      dataCache = GameData.fromJson(presetsMap[projectName]);
-      return dataCache;
+    if (presetsData.containsKey(projectName)) {
+      return GameData.fromJson(presetsData[projectName]);
     }
     return null;
   }
@@ -49,6 +48,6 @@ class Preset extends HiveObject {
     this.dataCache,
   });
 
-  factory Preset.fromJson(Map<String, dynamic> json) => _$PresetFromJson(json);
+  factory Preset.fromJson(Map json) => _$PresetFromJson(json);
   Map<String, dynamic> toJson() => _$PresetToJson(this);
 }

@@ -7,22 +7,24 @@ class Houses extends StatelessWidget {
   const Houses({Key key, @required this.amount}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    if (amount == 5) {
-      return Center(
-        child: FaIcon(
-          FontAwesomeIcons.hotel,
-          color: Colors.red,
-        ),
-      );
-    }
+    int hotels = amount ~/ 5;
+    int houses = amount % 5;
     return ListView.separated(
       separatorBuilder: (_, __) {
         return Container(width: 5);
       },
-      itemCount: amount,
+      itemCount: houses + hotels,
       scrollDirection: Axis.horizontal,
       shrinkWrap: true,
-      itemBuilder: (BuildContext context, _) {
+      itemBuilder: (BuildContext context, int i) {
+        if (i > amount) {
+          return Center(
+            child: FaIcon(
+              FontAwesomeIcons.hotel,
+              color: Colors.red,
+            ),
+          );
+        }
         return Center(
           child: FaIcon(
             FontAwesomeIcons.home,

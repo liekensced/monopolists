@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,6 +20,13 @@ class UIBloc {
   static ValueNotifier screenUpdate = ValueNotifier<Screen>(Screen.idle);
 
   static List<Alert> alerts = [];
+
+  static resetColors() {
+    MainBloc.prefbox.delete("primaryColor");
+    MainBloc.prefbox.delete("accentColor");
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Colors.teal));
+  }
 
   static changeScreen([Screen screen]) {
     if (screen != null) Game.data.ui.screenState = screen;

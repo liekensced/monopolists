@@ -26,6 +26,6 @@ class Info {
   InfoType type = InfoType.rule;
 
   Info(this.title, this.content, this.type);
-  factory Info.fromJson(Map<String, dynamic> json) => _$InfoFromJson(json);
+  factory Info.fromJson(Map json) => _$InfoFromJson(json);
   Map<String, dynamic> toJson() => _$InfoToJson(this);
 }

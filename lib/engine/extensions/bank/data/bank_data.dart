@@ -25,7 +25,6 @@ class BankData {
     bullPoints = Random().nextInt(200) - 100;
   }
 
-  factory BankData.fromJson(Map<String, dynamic> json) =>
-      _$BankDataFromJson(json);
+  factory BankData.fromJson(Map json) => _$BankDataFromJson(json);
   Map<String, dynamic> toJson() => _$BankDataToJson(this);
 }

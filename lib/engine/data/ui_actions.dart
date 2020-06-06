@@ -90,8 +90,7 @@ class UIActionsData {
 
   UIActionsData();
 
-  factory UIActionsData.fromJson(Map<String, dynamic> json) =>
-      _$UIActionsDataFromJson(json);
+  factory UIActionsData.fromJson(Map json) => _$UIActionsDataFromJson(json);
   Map<String, dynamic> toJson() => _$UIActionsDataToJson(this);
 
   int get moveAnimationMillis {

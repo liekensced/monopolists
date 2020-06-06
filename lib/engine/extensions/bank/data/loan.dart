@@ -45,7 +45,6 @@ class Contract {
     countToCap = contract.countToCap ?? true;
   }
 
-  factory Contract.fromJson(Map<String, dynamic> json) =>
-      _$ContractFromJson(json);
+  factory Contract.fromJson(Map json) => _$ContractFromJson(json);
   Map<String, dynamic> toJson() => _$ContractToJson(this);
 }

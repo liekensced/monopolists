@@ -236,7 +236,7 @@ class _PropertyCardState extends State<PropertyCard>
     if (tile.type == TileType.company) {
       color = Colors.white;
       textColor = Colors.black;
-      leading = (tile.idIndex == 1)
+      leading = (tile.icon == "bolt")
           ? FaIcon(FontAwesomeIcons.bolt, color: Colors.orange)
           : FaIcon(FontAwesomeIcons.faucet, color: Colors.blue);
       content = Container(

@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:plutopoly/engine/data/map.dart';
 import 'package:plutopoly/engine/data/player.dart';
@@ -26,7 +27,18 @@ class MoveCard extends StatelessWidget {
           onPressed: Game.data.transported
               ? null
               : () {
-                  Alert.handle(() => TransportationBloc.move(tile), context);
+                  if (Alert.handle(
+                      () => TransportationBloc.move(tile), context)) {
+                    AwesomeDialog(
+                      dialogType: DialogType.SUCCES,
+                      title: "Transported",
+                      desc: "You moved to ${tile.mapIndex}",
+                      context: context,
+                      animType: AnimType.LEFTSLIDE,
+                      headerAnimationLoop: false,
+                    ).show();
+                  }
+                  ;
                 },
         ),
       ));

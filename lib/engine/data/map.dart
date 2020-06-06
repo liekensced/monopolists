@@ -30,7 +30,7 @@ class MapConfiguration {
     configuration = denseConfiguration;
   }
 
-  factory MapConfiguration.fromJson(Map<String, dynamic> json) =>
+  factory MapConfiguration.fromJson(Map json) =>
       _$MapConfigurationFromJson(json);
   Map<String, dynamic> toJson() => _$MapConfigurationToJson(this);
 }
@@ -68,8 +68,10 @@ class Tile {
   int transportationPrice = 200;
   @HiveField(14)
   int backgroundColor;
+  @HiveField(15)
+  String icon = "";
 
-  factory Tile.fromJson(Map<String, dynamic> json) => _$TileFromJson(json);
+  factory Tile.fromJson(Map json) => _$TileFromJson(json);
 
   Map<String, dynamic> toJson() => _$TileToJson(this);
 
@@ -100,10 +102,14 @@ class Tile {
     }
     if (type == TileType.company) {
       int _eyes = Game.data.currentDices.fold<int>(0, (a, b) => a + b);
-      if (owner.companies == 2) {
-        return _eyes * 10;
+      if (rent == null || rent.isEmpty) {
+        if (owner.companies == 2) {
+          return _eyes * 10;
+        } else {
+          return _eyes * 4;
+        }
       } else {
-        return _eyes * 4;
+        return _eyes * rent[owner.companies];
       }
     }
     if (rent == null) return 0;
@@ -152,9 +158,15 @@ class Tile {
     this.hyp,
     this.mortaged: false,
     this.backgroundColor,
+    this.icon,
     @required this.idIndex,
   }) {
     idPrefix ??= type.toString();
+  }
+
+  @override
+  String toString() {
+    return 'Tile(color: $color, idPrefix: $idPrefix, name: $name, price: $price, hyp: $hyp, housePrice: $housePrice, rent: $rent, level: $level, idIndex: $idIndex, mortaged: $mortaged, description: $description, transportationPrice: $transportationPrice, backgroundColor: $backgroundColor, icon: $icon)';
   }
 }
 
@@ -269,8 +281,15 @@ List<Tile> defaultMap = [
       housePrice: 100,
       rent: [10, 50, 150, 450, 625, 750],
       hyp: 70),
-  Tile(TileType.company,
-      price: 150, idPrefix: "C", idIndex: 1, name: "Elektric Company", hyp: 75),
+  Tile(
+    TileType.company,
+    price: 150,
+    idPrefix: "C",
+    idIndex: 1,
+    name: "Elektric Company",
+    icon: "bolt",
+    hyp: 75,
+  ),
   Tile(TileType.land,
       color: Colors.purple.value,
       idPrefix: "P",

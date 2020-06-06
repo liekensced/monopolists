@@ -7,17 +7,16 @@ part of 'player.dart';
 // **************************************************************************
 
 Player _$PlayerFromJson(Map json) {
+  if (json['info'] is Map) {
+    json['info'] = [];
+  }
   return Player(
     money: (json['money'] as num)?.toDouble(),
     color: json['color'] as int,
     position: json['position'] as int,
     name: json['name'] as String,
     code: json['code'] as int,
-    ai: json['ai'] == null
-        ? null
-        : AI.fromJson((json['ai'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          )),
+    ai: json['ai'] == null ? null : AI.fromJson(json['ai'] as Map),
   )
     ..properties =
         (json['properties'] as List)?.map((e) => e as String)?.toList()
@@ -25,22 +24,14 @@ Player _$PlayerFromJson(Map json) {
     ..jailTries = json['jailTries'] as int
     ..goojCards = json['goojCards'] as int
     ..info = (json['info'] as List)
-        ?.map((e) => e == null
-            ? null
-            : UpdateInfo.fromJson((e as Map)?.map(
-                (k, e) => MapEntry(k as String, e),
-              )))
+        ?.map((e) => e == null ? null : UpdateInfo.fromJson(e as Map))
         ?.toList()
     ..moneyHistory = (json['moneyHistory'] as List)
         ?.map((e) => (e as num)?.toDouble())
         ?.toList()
     ..debt = (json['debt'] as num)?.toDouble()
     ..loans = (json['loans'] as List)
-        ?.map((e) => e == null
-            ? null
-            : Contract.fromJson((e as Map)?.map(
-                (k, e) => MapEntry(k as String, e),
-              )))
+        ?.map((e) => e == null ? null : Contract.fromJson(e as Map))
         ?.toList()
     ..stock = (json['stock'] as Map)?.map(
       (k, e) => MapEntry(k as String, e as int),

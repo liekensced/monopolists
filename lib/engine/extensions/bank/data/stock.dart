@@ -35,6 +35,6 @@ class Stock {
         "This is a world index fund. It represents the world average stock value. Buying fee: 5%";
   }
 
-  factory Stock.fromJson(Map<String, dynamic> json) => _$StockFromJson(json);
+  factory Stock.fromJson(Map json) => _$StockFromJson(json);
   Map<String, dynamic> toJson() => _$StockToJson(this);
 }

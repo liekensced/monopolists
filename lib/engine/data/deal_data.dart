@@ -29,7 +29,6 @@ class DealData {
   @HiveField(9)
   int dealer;
   DealData();
-  factory DealData.fromJson(Map<String, dynamic> json) =>
-      _$DealDataFromJson(json);
+  factory DealData.fromJson(Map json) => _$DealDataFromJson(json);
   Map<String, dynamic> toJson() => _$DealDataToJson(this);
 }

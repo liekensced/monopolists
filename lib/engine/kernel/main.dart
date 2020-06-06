@@ -35,6 +35,7 @@ class Game {
     List<String> only,
     List<String> exclude,
     bool excludeBasic: false,
+    bool local: false,
   }) {
     if (excludeBasic) {
       exclude = [
@@ -54,7 +55,7 @@ class Game {
     if (data.running == true && data.player.ai.type == AIType.normal && !force)
       return;
     if (!(testing ?? false)) {
-      MainBloc.save(data, only: only, exclude: exclude);
+      MainBloc.save(data, only: only, exclude: exclude, local: local);
     }
   }
 
@@ -323,7 +324,7 @@ class Game {
 
       BankExtension.onNewTurnPlayer(i);
 
-      data.players[i].moneyHistory.add(mapPlayer.money);
+      data.players[i].moneyHistory?.add(mapPlayer.money);
     });
   }
 
@@ -331,7 +332,9 @@ class Game {
     int _goBonus = Game.data.settings.goBonus;
     data.player.money += _goBonus;
 
-    addInfo(UpdateInfo(title: "Received go bonus: $_goBonus"));
+    addInfo(UpdateInfo(
+        title: "Received go bonus", trailing: "£$_goBonus", show: true));
+    Game.save(local: true);
 
     BankExtension.onPassGo();
   }

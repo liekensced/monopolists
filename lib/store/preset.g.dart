@@ -67,16 +67,10 @@ Preset _$PresetFromJson(Map json) {
     version: json['version'] as String,
     dataCache: json['dataCache'] == null
         ? null
-        : GameData.fromJson((json['dataCache'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          )),
+        : GameData.fromJson(json['dataCache'] as Map),
   )
     ..infoCards = (json['infoCards'] as List)
-        ?.map((e) => e == null
-            ? null
-            : Info.fromJson((e as Map)?.map(
-                (k, e) => MapEntry(k as String, e),
-              )))
+        ?.map((e) => e == null ? null : Info.fromJson(e as Map))
         ?.toList()
     ..primaryColor = json['primaryColor'] as int
     ..accentColor = json['accentColor'] as int;

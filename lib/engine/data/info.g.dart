@@ -22,13 +22,14 @@ class UpdateInfoAdapter extends TypeAdapter<UpdateInfo> {
       subtitle: fields[2] as String,
       trailing: fields[3] as String,
       show: fields[4] as bool,
+      color: fields[5] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, UpdateInfo obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class UpdateInfoAdapter extends TypeAdapter<UpdateInfo> {
       ..writeByte(3)
       ..write(obj.trailing)
       ..writeByte(4)
-      ..write(obj.show);
+      ..write(obj.show)
+      ..writeByte(5)
+      ..write(obj.color);
   }
 }
 
@@ -53,6 +56,7 @@ UpdateInfo _$UpdateInfoFromJson(Map json) {
     subtitle: json['subtitle'] as String,
     trailing: json['trailing'] as String,
     show: json['show'] as bool,
+    color: json['color'] as int,
   );
 }
 
@@ -63,4 +67,5 @@ Map<String, dynamic> _$UpdateInfoToJson(UpdateInfo instance) =>
       'subtitle': instance.subtitle,
       'trailing': instance.trailing,
       'show': instance.show,
+      'color': instance.color,
     };

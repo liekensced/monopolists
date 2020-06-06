@@ -123,6 +123,7 @@ class TileAdapter extends TypeAdapter<Tile> {
       hyp: fields[5] as int,
       mortaged: fields[11] as bool,
       backgroundColor: fields[14] as int,
+      icon: fields[15] as String,
       idIndex: fields[10] as int,
     )
       ..level = fields[9] as int
@@ -132,7 +133,7 @@ class TileAdapter extends TypeAdapter<Tile> {
   @override
   void write(BinaryWriter writer, Tile obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.type)
       ..writeByte(1)
@@ -160,7 +161,9 @@ class TileAdapter extends TypeAdapter<Tile> {
       ..writeByte(13)
       ..write(obj.transportationPrice)
       ..writeByte(14)
-      ..write(obj.backgroundColor);
+      ..write(obj.backgroundColor)
+      ..writeByte(15)
+      ..write(obj.icon);
   }
 }
 
@@ -194,6 +197,7 @@ Tile _$TileFromJson(Map json) {
     hyp: json['hyp'] as int,
     mortaged: json['mortaged'] as bool,
     backgroundColor: json['backgroundColor'] as int,
+    icon: json['icon'] as String,
     idIndex: json['idIndex'] as int,
   )
     ..level = json['level'] as int
@@ -215,6 +219,7 @@ Map<String, dynamic> _$TileToJson(Tile instance) => <String, dynamic>{
       'description': instance.description,
       'transportationPrice': instance.transportationPrice,
       'backgroundColor': instance.backgroundColor,
+      'icon': instance.icon,
     };
 
 T _$enumDecode<T>(

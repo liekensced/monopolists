@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
@@ -20,6 +21,7 @@ class Alert {
   bool closable = true;
   bool snackbar = false;
   bool failed = true;
+  DialogType type;
   Alert(
     this.title,
     this.content, {
@@ -27,6 +29,7 @@ class Alert {
     this.closable: true,
     this.failed: true,
     this.snackbar: false,
+    this.type,
   });
   Alert.snackBar(this.title, [this.content]) {
     content = content ?? "";
@@ -140,15 +143,26 @@ class Alert {
         });
       }
 
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-              title: Text(alert.title),
-              content: Text(alert.content),
-              actions: actions);
-        },
-      );
+      if (alert.closable && actions.length == 1) {
+        AwesomeDialog(
+          dialogType: alert.type ??
+              (alert.failed ? DialogType.ERROR : DialogType.WARNING),
+          title: alert.title,
+          desc: alert.content,
+          context: context,
+          headerAnimationLoop: false,
+        ).show();
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+                title: Text(alert.title),
+                content: Text(alert.content),
+                actions: actions);
+          },
+        );
+      }
       return !alert.failed;
     } else
       return true;

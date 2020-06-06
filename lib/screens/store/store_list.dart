@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
 import 'package:plutopoly/store/default_presets.dart';
 import 'package:plutopoly/store/preset.dart';
-import 'package:plutopoly/widgets/my_card.dart';
 
 class StoreList extends StatelessWidget {
   @override
@@ -16,26 +16,59 @@ class StoreList extends StatelessWidget {
         itemCount: presets.length,
         itemBuilder: (BuildContext context, int index) {
           Preset preset = presets[index];
-          return MyCard(
-            title: preset.title,
-            children: [
+          return Card(
+            child: Column(children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  preset.title,
+                  style: Theme.of(context).textTheme.headline3,
+                  textAlign: TextAlign.start,
+                ),
+              ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(12.0),
                 child: Text(preset.description),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: MaterialButton(
-                  textColor: Theme.of(context).primaryColor,
-                  child: Text("Open game"),
-                  onPressed: () async {
-                    MainBloc.cancelOnline();
-                    Game.loadGame(await preset.data);
-                    GameNavigator.navigate(context, loadGame: true);
-                  },
+              Flexible(
+                child: Container(),
+              ),
+              Theme(
+                data: Theme.of(context).copyWith(
+                    primaryColor: Color(preset.primaryColor ??
+                        Theme.of(context).primaryColor.value),
+                    accentColor: Color(preset.accentColor ??
+                        Theme.of(context).accentColor.value)),
+                child: Builder(
+                  builder: (context) => Align(
+                    alignment: Alignment.bottomCenter,
+                    child: MaterialButton(
+                      textColor: Theme.of(context).primaryColor,
+                      child: Text("Start game"),
+                      onPressed: () async {
+                        MainBloc.cancelOnline();
+                        Game.newGame(await preset.data);
+
+                        GameNavigator.navigate(context, loadGame: true);
+                        SystemChrome.setSystemUIOverlayStyle(
+                            SystemUiOverlayStyle(
+                                statusBarColor: Color(preset.primaryColor) ??
+                                    Theme.of(context).primaryColor));
+                        MainBloc.prefbox.put(
+                            "primaryColor",
+                            preset.primaryColor ??
+                                Theme.of(context).primaryColor.value);
+                        MainBloc.prefbox.put(
+                            "accentColor",
+                            preset.accentColor ??
+                                Theme.of(context).accentColor.value);
+                      },
+                    ),
+                  ),
                 ),
               )
-            ],
+            ]),
           );
         },
       ),

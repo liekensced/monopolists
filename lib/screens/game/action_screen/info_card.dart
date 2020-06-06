@@ -44,10 +44,25 @@ class InfoCard extends StatelessWidget {
                 return Divider();
               },
               itemBuilder: (BuildContext context, int i) {
+                if (info[i].subtitle == null) {
+                  return ListTile(
+                    leading: getLeading(info[i].leading),
+                    title: Text(
+                      info[i].title,
+                    ),
+                    trailing: Text(
+                      info[i].trailing ?? "",
+                    ),
+                  );
+                }
                 return ListTile(
                   leading: getLeading(info[i].leading),
                   title: Text(
                     info[i].title,
+                  ),
+                  subtitle: Text(info[i].subtitle),
+                  trailing: Text(
+                    info[i].trailing ?? "",
                   ),
                 );
               },

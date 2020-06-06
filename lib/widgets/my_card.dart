@@ -17,7 +17,8 @@ class MyCard extends StatefulWidget {
   final Widget leading;
   final bool seperated;
   final bool shrinkwrap;
-
+  final double elevation;
+  final Color shadowColor;
   const MyCard({
     Key key,
     this.title,
@@ -32,6 +33,8 @@ class MyCard extends StatefulWidget {
     this.seperated: false,
     this.show: true,
     this.shrinkwrap: false,
+    this.shadowColor,
+    this.elevation,
   }) : super(key: key);
 
   @override
@@ -59,29 +62,33 @@ class _MyCardState extends State<MyCard> with SingleTickerProviderStateMixin {
         child: EagerInkWell(
           onTap: widget.onTap,
           child: Card(
+              shadowColor: widget.shadowColor,
+              elevation: widget.elevation,
               clipBehavior: Clip.hardEdge,
               color: widget.color,
-              child: Column(
-                mainAxisSize:
-                    widget.shrinkwrap ? MainAxisSize.min : MainAxisSize.max,
-                children: <Widget>[
-                  widget.title == null
-                      ? Container()
-                      : Container(
-                          key: Key("title key"),
-                          padding: const EdgeInsets.all(8),
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            widget.title,
-                            style: !(widget.smallTitle ??
-                                    (widget.title.length > 10))
-                                ? Theme.of(context).textTheme.headline3
-                                : Theme.of(context).textTheme.headline4,
-                            textAlign: TextAlign.start,
+              child: Container(
+                child: Column(
+                  mainAxisSize:
+                      widget.shrinkwrap ? MainAxisSize.min : MainAxisSize.max,
+                  children: <Widget>[
+                    widget.title == null
+                        ? Container()
+                        : Container(
+                            key: Key("title key"),
+                            padding: const EdgeInsets.all(8),
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              widget.title,
+                              style: !(widget.smallTitle ??
+                                      (widget.title.length > 10))
+                                  ? Theme.of(context).textTheme.headline3
+                                  : Theme.of(context).textTheme.headline4,
+                              textAlign: TextAlign.start,
+                            ),
                           ),
-                        ),
-                  animatedSizeWrapper(),
-                ],
+                    animatedSizeWrapper(),
+                  ],
+                ),
               )),
         ));
   }
