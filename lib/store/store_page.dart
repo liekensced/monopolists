@@ -16,6 +16,15 @@ class StorePage extends StatelessWidget {
           ),
         ),
         StoreList(),
+        Container(
+          padding: const EdgeInsets.all(8),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "Local maps",
+            style: Theme.of(context).textTheme.headline4,
+            textAlign: TextAlign.start,
+          ),
+        ),
       ],
     );
   }

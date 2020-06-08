@@ -35,6 +35,7 @@ class MainBloc {
   static const ACCOUNTBOX = _boxVersion + "accountBox";
   static const RECENTBOX = _boxVersion + "recentBox";
   static const MOVEBOX = _boxVersion + "moveBox";
+  static const PRESETSBOX = _boxVersion + "presetsBox";
 
   static bool initialized = false;
   static int currentGame = 0;

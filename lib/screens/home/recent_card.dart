@@ -14,7 +14,9 @@ import '../../widgets/my_card.dart';
 class RecentCard extends StatelessWidget {
   final Box box;
   final bool active;
-  const RecentCard({Key key, @required this.box, this.active: false})
+  final String preset;
+  const RecentCard(
+      {Key key, @required this.box, this.active: false, this.preset})
       : super(key: key);
 
   @override

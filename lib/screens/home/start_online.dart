@@ -4,10 +4,14 @@ import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
+import 'package:plutopoly/store/preset.dart';
 
 class StartOnlineButton extends StatelessWidget {
+  final Preset preset;
+
   const StartOnlineButton({
     Key key,
+    this.preset,
   }) : super(key: key);
 
   @override
@@ -95,7 +99,8 @@ class StartOnlineButton extends StatelessWidget {
                             },
                           );
 
-                          Alert alert = await MainBloc.newOnlineGame();
+                          Alert alert =
+                              await MainBloc.newOnlineGame(preset.data);
                           if (cancel) return;
                           UIBloc.navigatorKey.currentState.pop();
 

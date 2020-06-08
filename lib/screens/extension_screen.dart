@@ -1,13 +1,13 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:plutopoly/bloc/game_listener.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/engine/data/extensions.dart';
-import 'package:plutopoly/engine/extensions/extension_data.dart';
-import 'package:plutopoly/engine/extensions/setting.dart';
-import 'package:plutopoly/screens/start/info_screen.dart';
-import 'package:plutopoly/widgets/end_of_list.dart';
-import 'package:plutopoly/widgets/my_card.dart';
+import '../bloc/game_listener.dart';
+import '../bloc/ui_bloc.dart';
+import '../engine/data/extensions.dart';
+import '../engine/extensions/extension_data.dart';
+import '../engine/extensions/setting.dart';
+import 'start/info_screen.dart';
+import '../widgets/end_of_list.dart';
+import '../widgets/my_card.dart';
 import 'package:plutopoly/widgets/setting_tile.dart';
 
 class ExtensionScreen extends StatelessWidget {

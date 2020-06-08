@@ -14,3 +14,18 @@ class Setting<T> {
     this.showLead: false,
   });
 }
+
+class ValueSetting<T> {
+  String title;
+  String subtitle = "";
+  T value;
+  bool showLead = false;
+  Function(T) onChanged;
+  ValueSetting({
+    @required this.title,
+    @required this.value,
+    this.onChanged,
+    this.subtitle = "",
+    this.showLead: false,
+  });
+}

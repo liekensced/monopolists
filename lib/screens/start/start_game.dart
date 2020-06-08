@@ -119,7 +119,7 @@ class _StartGameScreenState extends State<StartGameScreen> {
                                           false,
                                       title: "Allow price changes",
                                       subtitle: "If you have other prices"),
-                                )
+                                ),
                               ],
                             ),
                       Container(

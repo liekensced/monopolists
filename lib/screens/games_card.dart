@@ -9,8 +9,10 @@ import '../engine/kernel/main.dart';
 import '../engine/ui/game_navigator.dart';
 
 class GamesCard extends StatefulWidget {
+  final String preset;
   const GamesCard({
     Key key,
+    this.preset,
   }) : super(key: key);
 
   @override
@@ -35,6 +37,10 @@ class _GamesCardState extends State<GamesCard>
               builder: (context, Box box, __) {
                 List<GameData> games =
                     box.values.toList().whereType<GameData>().toList();
+                if (widget.preset != null) {
+                  games.removeWhere(
+                      (element) => element.preset != widget.preset);
+                }
                 if (games.length == 0)
                   return Container(
                       height: 80, child: Center(child: Text("No open games")));
