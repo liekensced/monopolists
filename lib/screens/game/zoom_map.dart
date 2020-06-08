@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:zoom_widget/zoom_widget.dart';
@@ -36,13 +38,21 @@ class ZoomMap extends StatelessWidget {
         Tile tile = gmap[tileIndex];
         gridChildren.add(
           Theme(
-            data: Theme.of(context).copyWith(
-                cardTheme: CardTheme(
-              elevation: 0,
-              margin: EdgeInsets.zero,
-              color: Color(tile.backgroundColor ?? Colors.white.value),
-              shape: Border.all(color: Colors.black, width: 0.5),
-            )),
+            data: tile.tableColor != null
+                ? Theme.of(context).copyWith(
+                    cardTheme: CardTheme(
+                      color: Color(tile.backgroundColor ?? Colors.white.value),
+                      margin: const EdgeInsets.all(20),
+                    ),
+                    canvasColor: Colors.white,
+                  )
+                : Theme.of(context).copyWith(
+                    cardTheme: CardTheme(
+                    elevation: 0,
+                    margin: EdgeInsets.zero,
+                    color: Color(tile.backgroundColor ?? Colors.white.value),
+                    shape: Border.all(color: Colors.black, width: 0.5),
+                  )),
             child: EagerInkWell(
               onTap: () {
                 if (tile.buyable) {
@@ -54,7 +64,10 @@ class ZoomMap extends StatelessWidget {
                   changePos(tile.mapIndex);
                 }
               },
-              child: buildCard(tile, zoom: true),
+              child: Container(
+                color: Color(tile.tableColor ?? 0),
+                child: buildCard(tile, zoom: true),
+              ),
             ),
           ),
         );
@@ -75,26 +88,33 @@ class ZoomMap extends StatelessWidget {
         (4 / 3) *
         ((((gridChildren.length / width.toDouble()).ceil() /
             width.toDouble())));
-
-    return MyCard(
-      maxWidth: 1500,
-      children: <Widget>[
-        Container(
-          width: size,
-          height: heigth,
-          child: BoardZoom(
-              width: width, gridChildren: gridChildren, heigth: heigth),
-        ),
-        ListTile(
-          title: Text("Map configuration:"),
-          trailing: DropdownButton(
-              value: Hive.box(MainBloc.METABOX).get("mapConfiguration"),
-              items: mapConfItems,
-              onChanged: (val) {
-                Hive.box(MainBloc.METABOX).put("mapConfiguration", val);
-              }),
-        )
-      ],
+    if (UIBloc.isWide(context)) {
+      heigth = min(MediaQuery.of(context).size.height, heigth);
+    }
+    return Padding(
+      padding: UIBloc.isWide(context)
+          ? const EdgeInsets.symmetric(horizontal: 20.0)
+          : const EdgeInsets.all(0),
+      child: MyCard(
+        maxWidth: 1500,
+        children: <Widget>[
+          Container(
+            width: size,
+            height: heigth,
+            child: BoardZoom(
+                width: width, gridChildren: gridChildren, heigth: heigth),
+          ),
+          ListTile(
+            title: Text("Map configuration:"),
+            trailing: DropdownButton(
+                value: Hive.box(MainBloc.METABOX).get("mapConfiguration"),
+                items: mapConfItems,
+                onChanged: (val) {
+                  Hive.box(MainBloc.METABOX).put("mapConfiguration", val);
+                }),
+          )
+        ],
+      ),
     );
   }
 }
@@ -115,7 +135,7 @@ class BoardZoom extends StatelessWidget {
   Widget build(BuildContext context) {
     return Zoom(
       initZoom: 0,
-      canvasColor: Theme.of(context).canvasColor,
+      canvasColor: Colors.white,
       enableScroll: true,
       width: (width.toDouble() * 250),
       height: (rows * 250 * (4 / 3)),

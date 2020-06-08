@@ -94,7 +94,8 @@ class GameEvents {
     int _goBonus = Game.data.settings.goBonus;
     data.player.money += _goBonus;
 
-    Game.addInfo(UpdateInfo(title: "Received go bonus: $_goBonus"));
+    Game.addInfo(UpdateInfo(title: "Received go bonus: $_goBonus"),
+        Game.data.currentPlayer);
 
     BankExtension.onPassGo();
   }

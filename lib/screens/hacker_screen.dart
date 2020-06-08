@@ -7,7 +7,6 @@ import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/data/info.dart';
 import 'package:plutopoly/engine/data/main_data.dart';
-import 'package:plutopoly/engine/data/player.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
 
 import '../engine/kernel/main.dart';
@@ -38,6 +37,7 @@ class _HackerScreenState extends State<HackerScreen> {
                     Alert.handle(
                         () => Alert("Couldn't parse json", "Nothing changed"),
                         context);
+                    return;
                   }
                   try {
                     Map<String, dynamic> newJson = jsonDecode(text);
@@ -50,22 +50,15 @@ class _HackerScreenState extends State<HackerScreen> {
                         context);
                     editMode = false;
 
-                    Game.data.players.forEach((Player p) {
-                      int index = p.index;
-                      Game.addInfo(
-                        UpdateInfo(
-                            title: UIBloc.gamePlayer.name +
-                                " changed the game data!",
-                            leading: "alert"),
-                        index,
-                      );
-                      Game.addInfo(
-                          UpdateInfo(
-                              title: UIBloc.gamePlayer.name +
-                                  " changed the game data!",
-                              leading: "alert"),
-                          index);
-                    });
+                    Game.addInfo(
+                      UpdateInfo(
+                          title: UIBloc.gamePlayer.name +
+                              " changed the game data!",
+                          leading: "alert",
+                          show: true,
+                          color: Colors.deepOrange.value),
+                    );
+
                     setState(() {});
                   } catch (e) {
                     Alert.handle(

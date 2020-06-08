@@ -1,13 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:plutopoly/engine/data/map.dart';
-import 'package:plutopoly/engine/extensions/setting.dart';
-import 'package:plutopoly/engine/kernel/main.dart';
-import 'package:plutopoly/widgets/my_card.dart';
-import 'package:plutopoly/widgets/setting_tile.dart';
 
-import '../../places.dart';
+import '../../bloc/main_bloc.dart';
+import '../../engine/extensions/setting.dart';
+import '../../engine/kernel/main.dart';
+import '../../widgets/my_card.dart';
+import '../../widgets/setting_tile.dart';
 
 class ExtraCard extends StatelessWidget {
   @override
@@ -18,35 +15,7 @@ class ExtraCard extends StatelessWidget {
         ListTile(
           title: Text("Generate names"),
           subtitle: Text("Generate names for the land tiles"),
-          trailing: RaisedButton(
-            textColor: Colors.white,
-            color: Theme.of(context).primaryColor,
-            child: Text("Generate"),
-            onPressed: () {
-              if (Game.data?.gmap != null) {
-                List<int> used = [];
-                Game.data.gmap.forEach((Tile property) {
-                  if (property.type != TileType.land) return;
-                  int i = Random().nextInt(MAP_NAMES.length ~/ 2) * 2;
-                  print(MAP_NAMES.length);
-                  while (used.contains(i)) {
-                    i = Random().nextInt(MAP_NAMES.length ~/ 2) * 2;
-                  }
-                  used.add(i);
-                  property.name = MAP_NAMES[i];
-                  property.description = MAP_NAMES[i + 1];
-                });
-
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text("Generated names"),
-                ));
-              } else {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text("Couldn't generated names"),
-                ));
-              }
-            },
-          ),
+          trailing: buildGenerateTrailing(context),
         ),
         ListTile(
           title: Text("Shuffle tiles"),
@@ -80,5 +49,47 @@ class ExtraCard extends StatelessWidget {
         )
       ],
     );
+  }
+
+  Widget buildGenerateTrailing(BuildContext context) {
+    if (!(Game.data.running ?? false)) {
+      if (Game.data.gmap[0].description == null ||
+          Game.data.gmap[0].description == "") {
+        return Switch(
+          value: Game.data.settings.generateNames ?? false,
+          onChanged: (bool val) {
+            Game.data.settings.generateNames = val;
+            Game.save(only: [SaveData.settings.toString()]);
+          },
+        );
+      } else {
+        return Tooltip(
+          message: "Names detected. Generate names when running.",
+          child: Switch(
+            value: false,
+            onChanged: null,
+          ),
+        );
+      }
+    } else {
+      return RaisedButton(
+        textColor: Colors.white,
+        color: Theme.of(context).primaryColor,
+        child: Text("Generate"),
+        onPressed: () {
+          if (Game.data?.gmap != null) {
+            Game.generateNames();
+
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text("Generated names"),
+            ));
+          } else {
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text("Couldn't generated names"),
+            ));
+          }
+        },
+      );
+    }
   }
 }

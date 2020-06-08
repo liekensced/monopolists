@@ -1,8 +1,9 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter/services.dart';
 import 'package:plutopoly/bloc/game_listener.dart';
+import 'package:plutopoly/helpers/icon_helper.dart';
 import 'package:plutopoly/screens/game/action_screen/property_card.dart';
 
 import '../../engine/data/actions.dart';
@@ -31,10 +32,13 @@ class PropertyActionCard extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    FaIcon(
-                      FontAwesomeIcons.question,
-                      size: 50,
-                      color: Colors.white,
+                    Container(
+                      height: 100,
+                      width: 100,
+                      child: GameIcon(
+                        "question",
+                        color: Colors.white.value,
+                      ),
                     ),
                     Container(height: 20),
                     Text(
@@ -90,10 +94,13 @@ class PropertyActionCard extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    FaIcon(
-                      FontAwesomeIcons.solidGem,
-                      size: 50,
-                      color: Colors.white,
+                    Container(
+                      height: 100,
+                      width: 100,
+                      child: GameIcon(
+                        "gem",
+                        color: Colors.white.value,
+                      ),
                     ),
                     Container(height: 20),
                     Text(

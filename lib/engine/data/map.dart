@@ -70,6 +70,8 @@ class Tile {
   int backgroundColor;
   @HiveField(15)
   String icon = "";
+  @HiveField(16)
+  int tableColor;
 
   factory Tile.fromJson(Map json) => _$TileFromJson(json);
 
@@ -247,7 +249,8 @@ List<Tile> defaultMap = [
       price: 100,
       housePrice: 50,
       rent: [6, 30, 90, 270, 400, 550],
-      hyp: 50),
+      hyp: 50)
+    ..level = 0,
   Tile(
     TileType.chance,
     idPrefix: "Ch",
@@ -261,7 +264,8 @@ List<Tile> defaultMap = [
       price: 100,
       housePrice: 50,
       rent: [6, 30, 90, 270, 400, 550],
-      hyp: 50),
+      hyp: 50)
+    ..level = 0,
   Tile(TileType.land,
       color: Colors.lightBlue.value,
       idPrefix: "LB",
@@ -270,7 +274,8 @@ List<Tile> defaultMap = [
       price: 120,
       housePrice: 50,
       rent: [8, 40, 100, 300, 450, 600],
-      hyp: 60),
+      hyp: 60)
+    ..level = 0,
   Tile(TileType.jail, idPrefix: "JAIL", idIndex: 1),
   Tile(TileType.land,
       color: Colors.purple.value,

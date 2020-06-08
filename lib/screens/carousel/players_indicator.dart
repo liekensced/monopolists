@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:plutopoly/screens/game/zoom_map.dart';
 
 import '../../engine/data/map.dart';
 import '../../engine/data/player.dart';
@@ -15,6 +16,7 @@ class PlayerIndicators extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool zoom = context.findAncestorWidgetOfExactType<ZoomMap>() != null;
     List<Widget> wrap = [];
     tile.players.forEach((player) {
       if (player.jailed != jailed) return;
@@ -26,7 +28,8 @@ class PlayerIndicators extends StatelessWidget {
             message: player.name,
             child: CircleColor(
               color: Color(player.color),
-              circleSize: 40,
+              circleSize:
+                  player.index == Game.data.currentPlayer && zoom ? 50 : 40,
             )));
       }
     });

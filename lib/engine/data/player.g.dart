@@ -7,9 +7,6 @@ part of 'player.dart';
 // **************************************************************************
 
 Player _$PlayerFromJson(Map json) {
-  if (json['info'] is Map) {
-    json['info'] = [];
-  }
   return Player(
     money: (json['money'] as num)?.toDouble(),
     color: json['color'] as int,

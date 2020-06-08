@@ -1,5 +1,8 @@
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/helpers/icon_helper.dart';
 
 import '../../engine/data/map.dart';
 import '../../engine/kernel/main.dart';
@@ -11,8 +14,10 @@ import 'start_card.dart';
 
 class MapCarousel extends StatefulWidget {
   final PageController controller;
+  final bool zoom;
 
-  const MapCarousel({Key key, @required this.controller}) : super(key: key);
+  const MapCarousel({Key key, @required this.controller, this.zoom: false})
+      : super(key: key);
 
   @override
   _MapCarouselState createState() => _MapCarouselState();
@@ -33,6 +38,8 @@ class _MapCarouselState extends State<MapCarousel> {
     }
 
     Future.delayed(Duration.zero, () {
+      bool track = MainBloc.prefbox.get("boolTrack", defaultValue: true);
+      if (!track) return;
       lastPosition ??= Game.data.player.position;
       if (lastPosition != Game.data.player.position) {
         if (Game.data.ui.shouldMove && widget.controller.hasClients) {
@@ -65,7 +72,6 @@ Widget buildCard(Tile tile, {zoom: false}) {
     case TileType.land:
       return LandCard(
         tile: tile,
-        zoom: zoom,
       );
     case TileType.start:
       return StartCard(tile: tile);
@@ -131,9 +137,11 @@ Widget buildCard(Tile tile, {zoom: false}) {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Spacer(),
-                    FaIcon(FontAwesomeIcons.mugHot,
-                        color: Color(tile.color ?? Colors.brown.value),
-                        size: 50),
+                    Container(
+                      height: 100,
+                      width: 100,
+                      child: GameIcon("coffee"),
+                    ),
                     Spacer(),
                     Text(
                       "£" + Game.data.pot.floor().toString() + " ",
@@ -184,11 +192,13 @@ Widget buildCard(Tile tile, {zoom: false}) {
             Expanded(
                 flex: 2,
                 child: Center(
-                    child: FaIcon(
-                  FontAwesomeIcons.solidGem,
-                  size: 50,
-                  color: Color(tile.color ?? Colors.white.value),
-                ))),
+                    child: Container(
+                        height: 100,
+                        width: 100,
+                        child: GameIcon(
+                          "gem",
+                          color: tile.color ?? Colors.white.value,
+                        )))),
             Expanded(
               child: PlayerIndicators(tile: tile),
             ),
@@ -203,10 +213,10 @@ Widget buildCard(Tile tile, {zoom: false}) {
             Expanded(
                 flex: 2,
                 child: Center(
-                    child: FaIcon(
-                  FontAwesomeIcons.question,
-                  size: 50,
-                  color: Color(tile.color ?? Colors.white.value),
+                    child: Container(
+                  height: 100,
+                  width: 100,
+                  child: GameIcon("question"),
                 ))),
             Expanded(
               child: PlayerIndicators(tile: tile),

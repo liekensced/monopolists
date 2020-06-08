@@ -19,82 +19,89 @@ class MoveScreen extends StatelessWidget {
     PageController pageController = PageController(
         initialPage: Game.data.player.position, viewportFraction: fraction);
     return Scaffold(
-        backgroundColor: Colors.teal,
+        backgroundColor: Theme.of(context).primaryColor,
         body: GestureDetector(
           behavior: HitTestBehavior.translucent,
           onVerticalDragEnd: (_) {
             moveModalBottomSheet(context);
           },
           child: SafeArea(
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 50),
-                  child: Text(Game.data.player.name,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 45, color: Colors.white)),
-                ),
-                GameListener(
-                  builder: (context, __, _) {
-                    return LimitedBox(
-                      maxHeight: 300,
-                      child: Theme(
-                        data: ThemeData.light(),
-                        child: MapCarousel(
-                          controller: pageController,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                ValueListenableBuilder(
-                  valueListenable: Hive.box(MainBloc.MOVEBOX).listenable(),
-                  builder: (BuildContext context, Box box, Widget _) {
-                    if (box.containsKey("intDice0") &&
-                        box.containsKey("intDice1")) {
-                      Game.move(
-                        box.get("intDice0"),
-                        box.get("intDice1"),
-                        shouldSave: false,
-                      );
-
-                      int pos = Game.data.player.position;
-
-                      int mapLength = Game.data.gmap.length;
-                      Future.delayed(Duration.zero, () {
-                        pageController.animateToPage(
-                          (pageController.page ?? 0) > pos
-                              ? pos + mapLength
-                              : pos,
-                          duration: Duration(
-                              milliseconds: Game.ui.moveAnimationMillis),
-                          curve: Curves.decelerate,
+            child: Stack(
+              children: [
+                Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12.0, horizontal: 50),
+                      child: Text(Game.data.player.name,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 45, color: Colors.white)),
+                    ),
+                    GameListener(
+                      builder: (context, __, _) {
+                        return LimitedBox(
+                          maxHeight: 300,
+                          child: Theme(
+                            data: ThemeData.light(),
+                            child: MapCarousel(
+                              controller: pageController,
+                            ),
+                          ),
                         );
-                      });
-                      Future.delayed(
-                          Duration(
-                              milliseconds: Game.ui.moveAnimationMillis + 500),
-                          () {
-                        box.delete("intDice0");
-                        box.delete("intDice1");
-                        UIBloc.changeScreen(Screen.active);
-                        Game.save();
-                      });
-                    }
+                      },
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: Hive.box(MainBloc.MOVEBOX).listenable(),
+                      builder: (BuildContext context, Box box, Widget _) {
+                        if (box.containsKey("intDice0") &&
+                            box.containsKey("intDice1")) {
+                          int dice1 = box.get("intDice0");
+                          int dice2 = box.get("intDice1");
+                          Game.move(
+                            dice1,
+                            dice2,
+                            shouldSave: false,
+                          );
 
-                    return GameListener(builder: (context, _, __) {
-                      return Expanded(
-                        child: DiceSelect(),
-                      );
-                    });
-                  },
+                          int pos = Game.data.player.position;
+
+                          int mapLength = Game.data.gmap.length;
+                          Future.delayed(Duration.zero, () {
+                            pageController.animateToPage(
+                              (pageController.page ?? 0) > pos
+                                  ? pos + mapLength
+                                  : pos,
+                              duration: Duration(
+                                  milliseconds: Game.ui.moveAnimationMillis),
+                              curve: Curves.decelerate,
+                            );
+                          });
+                          Future.delayed(
+                              Duration(
+                                  milliseconds:
+                                      Game.ui.moveAnimationMillis + 500), () {
+                            box.delete("intDice0");
+                            box.delete("intDice1");
+                            UIBloc.changeScreen(Screen.active);
+                            Game.save();
+                          });
+                        }
+
+                        return GameListener(builder: (context, _, __) {
+                          return Expanded(
+                            child: DiceSelect(),
+                          );
+                        });
+                      },
+                    ),
+                    Theme(
+                        child: GameListener(builder: (context, snapshot, _) {
+                          return NotificationHandler();
+                        }),
+                        data: ThemeData.light())
+                  ],
                 ),
-                Theme(
-                    child: GameListener(builder: (context, snapshot, _) {
-                      return NotificationHandler();
-                    }),
-                    data: ThemeData.light())
+                DoublePopup(),
               ],
             ),
           ),
@@ -137,4 +144,41 @@ void moveModalBottomSheet(BuildContext context) {
           ),
         );
       });
+}
+
+class DoublePopup extends StatefulWidget {
+  DoublePopup();
+  @override
+  _DoublePopupState createState() => _DoublePopupState();
+}
+
+class _DoublePopupState extends State<DoublePopup>
+    with SingleTickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: Hive.box(MainBloc.MOVEBOX).listenable(),
+      builder: (context, box, __) {
+        bool show = false;
+        if (box.containsKey("intDice0") && box.containsKey("intDice1")) {
+          int dice1 = box.get("intDice0");
+          int dice2 = box.get("intDice1");
+          show = dice2 == dice1;
+        }
+        !Game.data.ui.shouldMove;
+        return Center(
+          child: AnimatedSize(
+            vsync: this,
+            curve: Curves.easeInOutCubic,
+            duration: Duration(milliseconds: 200),
+            child: FractionallySizedBox(
+              heightFactor: show ? 0.9 : 0,
+              widthFactor: show ? 0.9 : 0,
+              child: Image.asset("assets/double.png"),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

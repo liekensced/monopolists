@@ -8,6 +8,7 @@ import 'package:plutopoly/engine/data/info.dart';
 import 'package:plutopoly/screens/game/zoom_map.dart';
 import 'package:plutopoly/widgets/end_of_list.dart';
 import 'package:plutopoly/widgets/my_card.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../bloc/ad_bloc.dart';
 import '../../../bloc/game_listener.dart';
@@ -76,13 +77,20 @@ class _ActionScreenState extends State<ActionScreen> {
     controller = ScrollController(
         initialScrollOffset: idle ? UIBloc.scrollOffset ?? 0 : 0);
     Future.delayed(Duration.zero, () {
-      if (idle && first) {
+      bool rememberScroll =
+          MainBloc.prefbox.get("boolRememberScroll", defaultValue: true);
+      if (idle && first && rememberScroll) {
         first = false;
         controller.jumpTo(UIBloc.scrollOffset);
       }
     });
 
     Screen screenState = Game.ui.screenState;
+    if (actionPageController.hasClients) {
+      pageIndex = actionPageController.page.floor();
+    } else {
+      pageIndex = actionPageController.initialPage;
+    }
 
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -274,7 +282,12 @@ class _ActionScreenState extends State<ActionScreen> {
                         ),
                   ListView(
                     children: [
-                      GameListener(builder: (context, _, __) => ZoomMap()),
+                      GameListener(
+                          builder: (context, _, __) => ValueListenableBuilder(
+                                valueListenable: MainBloc.metaBox.listenable(),
+                                builder: (BuildContext context, _, __) =>
+                                    ZoomMap(),
+                              )),
                       EndOfList(),
                     ],
                   )
@@ -302,6 +315,9 @@ class _NotificationHandlerState extends State<NotificationHandler> {
   int length;
   @override
   Widget build(BuildContext context) {
+    bool showSnackbar =
+        MainBloc.prefbox.get("boolShowSnackbar", defaultValue: true);
+    if (!showSnackbar) return Container();
     if (length == null) {
       length = UIBloc.gamePlayer.info.length;
     }
@@ -309,13 +325,29 @@ class _NotificationHandlerState extends State<NotificationHandler> {
       if (index > length - 1) {
         if (info.show ?? false) {
           Future.delayed(Duration.zero, () {
-            Scaffold.of(context).showSnackBar(SnackBar(
-              duration: Duration(seconds: 3),
-              behavior: SnackBarBehavior.fixed,
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              content: InfoSnackbar(info: info),
-            ));
+            if (info.subtitle != null && info.title == null) {
+              Scaffold.of(context).showSnackBar(
+                info.color == null
+                    ? SnackBar(
+                        content: Text(info.subtitle),
+                      )
+                    : SnackBar(
+                        content: Text(
+                          info.subtitle,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Color(info.color),
+                      ),
+              );
+            } else {
+              Scaffold.of(context).showSnackBar(SnackBar(
+                duration: Duration(seconds: 3),
+                behavior: SnackBarBehavior.fixed,
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                content: InfoSnackbar(info: info),
+              ));
+            }
           });
         }
       }
@@ -336,6 +368,7 @@ class InfoSnackbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: MyCard(
+        center: false,
         shadowColor: Color(info.color ?? Colors.green.value),
         elevation: 10,
         shrinkwrap: true,

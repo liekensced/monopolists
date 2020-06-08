@@ -29,13 +29,14 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..startProperties = fields[9] as int
       ..transportPassGo = fields[10] as bool
       ..allowDiceSelect = fields[11] as bool
-      ..allowPriceChanges = fields[12] as bool;
+      ..allowPriceChanges = fields[12] as bool
+      ..generateNames = fields[13] as bool;
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -61,7 +62,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(11)
       ..write(obj.allowDiceSelect)
       ..writeByte(12)
-      ..write(obj.allowPriceChanges);
+      ..write(obj.allowPriceChanges)
+      ..writeByte(13)
+      ..write(obj.generateNames);
   }
 }
 
@@ -83,7 +86,8 @@ Settings _$SettingsFromJson(Map json) {
     ..startProperties = json['startProperties'] as int ?? 0
     ..transportPassGo = json['transportPassGo'] as bool ?? true
     ..allowDiceSelect = json['allowDiceSelect'] as bool ?? false
-    ..allowPriceChanges = json['allowPriceChanges'] as bool ?? false;
+    ..allowPriceChanges = json['allowPriceChanges'] as bool ?? false
+    ..generateNames = json['generateNames'] as bool ?? true;
 }
 
 Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
@@ -100,4 +104,5 @@ Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
       'transportPassGo': instance.transportPassGo,
       'allowDiceSelect': instance.allowDiceSelect,
       'allowPriceChanges': instance.allowPriceChanges,
+      'generateNames': instance.generateNames,
     };

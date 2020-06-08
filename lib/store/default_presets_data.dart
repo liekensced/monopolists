@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-buildTrain(int index) {
+buildTrain(int index, [Color color]) {
   return {
     "type": "trainstation",
     "color": null,
@@ -15,17 +15,17 @@ buildTrain(int index) {
     "mortaged": false,
     "description": null,
     "transportationPrice": 200,
-    "backgroundColor": null
   };
 }
 
 Map<String, dynamic> presetsData = {
   "default.trainstations": {
+    "preset": "default.trainstations",
     "running": false,
     "players": [
       {
         "name": "Player 1",
-        "money": 1500,
+        "money": 1000,
         "position": 0,
         "color": 4294198070,
         "properties": [],
@@ -41,7 +41,7 @@ Map<String, dynamic> presetsData = {
       },
       {
         "name": "Ricardo",
-        "money": 1500,
+        "money": 1000,
         "position": 0,
         "color": Colors.cyan.value,
         "properties": [],
@@ -58,7 +58,7 @@ Map<String, dynamic> presetsData = {
       },
       {
         "name": "August",
-        "money": 1500,
+        "money": 1000,
         "position": 0,
         "color": Colors.blueGrey.value,
         "properties": [],
@@ -75,7 +75,7 @@ Map<String, dynamic> presetsData = {
       },
       {
         "name": "Daisy",
-        "money": 1500,
+        "money": 1000,
         "position": 0,
         "color": Colors.deepPurple.value,
         "properties": [],
@@ -111,14 +111,14 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": "This is the start tile of the game.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "land",
         "color": 4294951175,
         "idPrefix": "Y",
         "name": "Wallworth",
-        "price": 300,
+        "price": 350,
         "hyp": 130,
         "housePrice": 150,
         "rent": [22, 110, 330, 800, 975, 1150],
@@ -127,7 +127,7 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": "A big city. Known for it's oil lamps.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "tax",
@@ -143,14 +143,14 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": "You bring in a bounty +£100!",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "land",
         "color": 4294951175,
         "idPrefix": "Y",
         "name": "Delinosa",
-        "price": 300,
+        "price": 350,
         "hyp": 130,
         "housePrice": 150,
         "rent": [22, 110, 330, 800, 975, 1150],
@@ -160,16 +160,16 @@ Map<String, dynamic> presetsData = {
         "description":
             "A pretty large city. It had the first railway connection with Berbury.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
-      buildTrain(1),
-      buildTrain(2),
+      buildTrain(1, Colors.grey),
+      buildTrain(2, Colors.grey),
       {
         "type": "land",
         "color": 4294951175,
         "idPrefix": "Y",
         "name": "Hastter",
-        "price": 350,
+        "price": 380,
         "hyp": 140,
         "housePrice": 150,
         "rent": [24, 120, 360, 850, 1025, 1200],
@@ -179,7 +179,7 @@ Map<String, dynamic> presetsData = {
         "description":
             "The capital of the yellow street. Known for it's banking services.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "chance",
@@ -195,14 +195,14 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": null,
         "transportationPrice": 200,
-        "backgroundColor": 4294922834
+        "backgroundColor": 4294922834,
       },
       {
         "type": "land",
         "color": 4283215696,
         "idPrefix": "G",
         "name": "Greenworth",
-        "price": 350,
+        "price": 400,
         "hyp": 150,
         "housePrice": 200,
         "rent": [26, 130, 390, 900, 1100, 1275],
@@ -212,9 +212,9 @@ Map<String, dynamic> presetsData = {
         "description":
             "A big city with a giant central park. Known for its cotton industry",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
-      buildTrain(3),
+      buildTrain(3, Colors.grey),
       {
         "type": "police",
         "color": null,
@@ -229,14 +229,14 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": null,
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "land",
         "color": 4283215696,
         "idPrefix": "G",
         "name": "Tulman",
-        "price": 350,
+        "price": 400,
         "hyp": 150,
         "housePrice": 200,
         "rent": [26, 130, 390, 900, 1100, 1250],
@@ -245,7 +245,7 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": "A grey city known for it's metal industry.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "chest",
@@ -260,14 +260,14 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": null,
         "transportationPrice": 200,
-        "backgroundColor": 4279060385
+        "backgroundColor": 4279060385,
       },
       {
         "type": "land",
         "color": 4283215696,
         "idPrefix": "G",
         "name": "Berbury",
-        "price": 400,
+        "price": 450,
         "hyp": 160,
         "housePrice": 200,
         "rent": [28, 150, 450, 1000, 1200, 1400],
@@ -277,10 +277,10 @@ Map<String, dynamic> presetsData = {
         "description":
             "A pretty large city. It had the first railway connection with Delinosa.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
-      buildTrain(4),
-      buildTrain(5),
+      buildTrain(4, Colors.grey),
+      buildTrain(5, Colors.grey),
       {
         "type": "company",
         "color": Colors.black.value,
@@ -311,7 +311,7 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": null,
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "tax",
@@ -327,7 +327,7 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": "You've been robbed by a bandid.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "company",
@@ -344,7 +344,7 @@ Map<String, dynamic> presetsData = {
         "description":
             "Best water company in the world. You have to do the rent times the dice eyes.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "tax",
@@ -360,14 +360,14 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": null,
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "land",
         "color": Colors.brown.value,
         "idPrefix": "O",
         "name": "Twin Scar 1",
-        "price": 50,
+        "price": 100,
         "hyp": 90,
         "housePrice": 100,
         "rent": [10, 20, 35, 50, 60, 70, 100, 200, 550, 750, 950],
@@ -377,7 +377,7 @@ Map<String, dynamic> presetsData = {
         "description":
             "Twin scar is a rural outpost. It does have potential given enough funding.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "chance",
@@ -393,15 +393,15 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": null,
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "land",
         "color": Colors.brown.value,
         "idPrefix": "O",
         "name": "Twin Scar 2",
-        "price": 50,
-        "hyp": 100,
+        "price": 100,
+        "hyp": 90,
         "housePrice": 100,
         "rent": [10, 20, 35, 50, 60, 70, 100, 200, 550, 750, 950],
         "level": 0,
@@ -410,7 +410,7 @@ Map<String, dynamic> presetsData = {
         "description":
             "Twin scar is a rural town full of coal miners. It does have potential given enough funding.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "company",
@@ -428,7 +428,7 @@ Map<String, dynamic> presetsData = {
         "description": null,
         "transportationPrice": 200,
       },
-      buildTrain(6),
+      buildTrain(6, Colors.yellow[700]),
       {
         "type": "company",
         "color": Colors.black.value,
@@ -458,7 +458,7 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": null,
         "transportationPrice": 200,
-        "backgroundColor": 4279060385
+        "backgroundColor": 4279060385,
       },
       {
         "type": "company",
@@ -475,7 +475,7 @@ Map<String, dynamic> presetsData = {
         "description":
             "Epic water company in the world. You have to do the rent times the dice eyes.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "jail",
@@ -491,7 +491,7 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": "You are having a stare battle with the sheriff.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "chest",
@@ -506,7 +506,7 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": null,
         "transportationPrice": 200,
-        "backgroundColor": 4279060385
+        "backgroundColor": 4279060385,
       },
       {
         "type": "tax",
@@ -538,7 +538,7 @@ Map<String, dynamic> presetsData = {
         "description":
             "Crow's Ville is a rural town next to a canyon. It does have potential given enough funding.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "parking",
@@ -554,7 +554,7 @@ Map<String, dynamic> presetsData = {
         "mortaged": false,
         "description": null,
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       },
       {
         "type": "land",
@@ -571,7 +571,7 @@ Map<String, dynamic> presetsData = {
         "description":
             "Crow's Ville is a rural town next to a canyon. It does have potential given enough funding.",
         "transportationPrice": 200,
-        "backgroundColor": null
+        "backgroundColor": null,
       }
     ],
     "settings": {
@@ -581,15 +581,16 @@ Map<String, dynamic> presetsData = {
       "maxTurnes": 99999,
       "mustAuction": false,
       "startingMoney": 1500,
-      "hackerScreen": true,
+      "hackerScreen": false,
       "interest": 10,
       "dtlPrice": 1500,
       "startProperties": 0,
-      "transportPassGo": true,
+      "transportPassGo": false,
       "allowDiceSelect": false,
-      "allowPriceChanges": false
+      "allowPriceChanges": false,
+      "generateNames": false,
     },
-    "extensions": [],
+    "extensions": ["transportation"],
     "ui": {"screenState": "idle", "showDealScreen": false, "shouldMove": true},
     "rentPayed": false,
     "findingsIndex": 1,
@@ -605,7 +606,7 @@ Map<String, dynamic> presetsData = {
       "valid": [true, true],
       "playerChecked": false,
       "dealerChecked": false,
-      "dealer": null
+      "dealer": null,
     },
     "bankData": null,
     "version": "0.4.2",

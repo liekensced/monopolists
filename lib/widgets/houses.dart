@@ -17,7 +17,8 @@ class Houses extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       shrinkWrap: true,
       itemBuilder: (BuildContext context, int i) {
-        if (i > amount) {
+        if (i < hotels) {
+          print(amount);
           return Center(
             child: FaIcon(
               FontAwesomeIcons.hotel,

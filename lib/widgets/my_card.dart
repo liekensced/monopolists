@@ -19,6 +19,7 @@ class MyCard extends StatefulWidget {
   final bool shrinkwrap;
   final double elevation;
   final Color shadowColor;
+  final bool center;
   const MyCard({
     Key key,
     this.title,
@@ -35,6 +36,7 @@ class MyCard extends StatefulWidget {
     this.shrinkwrap: false,
     this.shadowColor,
     this.elevation,
+    this.center: true,
   }) : super(key: key);
 
   @override
@@ -61,35 +63,45 @@ class _MyCardState extends State<MyCard> with SingleTickerProviderStateMixin {
             BoxConstraints(maxWidth: widget.maxWidth ?? UIBloc.maxWidth),
         child: EagerInkWell(
           onTap: widget.onTap,
-          child: Card(
-              shadowColor: widget.shadowColor,
-              elevation: widget.elevation,
-              clipBehavior: Clip.hardEdge,
-              color: widget.color,
-              child: Container(
-                child: Column(
-                  mainAxisSize:
-                      widget.shrinkwrap ? MainAxisSize.min : MainAxisSize.max,
-                  children: <Widget>[
-                    widget.title == null
-                        ? Container()
-                        : Container(
-                            key: Key("title key"),
-                            padding: const EdgeInsets.all(8),
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              widget.title,
-                              style: !(widget.smallTitle ??
-                                      (widget.title.length > 10))
-                                  ? Theme.of(context).textTheme.headline3
-                                  : Theme.of(context).textTheme.headline4,
-                              textAlign: TextAlign.start,
-                            ),
-                          ),
-                    animatedSizeWrapper(),
-                  ],
-                ),
-              )),
+          child: widget.center
+              ? Center(
+                  child: buildCard(),
+                )
+              : buildCard(),
+        ));
+  }
+
+  Card buildCard() {
+    return Card(
+        shadowColor: widget.shadowColor,
+        elevation: widget.elevation,
+        clipBehavior: Clip.hardEdge,
+        color: widget.color,
+        child: Container(
+          constraints:
+              BoxConstraints(maxWidth: widget.maxWidth ?? UIBloc.maxWidth),
+          child: Column(
+            mainAxisSize:
+                widget.shrinkwrap ? MainAxisSize.min : MainAxisSize.max,
+            children: <Widget>[
+              widget.title == null
+                  ? Container()
+                  : Container(
+                      key: Key("title key"),
+                      padding: const EdgeInsets.all(8),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.title,
+                        style:
+                            !(widget.smallTitle ?? (widget.title.length > 10))
+                                ? Theme.of(context).textTheme.headline3
+                                : Theme.of(context).textTheme.headline4,
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+              animatedSizeWrapper(),
+            ],
+          ),
         ));
   }
 

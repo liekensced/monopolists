@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:plutopoly/engine/kernel/main.dart';
 
 import '../data/extensions.dart';
 import '../data/tip.dart';
-import '../kernel/main.dart';
 import '../ui/alert.dart';
 import 'setting.dart';
 

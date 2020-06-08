@@ -65,11 +65,15 @@ class PropertyPage extends StatelessWidget {
       title: "Rent",
       children: [
         Center(
-          child: Text("House Price: ${property.housePrice}"),
+          child: property.housePrice == null
+              ? Container()
+              : Text("House Price: ${property.housePrice}"),
         ),
         for (int rent in property.rent)
           ListTile(
-            title: Text(rent.toString()),
+            title: Text(property.type == TileType.company
+                ? "x $rent"
+                : rent.toString()),
           )
       ],
     );

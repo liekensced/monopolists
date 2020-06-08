@@ -4,6 +4,7 @@ import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/extensions/transportation.dart';
 
 import '../../bloc/main_bloc.dart';
+import '../../places.dart';
 import '../ai/ai_type.dart';
 import '../ai/normal/normal_ai.dart';
 import '../data/actions.dart';
@@ -30,6 +31,20 @@ class Game {
   static UIActionsData get ui => Game.data.ui;
 
   static bool testing = false;
+  static generateNames() {
+    List<int> used = [];
+    Game.data.gmap.forEach((Tile property) {
+      if (property.type != TileType.land) return;
+      int i = Random().nextInt(MAP_NAMES.length ~/ 2) * 2;
+      while (used.contains(i)) {
+        i = Random().nextInt(MAP_NAMES.length ~/ 2) * 2;
+      }
+      used.add(i);
+      property.name = MAP_NAMES[i];
+      property.description = MAP_NAMES[i + 1];
+    });
+  }
+
   static save({
     force: false,
     List<String> only,
@@ -161,6 +176,12 @@ class Game {
       }
     } catch (e) {
       UIBloc.alerts.add(Alert("Start properties failed", "$e"));
+    }
+
+    try {
+      if (data.settings.generateNames ?? false) Game.generateNames();
+    } catch (e) {
+      UIBloc.alerts.add(Alert("Couldn't generate names", "$e"));
     }
 
     data.findingsIndex = Random().nextInt(findings.length);
@@ -332,8 +353,10 @@ class Game {
     int _goBonus = Game.data.settings.goBonus;
     data.player.money += _goBonus;
 
-    addInfo(UpdateInfo(
-        title: "Received go bonus", trailing: "£$_goBonus", show: true));
+    addInfo(
+        UpdateInfo(
+            title: "Received go bonus", trailing: "£$_goBonus", show: true),
+        Game.data.currentPlayer);
     Game.save(local: true);
 
     BankExtension.onPassGo();

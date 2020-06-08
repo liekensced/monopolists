@@ -38,6 +38,9 @@ class Settings {
   @JsonKey(defaultValue: false)
   @HiveField(12)
   bool allowPriceChanges = false;
+  @JsonKey(defaultValue: true)
+  @HiveField(13)
+  bool generateNames = true;
 
   Settings();
 

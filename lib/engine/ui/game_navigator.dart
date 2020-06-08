@@ -4,6 +4,8 @@ import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/screens/game/win_screen.dart';
 import 'package:plutopoly/screens/no_data_screen.dart';
+import 'package:plutopoly/store/default_presets.dart';
+import 'package:plutopoly/store/preset.dart';
 
 import '../../screens/game/action_screen/action_screen.dart';
 import '../../screens/start/info_screen.dart';
@@ -18,6 +20,22 @@ class GameNavigator {
         return NoDataScreen();
       }));
       return;
+    }
+    try {
+      if (loadGame && Game.data.preset != null && Game.data.preset != "") {
+        Preset preset = PresetHelper.findPreset(Game.data.preset);
+        if (preset != null) {
+          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+              statusBarColor: Color(preset.primaryColor) ??
+                  Theme.of(context).primaryColor));
+          MainBloc.prefbox.put("primaryColor",
+              preset.primaryColor ?? Theme.of(context).primaryColor.value);
+          MainBloc.prefbox.put("accentColor",
+              preset.accentColor ?? Theme.of(context).accentColor.value);
+        }
+      }
+    } catch (e) {
+      print("Failed to parse preset");
     }
 
     if (Game.data.running == null &&

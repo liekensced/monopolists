@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/widgets/share_tile.dart';
-
+import 'package:hive_flutter/hive_flutter.dart';
 import '../../../bloc/main_bloc.dart';
 import '../../../bloc/ui_bloc.dart';
 import '../../../engine/kernel/main.dart';
@@ -104,6 +104,79 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                             ),
                           )
                         : Container(),
+                    InkWell(
+                      onTap: () {
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return ValueListenableBuilder(
+                                valueListenable: MainBloc.prefbox.listenable(),
+                                builder: (context, box, __) => BottomSheet(
+                                  builder: (context) {
+                                    bool track = box.get("boolTrack",
+                                        defaultValue: true);
+                                    bool showSnackbar = box.get(
+                                        "boolShowSnackbar",
+                                        defaultValue: true);
+                                    bool rememberScroll = box.get(
+                                        "boolRememberScroll",
+                                        defaultValue: true);
+                                    return Column(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(8),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            "Visual settings",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline5,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                        ListTile(
+                                          onTap: () {
+                                            box.put("boolShowSnackbar",
+                                                !showSnackbar);
+                                          },
+                                          trailing: showSnackbar
+                                              ? Icon(Icons.check)
+                                              : Container(width: 0),
+                                          title: Text("Show snackbars"),
+                                        ),
+                                        ListTile(
+                                          onTap: () {
+                                            box.put("boolTrack", !track);
+                                          },
+                                          title: Text("Track other players"),
+                                          trailing: track
+                                              ? Icon(Icons.check)
+                                              : Container(width: 0),
+                                        ),
+                                        ListTile(
+                                          onTap: () {
+                                            box.put("boolRememberScroll",
+                                                !rememberScroll);
+                                          },
+                                          trailing: rememberScroll
+                                              ? Icon(Icons.check)
+                                              : Container(width: 0),
+                                          title:
+                                              Text("Remember scroll position"),
+                                        )
+                                      ],
+                                    );
+                                  },
+                                  onClosing: () {},
+                                ),
+                              );
+                            });
+                      },
+                      child: ListTile(
+                        leading: Icon(Icons.assistant),
+                        title: Text("Visual settings"),
+                      ),
+                    ),
                     settings,
                     MainBloc.online
                         ? InkWell(

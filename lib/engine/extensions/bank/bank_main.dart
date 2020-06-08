@@ -55,7 +55,8 @@ class BankMain {
     if (!enabled) return;
     double rent = Game.data.player.money * Game.data.settings.interest / 100;
     Game.data.player.money += rent;
-    Game.addInfo(UpdateInfo(title: "You received rent! +£${rent.floor()}"));
+    Game.addInfo(UpdateInfo(title: "You received rent! +£${rent.floor()}"),
+        Game.data.currentPlayer);
   }
 
   static Alert payLoan(Contract loan) {

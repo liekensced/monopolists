@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/store/default_presets.dart';
+import 'package:plutopoly/store/preset.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/data/extensions.dart';
@@ -32,7 +34,7 @@ class InfoScreen extends StatelessWidget {
         title: Text("You must auction a property if you don't buy it"),
       ));
     }
-    if (settings.startProperties != Null) {
+    if (settings.startProperties != Null && settings.startProperties != 0) {
       prefs.add(ListTile(
         leading: Icon(Icons.info),
         title: Text("You get ${settings.startProperties} start properties."),
@@ -85,6 +87,13 @@ class InfoScreen extends StatelessWidget {
         ),
       ),
     ]));
+    Preset preset = PresetHelper.findPreset(Game.data.preset);
+    if (preset != null && (preset.infoCards?.isNotEmpty ?? false)) {
+      infoWidgets.add(IconDivider(icon: Icon(Icons.map)));
+      preset.infoCards.forEach((info) {
+        infoWidgets.add(GeneralInfoCard(info: info));
+      });
+    }
 
     extensions.forEach((ext) {
       ExtensionData extensionData = ExtensionsMap.call()[ext];
@@ -149,7 +158,7 @@ class GeneralInfoCard extends StatelessWidget {
                   width: 20,
                 ),
                 Text(
-                  info.title,
+                  info.title ?? "",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ],

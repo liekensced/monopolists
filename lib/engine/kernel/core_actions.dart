@@ -78,16 +78,29 @@ class CoreActions {
         break;
       case PayType.pot:
         data.rentPayed = true;
-        data.pot += amount;
-        if (message != null) {
-          Game.addInfo(
-            UpdateInfo(
-                title: message,
-                trailing: "£$amount",
-                show: true,
-                color: Colors.red.value),
-            receiver,
-          );
+        if (amount > 0) {
+          data.pot += amount ?? 0;
+          if (message != null) {
+            Game.addInfo(
+              UpdateInfo(
+                  title: message,
+                  trailing: "-£$amount",
+                  show: true,
+                  color: Colors.red.value),
+              receiver,
+            );
+          }
+        } else {
+          if (message != null) {
+            Game.addInfo(
+              UpdateInfo(
+                  title: "You received!",
+                  trailing: "+£${-amount}",
+                  show: true,
+                  color: Colors.green.value),
+              receiver,
+            );
+          }
         }
         break;
       default:
@@ -140,6 +153,13 @@ class CoreActions {
     } on Alert catch (e) {
       return e;
     }
+    Game.addInfo(
+        UpdateInfo(
+          subtitle: "Payed rent to ${tile.owner.name}",
+          show: true,
+          color: Colors.red.value,
+        ),
+        Game.data.currentPlayer);
     return null;
   }
 

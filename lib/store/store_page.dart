@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:plutopoly/screens/start/extensions_card.dart';
 import 'package:plutopoly/screens/store/store_list.dart';
 
 class StorePage extends StatelessWidget {
@@ -17,10 +16,6 @@ class StorePage extends StatelessWidget {
           ),
         ),
         StoreList(),
-        Container(height: 10),
-        ExtensionsCard(
-          info: true,
-        )
       ],
     );
   }
