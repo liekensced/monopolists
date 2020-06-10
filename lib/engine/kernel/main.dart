@@ -77,7 +77,14 @@ class Game {
   //launching
   static newGame([GameData preset]) {
     data = MainBloc.newGame(preset);
-
+    if (!MainBloc.online) {
+      Player account = MainBloc.player;
+      setup.addPlayer(
+        name: account.name,
+        color: account.color,
+        code: account.code,
+      );
+    }
     loadGame(data);
   }
 

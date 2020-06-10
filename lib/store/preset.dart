@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:plutopoly/bloc/main_bloc.dart';
 
 import 'package:plutopoly/engine/data/main_data.dart';
 import 'package:plutopoly/engine/data/tip.dart';
@@ -29,13 +30,47 @@ class Preset extends HiveObject {
   int primaryColor;
   @HiveField(8)
   int accentColor;
+  @HiveField(9)
+  String template;
+
+  @JsonKey(ignore: true)
+  String place = "";
+
+  Preset.classic() {
+    projectName = "classic";
+    title = "classic";
+    description = "classic";
+    author = "filorux";
+    version = "1.0.0";
+  }
 
   GameData get data {
-    if (dataCache != null) return dataCache;
+    return search(projectName) ?? search(template);
+  }
 
-    if (presetsData.containsKey(projectName)) {
-      return GameData.fromJson(presetsData[projectName]);
+  GameData search(String searchName) {
+    if (dataCache != null) {
+      if (place == "" || place == null) {
+        place = "cache";
+      }
+      return dataCache;
     }
+    if (searchName == "classic" || searchName == "default") {
+      place = "default";
+      dataCache = GameData();
+      return dataCache;
+    }
+    if (presetsData.containsKey(searchName)) {
+      place = "default";
+      dataCache = GameData.fromJson(presetsData[searchName]);
+      return dataCache;
+    }
+    if (Hive.box(MainBloc.PRESETGAMESBOX).containsKey(searchName)) {
+      place = "local";
+      dataCache = Hive.box(MainBloc.PRESETGAMESBOX).get(searchName);
+      return dataCache;
+    }
+    print("===\nCouldn't find data\n===");
     return null;
   }
 
@@ -45,6 +80,7 @@ class Preset extends HiveObject {
     this.description,
     this.author,
     this.version,
+    this.template,
     this.dataCache,
   });
 

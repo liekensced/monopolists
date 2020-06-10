@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/bloc/game_listener.dart';
 import 'package:plutopoly/store/default_presets.dart';
 import 'package:plutopoly/store/preset.dart';
 
@@ -16,6 +17,15 @@ import '../../widgets/my_card.dart';
 import 'players.dart';
 
 class InfoScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GameListener(
+      builder: (context, _, __) => InfoScreenChild(),
+    );
+  }
+}
+
+class InfoScreenChild extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> infoWidgets = <Widget>[];
@@ -203,7 +213,7 @@ class GeneralInfoCard extends StatelessWidget {
           ),
         ],
       );
-    return Text(info.content,
+    return Text(info.content ?? "content",
         style: TextStyle(fontSize: 16), textAlign: TextAlign.center);
   }
 

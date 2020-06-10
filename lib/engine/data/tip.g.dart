@@ -8,7 +8,7 @@ part of 'tip.dart';
 
 class InfoTypeAdapter extends TypeAdapter<InfoType> {
   @override
-  final typeId = 18;
+  final typeId = 19;
 
   @override
   InfoType read(BinaryReader reader) {

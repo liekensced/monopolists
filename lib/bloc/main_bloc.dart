@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:plutopoly/bloc/preset_bloc.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
 
@@ -20,7 +21,7 @@ import 'recent_bloc.dart';
 import 'ui_bloc.dart';
 
 class MainBloc {
-  static const version = "0.5.0";
+  static const version = "0.5.2";
   static const List<int> supported = [4];
   static const website = "https://filorux.web.app/Plutopoly.html";
   static List<int> get versionCode =>
@@ -36,7 +37,9 @@ class MainBloc {
   static const RECENTBOX = _boxVersion + "recentBox";
   static const MOVEBOX = _boxVersion + "moveBox";
   static const PRESETSBOX = _boxVersion + "presetsBox";
+  static const PRESETGAMESBOX = _boxVersion + "presetGamesBox";
 
+  static bool studio = false;
   static bool initialized = false;
   static int currentGame = 0;
   static bool online = false;
@@ -212,6 +215,8 @@ class MainBloc {
   static cancelOnline() async {
     online = false;
     gameId = null;
+    studio = false;
+    PresetBloc.preset = null;
     if (listener != null) await listener.cancel();
     Hive.box(METABOX).put("boolOnline", false);
     print("===CANCELED===");
@@ -322,7 +327,8 @@ class MainBloc {
     if (!online && !Game.testing) {
       Hive.box(METABOX).put("intTotalGames", getGameNumber + 1);
       newGameData.settings.name = "Game $getGameNumber";
-
+      newGameData.players.insert(0, UIBloc.gamePlayer);
+      Game.setup.addPlayer();
       Hive.box(GAMESBOX).add(newGameData);
 
       Hive.box(METABOX).put("intCurrentGame", getGameNumber);

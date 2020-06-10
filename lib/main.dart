@@ -41,6 +41,8 @@ class MyApp extends StatelessWidget {
                       Hive.openBox(MainBloc.ACCOUNTBOX),
                       Hive.openBox(MainBloc.RECENTBOX),
                       Hive.openBox(MainBloc.MOVEBOX),
+                      Hive.openBox(MainBloc.PRESETSBOX),
+                      Hive.openBox(MainBloc.PRESETGAMESBOX),
                     ]),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {

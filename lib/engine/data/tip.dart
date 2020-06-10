@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'tip.g.dart';
 
-@HiveType(typeId: 18)
+@HiveType(typeId: 19)
 enum InfoType {
   @HiveField(0)
   rule,

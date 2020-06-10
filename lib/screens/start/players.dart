@@ -15,9 +15,11 @@ import '../../engine/kernel/../ui/alert.dart';
 import '../../engine/kernel/main.dart';
 
 class PlayersCard extends StatefulWidget {
+  final bool studio;
   final bool red;
   final bool showBots;
-  const PlayersCard({Key key, this.red: false, this.showBots: true})
+  const PlayersCard(
+      {Key key, this.red: false, this.showBots: true, this.studio: false})
       : super(key: key);
 
   @override
@@ -73,67 +75,62 @@ class _PlayersCardState extends State<PlayersCard>
                       subtitle: player.ai.type == AIType.normal
                           ? Text("Normal BOT")
                           : Text("Normal player"),
-                      trailing: index == 0
-                          ? Container(
-                              width: 0,
-                            )
-                          : IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {
-                                if (MainBloc.online) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                          title: Text("Delete Player"),
-                                          content: Text(
-                                              "Are you sure you want to delete this player?"),
-                                          actions: [
-                                            MaterialButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text(
-                                                  "cancel",
-                                                  style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .primaryColor),
-                                                )),
-                                            MaterialButton(
-                                                onPressed: () {
-                                                  if (Game.data.running ==
-                                                      true) {
-                                                    Game.setup
-                                                        .defaultPlayer(player);
-                                                  } else {
-                                                    Game.setup
-                                                        .deletePlayer(player);
-                                                  }
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text(
-                                                  "kick",
-                                                  style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .primaryColor),
-                                                ))
-                                          ]);
-                                    },
-                                  );
-                                } else {
-                                  if (Game.data.running == true) {
-                                    Game.setup.defaultPlayer(player);
-                                  } else {
-                                    Game.setup.deletePlayer(player);
-                                  }
-                                  setState(() {});
-                                }
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          if (MainBloc.online) {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                    title: Text("Delete Player"),
+                                    content: Text(
+                                        "Are you sure you want to delete this player?"),
+                                    actions: [
+                                      MaterialButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            "cancel",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .primaryColor),
+                                          )),
+                                      MaterialButton(
+                                          onPressed: () {
+                                            if (Game.data.running == true) {
+                                              Game.setup.defaultPlayer(player);
+                                            } else {
+                                              Game.setup.deletePlayer(player);
+                                            }
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            "kick",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .primaryColor),
+                                          ))
+                                    ]);
                               },
-                            ));
+                            );
+                          } else {
+                            if (Game.data.running == true) {
+                              Game.setup.defaultPlayer(player);
+                            } else {
+                              Game.setup.deletePlayer(player);
+                            }
+                            setState(() {});
+                          }
+                        },
+                      ));
                 },
               ),
         widget.showBots ? AddBotButton() : Container(),
-        AddPlayerButton()
+        AddPlayerButton(
+          studio: widget.studio,
+        )
       ],
     );
   }
@@ -154,11 +151,9 @@ class AddBotButton extends StatelessWidget {
             "Add bot",
             textAlign: TextAlign.center,
           ),
-          onPressed: Game.data.players.isEmpty
-              ? null
-              : () {
-                  Alert.handle(Game.setup.addBot, context);
-                },
+          onPressed: () {
+            Alert.handle(Game.setup.addBot, context);
+          },
         ),
       ),
     );
@@ -166,8 +161,10 @@ class AddBotButton extends StatelessWidget {
 }
 
 class AddPlayerButton extends StatelessWidget {
+  final bool studio;
   const AddPlayerButton({
     Key key,
+    this.studio: false,
   }) : super(key: key);
 
   @override
@@ -176,25 +173,32 @@ class AddPlayerButton extends StatelessWidget {
       return ShareTile();
     }
 
-    return Padding(
-      padding: EdgeInsets.all(20).copyWith(top: 10),
-      child: RaisedButton(
-        textColor: Colors.white,
-        color: Theme.of(context).primaryColor,
-        child: Container(
-            width: double.maxFinite,
-            child: Text(
-              "Add player",
-              textAlign: TextAlign.center,
-            )),
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AddPlayerDialog();
-            },
-          );
-        },
+    return Tooltip(
+      message: studio
+          ? "You can't add real players in studio mode."
+          : "Add real players.",
+      child: Padding(
+        padding: EdgeInsets.all(20).copyWith(top: 10),
+        child: RaisedButton(
+          textColor: Colors.white,
+          color: Theme.of(context).primaryColor,
+          child: Container(
+              width: double.maxFinite,
+              child: Text(
+                "Add player",
+                textAlign: TextAlign.center,
+              )),
+          onPressed: studio
+              ? null
+              : () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AddPlayerDialog();
+                    },
+                  );
+                },
+        ),
       ),
     );
   }

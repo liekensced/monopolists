@@ -10,22 +10,24 @@ class Setting<T> {
     @required this.title,
     @required this.onChanged,
     @required this.value,
-    this.subtitle = "",
+    this.subtitle,
     this.showLead: false,
   });
 }
 
 class ValueSetting<T> {
   String title;
-  String subtitle = "";
+  String subtitle;
   T value;
   bool showLead = false;
   Function(T) onChanged;
+  bool allowNull = false;
   ValueSetting({
     @required this.title,
     @required this.value,
     this.onChanged,
-    this.subtitle = "",
+    this.subtitle,
+    this.allowNull: false,
     this.showLead: false,
   });
 }

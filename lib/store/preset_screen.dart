@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:plutopoly/engine/data/main_data.dart';
+import 'package:plutopoly/screens/extension_screen.dart';
 import 'package:plutopoly/screens/games_card.dart';
 import 'package:plutopoly/screens/home/start_online.dart';
+import 'package:plutopoly/widgets/my_card.dart';
 
 import '../bloc/main_bloc.dart';
 import '../bloc/ui_bloc.dart';
@@ -25,9 +28,11 @@ class PresetScreen extends StatefulWidget {
 
 class _PresetScreenState extends State<PresetScreen> {
   bool showSettings = false;
+  GameData gameData;
   @override
   void initState() {
-    showSettings = widget.preset.data.running == null;
+    gameData = widget.preset.data;
+    showSettings = gameData.running == null;
     super.initState();
   }
 
@@ -110,8 +115,8 @@ class _PresetScreenState extends State<PresetScreen> {
                       )),
                   onPressed: () async {
                     MainBloc.cancelOnline();
-                    Game.newGame(await widget.preset.data
-                      ..running = showSettings ? null : false);
+                    Game.newGame(
+                        gameData..running = showSettings ? null : false);
 
                     GameNavigator.navigate(context, loadGame: true);
                   },
@@ -125,11 +130,40 @@ class _PresetScreenState extends State<PresetScreen> {
                     GeneralInfoCard(info: info)
                 ],
               ),
+              ExtensionsList(
+                extensions: gameData.extensions,
+              ),
+              PresetInfoCard(
+                preset: widget.preset,
+              ),
               EndOfList()
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class PresetInfoCard extends StatelessWidget {
+  final Preset preset;
+
+  const PresetInfoCard({Key key, @required this.preset}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return MyCard(
+      title: "info",
+      smallTitle: true,
+      children: [
+        ListTile(
+          title: Text("Author"),
+          subtitle: Text(preset.author),
+        ),
+        ListTile(
+          title: Text("Version"),
+          subtitle: Text(preset.version),
+        ),
+      ],
     );
   }
 }

@@ -109,28 +109,8 @@ class ExtensionScreen extends StatelessWidget {
   }
 
   Widget buildDependencies(ExtensionData extensionData, BuildContext context) {
-    List<Widget> children = [];
-    extensionData.dependencies.forEach((key) {
-      children.add(ExtensionInfoTile(
-        extensionName: key,
-        ext: ExtensionsMap.call()[key],
-      ));
-      children.add(Divider());
-    });
-    if (children.isEmpty) {
-      children.add(
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16.0, top: 8.0),
-          child: Text("No dependencies"),
-        ),
-      );
-    } else {
-      children.removeLast();
-    }
-    return MyCard(
-      title: "Requires:",
-      smallTitle: true,
-      children: children,
+    return ExtensionsList(
+      extensions: extensionData.dependencies,
     );
   }
 
@@ -186,6 +166,39 @@ class ExtensionInfoTile extends StatelessWidget {
       openBuilder: (BuildContext context, void Function() action) {
         return ExtensionScreen(ext: key);
       },
+    );
+  }
+}
+
+class ExtensionsList extends StatelessWidget {
+  final List<Extension> extensions;
+
+  const ExtensionsList({Key key, this.extensions}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> children = [];
+    extensions.forEach((key) {
+      children.add(ExtensionInfoTile(
+        extensionName: key,
+        ext: ExtensionsMap.call()[key],
+      ));
+      children.add(Divider());
+    });
+    if (children.isEmpty) {
+      children.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0, top: 8.0),
+          child: Text("No dependencies"),
+        ),
+      );
+    } else {
+      children.removeLast();
+    }
+    return MyCard(
+      title: "Requires:",
+      smallTitle: true,
+      children: children,
     );
   }
 }

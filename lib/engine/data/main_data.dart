@@ -76,6 +76,7 @@ class GameData extends HiveObject {
         return players[index];
       }
     }
+    if (players.isEmpty) return Player();
 
     return players.first;
   }
@@ -85,6 +86,7 @@ class GameData extends HiveObject {
   }
 
   Player get player {
+    if (players.isEmpty) return Player(money: double.infinity);
     if (currentPlayer >= players.length) return players.first;
     if (currentPlayer < 0) {
       currentPlayer = players.last.index;

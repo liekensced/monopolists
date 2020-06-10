@@ -16,13 +16,16 @@ class GameListener extends StatelessWidget {
         return builder(context, null, null);
       }
       return ValueListenableBuilder(
-        valueListenable: Hive.box(MainBloc.GAMESBOX).listenable(),
-        builder: (___, _, __) {
-          return ValueListenableBuilder(
-            valueListenable: Hive.box(MainBloc.UPDATEBOX).listenable(),
-            builder: builder,
-          );
-        },
+        valueListenable: Hive.box(MainBloc.PRESETGAMESBOX).listenable(),
+        builder: (___, __, _) => ValueListenableBuilder(
+          valueListenable: Hive.box(MainBloc.GAMESBOX).listenable(),
+          builder: (___, _, __) {
+            return ValueListenableBuilder(
+              valueListenable: Hive.box(MainBloc.UPDATEBOX).listenable(),
+              builder: builder,
+            );
+          },
+        ),
       );
     } catch (e) {
       print("GameListener failed: $e");

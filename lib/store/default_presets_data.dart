@@ -24,22 +24,6 @@ Map<String, dynamic> presetsData = {
     "running": false,
     "players": [
       {
-        "name": "Player 1",
-        "money": 1000,
-        "position": 0,
-        "color": 4294198070,
-        "properties": [],
-        "jailed": false,
-        "jailTries": 0,
-        "goojCards": 0,
-        "info": [],
-        "code": -1,
-        "debt": 0,
-        "loans": [],
-        "stock": {},
-        "ai": {"type": "player"}
-      },
-      {
         "name": "Ricardo",
         "money": 1000,
         "position": 0,

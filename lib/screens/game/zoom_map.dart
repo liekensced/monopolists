@@ -15,8 +15,10 @@ import 'property_page.dart';
 
 class ZoomMap extends StatelessWidget {
   final PageController carrouselController;
+  final bool studio;
 
-  const ZoomMap({Key key, this.carrouselController}) : super(key: key);
+  const ZoomMap({Key key, this.carrouselController, this.studio: false})
+      : super(key: key);
   void changePos(int index) {
     if (carrouselController == null) return;
     if (carrouselController.hasClients) {

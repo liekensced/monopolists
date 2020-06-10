@@ -116,10 +116,11 @@ class Tile {
     }
     if (rent == null) return 0;
     if (level == 0) {
-      if (owner.hasAllUnmortaged(idPrefix)) _rentFactor *= 2;
+      if (owner?.hasAllUnmortaged(idPrefix) ?? false) _rentFactor *= 2;
     }
     if (level > rent.length) return 0;
-    return rent[owner.hasAllUnmortaged(idPrefix) ? level : 0] * _rentFactor;
+    return rent[(owner?.hasAllUnmortaged(idPrefix) ?? false) ? level : 0] *
+        _rentFactor;
   }
 
   int get mapIndex {

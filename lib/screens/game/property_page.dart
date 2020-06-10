@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:plutopoly/bloc/game_listener.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/engine/data/map.dart';
-import 'package:plutopoly/screens/carousel/map_carousel.dart';
-import 'package:plutopoly/screens/game/action_screen/property_card.dart';
-import 'package:plutopoly/widgets/end_of_list.dart';
-import 'package:plutopoly/widgets/my_card.dart';
+
+import '../../bloc/game_listener.dart';
+import '../../bloc/main_bloc.dart';
+import '../../bloc/ui_bloc.dart';
+import '../../engine/data/map.dart';
+import '../../engine/extensions/setting.dart';
+import '../../engine/kernel/main.dart';
+import '../../widgets/end_of_list.dart';
+import '../../widgets/my_card.dart';
+import '../../widgets/setting_tile.dart';
+import '../carousel/map_carousel.dart';
+import 'action_screen/property_card.dart';
 
 class PropertyPage extends StatelessWidget {
   final Tile property;
@@ -13,10 +18,11 @@ class PropertyPage extends StatelessWidget {
   const PropertyPage({Key key, @required this.property}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    bool studio = MainBloc.studio;
     if (!property.buyable) return Container();
     return Scaffold(
       appBar: AppBar(
-        title: Text(property.name),
+        title: Text(studio ? property.name + " (studio)" : property.name),
       ),
       body: GameListener(builder: (context, _, snapshot) {
         return ListView(
@@ -39,19 +45,75 @@ class PropertyPage extends StatelessWidget {
               title: "info",
               smallTitle: true,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(property.description ?? "no info"),
+                InkWell(
+                  onTap: studio
+                      ? () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              String value = "";
+                              return AlertDialog(
+                                  title: Text("Change description"),
+                                  content: TextField(
+                                      autofocus: true,
+                                      onChanged: (String val) {
+                                        value = val;
+                                      },
+                                      decoration: InputDecoration(
+                                          labelText: "tile description")),
+                                  actions: [
+                                    MaterialButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          "cancel",
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                        )),
+                                    MaterialButton(
+                                        onPressed: () {
+                                          property.description = value;
+
+                                          Navigator.pop(context);
+                                          Game.save();
+                                        },
+                                        child: Text(
+                                          "change",
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                        )),
+                                  ]);
+                            },
+                          );
+                        }
+                      : null,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(property.description ?? "no info"),
+                  ),
                 ),
               ],
             ),
             buildRentCard(),
-            property.owner == UIBloc.gamePlayer
+            studio
+                ? EditCard(
+                    property: property,
+                  )
+                : Container(),
+            property.owner == UIBloc.gamePlayer || studio
                 ? PropertyCard(
                     tile: property,
                     expanded: true,
                   )
                 : Container(),
+            Center(
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(studio ? "Tap on values to edit them" : ""),
+            )),
             EndOfList(),
           ],
         );
@@ -75,6 +137,68 @@ class PropertyPage extends StatelessWidget {
                 ? "x $rent"
                 : rent.toString()),
           )
+      ],
+    );
+  }
+}
+
+class EditCard extends StatelessWidget {
+  final Tile property;
+
+  const EditCard({Key key, @required this.property}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return MyCard(
+      title: "Edit settings",
+      children: [
+        ValueSettingTile(
+            setting: ValueSetting<String>(
+                title: "name",
+                value: property.name,
+                onChanged: (dynamic val) {
+                  property.name = val;
+                  Game.save();
+                })),
+        ValueSettingTile(
+            setting: ValueSetting<int>(
+                title: "Property price",
+                value: property.price,
+                onChanged: (dynamic val) {
+                  property.price = val;
+                  Game.save();
+                })),
+        ValueSettingTile(
+            setting: ValueSetting<int>(
+                title: "House price",
+                value: property.housePrice,
+                onChanged: (dynamic val) {
+                  property.housePrice = val;
+                  Game.save();
+                })),
+        ValueSettingTile(
+            setting: ValueSetting<String>(
+                title: "Description",
+                value: property.description,
+                onChanged: (dynamic val) {
+                  property.description = val;
+                  Game.save();
+                })),
+        ValueSettingTile(
+            setting: ValueSetting<int>(
+                title: "Mortage",
+                value: property.hyp,
+                onChanged: (dynamic val) {
+                  property.hyp = val;
+                  Game.save();
+                })),
+        ValueSettingTile(
+            setting: ValueSetting<Color>(
+                title: "Color",
+                value: Color(property.color),
+                onChanged: (dynamic val) {
+                  property.color = val.value;
+                  Game.save();
+                })),
       ],
     );
   }

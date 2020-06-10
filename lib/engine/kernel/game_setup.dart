@@ -25,8 +25,6 @@ class GameSetup {
   }
 
   Alert addBot() {
-    if (data.players.isEmpty)
-      return Alert("Failed to add bot", "Please start with a real player.");
     String name = "bot ${data.players.length}";
     while (true) {
       try {

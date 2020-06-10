@@ -22,6 +22,7 @@ class PresetAdapter extends TypeAdapter<Preset> {
       description: fields[1] as String,
       author: fields[2] as String,
       version: fields[4] as String,
+      template: fields[9] as String,
       dataCache: fields[5] as GameData,
     )
       ..infoCards = (fields[6] as List)?.cast<Info>()
@@ -32,7 +33,7 @@ class PresetAdapter extends TypeAdapter<Preset> {
   @override
   void write(BinaryWriter writer, Preset obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
@@ -50,7 +51,9 @@ class PresetAdapter extends TypeAdapter<Preset> {
       ..writeByte(7)
       ..write(obj.primaryColor)
       ..writeByte(8)
-      ..write(obj.accentColor);
+      ..write(obj.accentColor)
+      ..writeByte(9)
+      ..write(obj.template);
   }
 }
 
@@ -65,6 +68,7 @@ Preset _$PresetFromJson(Map json) {
     description: json['description'] as String,
     author: json['author'] as String,
     version: json['version'] as String,
+    template: json['template'] as String,
     dataCache: json['dataCache'] == null
         ? null
         : GameData.fromJson(json['dataCache'] as Map),
@@ -86,4 +90,5 @@ Map<String, dynamic> _$PresetToJson(Preset instance) => <String, dynamic>{
       'infoCards': instance.infoCards?.map((e) => e?.toJson())?.toList(),
       'primaryColor': instance.primaryColor,
       'accentColor': instance.accentColor,
+      'template': instance.template,
     };
