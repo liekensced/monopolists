@@ -124,6 +124,7 @@ class InfoScreenChild extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Game.launch();
+          Game.checkBot();
           GameNavigator.navigate(context);
         },
         child: FaIcon(

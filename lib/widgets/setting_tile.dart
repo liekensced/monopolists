@@ -62,6 +62,7 @@ class _SettingTileState extends State<SettingTile> {
                           value = val;
                         },
                         keyboardType: TextInputType.number,
+                        autofocus: true,
                         decoration: InputDecoration(
                             hintText: setting.value().toString())),
                     actions: [
@@ -158,6 +159,7 @@ class _ValueSettingTileState extends State<ValueSettingTile> {
                         onChanged: (String val) {
                           value = val;
                         },
+                        autofocus: true,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                             hintText: setting.value.toString())),
@@ -205,6 +207,7 @@ class _ValueSettingTileState extends State<ValueSettingTile> {
                         onChanged: (String val) {
                           value = val;
                         },
+                        autofocus: true,
                         decoration: InputDecoration(hintText: setting.value)),
                     actions: [
                       MaterialButton(

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 
 import 'package:plutopoly/engine/data/info.dart';
+import 'package:plutopoly/helpers/hero_info.dart';
 import 'package:plutopoly/screens/game/zoom_map.dart';
 import 'package:plutopoly/widgets/end_of_list.dart';
 import 'package:plutopoly/widgets/my_card.dart';
@@ -81,7 +82,9 @@ class _ActionScreenState extends State<ActionScreen> {
           MainBloc.prefbox.get("boolRememberScroll", defaultValue: true);
       if (idle && first && rememberScroll) {
         first = false;
-        controller.jumpTo(UIBloc.scrollOffset);
+        if (controller.hasClients) {
+          controller.jumpTo(UIBloc.scrollOffset);
+        }
       }
     });
 
@@ -286,7 +289,10 @@ class _ActionScreenState extends State<ActionScreen> {
                           builder: (context, _, __) => ValueListenableBuilder(
                                 valueListenable: MainBloc.metaBox.listenable(),
                                 builder: (BuildContext context, _, __) =>
-                                    ZoomMap(),
+                                    HeroInfo(
+                                  heroBaseTag: "actionScreen",
+                                  child: ZoomMap(),
+                                ),
                               )),
                       EndOfList(),
                     ],

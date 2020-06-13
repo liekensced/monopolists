@@ -1,15 +1,21 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:plutopoly/bloc/game_listener.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
-import 'package:plutopoly/bloc/preset_bloc.dart';
-import 'package:plutopoly/engine/data/tip.dart';
-import 'package:plutopoly/engine/extensions/setting.dart';
-import 'package:plutopoly/screens/start/info_screen.dart';
-import 'package:plutopoly/store/preset.dart';
-import 'package:plutopoly/widgets/my_card.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/engine/kernel/main.dart';
+import 'package:plutopoly/engine/ui/alert.dart';
+import 'package:plutopoly/helpers/file_helper.dart';
+import 'package:plutopoly/store/gmap_checker.dart';
+import 'package:plutopoly/widgets/end_of_list.dart';
+import '../bloc/game_listener.dart';
+import '../bloc/main_bloc.dart';
+import '../bloc/preset_bloc.dart';
+import '../engine/data/tip.dart';
+import '../engine/extensions/setting.dart';
+import '../screens/start/info_screen.dart';
+import 'preset.dart';
+import '../widgets/my_card.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:plutopoly/widgets/setting_tile.dart';
+import '../widgets/setting_tile.dart';
 
 class PresetSettings extends StatelessWidget {
   Preset get preset => PresetBloc.preset;
@@ -21,8 +27,46 @@ class PresetSettings extends StatelessWidget {
         appBar: AppBar(
           title: Text("Preset Settings"),
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Future.delayed(Duration.zero, () {
+              if (Alert.handle(
+                  () => GmapChecker.call(Game.data.gmap), context)) {
+                if (Alert.handle(() {
+                  FileHelper.savePreset(preset);
+                }, context)) {
+                  Navigator.pop(context);
+                  Alert.handle(
+                      () => Alert("Build preset", "Saved preset",
+                          type: DialogType.SUCCES),
+                      context);
+                }
+              }
+            });
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                    title: Text("Lauding"),
+                    content: Text("Building preset..."),
+                    actions: [
+                      MaterialButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            "close",
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor),
+                          ))
+                    ]);
+              },
+            );
+          },
+          child: FaIcon(FontAwesomeIcons.rocket, color: Colors.white),
+        ),
         body: ValueListenableBuilder(
-          valueListenable: Hive.box(MainBloc.PRESETSBOX).listenable(),
+          valueListenable: MainBloc.presetsBox.listenable(),
           builder: (context, _, __) => ListView(
             children: [
               MyCard(
@@ -128,7 +172,8 @@ class PresetSettings extends StatelessWidget {
                       )
                   ],
                 ),
-              )
+              ),
+              EndOfList()
             ],
           ),
         ));
@@ -247,6 +292,7 @@ class ThemeCard extends StatelessWidget {
             setting: ValueSetting<Color>(
           title: "Primary color",
           subtitle: "The primary color of the app",
+          allowNull: true,
           onChanged: (dynamic val) {
             PresetBloc.preset.primaryColor = val?.value;
             PresetBloc.preset.save();
@@ -257,6 +303,7 @@ class ThemeCard extends StatelessWidget {
         )),
         ValueSettingTile(
             setting: ValueSetting<Color>(
+          allowNull: true,
           title: "Accent color",
           subtitle: "The accent color of the app",
           onChanged: (dynamic val) {
@@ -265,7 +312,7 @@ class ThemeCard extends StatelessWidget {
           },
           value: PresetBloc.preset.accentColor == null
               ? null
-              : Color(PresetBloc.preset.primaryColor),
+              : Color(PresetBloc.preset.accentColor),
         )),
       ],
     );

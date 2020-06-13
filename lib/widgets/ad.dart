@@ -28,29 +28,32 @@ class _ADViewState extends State<ADView> {
     bool dark = UIBloc.darkMode;
     NativeTextStyle textStyle =
         NativeTextStyle(color: dark ? Colors.white : Colors.black);
-    return Container(
-      height: widget.large ? 350 : 100,
-      child: Card(
-        child: kIsWeb
-            ? buildJoke(context)
-            : NativeAdmob(
-                error: buildJoke(context),
-                adUnitID: AdBloc.nativeAdUID,
-                controller: _controller,
-                type: widget.large
-                    ? NativeAdmobType.full
-                    : NativeAdmobType.banner,
-                options: NativeAdmobOptions(
-                  showMediaContent: true,
-                  headlineTextStyle: textStyle,
-                  bodyTextStyle: textStyle,
-                  adLabelTextStyle: textStyle,
-                  advertiserTextStyle: textStyle,
-                  priceTextStyle: textStyle,
-                  storeTextStyle: textStyle,
-                  ratingColor: Colors.cyan,
+    return Center(
+      child: Container(
+        height: widget.large ? 350 : 100,
+        width: widget.large ? UIBloc.maxWidth * 1.2 : UIBloc.maxWidth,
+        child: Card(
+          child: kIsWeb
+              ? buildJoke(context)
+              : NativeAdmob(
+                  error: buildJoke(context),
+                  adUnitID: AdBloc.nativeAdUID,
+                  controller: _controller,
+                  type: widget.large
+                      ? NativeAdmobType.full
+                      : NativeAdmobType.banner,
+                  options: NativeAdmobOptions(
+                    showMediaContent: true,
+                    headlineTextStyle: textStyle,
+                    bodyTextStyle: textStyle,
+                    adLabelTextStyle: textStyle,
+                    advertiserTextStyle: textStyle,
+                    priceTextStyle: textStyle,
+                    storeTextStyle: textStyle,
+                    ratingColor: Colors.cyan,
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }

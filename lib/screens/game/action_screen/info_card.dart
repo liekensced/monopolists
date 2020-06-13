@@ -25,8 +25,10 @@ class InfoCard extends StatelessWidget {
           builder: (BuildContext context, _, __) {
             //check it exists
             int length = player.info.length;
-            List<UpdateInfo> info =
-                player.info.sublist(max(length - (short ? 5 : 10), 0));
+            List<UpdateInfo> info = player.info
+                .sublist(max(length - (short ? 5 : 10), 0))
+                .reversed
+                .toList();
 
             if (info.isEmpty)
               return Container(

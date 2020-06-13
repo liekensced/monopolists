@@ -20,12 +20,18 @@ class _StartPresetScreenState extends State<StartPresetScreen> {
   String template = "classic";
   String prefix;
   String suffix;
+  List<Preset> presets;
   TextEditingController textEditingController;
   @override
   void initState() {
     prefix = prefixs[Random().nextInt(prefixs.length)];
     DateTime now = DateTime.now();
     suffix = now.month.toString() + now.day.toString();
+    PresetHelper.localPresets.then((value) async {
+      setState(() {
+        presets = value;
+      });
+    });
     textEditingController = TextEditingController();
     super.initState();
   }
@@ -82,21 +88,23 @@ class _StartPresetScreenState extends State<StartPresetScreen> {
                 ),
                 ListTile(
                   title: Text("Select template"),
-                  trailing: DropdownButton(
-                      value: template,
-                      items: [
-                        DropdownMenuItem(
-                          child: Text("classic"),
-                          value: "classic",
-                        ),
-                        for (Preset preset in PresetHelper.presets)
-                          DropdownMenuItem(
-                            child: Text(preset.title),
-                            value: preset.projectName,
-                          )
-                      ],
-                      onChanged: (selectedPreset) =>
-                          setState(() => template = selectedPreset)),
+                  trailing: presets == null
+                      ? CircularProgressIndicator()
+                      : DropdownButton(
+                          value: template,
+                          items: [
+                            DropdownMenuItem(
+                              child: Text("classic"),
+                              value: "classic",
+                            ),
+                            for (Preset preset in presets)
+                              DropdownMenuItem(
+                                child: Text(preset.title),
+                                value: preset.projectName,
+                              )
+                          ],
+                          onChanged: (selectedPreset) =>
+                              setState(() => template = selectedPreset)),
                 ),
               ],
             ),

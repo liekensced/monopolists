@@ -5,7 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
+import 'package:plutopoly/engine/data/main_data.dart';
 import 'package:plutopoly/helpers/main_helper.dart';
+import 'package:plutopoly/store/preset.dart';
 
 import 'bloc/main_bloc.dart';
 import 'helpers/route_helper.dart';
@@ -41,8 +43,8 @@ class MyApp extends StatelessWidget {
                       Hive.openBox(MainBloc.ACCOUNTBOX),
                       Hive.openBox(MainBloc.RECENTBOX),
                       Hive.openBox(MainBloc.MOVEBOX),
-                      Hive.openBox(MainBloc.PRESETSBOX),
-                      Hive.openBox(MainBloc.PRESETGAMESBOX),
+                      Hive.openBox<Preset>(MainBloc.PRESETSBOX),
+                      Hive.openBox<GameData>(MainBloc.PRESETGAMESBOX),
                     ]),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {

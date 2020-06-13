@@ -19,10 +19,12 @@ class PropertyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool studio = MainBloc.studio;
-    if (!property.buyable) return Container();
+    String type = property.type.toString().split(".").last;
     return Scaffold(
       appBar: AppBar(
-        title: Text(studio ? property.name + " (studio)" : property.name),
+        title: Text(studio
+            ? (property.name ?? type) + " (studio)"
+            : (property.name ?? type)),
       ),
       body: GameListener(builder: (context, _, snapshot) {
         return ListView(
@@ -97,7 +99,7 @@ class PropertyPage extends StatelessWidget {
                 ),
               ],
             ),
-            buildRentCard(),
+            buildRentCard(studio, context),
             studio
                 ? EditCard(
                     property: property,
@@ -109,11 +111,64 @@ class PropertyPage extends StatelessWidget {
                     expanded: true,
                   )
                 : Container(),
+            MyCard(
+              show: studio,
+              title: "Preset values",
+              children: [
+                ValueSettingTile(
+                    setting: ValueSetting<bool>(
+                        allowNull: true,
+                        title: "Mortaged",
+                        value: property.mortaged,
+                        onChanged: (dynamic val) {
+                          property.mortaged = val;
+                          Game.save();
+                        })),
+                ValueSettingTile(
+                    setting: ValueSetting<int>(
+                        allowNull: true,
+                        title: "level",
+                        subtitle: "The amount of houses",
+                        value: property.level,
+                        onChanged: (dynamic val) {
+                          property.level = val;
+                          Game.save();
+                        })),
+                ValueSettingTile(
+                    setting: ValueSetting<int>(
+                        allowNull: true,
+                        title: "Transportation price",
+                        subtitle:
+                            "Amount other players have to pay to transport",
+                        value: property.transportationPrice,
+                        onChanged: (dynamic val) {
+                          property.transportationPrice = val;
+                          Game.save();
+                        })),
+              ],
+            ),
             Center(
                 child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(studio ? "Tap on values to edit them" : ""),
             )),
+            studio
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RaisedButton(
+                      color: Colors.red,
+                      child: Text(
+                        "Delete tile",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Game.data.gmap.remove(property);
+                        Game.save();
+                      },
+                    ),
+                  )
+                : Container(width: 0),
             EndOfList(),
           ],
         );
@@ -121,8 +176,96 @@ class PropertyPage extends StatelessWidget {
     );
   }
 
-  Widget buildRentCard() {
+  Widget buildRentCard(bool studio, context) {
     if (property.rent == null) return Container();
+    if (studio)
+      return MyCard(
+        animate: false,
+        title: "Rent (reordable)",
+        children: [
+          Container(
+            height: property.rent.length * 60.0,
+            child: ReorderableListView(
+              children: [
+                for (int rent in property.rent)
+                  ListTile(
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        property.rent.remove(rent);
+                        Game.save();
+                      },
+                    ),
+                    key: Key(rent.toString()),
+                    title: Text(property.type == TileType.company
+                        ? "x $rent"
+                        : rent.toString()),
+                  ),
+              ],
+              onReorder: (oldIndex, newIndex) {
+                int cache = property.rent[oldIndex];
+                property.rent.removeAt(oldIndex);
+                if (newIndex > oldIndex) newIndex--;
+                if (newIndex > Game.data.gmap.length - 1) {
+                  property.rent.add(cache);
+                } else {
+                  property.rent.insert(newIndex, cache);
+                }
+                Game.save();
+              },
+            ),
+          ),
+          FlatButton(
+            textColor: Theme.of(context).primaryColor,
+            child: Text("Add rent"),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  String value = "";
+                  return AlertDialog(
+                      title: Text("Add rent"),
+                      content: TextField(
+                          onChanged: (String val) {
+                            value = val;
+                          },
+                          keyboardType: TextInputType.number,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                              hintText: property.rent.isEmpty
+                                  ? ""
+                                  : property.rent.last.toString())),
+                      actions: [
+                        MaterialButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "cancel",
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor),
+                            )),
+                        MaterialButton(
+                            onPressed: () {
+                              int number = int.tryParse(value);
+                              if (number != null) {
+                                property.rent.add(number);
+                                Game.save();
+                              }
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "save",
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor),
+                            )),
+                      ]);
+                },
+              );
+            },
+          )
+        ],
+      );
     return MyCard(
       title: "Rent",
       children: [
@@ -154,7 +297,7 @@ class EditCard extends StatelessWidget {
         ValueSettingTile(
             setting: ValueSetting<String>(
                 title: "name",
-                value: property.name,
+                value: property.name ?? "none",
                 onChanged: (dynamic val) {
                   property.name = val;
                   Game.save();
@@ -194,9 +337,34 @@ class EditCard extends StatelessWidget {
         ValueSettingTile(
             setting: ValueSetting<Color>(
                 title: "Color",
-                value: Color(property.color),
+                subtitle: "The color of the top bar or icon.",
+                value: property.color == null ? null : Color(property.color),
                 onChanged: (dynamic val) {
-                  property.color = val.value;
+                  property.color = val?.value;
+                  Game.save();
+                })),
+        ValueSettingTile(
+            setting: ValueSetting<Color>(
+                allowNull: true,
+                title: "Background color",
+                value: property.backgroundColor == null
+                    ? null
+                    : Color(property.backgroundColor),
+                onChanged: (dynamic val) {
+                  property.backgroundColor = val?.value;
+                  Game.save();
+                })),
+        ValueSettingTile(
+            setting: ValueSetting<Color>(
+                allowNull: true,
+                title: "Table color",
+                subtitle:
+                    "Adds a color on the zoom map if not null. Can get busy very quickly!",
+                value: property.tableColor == null
+                    ? null
+                    : Color(property.tableColor),
+                onChanged: (dynamic val) {
+                  property.tableColor = val?.value;
                   Game.save();
                 })),
       ],

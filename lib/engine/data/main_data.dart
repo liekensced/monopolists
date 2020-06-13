@@ -72,7 +72,7 @@ class GameData extends HiveObject {
   Player get nextRealPlayer {
     for (int i = 0; i < players.length; i++) {
       int index = (i + currentPlayer) % players.length;
-      if (players[index].ai.type == AIType.player) {
+      if (players[index].ai?.type == AIType.player) {
         return players[index];
       }
     }

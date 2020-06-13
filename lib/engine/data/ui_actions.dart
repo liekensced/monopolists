@@ -57,7 +57,7 @@ class UIActionsData {
   bool get realPlayers {
     bool real = false;
     Game.data.players.forEach((Player p) {
-      if ((p.ai.type ?? AIType.player) == AIType.player) real = true;
+      if ((p.ai?.type ?? AIType.player) == AIType.player) real = true;
     });
     return real;
   }

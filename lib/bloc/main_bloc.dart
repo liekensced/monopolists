@@ -8,6 +8,7 @@ import 'package:hive/hive.dart';
 import 'package:plutopoly/bloc/preset_bloc.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
+import 'package:plutopoly/store/preset.dart';
 
 import '../engine/data/main_data.dart';
 import '../engine/data/map.dart';
@@ -37,7 +38,9 @@ class MainBloc {
   static const RECENTBOX = _boxVersion + "recentBox";
   static const MOVEBOX = _boxVersion + "moveBox";
   static const PRESETSBOX = _boxVersion + "presetsBox";
+  static Box<Preset> get presetsBox => Hive.box<Preset>(PRESETSBOX);
   static const PRESETGAMESBOX = _boxVersion + "presetGamesBox";
+  static Box<GameData> get presetGamesBox => Hive.box<GameData>(PRESETGAMESBOX);
 
   static bool studio = false;
   static bool initialized = false;
@@ -327,8 +330,6 @@ class MainBloc {
     if (!online && !Game.testing) {
       Hive.box(METABOX).put("intTotalGames", getGameNumber + 1);
       newGameData.settings.name = "Game $getGameNumber";
-      newGameData.players.insert(0, UIBloc.gamePlayer);
-      Game.setup.addPlayer();
       Hive.box(GAMESBOX).add(newGameData);
 
       Hive.box(METABOX).put("intCurrentGame", getGameNumber);

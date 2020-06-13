@@ -72,6 +72,73 @@ class Tile {
   String icon = "";
   @HiveField(16)
   int tableColor;
+  factory Tile.type(TileType _tileType, [String street]) {
+    switch (_tileType) {
+      case TileType.land:
+        Tile newTile = Tile.fromJson(Game.data.gmap
+            .firstWhere((element) => element.idPrefix == street, orElse: () {
+          return defaultMap.last;
+        }).toJson())
+          ..idIndex = Game.data.gmap.length
+          ..name += " new";
+        return newTile;
+        break;
+      case TileType.company:
+        return Tile.fromJson(defaultMap
+            .firstWhere((element) => element.type == TileType.company)
+            .toJson())
+          ..idIndex = Game.data.gmap.length;
+        break;
+      case TileType.trainstation:
+        return Tile.fromJson(defaultMap
+            .firstWhere((element) => element.type == TileType.trainstation)
+            .toJson())
+          ..idIndex = Game.data.gmap.length;
+        break;
+      case TileType.start:
+        return Tile.fromJson(defaultMap.first.toJson())
+          ..idIndex = Game.data.gmap.length;
+        break;
+      case TileType.chest:
+        return Tile.fromJson(defaultMap
+            .firstWhere((element) => element.type == TileType.chest)
+            .toJson())
+          ..idIndex = Game.data.gmap.length;
+        break;
+      case TileType.tax:
+        return Tile.fromJson(defaultMap
+            .firstWhere((element) => element.type == TileType.tax)
+            .toJson())
+          ..idIndex = Game.data.gmap.length;
+        break;
+      case TileType.chance:
+        return Tile.fromJson(defaultMap
+            .firstWhere((element) => element.type == TileType.chance)
+            .toJson())
+          ..idIndex = Game.data.gmap.length;
+        break;
+      case TileType.jail:
+        return Tile.fromJson(defaultMap
+            .firstWhere((element) => element.type == TileType.jail)
+            .toJson())
+          ..idIndex = Game.data.gmap.length;
+        break;
+      case TileType.parking:
+        return Tile.fromJson(defaultMap
+            .firstWhere((element) => element.type == TileType.parking)
+            .toJson())
+          ..idIndex = Game.data.gmap.length;
+        break;
+      case TileType.police:
+        return Tile.fromJson(defaultMap
+            .firstWhere((element) => element.type == TileType.police)
+            .toJson())
+          ..idIndex = Game.data.gmap.length;
+        break;
+      default:
+        return null;
+    }
+  }
 
   factory Tile.fromJson(Map json) => _$TileFromJson(json);
 
@@ -97,7 +164,9 @@ class Tile {
   }
 
   int get currentRent {
+    if (rent?.isEmpty ?? true) return 0;
     if (mortaged ?? false) return 0;
+    if (owner == null) return rent.first;
     int _rentFactor = 1;
     if (type == TileType.trainstation) {
       return rent[owner.trainstations - 1];
@@ -293,6 +362,7 @@ List<Tile> defaultMap = [
     idPrefix: "C",
     idIndex: 1,
     name: "Elektric Company",
+    rent: [4, 10],
     icon: "bolt",
     hyp: 75,
   ),
@@ -409,6 +479,7 @@ List<Tile> defaultMap = [
   Tile(
     TileType.company,
     price: 150,
+    rent: [4, 10],
     idPrefix: "C",
     idIndex: 2,
     name: "Water company",

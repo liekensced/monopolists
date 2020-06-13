@@ -67,11 +67,32 @@ class Game {
         MainBloc.updateUI();
       }
     }
-    if (data.running == true && data.player.ai.type == AIType.normal && !force)
+    if (data.running == true && data.player.ai?.type == AIType.normal && !force)
       return;
     if (!(testing ?? false)) {
       MainBloc.save(data, only: only, exclude: exclude, local: local);
     }
+  }
+
+  static List<String> idPrefixs() {
+    List<String> ids = [];
+    Game.data.gmap.forEach((element) {
+      if (!ids.contains(element.idPrefix))
+        ids.add(
+          element.idPrefix,
+        );
+    });
+    return ids;
+  }
+
+  static Map<String, String> get streets {
+    Map<String, String> streets = {};
+    Game.data.gmap.forEach((element) {
+      if (element.type == TileType.land)
+        streets.putIfAbsent(element.idPrefix,
+            () => element.name ?? element.type.toString().split(".").last);
+    });
+    return streets;
   }
 
   //launching
@@ -91,11 +112,15 @@ class Game {
   static loadGame(GameData loadData) {
     data = loadData;
     if (Game.data == null || !(Game.data.running ?? false)) return;
+    checkBot();
+  }
+
+  static checkBot() {
     if (MainBloc.online) {
       ///RETURNS
       if (Game.data.nextRealPlayer.code != UIBloc.gamePlayer.code) return;
     }
-    if (Game.data.player.ai.type == AIType.normal) {
+    if (Game.data.player.ai?.type == AIType.normal) {
       NormalAI.onPlayerTurn();
     }
   }

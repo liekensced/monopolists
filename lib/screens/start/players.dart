@@ -72,59 +72,64 @@ class _PlayersCardState extends State<PlayersCard>
                           ),
                         ],
                       ),
-                      subtitle: player.ai.type == AIType.normal
+                      subtitle: player?.ai?.type == AIType.normal
                           ? Text("Normal BOT")
                           : Text("Normal player"),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          if (MainBloc.online) {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                    title: Text("Delete Player"),
-                                    content: Text(
-                                        "Are you sure you want to delete this player?"),
-                                    actions: [
-                                      MaterialButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(
-                                            "cancel",
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .primaryColor),
-                                          )),
-                                      MaterialButton(
-                                          onPressed: () {
-                                            if (Game.data.running == true) {
-                                              Game.setup.defaultPlayer(player);
-                                            } else {
-                                              Game.setup.deletePlayer(player);
-                                            }
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(
-                                            "kick",
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .primaryColor),
-                                          ))
-                                    ]);
+                      trailing: !widget.showBots
+                          ? Container(width: 0)
+                          : IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                if (MainBloc.online) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                          title: Text("Delete Player"),
+                                          content: Text(
+                                              "Are you sure you want to delete this player?"),
+                                          actions: [
+                                            MaterialButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  "cancel",
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .primaryColor),
+                                                )),
+                                            MaterialButton(
+                                                onPressed: () {
+                                                  if (Game.data.running ==
+                                                      true) {
+                                                    Game.setup
+                                                        .defaultPlayer(player);
+                                                  } else {
+                                                    Game.setup
+                                                        .deletePlayer(player);
+                                                  }
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  "kick",
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .primaryColor),
+                                                ))
+                                          ]);
+                                    },
+                                  );
+                                } else {
+                                  if (Game.data.running == true) {
+                                    Game.setup.defaultPlayer(player);
+                                  } else {
+                                    Game.setup.deletePlayer(player);
+                                  }
+                                  setState(() {});
+                                }
                               },
-                            );
-                          } else {
-                            if (Game.data.running == true) {
-                              Game.setup.defaultPlayer(player);
-                            } else {
-                              Game.setup.deletePlayer(player);
-                            }
-                            setState(() {});
-                          }
-                        },
-                      ));
+                            ));
                 },
               ),
         widget.showBots ? AddBotButton() : Container(),

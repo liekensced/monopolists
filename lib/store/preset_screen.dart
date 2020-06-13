@@ -42,102 +42,108 @@ class _PresetScreenState extends State<PresetScreen> {
       appBar: AppBar(
         title: Text(widget.preset.title),
       ),
-      body: Container(
-        constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
-        child: Center(
-          child: ListView(
-            children: [
-              Card(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                            child: Center(
-                                child: Icon(
-                          Icons.map,
-                          size: 50,
-                        ))),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.all(20),
-                            alignment: Alignment.centerLeft,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  widget.preset.title,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline4
-                                      .copyWith(color: Colors.white),
-                                  textAlign: TextAlign.start,
-                                ),
-                                Container(height: 4),
-                                Text(widget.preset.description)
-                              ],
+      body: Center(
+        child: Container(
+          constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Card(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                              child: Center(
+                                  child: Icon(
+                            Icons.map,
+                            size: 50,
+                          ))),
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              alignment: Alignment.centerLeft,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    widget.preset.title,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline4
+                                        .copyWith(color: Colors.white),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                  Container(height: 4),
+                                  Text(widget.preset.description ??
+                                      "no descrioption")
+                                ],
+                              ),
                             ),
+                            flex: 3,
                           ),
-                          flex: 3,
-                        ),
-                      ],
-                    ),
-                    Divider(),
-                    ListTile(
-                      title: Text("Launch with settings"),
-                      trailing: Switch(
-                        onChanged: (bool val) {
-                          showSettings = val;
-                          setState(() {});
-                        },
-                        value: showSettings,
+                        ],
                       ),
-                    )
+                      Divider(),
+                      ListTile(
+                        title: Text("Launch with settings"),
+                        trailing: Switch(
+                          onChanged: (bool val) {
+                            showSettings = val;
+                            setState(() {});
+                          },
+                          value: showSettings,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(20),
+                  child: RaisedButton(
+                    color: Theme.of(context).primaryColor,
+                    child: Container(
+                        width: double.infinity,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Text(
+                            "Start new local game",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        )),
+                    onPressed: () async {
+                      MainBloc.cancelOnline();
+                      Game.newGame(GameData.fromJson(gameData.toJson())
+                        ..running = showSettings ? null : false);
+
+                      GameNavigator.navigate(context, loadGame: true);
+                    },
+                  ),
+                ),
+                GamesCard(preset: widget.preset.projectName),
+                StartOnlineButton(preset: widget.preset),
+                Column(
+                  children: [
+                    for (Info info in widget.preset.infoCards)
+                      GeneralInfoCard(info: info)
                   ],
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(20),
-                child: RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  child: Container(
-                      width: double.infinity,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Text(
-                          "Start new local game",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                      )),
-                  onPressed: () async {
-                    MainBloc.cancelOnline();
-                    Game.newGame(
-                        gameData..running = showSettings ? null : false);
-
-                    GameNavigator.navigate(context, loadGame: true);
-                  },
+                ExtensionsList(
+                  extensions: gameData.extensions,
                 ),
-              ),
-              GamesCard(preset: widget.preset.projectName),
-              StartOnlineButton(preset: widget.preset),
-              Column(
-                children: [
-                  for (Info info in widget.preset.infoCards)
-                    GeneralInfoCard(info: info)
-                ],
-              ),
-              ExtensionsList(
-                extensions: gameData.extensions,
-              ),
-              PresetInfoCard(
-                preset: widget.preset,
-              ),
-              EndOfList()
-            ],
+                PresetInfoCard(
+                  preset: widget.preset,
+                ),
+                EndOfList()
+              ],
+            ),
           ),
         ),
       ),
@@ -162,6 +168,10 @@ class PresetInfoCard extends StatelessWidget {
         ListTile(
           title: Text("Version"),
           subtitle: Text(preset.version),
+        ),
+        ListTile(
+          title: Text("Save location"),
+          subtitle: Text(preset.place),
         ),
       ],
     );

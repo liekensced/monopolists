@@ -13,7 +13,7 @@ import '../move_screen.dart';
 
 void showSettingsSheet(BuildContext context, [PageController pageController]) {
   Widget settings = Container();
-  if (UIBloc.gamePlayer == Game.data.player) {
+  if (UIBloc.gamePlayer == Game.data.nextRealPlayer) {
     settings = InkWell(
       onTap: () {
         Navigator.push(context,

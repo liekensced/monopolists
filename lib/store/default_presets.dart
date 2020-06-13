@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/bloc/preset_bloc.dart';
 import 'package:plutopoly/engine/data/main_data.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
+import 'package:plutopoly/helpers/file_helper.dart';
 
 import '../engine/data/tip.dart';
 import 'preset.dart';
@@ -11,19 +11,19 @@ import 'preset.dart';
 class PresetHelper {
   static Preset findPreset(String projectName) {
     if (projectName == null || projectName == "") return Preset.classic();
-    Preset localPreset = presets.firstWhere(
+    Preset localPreset = defaultPresets.firstWhere(
         (element) => element.projectName == projectName,
         orElse: () => null);
     if (localPreset != null) return localPreset;
-    localPreset = Hive.box(MainBloc.PRESETSBOX).get(projectName);
+    localPreset = MainBloc.presetsBox.get(projectName);
     if (localPreset != null) return localPreset;
     return null;
   }
 
   static Preset newPreset(Preset _preset) {
     GameData gameData = GameData.fromJson(_preset.data.toJson());
-    Hive.box(MainBloc.PRESETSBOX).put(_preset.projectName, _preset);
-    Hive.box(MainBloc.PRESETGAMESBOX).put(_preset.projectName, gameData);
+    MainBloc.presetsBox.put(_preset.projectName, _preset);
+    MainBloc.presetGamesBox.put(_preset.projectName, gameData);
     MainBloc.cancelOnline();
     MainBloc.studio = true;
     Game.data = gameData;
@@ -31,7 +31,14 @@ class PresetHelper {
     return _preset;
   }
 
-  static List<Preset> presets = [
+  static Future<List<Preset>> get localPresets async {
+    return [...defaultPresets, ...(await FileHelper.getPresets() ?? [])]
+        .where((element) => element.data != null)
+        .toList()
+        .cast<Preset>();
+  }
+
+  static List<Preset> defaultPresets = [
     Preset(
       projectName: "default.trainstations",
     )
@@ -69,7 +76,7 @@ class PresetHelper {
     )
       ..title = "Coming soon"
       ..author = "filorux"
-      ..description = "More maps are coming."
+      ..description = "More maps are coming.\nIt just felt empty..."
       ..version = "1.0.0"
   ];
 }

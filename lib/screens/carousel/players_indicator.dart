@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:plutopoly/helpers/hero_info.dart';
 import 'package:plutopoly/screens/game/zoom_map.dart';
 
 import '../../engine/data/map.dart';
@@ -10,8 +11,10 @@ import '../../engine/kernel/main.dart';
 class PlayerIndicators extends StatelessWidget {
   final bool jailed;
   final Tile tile;
+  final String heroTag;
 
-  const PlayerIndicators({Key key, @required this.tile, this.jailed: false})
+  const PlayerIndicators(
+      {Key key, @required this.tile, this.jailed: false, this.heroTag})
       : super(key: key);
 
   @override
@@ -24,13 +27,7 @@ class PlayerIndicators extends StatelessWidget {
       if (player == Game.data.player && !Game.ui.shouldMove) {
         wrap.add(FadeIn(player));
       } else {
-        wrap.add(Tooltip(
-            message: player.name,
-            child: CircleColor(
-              color: Color(player.color),
-              circleSize:
-                  player.index == Game.data.currentPlayer && zoom ? 50 : 40,
-            )));
+        wrap.add(buildTooltip(player, zoom));
       }
     });
 
@@ -45,6 +42,15 @@ class PlayerIndicators extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Tooltip buildTooltip(Player player, bool zoom) {
+    return Tooltip(
+        message: player.name,
+        child: CircleColor(
+          color: Color(player.color),
+          circleSize: player.index == Game.data.currentPlayer && zoom ? 50 : 40,
+        ));
   }
 }
 

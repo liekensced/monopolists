@@ -57,14 +57,10 @@ class ZoomMap extends StatelessWidget {
                   )),
             child: EagerInkWell(
               onTap: () {
-                if (tile.buyable) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                    return PropertyPage(property: tile);
-                  }));
-                } else {
-                  changePos(tile.mapIndex);
-                }
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                  return PropertyPage(property: tile);
+                }));
               },
               child: Container(
                 color: Color(tile.tableColor ?? 0),
@@ -137,7 +133,7 @@ class BoardZoom extends StatelessWidget {
   Widget build(BuildContext context) {
     return Zoom(
       initZoom: 0,
-      canvasColor: Colors.white,
+      canvasColor: Colors.black,
       enableScroll: true,
       width: (width.toDouble() * 250),
       height: (rows * 250 * (4 / 3)),

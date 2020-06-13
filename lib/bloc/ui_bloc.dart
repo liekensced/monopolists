@@ -85,7 +85,7 @@ class UIBloc {
       Hive.box(MainBloc.PREFBOX).put("doubleMaxWidth", max(maxWidth, 400.0));
 
   static Player get gamePlayer {
-    if (!MainBloc.online) return Game.data.nextRealPlayer;
+    if (!MainBloc.online) return Game.data?.nextRealPlayer;
     try {
       return Game.data.players
           .firstWhere((Player p) => p.code == MainBloc.code);

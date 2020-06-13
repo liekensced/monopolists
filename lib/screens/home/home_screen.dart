@@ -120,37 +120,37 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   children: [
                     Center(
-                      child: Container(
-                        constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
-                        child: ValueListenableBuilder(
-                            valueListenable:
-                                Hive.box(MainBloc.METABOX).listenable(),
-                            builder: (BuildContext context, Box box, __) {
-                              if (box.get("boolOnline", defaultValue: false)) {
-                                if (MainBloc.gameId != null)
-                                  return OfflinePage();
-                              }
-                              return ListView(
-                                children: <Widget>[
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  ValueListenableBuilder(
-                                      valueListenable:
-                                          Hive.box(MainBloc.RECENTBOX)
-                                              .listenable(),
-                                      builder: (context, Box box, _) {
-                                        return RecentCard(
-                                          box: box,
-                                          active: true,
-                                        );
-                                      }),
-                                  Padding(
+                      child: ValueListenableBuilder(
+                          valueListenable:
+                              Hive.box(MainBloc.METABOX).listenable(),
+                          builder: (BuildContext context, Box box, __) {
+                            if (box.get("boolOnline", defaultValue: false)) {
+                              if (MainBloc.gameId != null) return OfflinePage();
+                            }
+                            return ListView(
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                ValueListenableBuilder(
+                                    valueListenable:
+                                        Hive.box(MainBloc.RECENTBOX)
+                                            .listenable(),
+                                    builder: (context, Box box, _) {
+                                      return RecentCard(
+                                        box: box,
+                                        active: true,
+                                      );
+                                    }),
+                                Center(
+                                  child: Container(
+                                    constraints: BoxConstraints(
+                                        maxWidth: UIBloc.maxWidth),
                                     padding: EdgeInsets.all(20),
                                     child: RaisedButton(
                                       color: Theme.of(context).primaryColor,
                                       child: Container(
-                                          width: double.infinity,
+                                          width: UIBloc.maxWidth,
                                           child: Padding(
                                             padding: const EdgeInsets.all(12.0),
                                             child: Text(
@@ -172,72 +172,72 @@ class _MyHomePageState extends State<MyHomePage> {
                                       },
                                     ),
                                   ),
-                                  GamesCard(),
-                                  StartOnlineButton(),
-                                  JoinOnlineCard(),
-                                  ADView(
-                                    controller: _adController,
+                                ),
+                                GamesCard(),
+                                StartOnlineButton(),
+                                JoinOnlineCard(),
+                                ADView(
+                                  controller: _adController,
+                                ),
+                                ValueListenableBuilder(
+                                    valueListenable:
+                                        Hive.box(MainBloc.RECENTBOX)
+                                            .listenable(),
+                                    builder: (context, Box box, _) {
+                                      return RecentCard(box: box);
+                                    }),
+                                IconDivider(
+                                  icon: Icon(
+                                    Icons.store,
+                                    size: 40,
                                   ),
-                                  ValueListenableBuilder(
-                                      valueListenable:
-                                          Hive.box(MainBloc.RECENTBOX)
-                                              .listenable(),
-                                      builder: (context, Box box, _) {
-                                        return RecentCard(box: box);
-                                      }),
-                                  IconDivider(
-                                    icon: Icon(
-                                      Icons.store,
-                                      size: 40,
-                                    ),
+                                ),
+                                StoreList(),
+                                IconDivider(
+                                  icon: Icon(
+                                    Icons.settings,
+                                    size: 40,
                                   ),
-                                  StoreList(),
-                                  IconDivider(
-                                    icon: Icon(
-                                      Icons.settings,
-                                      size: 40,
-                                    ),
+                                ),
+                                AccountCard(),
+                                SettingsCard(),
+                                VersionCard(),
+                                IconDivider(
+                                  icon: Icon(
+                                    Icons.whatshot,
+                                    size: 40,
                                   ),
-                                  AccountCard(),
-                                  SettingsCard(),
-                                  VersionCard(),
-                                  IconDivider(
-                                    icon: Icon(
-                                      Icons.whatshot,
-                                      size: 40,
-                                    ),
-                                  ),
-                                  MyCard(
-                                    show: kIsWeb,
-                                    title: "Android app",
-                                    children: [
-                                      InkWell(
+                                ),
+                                MyCard(
+                                  show: kIsWeb,
+                                  title: "Android app",
+                                  children: [
+                                    InkWell(
+                                        onTap: () async {
+                                          UIBloc.launchUrl(context,
+                                              "https://play.google.com/store/apps/details?id=web.filorux.plutopoly");
+                                        },
+                                        child: ListTile(
+                                          title: Text("Download android app"),
+                                          subtitle: Text(
+                                              "Download the android app for Faster performance and less bugs!"),
+                                          trailing: Icon(Icons.open_in_new),
                                           onTap: () async {
-                                            UIBloc.launchUrl(context,
-                                                "https://play.google.com/store/apps/details?id=web.filorux.plutopoly");
+                                            String url = MainBloc.website;
+                                            UIBloc.launchUrl(context, url);
                                           },
-                                          child: ListTile(
-                                            title: Text("Download android app"),
-                                            subtitle: Text(
-                                                "Download the android app for Faster performance and less bugs!"),
-                                            trailing: Icon(Icons.open_in_new),
-                                            onTap: () async {
-                                              String url = MainBloc.website;
-                                              UIBloc.launchUrl(context, url);
-                                            },
-                                          ))
-                                    ],
-                                  ),
-                                  ADView(
-                                    large: true,
-                                    controller: _adController,
-                                  ),
-                                  Image.asset("assets/wide.png"),
-                                  EndOfList()
-                                ],
-                              );
-                            }),
-                      ),
+                                        ))
+                                  ],
+                                ),
+                                ADView(
+                                  large: true,
+                                  controller: _adController,
+                                ),
+                                Image.asset("assets/wide.png"),
+                                EndOfList()
+                              ],
+                            );
+                          }),
                     ),
                     StorePage()
                   ],
@@ -256,6 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: FloatingActionButton.extended(
+                            heroTag: "Cancel game connection",
                             onPressed: () {
                               MainBloc.cancelOnline();
                             },

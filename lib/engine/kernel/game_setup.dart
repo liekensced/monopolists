@@ -17,7 +17,7 @@ class GameSetup {
   }
 
   void addPlayerCheck({String name: "", int color: 0, int code: -1}) {
-    data.players.forEach((player) {
+    (data?.players ?? []).forEach((player) {
       if (player.name == name) {
         throw Alert("Couldn't add player", "The name has already been used");
       }

@@ -4,6 +4,7 @@ import 'package:plutopoly/bloc/main_bloc.dart';
 
 import 'package:plutopoly/engine/data/main_data.dart';
 import 'package:plutopoly/engine/data/tip.dart';
+import 'package:plutopoly/store/default_presets.dart';
 
 import 'default_presets_data.dart';
 
@@ -45,32 +46,35 @@ class Preset extends HiveObject {
   }
 
   GameData get data {
-    return search(projectName) ?? search(template);
+    return search(projectName);
   }
 
   GameData search(String searchName) {
     if (dataCache != null) {
       if (place == "" || place == null) {
-        place = "cache";
+        place ??= "cache";
       }
       return dataCache;
     }
     if (searchName == "classic" || searchName == "default") {
       place = "default";
-      dataCache = GameData();
-      return dataCache;
+      return GameData();
     }
     if (presetsData.containsKey(searchName)) {
-      place = "default";
-      dataCache = GameData.fromJson(presetsData[searchName]);
-      return dataCache;
+      place = "local default";
+      return GameData.fromJson(presetsData[searchName]);
     }
-    if (Hive.box(MainBloc.PRESETGAMESBOX).containsKey(searchName)) {
+    if (MainBloc.presetGamesBox.containsKey(searchName)) {
       place = "local";
-      dataCache = Hive.box(MainBloc.PRESETGAMESBOX).get(searchName);
-      return dataCache;
+      return MainBloc.presetGamesBox.get(searchName);
     }
+
     print("===\nCouldn't find data\n===");
+    if (template == "classic" || template == "default") {
+      place = "default";
+      return GameData();
+    }
+    if (template != null) return PresetHelper.findPreset(template)?.data;
     return null;
   }
 

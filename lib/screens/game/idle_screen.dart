@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/helpers/hero_info.dart';
 
 import '../../bloc/ad_bloc.dart';
 import '../../bloc/main_bloc.dart';
@@ -182,8 +183,11 @@ class IdleScreen extends StatelessWidget {
                 height: 5,
               ),
               buildIdleActionCard(context, listViewController),
-              ZoomMap(
-                carrouselController: carrouselController,
+              HeroInfo(
+                heroBaseTag: "idleScreen",
+                child: ZoomMap(
+                  carrouselController: carrouselController,
+                ),
               ),
               InfoCard(
                 iplayer: UIBloc.gamePlayer,

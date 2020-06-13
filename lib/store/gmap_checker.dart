@@ -7,7 +7,7 @@ class GmapChecker {
     map.forEach((Tile element) {
       if (usedIds.contains(element.id)) {
         throw Alert(
-            "No unique id", "There are to tiles with the same id:\n$element");
+            "No unique id", "There are two tiles with the same id:\n$element");
       }
       usedIds.add(element.id);
     });
