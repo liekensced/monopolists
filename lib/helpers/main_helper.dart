@@ -53,6 +53,7 @@ class MainHelper {
     Hive.registerAdapter(PresetAdapter());
     Hive.registerAdapter(InfoAdapter());
     Hive.registerAdapter(InfoTypeAdapter());
+    Hive.registerAdapter(AISettingsAdapter());
     await Hive.openBox(MainBloc.PREFBOX);
 
     return null;
@@ -72,12 +73,22 @@ class MainHelper {
         border: OutlineInputBorder(),
       ));
   static Color get primaryColor {
-    return Color(
+    Color savedColor = Color(
         Hive.box(MainBloc.PREFBOX).get("primaryColor") ?? Colors.teal.value);
+    if (savedColor.alpha != 0xFF) {
+      Hive.box(MainBloc.PREFBOX).delete("primaryColor");
+      return Colors.teal;
+    }
+    return savedColor;
   }
 
   static Color get accentColor {
-    return Color(
+    Color savedColor = Color(
         Hive.box(MainBloc.PREFBOX).get("accentColor") ?? Colors.cyan.value);
+    if (savedColor.alpha != 0xFF) {
+      Hive.box(MainBloc.PREFBOX).delete("accentColor");
+      return Colors.cyan;
+    }
+    return savedColor;
   }
 }

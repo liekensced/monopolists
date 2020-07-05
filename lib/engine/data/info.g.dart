@@ -60,12 +60,20 @@ UpdateInfo _$UpdateInfoFromJson(Map json) {
   );
 }
 
-Map<String, dynamic> _$UpdateInfoToJson(UpdateInfo instance) =>
-    <String, dynamic>{
-      'title': instance.title,
-      'leading': instance.leading,
-      'subtitle': instance.subtitle,
-      'trailing': instance.trailing,
-      'show': instance.show,
-      'color': instance.color,
-    };
+Map<String, dynamic> _$UpdateInfoToJson(UpdateInfo instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('title', instance.title);
+  writeNotNull('leading', instance.leading);
+  writeNotNull('subtitle', instance.subtitle);
+  writeNotNull('trailing', instance.trailing);
+  writeNotNull('show', instance.show);
+  writeNotNull('color', instance.color);
+  return val;
+}

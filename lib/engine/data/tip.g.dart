@@ -87,11 +87,20 @@ Info _$InfoFromJson(Map json) {
   );
 }
 
-Map<String, dynamic> _$InfoToJson(Info instance) => <String, dynamic>{
-      'title': instance.title,
-      'content': instance.content,
-      'type': _$InfoTypeEnumMap[instance.type],
-    };
+Map<String, dynamic> _$InfoToJson(Info instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('title', instance.title);
+  writeNotNull('content', instance.content);
+  writeNotNull('type', _$InfoTypeEnumMap[instance.type]);
+  return val;
+}
 
 T _$enumDecode<T>(
   Map<T, dynamic> enumValues,

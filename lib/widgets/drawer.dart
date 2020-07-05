@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:hive/hive.dart';
+import 'package:plutopoly/helpers/progress_helper.dart';
 import 'package:plutopoly/screens/online_extension_page.dart';
 
 import '../bloc/main_bloc.dart';
@@ -21,12 +23,38 @@ class MyDrawer extends StatelessWidget {
             width: double.maxFinite,
             color: Theme.of(context).primaryColor,
             child: DrawerHeader(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Text(
-                  "Plutopoly extended boardgame",
-                  style: TextStyle(color: Colors.white),
-                ),
+              padding: EdgeInsets.all(2),
+              child: Column(
+                children: [
+                  Expanded(
+                      child: Center(
+                    child: Text("Plutopoly extended boardgame"),
+                  )),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ListTile(
+                      leading: CircleColor(
+                          color: Color(
+                              MainBloc.player?.color ?? Colors.white.value),
+                          circleSize: 40),
+                      title: Text(
+                        MainBloc.player?.name ?? "unknown",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.w900),
+                      ),
+                      trailing: Text(
+                        ProgressHelper.level.toString(),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w900),
+                      ),
+                      subtitle: LinearProgressIndicator(
+                        value: ProgressHelper.levelProgress,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).accentColor),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

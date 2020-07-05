@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/engine/ai/ai_type.dart';
+import 'package:plutopoly/helpers/progress_helper.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 import 'package:plutopoly/widgets/share_tile.dart';
 
@@ -72,9 +73,10 @@ class _PlayersCardState extends State<PlayersCard>
                           ),
                         ],
                       ),
-                      subtitle: player?.ai?.type == AIType.normal
-                          ? Text("Normal BOT")
-                          : Text("Normal player"),
+                      subtitle: Text(player?.ai?.description ??
+                          (player?.ai?.type == AIType.normal
+                              ? "Normal BOT"
+                              : "Normal player")),
                       trailing: !widget.showBots
                           ? Container(width: 0)
                           : IconButton(
@@ -133,6 +135,11 @@ class _PlayersCardState extends State<PlayersCard>
                 },
               ),
         widget.showBots ? AddBotButton() : Container(),
+        widget.showBots
+            ? AddBotButton(
+                hard: true,
+              )
+            : Container(),
         AddPlayerButton(
           studio: widget.studio,
         )
@@ -142,8 +149,15 @@ class _PlayersCardState extends State<PlayersCard>
 }
 
 class AddBotButton extends StatelessWidget {
+  final bool hard;
+
+  const AddBotButton({Key key, this.hard: false}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    if (hard) {
+      if (ProgressHelper.level < 10) return Container();
+    }
     return Padding(
       padding: EdgeInsets.only(right: 20),
       child: Align(
@@ -153,11 +167,11 @@ class AddBotButton extends StatelessWidget {
           color: Theme.of(context).primaryColor,
           icon: FaIcon(FontAwesomeIcons.robot),
           label: Text(
-            "Add bot",
+            hard ? "Add hard bot" : "Add bot",
             textAlign: TextAlign.center,
           ),
           onPressed: () {
-            Alert.handle(Game.setup.addBot, context);
+            Alert.handle(() => Game.setup.addBot(hard: hard), context);
           },
         ),
       ),

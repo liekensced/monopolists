@@ -38,7 +38,10 @@ Map<String, dynamic> presetsData = {
         "debt": 0,
         "loans": [],
         "stock": {},
-        "ai": {"type": "normal"}
+        "ai": {
+          "type": "normal",
+          "_aiSettings": {"idle": true}
+        }
       },
       {
         "name": "August",

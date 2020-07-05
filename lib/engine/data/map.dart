@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -7,7 +9,7 @@ import 'player.dart';
 
 part 'map.g.dart';
 
-@JsonSerializable(nullable: true)
+@JsonSerializable(nullable: true, includeIfNull: false)
 @HiveType(typeId: 9)
 class MapConfiguration {
   @HiveField(0)
@@ -25,6 +27,11 @@ class MapConfiguration {
     configuration = denseConfiguration;
   }
 
+  MapConfiguration.tween() {
+    width = 7;
+    configuration = denseConfiguration;
+  }
+
   MapConfiguration.wide() {
     width = 10;
     configuration = denseConfiguration;
@@ -35,7 +42,7 @@ class MapConfiguration {
   Map<String, dynamic> toJson() => _$MapConfigurationToJson(this);
 }
 
-@JsonSerializable(nullable: true)
+@JsonSerializable(nullable: true, includeIfNull: false)
 @HiveType(typeId: 1)
 class Tile {
   @HiveField(0)
@@ -67,10 +74,12 @@ class Tile {
   @JsonKey(defaultValue: 200)
   int transportationPrice = 200;
   @HiveField(14)
+  @JsonKey(includeIfNull: true)
   int backgroundColor;
   @HiveField(15)
   String icon = "";
   @HiveField(16)
+  @JsonKey(includeIfNull: true)
   int tableColor;
   factory Tile.type(TileType _tileType, [String street]) {
     switch (_tileType) {
@@ -180,7 +189,7 @@ class Tile {
           return _eyes * 4;
         }
       } else {
-        return _eyes * rent[owner.companies];
+        return _eyes * rent[max(owner.companies - 1, rent.length - 1)];
       }
     }
     if (rent == null) return 0;
@@ -193,7 +202,7 @@ class Tile {
   }
 
   int get mapIndex {
-    return Game.data.gmap.indexWhere((tile) => tile.id == id);
+    return Game.data.gmap.indexOf(this);
   }
 
   Player get owner {

@@ -38,29 +38,29 @@ class GameIcon extends StatelessWidget {
         return Icon(Icons.info, size: size);
       case "question":
         return flareBuilder(
-          "assets/question.flr",
-          FaIcon(
-            FontAwesomeIcons.question,
-            size: 50,
-            color: Color(color ?? Colors.white.value),
-          ),
-        );
+            "assets/question.flr",
+            FaIcon(
+              FontAwesomeIcons.question,
+              size: 50,
+              color: Color(color ?? Colors.white.value),
+            ),
+            color ?? Colors.white.value);
       case "coffee":
         return flareBuilder(
           "assets/coffee.flr",
           FaIcon(FontAwesomeIcons.coffee,
               color: Color(color ?? Colors.white.value), size: 50),
-          Colors.brown.value,
+          color ?? Colors.brown.value,
         );
       case "gem":
         return flareBuilder(
-          "assets/gem_shine.flr",
-          FaIcon(
-            FontAwesomeIcons.solidGem,
-            size: 50,
-            color: Color(color ?? Colors.white.value),
-          ),
-        );
+            "assets/gem_shine.flr",
+            FaIcon(
+              FontAwesomeIcons.solidGem,
+              size: 50,
+              color: Color(color ?? Colors.white.value),
+            ),
+            color ?? Colors.white.value);
     }
 
     return Container(width: 0);

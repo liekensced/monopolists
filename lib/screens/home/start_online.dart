@@ -96,7 +96,7 @@ class StartOnlineButton extends StatelessWidget {
                             );
 
                             Alert alert =
-                                await MainBloc.newOnlineGame(preset.data);
+                                await MainBloc.newOnlineGame(preset?.data);
                             if (cancel) return;
                             UIBloc.navigatorKey.currentState.pop();
 

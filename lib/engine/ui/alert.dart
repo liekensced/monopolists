@@ -96,13 +96,20 @@ class Alert {
 
   static bool handle(Function() function, BuildContext context) {
     Alert alert;
-    try {
-      alert = function();
-    } catch (e) {
-      if (e is Alert) {
-        alert = e;
-      } else {
-        alert = Alert.exception(e);
+    if (UIBloc.lost) {
+      alert = Alert(
+        "Lost",
+        "You already lost and can't do anything.",
+      );
+    } else {
+      try {
+        alert = function();
+      } catch (e) {
+        if (e is Alert) {
+          alert = e;
+        } else {
+          alert = Alert.exception(e);
+        }
       }
     }
     if (alert != null) {

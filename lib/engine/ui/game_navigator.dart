@@ -48,7 +48,7 @@ class GameNavigator {
       }));
       return;
     }
-    if (!Game.data.running || loadGame) {
+    if (loadGame || !Game.data.running) {
       UIBloc.navigatorKey.currentState
           .push(MaterialPageRoute(builder: (BuildContext context) {
         return InfoScreen();

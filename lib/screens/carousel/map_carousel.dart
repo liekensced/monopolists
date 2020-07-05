@@ -31,11 +31,6 @@ class _MapCarouselState extends State<MapCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> listItems = [];
-    for (int i = 0; i < Game.data.gmap.length; i++) {
-      listItems.add(buildCard(Game.data.gmap[i]));
-    }
-
     Future.delayed(Duration.zero, () {
       bool track = MainBloc.prefbox.get("boolTrack", defaultValue: true);
       if (!track) return;
@@ -58,10 +53,13 @@ class _MapCarouselState extends State<MapCarousel> {
       }
     });
 
+    final int length = Game.data.gmap.length;
+
     return PageView.builder(
       scrollDirection: Axis.horizontal,
       controller: widget.controller,
-      itemBuilder: (context, index) => listItems[index % listItems.length],
+      itemBuilder: (context, index) =>
+          buildCard(Game.data.gmap[index % length]),
     );
   }
 }
@@ -187,17 +185,32 @@ Widget buildCard(Tile tile, {zoom: false}) {
       return Card(
         color: Color(tile.backgroundColor ?? Colors.cyan.value),
         child: Column(
-          children: <Widget>[
+          children: [
             Expanded(
                 flex: 2,
                 child: Center(
-                    child: Container(
+                    child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
                         height: 100,
                         width: 100,
                         child: GameIcon(
                           "gem",
                           color: tile.color ?? Colors.white.value,
-                        )))),
+                        )),
+                    tile.name == null
+                        ? Container()
+                        : Text(
+                            tile.name,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          )
+                  ],
+                ))),
             Expanded(
               child: PlayerIndicators(tile: tile),
             ),
@@ -212,10 +225,28 @@ Widget buildCard(Tile tile, {zoom: false}) {
             Expanded(
                 flex: 2,
                 child: Center(
-                    child: Container(
-                  height: 100,
-                  width: 100,
-                  child: GameIcon("question"),
+                    child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      height: 100,
+                      width: 100,
+                      child: GameIcon(
+                        "question",
+                        color: tile.color ?? Colors.white.value,
+                      ),
+                    ),
+                    tile.name == null
+                        ? Container()
+                        : Text(
+                            tile.name,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          )
+                  ],
                 ))),
             Expanded(
               child: PlayerIndicators(tile: tile),

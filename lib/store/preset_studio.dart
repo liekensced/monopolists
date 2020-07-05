@@ -1,26 +1,29 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
-import 'package:plutopoly/bloc/game_listener.dart';
-import 'package:plutopoly/engine/data/map.dart';
-import 'package:plutopoly/engine/extensions/setting.dart';
-import 'package:plutopoly/engine/kernel/main.dart';
-import 'package:plutopoly/engine/ui/alert.dart';
-import 'package:plutopoly/screens/game/property_page.dart';
-import 'package:plutopoly/screens/game/zoom_map.dart';
-import 'package:plutopoly/store/gmap_checker.dart';
-import 'package:plutopoly/store/preset_settings.dart';
-import 'package:plutopoly/widgets/end_of_list.dart';
-import 'package:plutopoly/widgets/setting_tile.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
+import '../bloc/game_listener.dart';
+import '../bloc/main_bloc.dart';
+import '../engine/data/map.dart';
+import '../engine/extensions/setting.dart';
+import '../engine/kernel/main.dart';
+import '../engine/ui/alert.dart';
+import '../screens/game/property_page.dart';
+import '../screens/game/zoom_map.dart';
 import '../screens/start/start_game.dart';
+import '../widgets/end_of_list.dart';
 import '../widgets/my_card.dart';
+import '../widgets/setting_tile.dart';
+import 'gmap_checker.dart';
 import 'preset.dart';
+import 'preset_settings.dart';
 
 class PresetStudio extends StatelessWidget {
   final Preset preset;
 
   const PresetStudio({Key key, @required this.preset}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +93,11 @@ class PresetStudio extends StatelessWidget {
                     )),
               ],
             ),
-            GameListener(builder: (context, _, __) => ZoomMap()),
+            ValueListenableBuilder(
+              valueListenable: MainBloc.metaBox.listenable(),
+              builder: (context, _, __) =>
+                  GameListener(builder: (context, _, __) => ZoomMap()),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: RaisedButton(

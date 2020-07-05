@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/extensions/transportation.dart';
+import 'package:plutopoly/helpers/progress_helper.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../places.dart';
@@ -61,8 +62,8 @@ class Game {
       ];
     }
     if (Game.data.dealData.dealer != null) {
-      if (Game.data.players[Game.data.dealData.dealer].ai.type ==
-          AIType.normal) {
+      Player dealer = Game.data.players[Game.data.dealData.dealer];
+      if (dealer.ai.type == AIType.normal) {
         NormalAI.onDealUpdate();
         MainBloc.updateUI();
       }
@@ -282,7 +283,7 @@ class Game {
       }
     }
     if (dice1 == dice2 && data.doublesThrown >= 2) {
-      helper.jail(data.currentPlayer, shouldSave: false);
+      helper.jail(data.player, shouldSave: false);
     } else {
       if (dice1 != dice2) data.doublesThrown = 0;
       for (int i = 0; i < steps; i++) {
@@ -297,8 +298,7 @@ class Game {
       switch (data.gmap[player.position].type) {
         case TileType.police:
           Game.save(only: [SaveData.players.toString()]);
-          Future.delayed(Duration(seconds: 1)).then(
-              (value) => Game.helper.jail(player.index, shouldSave: false));
+
           break;
         default:
       }
@@ -323,6 +323,9 @@ class Game {
       return Alert(
           "Taxes not payed", "Please pay your taxes before continuing");
     }
+    if (_type == TileType.police && !Game.data.rentPayed) {
+      return Alert("Go to jail", "You have to go to jail");
+    }
     if ((_type == TileType.chance || _type == TileType.chest) &&
         !Game.data.rentPayed) {
       return Alert("Card not executed",
@@ -335,6 +338,7 @@ class Game {
     return null;
   }
 
+  /// If changeS experience++
   static Alert next({force: false, changeS: false}) {
     data.findingsIndex = Random().nextInt(findings.length);
     data.eventIndex = Random().nextInt(events.length);
@@ -361,6 +365,8 @@ class Game {
     if (MainBloc.online && Game.data.ui.idle) {
       UIBloc.changeScreen(Screen.idle);
     }
+
+    if (changeS) ProgressHelper.onNext();
 
     save();
     return null;

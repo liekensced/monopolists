@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/engine/ai/ai_type.dart';
-import 'package:plutopoly/engine/kernel/main.dart';
-import 'package:plutopoly/widgets/my_card.dart';
+
+import '../../bloc/main_bloc.dart';
+import '../../bloc/ui_bloc.dart';
+import '../../engine/ai/ai_type.dart';
+import '../../engine/kernel/main.dart';
+import '../../widgets/my_card.dart';
 
 class IdleSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyCard(
+      show: !UIBloc.lost,
       listen: true,
       title: "settings",
       children: [

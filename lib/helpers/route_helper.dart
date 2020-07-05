@@ -1,17 +1,18 @@
 import 'dart:async';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:plutopoly/engine/data/extensions.dart';
-import 'package:plutopoly/screens/extension_screen.dart';
-import 'package:plutopoly/screens/home/recent_card.dart';
-import 'package:plutopoly/screens/start/players.dart';
 import 'package:uni_links/uni_links.dart';
 
 import '../bloc/main_bloc.dart';
 import '../bloc/ui_bloc.dart';
+import '../engine/data/extensions.dart';
 import '../engine/ui/alert.dart';
+import '../screens/extension_screen.dart';
+import '../screens/home/recent_card.dart';
+import '../screens/start/players.dart';
 import '../screens/testing/stock_testing_screen.dart';
 
 class RouteHelper {
@@ -129,8 +130,11 @@ class RouteHelper {
         }
       }
       if (parameters.containsKey("msg")) {
-        UIBloc.alerts
-            .add(Alert(parameters["title"] ?? "Message", parameters["msg"]));
+        UIBloc.alerts.add(Alert(
+          parameters["title"] ?? "Message",
+          parameters["msg"],
+          type: DialogType.INFO,
+        ));
         MainBloc.prefbox.put("update", true);
       }
       if (parameters["reset"]?.toLowerCase() == "true") {

@@ -10,11 +10,12 @@ class CardAction {
 
 List<CardAction> events = [
   CardAction("You win a game: +£100", () => Game.data.player.money += 100),
+  CardAction("You win a game: +£100", () => Game.data.player.money += 100),
   CardAction("You get payed from insurance: +150",
       () => Game.data.player.money += 150),
   CardAction("Pay new clothes: -£150",
       () => Game.act.pay(PayType.pot, 150, count: true)),
-  CardAction("Go to prison", () => Game.helper.jail(Game.data.currentPlayer)),
+  CardAction("Go to prison", () => Game.helper.jail(Game.data.player)),
   CardAction("Free out of prison card", () => Game.data.player.goojCards++),
   CardAction("Reverse three steps",
       () => Game.jump(Game.data.player.position - 3, false)),
@@ -32,7 +33,8 @@ List<CardAction> events = [
 ];
 List<CardAction> findings = [
   CardAction("Repare your houses", () => Game.helper.repareHouses()),
-  CardAction("Go to prison", () => Game.helper.jail(Game.data.currentPlayer)),
+  CardAction("Go to prison", () => Game.helper.jail(Game.data.player)),
+  CardAction("You win a game: +£100", () => Game.data.player.money += 100),
   CardAction("You win a game: +£100", () => Game.data.player.money += 100),
   CardAction("You win a bet: +50", () => Game.data.player.money += 50),
   CardAction("You win a bet: +25", () => Game.data.player.money += 25),
@@ -49,7 +51,7 @@ List<CardAction> findings = [
       "Doctor bill: -50", () => Game.act.pay(PayType.pot, 50, count: true)),
   CardAction(
       "You win a drawing contest: +10", () => Game.data.player.money += 10),
-  CardAction("It's your birthday: +10 from every player",
+  CardAction("It's your birthday: +50 from every player",
       () => Game.helper.birthDay()),
   CardAction("Go to the start", () => Game.jump(0)),
   CardAction("Deducting taxes: +20", () => Game.data.player.money += 20),

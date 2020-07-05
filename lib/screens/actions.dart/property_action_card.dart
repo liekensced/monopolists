@@ -42,7 +42,9 @@ class PropertyActionCard extends StatelessWidget {
                     ),
                     Container(height: 20),
                     Text(
-                      "Event card",
+                      (tile.description ?? "No info") == "No info"
+                          ? "Event card"
+                          : tile.description,
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     )
                   ],
@@ -57,10 +59,13 @@ class PropertyActionCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Spacer(),
-                      Text(
-                        Game.data.rentPayed ? "done" : action.text,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          Game.data.rentPayed ? "done" : action.text,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                       Spacer(),
                       Padding(
@@ -104,7 +109,9 @@ class PropertyActionCard extends StatelessWidget {
                     ),
                     Container(height: 20),
                     Text(
-                      "Findings card",
+                      (tile.description ?? "No info") == "No info"
+                          ? "Findings card"
+                          : tile.description,
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     )
                   ],
@@ -118,10 +125,13 @@ class PropertyActionCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Spacer(),
-                      Text(
-                        Game.data.rentPayed ? "done" : action.text,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          Game.data.rentPayed ? "done" : action.text,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                       Spacer(),
                       Padding(
@@ -146,7 +156,7 @@ class PropertyActionCard extends StatelessWidget {
             ]),
           );
         }
-        if (tile.owner?.id == Game.data.player.id) {
+        if (tile.owner == Game.data.player) {
           return PropertyCard(tile: tile, expanded: true);
         }
         return PropertyActionCardChild();
@@ -212,7 +222,16 @@ class PropertyActionCardChild extends StatelessWidget {
         return Container(
           height: 100,
           child: Center(
-            child: Text(tile.price > 0 ? "Rent payed" : "Received"),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (tile.description != null) Text(tile.description),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(tile.price > 0 ? "Rent payed" : "Received"),
+                ),
+              ],
+            ),
           ),
         );
       }
@@ -305,8 +324,27 @@ class PropertyActionCardChild extends StatelessWidget {
       );
     }
 
+    if (tile.type == TileType.police) {
+      return Container(
+        padding: const EdgeInsets.all(8.0),
+        width: double.maxFinite,
+        child: RaisedButton(
+          padding: const EdgeInsets.all(8.0),
+          color: Colors.blue[900],
+          child: Text(
+            "Go to jail",
+            style: TextStyle(
+                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          onPressed: () {
+            Game.helper.jail(Game.data.player, shouldSave: true);
+          },
+        ),
+      );
+    }
+
     //Done TileTypes
-    if (Game.data.player.positionTile.price == null) return Container();
+    if (tile.price == null) return Container();
 
     if (owner == null) {
       return Container(

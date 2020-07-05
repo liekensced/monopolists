@@ -58,6 +58,7 @@ class _HackerScreenState extends State<HackerScreen> {
                           show: true,
                           color: Colors.deepOrange.value),
                     );
+                    Game.save();
 
                     setState(() {});
                   } catch (e) {

@@ -18,15 +18,56 @@ class AIAdapter extends TypeAdapter<AI> {
     };
     return AI(
       fields[0] as AIType,
-    );
+    )
+      .._aiSettings = fields[1] as AISettings
+      ..description = fields[2] as String;
   }
 
   @override
   void write(BinaryWriter writer, AI obj) {
     writer
-      ..writeByte(1)
+      ..writeByte(3)
       ..writeByte(0)
-      ..write(obj.type);
+      ..write(obj.type)
+      ..writeByte(1)
+      ..write(obj._aiSettings)
+      ..writeByte(2)
+      ..write(obj.description);
+  }
+}
+
+class AISettingsAdapter extends TypeAdapter<AISettings> {
+  @override
+  final typeId = 20;
+
+  @override
+  AISettings read(BinaryReader reader) {
+    var numOfFields = reader.readByte();
+    var fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return AISettings()
+      ..chances = (fields[0] as List)?.cast<double>()
+      ..dealFactor = fields[1] as double
+      ..smart = fields[2] as bool
+      ..canTrade = fields[3] as bool
+      ..idle = fields[4] as bool;
+  }
+
+  @override
+  void write(BinaryWriter writer, AISettings obj) {
+    writer
+      ..writeByte(5)
+      ..writeByte(0)
+      ..write(obj.chances)
+      ..writeByte(1)
+      ..write(obj.dealFactor)
+      ..writeByte(2)
+      ..write(obj.smart)
+      ..writeByte(3)
+      ..write(obj.canTrade)
+      ..writeByte(4)
+      ..write(obj.idle);
   }
 }
 
@@ -37,11 +78,12 @@ class AIAdapter extends TypeAdapter<AI> {
 AI _$AIFromJson(Map json) {
   return AI(
     _$enumDecodeNullable(_$AITypeEnumMap, json['type']),
-  );
+  )..description = json['description'] as String;
 }
 
 Map<String, dynamic> _$AIToJson(AI instance) => <String, dynamic>{
       'type': _$AITypeEnumMap[instance.type],
+      'description': instance.description,
     };
 
 T _$enumDecode<T>(
@@ -80,3 +122,22 @@ const _$AITypeEnumMap = {
   AIType.player: 'player',
   AIType.normal: 'normal',
 };
+
+AISettings _$AISettingsFromJson(Map json) {
+  return AISettings()
+    ..chances =
+        (json['chances'] as List)?.map((e) => (e as num)?.toDouble())?.toList()
+    ..dealFactor = (json['dealFactor'] as num)?.toDouble()
+    ..smart = json['smart'] as bool
+    ..canTrade = json['canTrade'] as bool
+    ..idle = json['idle'] as bool;
+}
+
+Map<String, dynamic> _$AISettingsToJson(AISettings instance) =>
+    <String, dynamic>{
+      'chances': instance.chances,
+      'dealFactor': instance.dealFactor,
+      'smart': instance.smart,
+      'canTrade': instance.canTrade,
+      'idle': instance.idle,
+    };

@@ -29,14 +29,15 @@ class HoldingCards extends StatelessWidget {
     } else {
       if (MainBloc.online) _properties = UIBloc.gamePlayer.properties;
     }
-    if (_properties.isEmpty) {
+    if (_properties.isEmpty || UIBloc.lost) {
       return Container(
         height: 100,
         child: Center(
             child: Card(
                 child: Padding(
           padding: const EdgeInsets.all(12.0),
-          child: Text("You have no properties yet"),
+          child: Text(
+              UIBloc.lost ? "You already lost" : "You have no properties yet"),
         ))),
       );
     }

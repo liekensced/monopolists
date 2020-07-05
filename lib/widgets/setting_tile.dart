@@ -266,6 +266,39 @@ class _ValueSettingTileState extends State<ValueSettingTile> {
                                 },
                               ),
                             ),
+                            Wrap(
+                              alignment: WrapAlignment.spaceBetween,
+                              children: [
+                                FlatButton(
+                                  textColor: Theme.of(context).primaryColor,
+                                  child: Text("Black"),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    setting.onChanged(Colors.black);
+                                    return;
+                                  },
+                                ),
+                                FlatButton(
+                                  textColor: Theme.of(context).primaryColor,
+                                  child: Text("White"),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    setting.onChanged(Colors.white);
+                                    return;
+                                  },
+                                ),
+                                if (setting.allowAlpha)
+                                  FlatButton(
+                                    textColor: Theme.of(context).primaryColor,
+                                    child: Text("Transparent"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      setting.onChanged(Colors.transparent);
+                                      return;
+                                    },
+                                  )
+                              ],
+                            ),
                             setting.allowNull
                                 ? FlatButton(
                                     textColor: Theme.of(context).primaryColor,

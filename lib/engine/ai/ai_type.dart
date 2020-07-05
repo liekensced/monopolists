@@ -7,5 +7,5 @@ enum AIType {
   @HiveField(0)
   player,
   @HiveField(1)
-  normal
+  normal,
 }

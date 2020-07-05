@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
-import 'package:plutopoly/bloc/preset_bloc.dart';
-import 'package:plutopoly/engine/data/main_data.dart';
-import 'package:plutopoly/engine/kernel/main.dart';
-import 'package:plutopoly/helpers/file_helper.dart';
 
+import '../bloc/main_bloc.dart';
+import '../bloc/preset_bloc.dart';
+import '../engine/data/main_data.dart';
 import '../engine/data/tip.dart';
+import '../engine/kernel/main.dart';
+import '../helpers/file_helper.dart';
 import 'preset.dart';
 
 class PresetHelper {
@@ -22,6 +22,7 @@ class PresetHelper {
 
   static Preset newPreset(Preset _preset) {
     GameData gameData = GameData.fromJson(_preset.data.toJson());
+    gameData.preset = _preset.projectName;
     MainBloc.presetsBox.put(_preset.projectName, _preset);
     MainBloc.presetGamesBox.put(_preset.projectName, gameData);
     MainBloc.cancelOnline();

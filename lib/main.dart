@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/data/main_data.dart';
 import 'package:plutopoly/helpers/main_helper.dart';
@@ -26,58 +27,60 @@ class MyApp extends StatelessWidget {
         builder: (context, Box box, _) {
           SystemChrome.setSystemUIOverlayStyle(
               SystemUiOverlayStyle(statusBarColor: MainHelper.primaryColor));
-          return MaterialApp(
-            navigatorKey: UIBloc.navigatorKey,
-            debugShowCheckedModeBanner: false,
-            title: 'Plutopoly',
-            onGenerateRoute: RouteHelper.onGenerateRoute,
-            theme: MainHelper.themeData,
-            home: MainBloc.initialized
-                ? MyHomePage()
-                : FutureBuilder(
-                    future: Future.wait([
-                      Hive.openBox(MainBloc.GAMESBOX),
-                      Hive.openBox(MainBloc.METABOX),
-                      Hive.openBox(MainBloc.UPDATEBOX),
-                      Hive.openBox(MainBloc.MAPCONFBOX),
-                      Hive.openBox(MainBloc.ACCOUNTBOX),
-                      Hive.openBox(MainBloc.RECENTBOX),
-                      Hive.openBox(MainBloc.MOVEBOX),
-                      Hive.openBox<Preset>(MainBloc.PRESETSBOX),
-                      Hive.openBox<GameData>(MainBloc.PRESETGAMESBOX),
-                    ]),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        if (snapshot.error != null) {
-                          print(snapshot.error);
+          return OverlaySupport(
+            child: MaterialApp(
+              navigatorKey: UIBloc.navigatorKey,
+              debugShowCheckedModeBanner: false,
+              title: 'Plutopoly',
+              onGenerateRoute: RouteHelper.onGenerateRoute,
+              theme: MainHelper.themeData,
+              home: MainBloc.initialized
+                  ? MyHomePage()
+                  : FutureBuilder(
+                      future: Future.wait([
+                        Hive.openBox(MainBloc.GAMESBOX),
+                        Hive.openBox(MainBloc.METABOX),
+                        Hive.openBox(MainBloc.UPDATEBOX),
+                        Hive.openBox(MainBloc.MAPCONFBOX),
+                        Hive.openBox(MainBloc.ACCOUNTBOX),
+                        Hive.openBox(MainBloc.RECENTBOX),
+                        Hive.openBox(MainBloc.MOVEBOX),
+                        Hive.openBox<Preset>(MainBloc.PRESETSBOX),
+                        Hive.openBox<GameData>(MainBloc.PRESETGAMESBOX),
+                      ]),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.error != null) {
+                            print(snapshot.error);
+                            return Scaffold(
+                              body: Center(
+                                child: Text(
+                                  'Something went wrong :/\n\nIf this keeps happening, reset all app data in settings.',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            );
+                          } else {
+                            MainBloc.initBloc(context);
+                            return MyHomePage();
+                          }
+                        } else {
                           return Scaffold(
                             body: Center(
-                              child: Text(
-                                'Something went wrong :/\n\nIf this keeps happening, reset all app data in settings.',
-                                textAlign: TextAlign.center,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  CircularProgressIndicator(),
+                                  Text(messages[
+                                      Random().nextInt(messages.length - 1)]),
+                                ],
                               ),
                             ),
                           );
-                        } else {
-                          MainBloc.initBloc(context);
-                          return MyHomePage();
                         }
-                      } else {
-                        return Scaffold(
-                          body: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                CircularProgressIndicator(),
-                                Text(messages[
-                                    Random().nextInt(messages.length - 1)]),
-                              ],
-                            ),
-                          ),
-                        );
-                      }
-                    }),
+                      }),
+            ),
           );
         });
   }

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/screens/home/adventure_screen.dart';
 import 'package:plutopoly/screens/store/store_list.dart';
 import 'package:plutopoly/store/store_page.dart';
 
@@ -38,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController pageController;
   @override
   void initState() {
-    pageController = PageController();
+    pageController = PageController(initialPage: 1);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Future.delayed(Duration.zero, () {
         UIBloc.showAlerts(context);
@@ -47,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  int currentPage = 0;
+  int currentPage = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -71,55 +72,59 @@ class _MyHomePageState extends State<MyHomePage> {
           pageController.jumpToPage(page);
         },
         items: [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home), title: Text("Adventure")),
           BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("Home")),
           BottomNavigationBarItem(icon: Icon(Icons.shop), title: Text("Store")),
         ],
       ),
-      body: Stack(
-        children: <Widget>[
-          FractionallySizedBox(
-            heightFactor: 1,
-            child: NestedScrollView(
-                headerSliverBuilder:
-                    (BuildContext context, bool innerBoxIsScrolled) {
-                  return <Widget>[
-                    SliverAppBar(
-                      expandedHeight: 400.0,
-                      floating: false,
-                      pinned: true,
-                      flexibleSpace: FlexibleSpaceBar(
-                          centerTitle: true,
-                          title: Text("Plutopoly extended boardgame",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.0,
-                              )),
-                          background: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 75.0),
-                            child: Center(
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                                child: Image.asset(
-                                  UIBloc.isWide(context)
-                                      ? "assets/wide.png"
-                                      : "assets/logo.png",
-                                  fit: BoxFit.scaleDown,
+      body: PageView(
+        controller: pageController,
+        onPageChanged: (int newPage) {
+          currentPage = newPage;
+          setState(() {});
+        },
+        children: [
+          AdventureScreen(),
+          Stack(
+            children: <Widget>[
+              FractionallySizedBox(
+                heightFactor: 1,
+                child: NestedScrollView(
+                    headerSliverBuilder:
+                        (BuildContext context, bool innerBoxIsScrolled) {
+                      return <Widget>[
+                        SliverAppBar(
+                          expandedHeight: 400.0,
+                          floating: false,
+                          pinned: true,
+                          flexibleSpace: FlexibleSpaceBar(
+                              centerTitle: true,
+                              title: Text("Plutopoly extended boardgame",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                  )),
+                              background: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 75.0),
+                                child: Center(
+                                  child: ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
+                                    child: Image.asset(
+                                      UIBloc.isWide(context)
+                                          ? "assets/wide.png"
+                                          : "assets/logo.png",
+                                      fit: BoxFit.scaleDown,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          )),
-                    ),
-                  ];
-                },
-                body: PageView(
-                  controller: pageController,
-                  onPageChanged: (int newPage) {
-                    currentPage = newPage;
-                    setState(() {});
-                  },
-                  children: [
-                    Center(
+                              )),
+                        ),
+                      ];
+                    },
+                    body: Center(
                       child: ValueListenableBuilder(
                           valueListenable:
                               Hive.box(MainBloc.METABOX).listenable(),
@@ -238,48 +243,48 @@ class _MyHomePageState extends State<MyHomePage> {
                               ],
                             );
                           }),
-                    ),
-                    StorePage()
-                  ],
-                )),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Spacer(),
-              ValueListenableBuilder(
-                valueListenable: Hive.box(MainBloc.METABOX).listenable(),
-                builder: (BuildContext context, Box box, _) {
-                  if (box.get("boolOnline",
-                      defaultValue: false)) if (MainBloc.gameId != null) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: FloatingActionButton.extended(
-                            heroTag: "Cancel game connection",
-                            onPressed: () {
-                              MainBloc.cancelOnline();
-                            },
-                            label: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Text(
-                                "Cancel game connection",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            )),
-                      ),
-                    );
-                  }
-                  return Container();
-                },
+                    )),
               ),
-              ValueListenableBuilder(
-                  valueListenable: MainBloc.metaBox.listenable(),
-                  builder: (context, snapshot, _) {
-                    return DailyAdsMessage();
-                  }),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Spacer(),
+                  ValueListenableBuilder(
+                    valueListenable: Hive.box(MainBloc.METABOX).listenable(),
+                    builder: (BuildContext context, Box box, _) {
+                      if (box.get("boolOnline",
+                          defaultValue: false)) if (MainBloc.gameId != null) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: FloatingActionButton.extended(
+                                heroTag: "Cancel game connection",
+                                onPressed: () {
+                                  MainBloc.cancelOnline();
+                                },
+                                label: Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Text(
+                                    "Cancel game connection",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                )),
+                          ),
+                        );
+                      }
+                      return Container();
+                    },
+                  ),
+                  ValueListenableBuilder(
+                      valueListenable: MainBloc.metaBox.listenable(),
+                      builder: (context, snapshot, _) {
+                        return DailyAdsMessage();
+                      }),
+                ],
+              ),
             ],
           ),
+          StorePage()
         ],
       ),
     );

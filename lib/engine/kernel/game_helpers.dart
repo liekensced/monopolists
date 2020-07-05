@@ -12,13 +12,13 @@ class GameHelpers {
 
   static GameData get data => Game.data;
 
-  jail(int player, {bool shouldSave: true}) {
+  jail(Player player, {bool shouldSave: true}) {
     data.doublesThrown = 0;
-    data.players[player].jailed = true;
-    data.players[player].position = data.gmap
+    player.jailed = true;
+    player.position = data.gmap
         .firstWhere((element) => element.type == TileType.jail)
         .mapIndex;
-    data.players[player].jailTries = data.tile.price ?? 2;
+    player.jailTries = data.tile.price ?? 2;
     if (shouldSave) {
       Game.save(only: ["doublesThrown", SaveData.players.toString()]);
     }
@@ -27,8 +27,8 @@ class GameHelpers {
   birthDay() {
     data.players.forEach((Player p) {
       if (p == data.player) return;
-      p.money -= 10;
-      data.player.money += 10;
+      p.money -= 50;
+      data.player.money += 50;
     });
     Game.save(only: [SaveData.players.toString()]);
   }

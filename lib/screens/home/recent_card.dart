@@ -193,8 +193,11 @@ class RecentCard extends StatelessWidget {
     }
     if (cancel) return;
     Navigator.pop(context);
-    if (alert != null) cancel = true;
-    if (Alert.handle(() => alert, context)) {
+    if (alert != null) {
+      cancel = true;
+
+      if (Alert.handle(() => alert, context)) {}
+    } else {
       GameNavigator.navigate(context, loadGame: true);
     }
   }

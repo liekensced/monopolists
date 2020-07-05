@@ -13,10 +13,11 @@ import 'ui_actions.dart';
 
 part 'main_data.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 @HiveType(typeId: 0)
 class GameData extends HiveObject {
   @HiveField(0)
+  @JsonKey(includeIfNull: true)
   bool running;
   @HiveField(1)
   List<Player> players = [];
@@ -47,6 +48,7 @@ class GameData extends HiveObject {
   @HiveField(14)
   String mapConfiguration = "classic";
   @HiveField(15)
+  @JsonKey(includeIfNull: true)
   DealData dealData = DealData();
   @HiveField(16)
   BankData bankData;

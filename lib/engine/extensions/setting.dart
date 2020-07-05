@@ -22,6 +22,7 @@ class ValueSetting<T> {
   bool showLead = false;
   Function(T) onChanged;
   bool allowNull = false;
+  bool allowAlpha = false;
   ValueSetting({
     @required this.title,
     @required this.value,
@@ -29,5 +30,6 @@ class ValueSetting<T> {
     this.subtitle,
     this.allowNull: false,
     this.showLead: false,
+    this.allowAlpha: false,
   });
 }

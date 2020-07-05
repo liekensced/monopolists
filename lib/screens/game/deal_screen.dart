@@ -3,16 +3,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:plutopoly/bloc/game_listener.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/widgets/my_card.dart';
+import 'package:plutopoly/screens/game/property_page.dart';
 
+import '../../bloc/game_listener.dart';
 import '../../bloc/main_bloc.dart';
+import '../../bloc/ui_bloc.dart';
 import '../../engine/data/deal_data.dart';
 import '../../engine/data/map.dart';
 import '../../engine/kernel/main.dart';
 import '../../engine/ui/alert.dart';
 import '../../widgets/houses.dart';
+import '../../widgets/my_card.dart';
 
 class DealScreen extends StatelessWidget {
   final int dealer;
@@ -578,6 +579,21 @@ class _DealScreenChildState extends State<DealScreenChild>
       return Card(
         color: Color(tile.color),
         child: ListTile(
+          subtitle: Text(
+            "${tile.mortaged ? 'Mortaged ' : ''} £${tile.price}, £${tile.hyp}, -£${tile.currentRent}",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PropertyPage(
+                    property: tile,
+                  ),
+                ));
+          },
           leading: _leading,
           title: Row(
             mainAxisSize: MainAxisSize.min,
@@ -616,6 +632,12 @@ class _DealScreenChildState extends State<DealScreenChild>
       return Card(
         color: Colors.white,
         child: ListTile(
+          subtitle: Text(
+            "${tile.mortaged ? 'Mortaged ' : ''} £${tile.price}, £${tile.hyp}, -£${tile.currentRent}",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
           leading: tile.idIndex == 1
               ? FaIcon(FontAwesomeIcons.bolt, color: Colors.orange)
               : FaIcon(FontAwesomeIcons.faucet, color: Colors.blue),
@@ -644,6 +666,12 @@ class _DealScreenChildState extends State<DealScreenChild>
         color: Colors.white,
         child: ListTile(
           leading: Icon(Icons.train, color: Colors.black),
+          subtitle: Text(
+            "${tile.mortaged ? 'Mortaged ' : ''} £${tile.price}, £${tile.hyp}, -£${tile.currentRent}",
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          ),
           title: Text(
             tile.name ?? "",
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),

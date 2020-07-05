@@ -17,6 +17,8 @@ class GameSetup {
   }
 
   void addPlayerCheck({String name: "", int color: 0, int code: -1}) {
+    if ((data?.players ?? []).length > 10)
+      throw Alert("Couldn't add player", "The're is a maximum of 10 players.");
     (data?.players ?? []).forEach((player) {
       if (player.name == name) {
         throw Alert("Couldn't add player", "The name has already been used");
@@ -24,7 +26,7 @@ class GameSetup {
     });
   }
 
-  Alert addBot() {
+  Alert addBot({bool hard: false}) {
     String name = "bot ${data.players.length}";
     while (true) {
       try {
@@ -40,7 +42,7 @@ class GameSetup {
       name: "$name",
       color: ColorHelper().randomColor,
       code: -2,
-      ai: AI(AIType.normal),
+      ai: AI(AIType.normal, hard: hard),
     ));
     Game.save(only: [SaveData.players.toString()]);
     return null;
@@ -82,6 +84,7 @@ class GameSetup {
     if (Game.data.currentPlayer < 0) {
       Game.data.currentPlayer = Game.data.players.last.index;
     }
+    Game.save(force: true);
     Game.next(force: true);
   }
 }

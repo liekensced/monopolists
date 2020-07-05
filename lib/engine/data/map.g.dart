@@ -181,11 +181,19 @@ MapConfiguration _$MapConfigurationFromJson(Map json) {
     ..width = json['width'] as int;
 }
 
-Map<String, dynamic> _$MapConfigurationToJson(MapConfiguration instance) =>
-    <String, dynamic>{
-      'configuration': instance.configuration,
-      'width': instance.width,
-    };
+Map<String, dynamic> _$MapConfigurationToJson(MapConfiguration instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('configuration', instance.configuration);
+  writeNotNull('width', instance.width);
+  return val;
+}
 
 Tile _$TileFromJson(Map json) {
   return Tile(
@@ -208,24 +216,33 @@ Tile _$TileFromJson(Map json) {
     ..tableColor = json['tableColor'] as int;
 }
 
-Map<String, dynamic> _$TileToJson(Tile instance) => <String, dynamic>{
-      'type': _$TileTypeEnumMap[instance.type],
-      'color': instance.color,
-      'idPrefix': instance.idPrefix,
-      'name': instance.name,
-      'price': instance.price,
-      'hyp': instance.hyp,
-      'housePrice': instance.housePrice,
-      'rent': instance.rent,
-      'level': instance.level,
-      'idIndex': instance.idIndex,
-      'mortaged': instance.mortaged,
-      'description': instance.description,
-      'transportationPrice': instance.transportationPrice,
-      'backgroundColor': instance.backgroundColor,
-      'icon': instance.icon,
-      'tableColor': instance.tableColor,
-    };
+Map<String, dynamic> _$TileToJson(Tile instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('type', _$TileTypeEnumMap[instance.type]);
+  writeNotNull('color', instance.color);
+  writeNotNull('idPrefix', instance.idPrefix);
+  writeNotNull('name', instance.name);
+  writeNotNull('price', instance.price);
+  writeNotNull('hyp', instance.hyp);
+  writeNotNull('housePrice', instance.housePrice);
+  writeNotNull('rent', instance.rent);
+  writeNotNull('level', instance.level);
+  writeNotNull('idIndex', instance.idIndex);
+  writeNotNull('mortaged', instance.mortaged);
+  writeNotNull('description', instance.description);
+  writeNotNull('transportationPrice', instance.transportationPrice);
+  val['backgroundColor'] = instance.backgroundColor;
+  writeNotNull('icon', instance.icon);
+  val['tableColor'] = instance.tableColor;
+  return val;
+}
 
 T _$enumDecode<T>(
   Map<T, dynamic> enumValues,

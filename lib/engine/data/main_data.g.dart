@@ -137,31 +137,42 @@ GameData _$GameDataFromJson(Map json) {
     ..preset = json['preset'] as String;
 }
 
-Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
-      'running': instance.running,
-      'players': instance.players?.map((e) => e?.toJson())?.toList(),
-      'currentPlayer': instance.currentPlayer,
-      'turn': instance.turn,
-      'currentDices': instance.currentDices,
-      'doublesThrown': instance.doublesThrown,
-      'pot': instance.pot,
-      'gmap': instance.gmap?.map((e) => e?.toJson())?.toList(),
-      'settings': instance.settings?.toJson(),
-      'extensions':
-          instance.extensions?.map((e) => _$ExtensionEnumMap[e])?.toList(),
-      'ui': instance.ui?.toJson(),
-      'rentPayed': instance.rentPayed,
-      'findingsIndex': instance.findingsIndex,
-      'eventIndex': instance.eventIndex,
-      'mapConfiguration': instance.mapConfiguration,
-      'dealData': instance.dealData?.toJson(),
-      'bankData': instance.bankData?.toJson(),
-      'version': instance.version,
-      'lostPlayers': instance.lostPlayers?.map((e) => e?.toJson())?.toList(),
-      'bot': instance.bot,
-      'transported': instance.transported,
-      'preset': instance.preset,
-    };
+Map<String, dynamic> _$GameDataToJson(GameData instance) {
+  final val = <String, dynamic>{
+    'running': instance.running,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('players', instance.players?.map((e) => e?.toJson())?.toList());
+  writeNotNull('currentPlayer', instance.currentPlayer);
+  writeNotNull('turn', instance.turn);
+  writeNotNull('currentDices', instance.currentDices);
+  writeNotNull('doublesThrown', instance.doublesThrown);
+  writeNotNull('pot', instance.pot);
+  writeNotNull('gmap', instance.gmap?.map((e) => e?.toJson())?.toList());
+  writeNotNull('settings', instance.settings?.toJson());
+  writeNotNull('extensions',
+      instance.extensions?.map((e) => _$ExtensionEnumMap[e])?.toList());
+  writeNotNull('ui', instance.ui?.toJson());
+  writeNotNull('rentPayed', instance.rentPayed);
+  writeNotNull('findingsIndex', instance.findingsIndex);
+  writeNotNull('eventIndex', instance.eventIndex);
+  writeNotNull('mapConfiguration', instance.mapConfiguration);
+  val['dealData'] = instance.dealData?.toJson();
+  writeNotNull('bankData', instance.bankData?.toJson());
+  writeNotNull('version', instance.version);
+  writeNotNull(
+      'lostPlayers', instance.lostPlayers?.map((e) => e?.toJson())?.toList());
+  writeNotNull('bot', instance.bot);
+  writeNotNull('transported', instance.transported);
+  writeNotNull('preset', instance.preset);
+  return val;
+}
 
 T _$enumDecode<T>(
   Map<T, dynamic> enumValues,

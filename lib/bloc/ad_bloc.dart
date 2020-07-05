@@ -14,8 +14,8 @@ class AdBloc {
   static String nativeAdUID =
       test ? NativeAd.testAdUnitId : "ca-app-pub-3735790035510409/3739583933";
 
-  static MobileAdTargetingInfo targetingInfo =
-      MobileAdTargetingInfo(keywords: <String>["boardgame"]);
+  static MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+      keywords: <String>["boardgame"], childDirected: true);
   static void init() async {
     if (kIsWeb) return;
     idleAdController = NativeAdmobController();

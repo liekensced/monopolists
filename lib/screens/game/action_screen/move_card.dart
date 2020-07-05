@@ -23,7 +23,7 @@ class MoveCard extends StatelessWidget {
           color: Theme.of(context).primaryColor,
           child: Text(owner == Game.data.player
               ? "move"
-              : "Pay £" + (Game.data.tile.transportationPrice ?? 0).toString()),
+              : "Pay £" + (tile.transportationPrice ?? 0).toString()),
           onPressed: Game.data.transported
               ? null
               : () {

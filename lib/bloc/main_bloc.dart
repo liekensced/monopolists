@@ -8,6 +8,7 @@ import 'package:hive/hive.dart';
 import 'package:plutopoly/bloc/preset_bloc.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
+import 'package:plutopoly/helpers/progress_helper.dart';
 import 'package:plutopoly/store/preset.dart';
 
 import '../engine/data/main_data.dart';
@@ -22,7 +23,7 @@ import 'recent_bloc.dart';
 import 'ui_bloc.dart';
 
 class MainBloc {
-  static const version = "0.5.2";
+  static const version = "0.5.3";
   static const List<int> supported = [4];
   static const website = "https://filorux.web.app/Plutopoly.html";
   static List<int> get versionCode =>
@@ -59,6 +60,7 @@ class MainBloc {
   }
 
   static Future newOnlineGame([GameData preset]) async {
+    MainBloc.studio = false;
     if (player.name == null || player.name == "null")
       return Alert.accountIncomplete();
     online = true;
@@ -116,6 +118,7 @@ class MainBloc {
 
   static Future<Alert> joinOnline(String gameIdInput,
       [bool force = false]) async {
+    MainBloc.studio = false;
     if (player.name == null || player.name == "null")
       return Alert.accountIncomplete();
 
@@ -293,6 +296,8 @@ class MainBloc {
     code;
     DailyBloc.checkNewDay();
 
+    ProgressHelper.init();
+
     currentGame = Hive.box(METABOX).get("intCurrentGame");
     if (Hive.box(MAPCONFBOX).isEmpty) {
       Hive.box(MAPCONFBOX).put("classic", MapConfiguration.standard());
@@ -300,6 +305,9 @@ class MainBloc {
     }
     if (!Hive.box(MAPCONFBOX).containsKey("wide")) {
       Hive.box(MAPCONFBOX).put("wide", MapConfiguration.wide());
+    }
+    if (!Hive.box(MAPCONFBOX).containsKey("tween")) {
+      Hive.box(MAPCONFBOX).put("tween", MapConfiguration.tween());
     }
     if (Hive.box(MainBloc.METABOX).get("mapConfiguration") == null) {
       Hive.box(MainBloc.METABOX)

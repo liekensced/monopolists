@@ -346,6 +346,7 @@ class EditCard extends StatelessWidget {
         ValueSettingTile(
             setting: ValueSetting<Color>(
                 allowNull: true,
+                allowAlpha: true,
                 title: "Background color",
                 value: property.backgroundColor == null
                     ? null
@@ -357,6 +358,7 @@ class EditCard extends StatelessWidget {
         ValueSettingTile(
             setting: ValueSetting<Color>(
                 allowNull: true,
+                allowAlpha: true,
                 title: "Table color",
                 subtitle:
                     "Adds a color on the zoom map if not null. Can get busy very quickly!",

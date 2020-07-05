@@ -206,6 +206,7 @@ class IdleScreen extends StatelessWidget {
 
   Widget buildIdleActionCard(
       BuildContext context, ScrollController controller) {
+    if (UIBloc.lost) return Container();
     if (!Game.ui.idle) {
       return Padding(
         padding: const EdgeInsets.all(12.0),

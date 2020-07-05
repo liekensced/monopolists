@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/engine/extensions/transportation.dart';
-import 'package:plutopoly/helpers/sure_helper.dart';
-import 'package:plutopoly/screens/game/property_page.dart';
 
+import '../../../bloc/main_bloc.dart';
+import '../../../bloc/ui_bloc.dart';
 import '../../../engine/data/map.dart';
+import '../../../engine/extensions/transportation.dart';
 import '../../../engine/kernel/main.dart';
 import '../../../engine/ui/alert.dart';
+import '../../../helpers/sure_helper.dart';
 import '../../../widgets/houses.dart';
 import '../../../widgets/my_card.dart';
+import '../property_page.dart';
 
 class PropertyCard extends StatefulWidget {
   final Tile tile;
@@ -40,13 +40,14 @@ class _PropertyCardState extends State<PropertyCard>
     Widget leading = Container(width: 0);
     Color textColor = Colors.black;
     Widget content = Container(height: 200);
+    if (tile.mortaged ?? false)
+      leading = Icon(Icons.turned_in, color: Colors.white);
 
     if (tile.type == TileType.land) {
       bool _hasAll = UIBloc.gamePlayer.hasAllUnmortaged(tile.idPrefix);
       color = Color(tile.color ?? Theme.of(context).primaryColor.value);
       textColor = Colors.white;
-      if (tile.mortaged ?? false)
-        leading = Icon(Icons.turned_in, color: Colors.white);
+
       content = Container(
         height: 200,
         child: InkWell(
@@ -62,136 +63,8 @@ class _PropertyCardState extends State<PropertyCard>
             children: !expanded
                 ? []
                 : [
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          tile.level > 0
-                              ? Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: Houses(amount: tile.level),
-                                  ),
-                                )
-                              : Container(),
-                          Expanded(
-                              child: Stack(
-                            children: <Widget>[
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: IconButton(
-                                  icon: Icon(Icons.edit),
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        String name = tile.name;
-                                        return AlertDialog(
-                                            title: Text("Edit name"),
-                                            content: TextField(
-                                              autofocus: true,
-                                              decoration: InputDecoration(
-                                                labelText: "Enter name",
-                                              ),
-                                              onChanged: (String val) {
-                                                name = val;
-                                              },
-                                            ),
-                                            actions: [
-                                              MaterialButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text(
-                                                    "close",
-                                                    style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .primaryColor),
-                                                  )),
-                                              MaterialButton(
-                                                  onPressed: () {
-                                                    tile.name = name;
-                                                    Game.save(only: [
-                                                      SaveData.gmap.toString()
-                                                    ]);
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text(
-                                                    "save",
-                                                    style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .primaryColor),
-                                                  ))
-                                            ]);
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                              Center(
-                                  child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                        "Value: £" +
-                                            tile.price.toString() +
-                                            "\nRent: " +
-                                            tile.currentRent.toString(),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                  tile.mortaged
-                                      ? Center(
-                                          child: Text(
-                                          "mortaged",
-                                          style: TextStyle(color: Colors.grey),
-                                        ))
-                                      : Container()
-                                ],
-                              )),
-                            ],
-                          )),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        alignment: Alignment.bottomCenter,
-                        padding: const EdgeInsets.all(8.0),
-                        width: double.maxFinite,
-                        child: Tooltip(
-                          message: tile.mortaged ? "Buy back" : "Mortage",
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: FlatButton(
-                              child: Text(
-                                (tile.mortaged
-                                    ? "Buy back for £" +
-                                        (tile.hyp * 1.1).floor().toString()
-                                    : "Mortage for  £" + tile.hyp.toString()),
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.orange),
-                              ),
-                              onPressed: () {
-                                sure(
-                                    context,
-                                    Game.data.player.money > 400,
-                                    "Are you sure you want to mortage this property?",
-                                    () => Alert.handle(
-                                          () => Game.act.mortage(tile.id),
-                                          context,
-                                        ));
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    TileInfo(tile: tile),
+                    MortageButton(tile: tile),
                     Expanded(
                       child: Container(
                         alignment: Alignment.bottomCenter,
@@ -256,20 +129,14 @@ class _PropertyCardState extends State<PropertyCard>
             height: 200,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Text(
-                      "Value: £" +
-                          tile.price.toString() +
-                          "\nRent: " +
-                          tile.currentRent.toString(),
-                      textAlign: TextAlign.center),
-                ),
+                TileInfo(tile: tile),
                 Expanded(
-                  child: Center(
-                    child: leading,
-                  ),
+                  flex: 2,
+                  child: leading,
                 ),
+                MortageButton(
+                  tile: tile,
+                )
               ],
             )),
       );
@@ -278,73 +145,17 @@ class _PropertyCardState extends State<PropertyCard>
     if (tile.type == TileType.trainstation) {
       color = Colors.white;
       textColor = Colors.black;
-      leading = Icon(Icons.train);
+      leading = Icon(
+        Icons.train,
+        color: Colors.black,
+      );
       if (TransportationBloc.active) {
-        List<Tile> trains = tile.owner?.transtationTiles ?? [];
-        List<Widget> children = [];
+        Widget message;
 
-        trains.forEach((Tile train) {
-          if (train == tile) return;
-          children.add(ListTile(
-            title: Text("Move to ${train.name}"),
-            subtitle: Text("Position: ${train.mapIndex}"),
-            trailing: RaisedButton(
-              color: Theme.of(context).primaryColor,
-              child: Text("Change price: £" +
-                  (train.transportationPrice ?? 0).toString()),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    String text = "";
-                    return AlertDialog(
-                        title: Text("Change price"),
-                        content: TextField(
-                          autofocus: true,
-                          onChanged: (val) {
-                            text = val;
-                          },
-                        ),
-                        actions: [
-                          MaterialButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                "close",
-                                style: TextStyle(
-                                    color: Theme.of(context).primaryColor),
-                              )),
-                          MaterialButton(
-                              onPressed: () {
-                                int price = int.tryParse(text);
-                                train.transportationPrice = price;
-                                Game.save(only: [SaveData.gmap.toString()]);
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                "change",
-                                style: TextStyle(
-                                    color: Theme.of(context).primaryColor),
-                              )),
-                        ]);
-                  },
-                );
-              },
-            ),
-          ));
-        });
-        if (children.isEmpty) {
-          children.add(
-            Container(
-                height: 100,
-                child: Center(child: Text("Get more transations to move."))),
-          );
-        } else {
-          children.insert(
-              0,
-              Text(
-                  "You can change the price for transportation for other players."));
+        if ((tile.owner.trainstations ?? 0) == 0) {
+          message = Container(
+              height: 100,
+              child: Center(child: Text("Get more transations to move.")));
         }
         content = InkWell(
           onTap: () {
@@ -359,16 +170,72 @@ class _PropertyCardState extends State<PropertyCard>
               height: 200,
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                        "Value: £" +
-                            tile.price.toString() +
-                            "\nRent: " +
-                            tile.currentRent.toString(),
-                        textAlign: TextAlign.center),
+                  TileInfo(
+                    tile: tile,
                   ),
-                  ...children,
+                  MortageButton(
+                    tile: tile,
+                  ),
+                  message == null
+                      ? Container(width: 0)
+                      : Expanded(
+                          child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: message,
+                        )),
+                  ListTile(
+                    title: Text("Price to move"),
+                    subtitle: Text(
+                        "How much other players have to pay to move from this station."),
+                    trailing: RaisedButton.icon(
+                      color: Theme.of(context).primaryColor,
+                      icon: Text(
+                          '£' + (tile.transportationPrice ?? 0).toString()),
+                      label: Icon(Icons.edit),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            String text = "";
+                            return AlertDialog(
+                                title: Text("Change price"),
+                                content: TextField(
+                                  autofocus: true,
+                                  onChanged: (val) {
+                                    text = val;
+                                  },
+                                ),
+                                actions: [
+                                  MaterialButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        "close",
+                                        style: TextStyle(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                      )),
+                                  MaterialButton(
+                                      onPressed: () {
+                                        int price = int.tryParse(text);
+                                        tile.transportationPrice = price;
+                                        Game.save(
+                                            only: [SaveData.gmap.toString()]);
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        "change",
+                                        style: TextStyle(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                      )),
+                                ]);
+                          },
+                        );
+                      },
+                    ),
+                  ),
                 ],
               )),
         );
@@ -386,20 +253,21 @@ class _PropertyCardState extends State<PropertyCard>
               height: 200,
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                        "Value: £" +
-                            tile.price.toString() +
-                            "\nRent: " +
-                            tile.currentRent.toString(),
-                        textAlign: TextAlign.center),
+                  TileInfo(
+                    tile: tile,
                   ),
                   Expanded(
+                    flex: 2,
                     child: Center(
-                      child: leading,
+                      child: Icon(
+                        Icons.train,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
+                  MortageButton(
+                    tile: tile,
+                  )
                 ],
               )),
         );
@@ -428,6 +296,12 @@ class _PropertyCardState extends State<PropertyCard>
                 widget.tile.name ?? "",
                 style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
               ),
+              subtitle: Text(
+                "${tile.mortaged ? 'Mortaged ' : ''} £${tile.price ?? 0}, £${tile.hyp ?? 0}, -£${tile.currentRent ?? 0}",
+                style: TextStyle(
+                  color: textColor,
+                ),
+              ),
               trailing: Icon(
                 expanded ? Icons.expand_less : Icons.expand_more,
                 color: textColor,
@@ -445,6 +319,161 @@ class _PropertyCardState extends State<PropertyCard>
               : Container(),
         )
       ],
+    );
+  }
+}
+
+class TileInfo extends StatelessWidget {
+  const TileInfo({
+    Key key,
+    @required this.tile,
+  }) : super(key: key);
+
+  final Tile tile;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: 2,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          tile.level > 0
+              ? Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Houses(amount: tile.level),
+                  ),
+                )
+              : Container(),
+          Expanded(
+              child: Stack(
+            children: <Widget>[
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        String name = tile.name;
+                        return AlertDialog(
+                            title: Text("Edit name"),
+                            content: TextField(
+                              autofocus: true,
+                              decoration: InputDecoration(
+                                labelText: "Enter name",
+                              ),
+                              onChanged: (String val) {
+                                name = val;
+                              },
+                            ),
+                            actions: [
+                              MaterialButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "close",
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor),
+                                  )),
+                              MaterialButton(
+                                  onPressed: () {
+                                    tile.name = name;
+                                    Game.save(only: [SaveData.gmap.toString()]);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "save",
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor),
+                                  ))
+                            ]);
+                      },
+                    );
+                  },
+                ),
+              ),
+              Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                        "Value: £" +
+                            tile.price.toString() +
+                            "\nRent: " +
+                            tile.currentRent.toString(),
+                        textAlign: TextAlign.center),
+                  ),
+                  tile.mortaged
+                      ? Center(
+                          child: Text(
+                          "mortaged",
+                          style: TextStyle(color: Colors.grey),
+                        ))
+                      : Container()
+                ],
+              )),
+            ],
+          )),
+        ],
+      ),
+    );
+  }
+}
+
+class MortageButton extends StatelessWidget {
+  const MortageButton({
+    Key key,
+    @required this.tile,
+  }) : super(key: key);
+
+  final Tile tile;
+
+  @override
+  Widget build(BuildContext context) {
+    if (tile.hyp == null) {
+      return Container(
+        width: 0,
+      );
+    }
+    return Expanded(
+      child: Container(
+        alignment: Alignment.bottomCenter,
+        padding: const EdgeInsets.all(8.0),
+        width: double.maxFinite,
+        child: Tooltip(
+          message: tile.mortaged ? "Buy back" : "Mortage",
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: FlatButton(
+              child: Text(
+                (tile.mortaged
+                    ? "Buy back for £" + (tile.hyp * 1.1).floor().toString()
+                    : "Mortage for  £" + tile.hyp.toString()),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange),
+              ),
+              onPressed: () {
+                sure(
+                    context,
+                    Game.data.player.money > 400,
+                    "Are you sure you want to mortage this property?",
+                    () => Alert.handle(
+                          () => Game.act.mortage(tile.id),
+                          context,
+                        ));
+              },
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -51,7 +51,7 @@ class Player {
   Map<String, dynamic> toJson() => _$PlayerToJson(this);
 
   Tile get positionTile => Game.data.gmap[position];
-  int get index => Game.data.players.indexOf(this);
+  int get index => id;
   int get trainstations {
     int _trainsTations = 0;
     properties.forEach((String i) {

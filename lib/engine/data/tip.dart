@@ -15,17 +15,17 @@ enum InfoType {
   setting,
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 @HiveType(typeId: 18)
 class Info {
   @HiveField(0)
-  String title = "";
+  final String title;
   @HiveField(1)
-  String content = "";
+  final String content;
   @HiveField(2)
-  InfoType type = InfoType.rule;
+  final InfoType type;
 
-  Info(this.title, this.content, this.type);
+  const Info(this.title, this.content, this.type);
   factory Info.fromJson(Map json) => _$InfoFromJson(json);
   Map<String, dynamic> toJson() => _$InfoToJson(this);
 }

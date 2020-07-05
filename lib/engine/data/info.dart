@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'info.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 @HiveType(typeId: 7)
 class UpdateInfo {
   @HiveField(0)

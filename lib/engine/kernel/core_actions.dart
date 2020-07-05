@@ -66,15 +66,16 @@ class CoreActions {
     switch (type) {
       case PayType.rent:
         data.rentPayed = true;
-        Game.addInfo(
-          UpdateInfo(
-              title: "You received rent!",
-              subtitle: "From ${data.player.name}.",
-              trailing: "£$amount",
-              leading: "rent",
-              show: true),
-          receiver,
-        );
+        if ((amount ?? 0) != 0)
+          Game.addInfo(
+            UpdateInfo(
+                title: "You received rent!",
+                subtitle: "From ${data.player.name}.",
+                trailing: "£$amount",
+                leading: "rent",
+                show: true),
+            receiver,
+          );
         break;
       case PayType.pot:
         data.rentPayed = true;
@@ -92,14 +93,15 @@ class CoreActions {
           }
         } else {
           if (message != null) {
-            Game.addInfo(
-              UpdateInfo(
-                  title: "You received!",
-                  trailing: "+£${-amount}",
-                  show: true,
-                  color: Colors.green.value),
-              receiver,
-            );
+            if ((amount ?? 0) != 0)
+              Game.addInfo(
+                UpdateInfo(
+                    title: "You received!",
+                    trailing: "+£${-amount}",
+                    show: true,
+                    color: Colors.green.value),
+                receiver,
+              );
           }
         }
         break;

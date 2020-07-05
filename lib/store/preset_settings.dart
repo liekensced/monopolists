@@ -33,6 +33,7 @@ class PresetSettings extends StatelessWidget {
               if (Alert.handle(
                   () => GmapChecker.call(Game.data.gmap), context)) {
                 if (Alert.handle(() {
+                  preset.data.preset = preset.projectName;
                   FileHelper.savePreset(preset);
                 }, context)) {
                   Navigator.pop(context);

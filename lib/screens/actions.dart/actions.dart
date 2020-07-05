@@ -27,6 +27,7 @@ class ActionsCardChild extends StatelessWidget {
     List<Widget> playersList = [];
     Game.data.players.forEach((Player player) {
       if (player == Game.data.player) return;
+      if (!player.ai.aiSettings.canTrade) return;
       playersList.add(ListTile(
         title: Text(player.name),
         subtitle: Text(
