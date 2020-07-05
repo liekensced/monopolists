@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/helpers/icon_helper.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 
 import '../../engine/data/map.dart';
 import '../../engine/kernel/main.dart';
@@ -94,7 +95,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
                         size: 50),
                     Spacer(),
                     Text(
-                      "£" + tile.price.abs().toString(),
+                      mon(tile.price.abs()),
                       style: TextStyle(color: Colors.white, fontSize: 27),
                     )
                   ],
@@ -141,7 +142,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
                     ),
                     Spacer(),
                     Text(
-                      "£" + Game.data.pot.floor().toString() + " ",
+                      mon(Game.data.pot) + " ",
                       style: TextStyle(color: Colors.green, fontSize: 25),
                     ),
                     Spacer(),

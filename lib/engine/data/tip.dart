@@ -24,8 +24,29 @@ class Info {
   final String content;
   @HiveField(2)
   final InfoType type;
+  @HiveField(3)
+  final int color;
 
-  const Info(this.title, this.content, this.type);
+  const Info(
+    this.title,
+    this.content,
+    this.type, {
+    this.color,
+  });
   factory Info.fromJson(Map json) => _$InfoFromJson(json);
   Map<String, dynamic> toJson() => _$InfoToJson(this);
+
+  Info copyWith({
+    String title,
+    String content,
+    InfoType type,
+    int color,
+  }) {
+    return Info(
+      title ?? this.title,
+      content ?? this.content,
+      type ?? this.type,
+      color: color ?? this.color,
+    );
+  }
 }

@@ -1,8 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plutopoly/helpers/file_helper.dart';
+import 'package:plutopoly/helpers/progress_helper.dart';
+import 'package:plutopoly/screens/store/rewards_list.dart';
 import 'package:plutopoly/store/preset_studio.dart';
+import 'package:plutopoly/widgets/animated_count.dart';
 
 import '../bloc/main_bloc.dart';
 import '../screens/store/store_list.dart';
@@ -15,100 +19,147 @@ import 'start_preset.dart';
 class StorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "Maps",
-            style: Theme.of(context).textTheme.headline4,
-            textAlign: TextAlign.start,
-          ),
-        ),
-        StoreList(),
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerLeft,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Local maps",
-                style: Theme.of(context).textTheme.headline4,
-                textAlign: TextAlign.start,
-              ),
-              IconButton(
-                icon: Icon(Icons.info),
-                onPressed: () async {
-                  String path = await FileHelper.presetsDir;
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                          title: Text("Local presets"),
-                          content: Text(
-                              "Plutopoly looks in the presets map:\n$path\nIf you make a preset with the studio, the final preset will end up in this map. You can share that file and if others put it in there presets folder, they'll be able to play your map. If you start a online game, others do not need to install the map first."),
-                          actions: [
-                            MaterialButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  "close",
-                                  style: TextStyle(
-                                      color: Theme.of(context).primaryColor),
-                                ))
-                          ]);
-                    },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Store page"),
+        actions: [
+          Center(
+            child: Card(
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ValueListenableBuilder(
+                valueListenable: Hive.box(MainBloc.ACCOUNTBOX).listenable(),
+                builder: (BuildContext context, _, __) {
+                  return Row(
+                    children: <Widget>[
+                      AnimatedCount(
+                        count: ProgressHelper.tickets,
+                        duration: Duration(seconds: 1),
+                      ),
+                      Container(
+                        height: 0,
+                        width: 5,
+                      ),
+                      Icon(
+                        Icons.local_activity,
+                        size: 20,
+                      )
+                    ],
                   );
                 },
               ),
-            ],
+            )),
           ),
-        ),
-        kIsWeb
-            ? Container(
-                height: 100,
-                child: Center(
-                    child: Text(
-                        "Download the android app to install unique maps!")),
-              )
-            : FutureBuilder<List<Preset>>(
-                future: FileHelper.getPresets(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.error != null) {
+          Container(
+            width: 5,
+          )
+        ],
+      ),
+      body: ListView(
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.all(8),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Maps",
+              style: Theme.of(context).textTheme.headline4,
+              textAlign: TextAlign.start,
+            ),
+          ),
+          StoreList(),
+          Container(
+            padding: const EdgeInsets.all(8),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Rewards",
+              style: Theme.of(context).textTheme.headline4,
+              textAlign: TextAlign.start,
+            ),
+          ),
+          StoreRewardsList(),
+          Container(
+            padding: const EdgeInsets.all(8),
+            alignment: Alignment.centerLeft,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Local maps",
+                  style: Theme.of(context).textTheme.headline4,
+                  textAlign: TextAlign.start,
+                ),
+                IconButton(
+                  icon: Icon(Icons.info),
+                  onPressed: () async {
+                    String path = await FileHelper.presetsDir;
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                            title: Text("Local presets"),
+                            content: Text(
+                                "Plutopoly looks in the presets map:\n$path\nIf you make a preset with the studio, the final preset will end up in this map. You can share that file and if others put it in there presets folder, they'll be able to play your map. If you start a online game, others do not need to install the map first."),
+                            actions: [
+                              MaterialButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    "close",
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor),
+                                  ))
+                            ]);
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          kIsWeb
+              ? Container(
+                  height: 100,
+                  child: Center(
+                      child: Text(
+                          "Download the android app to install unique maps!")),
+                )
+              : FutureBuilder<List<Preset>>(
+                  future: FileHelper.getPresets(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.error != null) {
+                        return Container(
+                          height: 220,
+                          child: Center(
+                            child: Text("Failed to open files:\n" +
+                                snapshot.error.toString()),
+                          ),
+                        );
+                      } else {
+                        return StoreList(
+                          inPresets: snapshot.data ?? [],
+                        );
+                      }
+                    } else {
                       return Container(
                         height: 220,
                         child: Center(
-                          child: Text("Failed to open files:\n" +
-                              snapshot.error.toString()),
+                          child: CircularProgressIndicator(),
                         ),
                       );
-                    } else {
-                      return StoreList(
-                        inPresets: snapshot.data ?? [],
-                      );
                     }
-                  } else {
-                    return Container(
-                      height: 220,
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                }),
-        Container(
-          height: 50,
-        ),
-        ValueListenableBuilder(
-          valueListenable: MainBloc.presetsBox.listenable(),
-          builder: (context, _, __) => StudioCard(),
-        ),
-        EndOfList(),
-      ],
+                  }),
+          Container(
+            height: 50,
+          ),
+          ValueListenableBuilder(
+            valueListenable: MainBloc.presetsBox.listenable(),
+            builder: (context, _, __) => StudioCard(),
+          ),
+          EndOfList(),
+        ],
+      ),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/data/extensions.dart';
 import 'package:plutopoly/engine/extensions/bank/bank_main.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 
 import '../../../engine/extensions/bank/data/loan.dart';
 import '../../../engine/ui/alert.dart';
@@ -23,12 +24,15 @@ class LoanCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("£" + UIBloc.gamePlayer.debt.toInt().toString(),
+            Text("${mon(UIBloc.gamePlayer.debt)}",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-            Text(" / £" + BankMain.lendingCap().toInt().toString() + " lend ",
+            Text(
+                " / ${mon(BankMain.lendingCap())}"
+                " lend ",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             Tooltip(
-              message: "This is the maximum you can lend. (Cash * 2 + assets / 2)",
+              message:
+                  "This is the maximum you can lend. (Cash * 2 + assets / 2)",
               child: Icon(
                 Icons.info,
                 color: Colors.grey,
@@ -41,8 +45,8 @@ class LoanCard extends StatelessWidget {
 
     BankMain.getLoans().forEach((Contract loan) {
       loans.add(ListTile(
-        title: Text(
-            "+£${loan.amount.toInt()} with ${loan.interest * 100}% interest."),
+        title:
+            Text("+${mon(loan.amount)} with ${loan.interest * 100}% interest."),
         subtitle: Text(
             "Start fee: ${loan.fee * 100}%. Receive in ${loan.waitingTurns} turns."),
         trailing: IconButton(
@@ -57,7 +61,7 @@ class LoanCard extends StatelessWidget {
                   return AlertDialog(
                       title: Text("Take loan"),
                       content: Text(
-                          "+£${loan.amount.toInt()} with ${loan.interest * 100}% interest.\n" +
+                          "+${mon(loan.amount.toInt())} with ${loan.interest * 100}% interest.\n" +
                               "Start fee: ${loan.fee * 100}%. Receive in ${loan.waitingTurns} turns."),
                       actions: [
                         MaterialButton(
@@ -131,8 +135,8 @@ class DebtCard extends StatelessWidget {
           amount.toString(),
           textScaleFactor: 2,
         ),
-        title: Text(
-            "+£${loan.amount.toInt()} with ${loan.interest * 100}% interest."),
+        title:
+            Text("+${mon(loan.amount)} with ${loan.interest * 100}% interest."),
         subtitle: Text("Start fee: ${loan.fee * 100}%. " +
             ((loan.waitingTurns > 0)
                 ? "Receive in ${loan.waitingTurns} turns."

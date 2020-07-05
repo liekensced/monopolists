@@ -8,6 +8,7 @@ import 'package:plutopoly/engine/extensions/setting.dart';
 import 'package:plutopoly/engine/kernel/core_actions.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 
 class LakeDrain {
   static ExtensionData data = ExtensionData(
@@ -18,7 +19,7 @@ class LakeDrain {
       getInfo: () => [
             Info(
               "Drain the lake",
-              "You can drain the lake for £${Game?.data?.settings?.dtlPrice ?? 1500}. This will add 2 properties to the map that you will own and can upgrade.",
+              "You can drain the lake for ${mon(Game?.data?.settings?.dtlPrice ?? 1500)}. This will add 2 properties to the map that you will own and can upgrade.",
               InfoType.rule,
             ),
             Info(
@@ -36,7 +37,8 @@ class LakeDrain {
       settings: [
         Setting<int>(
           title: "Drain price",
-          subtitle: "The price it costs to drain the lake. Default: £1500",
+          subtitle:
+              "The price it costs to drain the lake. Default: ${mon(1500)}",
           onChanged: (dynamic price) {
             Game.data.settings.dtlPrice = price;
             Game.save(only: [SaveData.settings.toString()]);

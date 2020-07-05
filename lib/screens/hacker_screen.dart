@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_json_widget/flutter_json_widget.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/engine/data/info.dart';
+import 'package:plutopoly/engine/data/update_info.dart';
 import 'package:plutopoly/engine/data/main_data.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plutopoly/store/default_presets_data.dart';
 
 import '../bloc/main_bloc.dart';
 import '../bloc/preset_bloc.dart';
@@ -11,9 +12,11 @@ import 'preset.dart';
 class PresetHelper {
   static Preset findPreset(String projectName) {
     if (projectName == null || projectName == "") return Preset.classic();
+
     Preset localPreset = defaultPresets.firstWhere(
         (element) => element.projectName == projectName,
         orElse: () => null);
+
     if (localPreset != null) return localPreset;
     localPreset = MainBloc.presetsBox.get(projectName);
     if (localPreset != null) return localPreset;
@@ -72,12 +75,6 @@ class PresetHelper {
         ),
       ]
       ..version = "1.0.2",
-    Preset(
-      projectName: "default.space",
-    )
-      ..title = "Coming soon"
-      ..author = "filorux"
-      ..description = "More maps are coming.\nIt just felt empty..."
-      ..version = "1.0.0"
+    Preset.fromJson(aiExample)
   ];
 }

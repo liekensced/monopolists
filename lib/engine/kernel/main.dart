@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/extensions/transportation.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 import 'package:plutopoly/helpers/progress_helper.dart';
 
 import '../../bloc/main_bloc.dart';
@@ -10,7 +11,7 @@ import '../ai/ai_type.dart';
 import '../ai/normal/normal_ai.dart';
 import '../data/actions.dart';
 import '../data/extensions.dart';
-import '../data/info.dart';
+import '../data/update_info.dart';
 import '../data/main_data.dart';
 import '../data/map.dart';
 import '../data/player.dart';
@@ -340,10 +341,10 @@ class Game {
 
   /// If changeS experience++
   static Alert next({force: false, changeS: false}) {
-    data.findingsIndex = Random().nextInt(findings.length);
-    data.eventIndex = Random().nextInt(events.length);
     Alert alert = nextCheck();
     if (alert != null && !force) return alert;
+    data.findingsIndex = Random().nextInt(findings.length);
+    data.eventIndex = Random().nextInt(events.length);
 
     if (data.currentDices[0] == data.currentDices[1] && !data.player.jailed) {
       data.doublesThrown++;
@@ -393,7 +394,9 @@ class Game {
 
     addInfo(
         UpdateInfo(
-            title: "Received go bonus", trailing: "£$_goBonus", show: true),
+            title: "Received go bonus",
+            trailing: "${mon(_goBonus)}",
+            show: true),
         Game.data.currentPlayer);
     Game.save(local: true);
 

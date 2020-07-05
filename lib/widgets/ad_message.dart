@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/helpers/progress_helper.dart';
 
 import '../bloc/ad_bloc.dart';
 import '../bloc/main_bloc.dart';
@@ -21,7 +24,7 @@ class DailyAdsMessage extends StatelessWidget {
     RewardedVideoAd.instance.listener =
         (RewardedVideoAdEvent event, {String rewardType, int rewardAmount}) {
       if (event == RewardedVideoAdEvent.rewarded) {
-        Hive.box(MainBloc.METABOX).put("intAdDays", amount - 1);
+        giveReward(amount);
       }
 
       if (event == RewardedVideoAdEvent.loaded) {
@@ -41,7 +44,7 @@ class DailyAdsMessage extends StatelessWidget {
               Future.delayed(Duration(seconds: 15), () {
                 if (Hive.box(MainBloc.METABOX).get("boolShowAd")) {
                   Hive.box(MainBloc.METABOX).put("boolShowAd", false);
-                  Hive.box(MainBloc.METABOX).put("intAdDays", amount - 1);
+                  giveReward(amount);
                 }
               });
 
@@ -102,5 +105,10 @@ class DailyAdsMessage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: children,
     );
+  }
+
+  void giveReward(int amount) {
+    ProgressHelper.energy += Random().nextInt(3) + 1;
+    Hive.box(MainBloc.METABOX).put("intAdDays", amount - 1);
   }
 }

@@ -4,7 +4,7 @@ import 'package:plutopoly/engine/ai/ai.dart';
 
 import '../extensions/bank/data/loan.dart';
 import '../kernel/main.dart';
-import 'info.dart';
+import 'update_info.dart';
 import 'map.dart';
 
 part 'player.g.dart';
@@ -32,7 +32,7 @@ class Player {
   @HiveField(8)
   int goojCards = 0;
   @HiveField(9)
-  List<UpdateInfo> info = [UpdateInfo(title: "New game")];
+  List<UpdateInfo> info = <UpdateInfo>[UpdateInfo(title: "New game")];
 
   @HiveField(10)
   List<double> moneyHistory = [0];

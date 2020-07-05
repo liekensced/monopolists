@@ -54,8 +54,10 @@ class MoneyCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      Text("£",
-                          style: TextStyle(color: Colors.white, fontSize: 50)),
+                      if (Game.data.placeCurrencyInFront)
+                        Text(Game.data.currency ?? "£",
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 50)),
                       GameListener(
                         builder: (BuildContext context, _, __) {
                           return AnimatedCount(
@@ -65,6 +67,10 @@ class MoneyCard extends StatelessWidget {
                                   TextStyle(color: Colors.white, fontSize: 50));
                         },
                       ),
+                      if (!Game.data.placeCurrencyInFront)
+                        Text(Game.data.currency ?? "£",
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 50)),
                       Spacer(),
                       buildText()
                     ],

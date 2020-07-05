@@ -4,12 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 
-import 'package:plutopoly/engine/data/info.dart';
+import 'package:plutopoly/engine/data/update_info.dart';
 import 'package:plutopoly/helpers/hero_info.dart';
+import 'package:plutopoly/helpers/progress_helper.dart';
 import 'package:plutopoly/screens/game/zoom_map.dart';
 import 'package:plutopoly/widgets/end_of_list.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
 
 import '../../../bloc/ad_bloc.dart';
 import '../../../bloc/game_listener.dart';
@@ -136,175 +138,200 @@ class _ActionScreenState extends State<ActionScreen> {
               icon: Icon(Icons.home), title: Text("Actions")),
           BottomNavigationBarItem(
               icon: Icon(Icons.grid_on), title: Text("Gridview"))
-          // BottomNavigationBarItem(
-          //     icon: FaIcon(FontAwesomeIcons.compass), title: Text("Open item"))
         ],
       ),
-      body: FractionallySizedBox(
-        heightFactor: 1,
-        child: NestedScrollView(
-          controller: controller,
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return [
-              SliverAppBar(
-                title: GameListener(
-                    builder: (c, _, __) => Text(Game.data.player.name)),
-                leading: IconButton(
-                  icon: Icon(Icons.menu),
-                  onPressed: () {
-                    showSettingsSheet(context, pageController);
-                  },
-                ),
-                actions: [
-                  IconButton(
-                    icon: Tooltip(
-                      child: Icon(Icons.location_searching),
-                      message: "Locate player",
-                    ),
+      body: SafeArea(
+        child: FractionallySizedBox(
+          heightFactor: 1,
+          child: NestedScrollView(
+            controller: controller,
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              return [
+                SliverAppBar(
+                  title: GameListener(
+                      builder: (c, _, __) => Text(Game.data.player.name)),
+                  leading: IconButton(
+                    icon: Icon(Icons.menu),
                     onPressed: () {
-                      if (pageController.hasClients) {
-                        pageController.animateToPage(Game.data.player.position,
-                            duration: Duration(milliseconds: 500),
-                            curve: Curves.easeInOutCubic);
-                      }
+                      showSettingsSheet(context, pageController);
                     },
                   ),
-                  Center(
-                      child: InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return ListView.builder(
-                                itemCount:
-                                    UIBloc.gamePlayer.moneyHistory.length,
-                                itemBuilder: (context, int index) {
-                                  return ListTile(
-                                    title: Text(UIBloc
-                                        .gamePlayer.moneyHistory[index]
-                                        .toString()),
-                                  );
-                                });
-                          });
-                    },
-                    child: Card(
-                        child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GameListener(
-                        builder: (BuildContext context, _, __) {
-                          try {
-                            if (screenState != Game.ui.screenState) {
-                              Future.delayed(
-                                  Duration.zero, () => setState(() {}));
-                            }
-                            if (Game.data.dealData.dealer != null) {
-                              if (Game.data.players[Game.data.dealData.dealer]
-                                          .code ==
-                                      MainBloc.code &&
-                                  MainBloc.online &&
-                                  !MainBloc.dealOpen &&
-                                  Game.ui.showDealScreen) {
-                                Future.delayed(Duration.zero, () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return DealScreen(
-                                      dealer: Game.data.dealData.dealer,
-                                      visit: true,
-                                    );
-                                  }));
-                                  ;
-                                });
-                              }
-                            }
-                          } catch (e) {
-                            Game.data.dealData == GameData();
-                          }
-
-                          return Row(
-                            children: <Widget>[
-                              Text("£"),
-                              AnimatedCount(
-                                count: ((UIBloc.gamePlayer.money.toInt())),
-                                duration: Duration(seconds: 1),
-                              ),
-                            ],
-                          );
-                        },
+                  actions: [
+                    IconButton(
+                      icon: Tooltip(
+                        child: Icon(Icons.location_searching),
+                        message: "Locate player",
                       ),
-                    )),
-                  )),
-                  Container(
-                    width: 5,
-                  )
-                ],
-                automaticallyImplyLeading: false,
-                expandedHeight:
-                    max(min(MediaQuery.of(context).size.height / 2, 450), 300),
-                floating: false,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
-                    padding: EdgeInsets.only(top: 50),
-                    alignment: Alignment.center,
-                    child: Container(
-                      height: 300,
-                      child: Theme(
-                        data: ThemeData.light(),
+                      onPressed: () {
+                        if (pageController.hasClients) {
+                          pageController.animateToPage(
+                              Game.data.player.position,
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeInOutCubic);
+                        }
+                      },
+                    ),
+                    Center(
+                        child: InkWell(
+                      onTap: () {
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return ListView.builder(
+                                  itemCount:
+                                      UIBloc.gamePlayer.moneyHistory.length,
+                                  itemBuilder: (context, int index) {
+                                    return ListTile(
+                                      title: Text(UIBloc
+                                          .gamePlayer.moneyHistory[index]
+                                          .toString()),
+                                    );
+                                  });
+                            });
+                      },
+                      child: Card(
+                          child: Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: GameListener(
-                          builder: (_, __, ___) {
-                            return MapCarousel(controller: pageController);
+                          builder: (BuildContext context, _, __) {
+                            try {
+                              if (screenState != Game.ui.screenState) {
+                                Future.delayed(
+                                    Duration.zero, () => setState(() {}));
+                              }
+                              if (Game.data.dealData.dealer != null) {
+                                if (Game.data.players[Game.data.dealData.dealer]
+                                            .code ==
+                                        MainBloc.code &&
+                                    MainBloc.online &&
+                                    !MainBloc.dealOpen &&
+                                    Game.ui.showDealScreen) {
+                                  Future.delayed(Duration.zero, () {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return DealScreen(
+                                        dealer: Game.data.dealData.dealer,
+                                        visit: true,
+                                      );
+                                    }));
+                                    ;
+                                  });
+                                }
+                              }
+                            } catch (e) {
+                              Game.data.dealData == GameData();
+                            }
+
+                            return Row(
+                              children: <Widget>[
+                                if (Game.data?.placeCurrencyInFront ?? true)
+                                  Text(Game.data.currency ?? "£"),
+                                AnimatedCount(
+                                  count: ((UIBloc.gamePlayer.money.toInt())),
+                                  duration: Duration(seconds: 1),
+                                ),
+                                if (!(Game.data?.placeCurrencyInFront ?? true))
+                                  Text(Game.data.currency ?? "£"),
+                              ],
+                            );
                           },
                         ),
-                      ),
+                      )),
+                    )),
+                    Container(
+                      width: 5,
+                    )
+                  ],
+                  automaticallyImplyLeading: false,
+                  expandedHeight: max(
+                      min(MediaQuery.of(context).size.height / 2, 450), 300),
+                  floating: false,
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Column(
+                      children: [
+                        if (MainBloc.prefbox.get("boolShowLinear") ?? true)
+                          ValueListenableBuilder(
+                              valueListenable:
+                                  Hive.box(MainBloc.ACCOUNTBOX).listenable(),
+                              builder: (context, __, _) {
+                                return AnimatedLinear(
+                                  duration: Duration(seconds: 1),
+                                  count: (ProgressHelper.levelProgress * 1000)
+                                      .floor(),
+                                );
+                              }),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.only(top: 50),
+                            alignment: Alignment.center,
+                            child: Container(
+                              height: 300,
+                              child: Theme(
+                                data: ThemeData.light(),
+                                child: GameListener(
+                                  builder: (_, __, ___) {
+                                    return MapCarousel(
+                                        controller: pageController);
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                )
+              ];
+            },
+            body: Stack(
+              children: [
+                PageView(
+                  onPageChanged: (int indx) {
+                    pageIndex = indx;
+                    setState(() {});
+                  },
+                  controller: actionPageController,
+                  physics: idle
+                      ? NeverScrollableScrollPhysics()
+                      : PageScrollPhysics(),
+                  children: <Widget>[
+                    HoldingCards(),
+                    idle
+                        ? GameListener(
+                            builder: (c, __, ___) =>
+                                IdleScreen(pageController, controller))
+                        : GameListener(
+                            builder: (BuildContext context, _, __) {
+                              return ActionCards();
+                            },
+                          ),
+                    ListView(
+                      children: [
+                        GameListener(
+                            builder: (context, _, __) => ValueListenableBuilder(
+                                  valueListenable:
+                                      MainBloc.metaBox.listenable(),
+                                  builder: (BuildContext context, _, __) =>
+                                      HeroInfo(
+                                    heroBaseTag: "actionScreen",
+                                    child: ZoomMap(),
+                                  ),
+                                )),
+                        EndOfList(),
+                      ],
+                    )
+                  ],
                 ),
-              )
-            ];
-          },
-          body: Stack(
-            children: [
-              PageView(
-                onPageChanged: (int indx) {
-                  pageIndex = indx;
-                  setState(() {});
-                },
-                controller: actionPageController,
-                physics:
-                    idle ? NeverScrollableScrollPhysics() : PageScrollPhysics(),
-                children: <Widget>[
-                  HoldingCards(),
-                  idle
-                      ? GameListener(
-                          builder: (c, __, ___) =>
-                              IdleScreen(pageController, controller))
-                      : GameListener(
-                          builder: (BuildContext context, _, __) {
-                            return ActionCards();
-                          },
-                        ),
-                  ListView(
-                    children: [
-                      GameListener(
-                          builder: (context, _, __) => ValueListenableBuilder(
-                                valueListenable: MainBloc.metaBox.listenable(),
-                                builder: (BuildContext context, _, __) =>
-                                    HeroInfo(
-                                  heroBaseTag: "actionScreen",
-                                  child: ZoomMap(),
-                                ),
-                              )),
-                      EndOfList(),
-                    ],
-                  )
-                ],
-              ),
-              Theme(
-                  child: GameListener(builder: (context, snapshot, _) {
-                    return NotificationHandler();
-                  }),
-                  data: ThemeData.light())
-            ],
+                Theme(
+                    child: GameListener(builder: (context, snapshot, _) {
+                      return NotificationHandler();
+                    }),
+                    data: ThemeData.light())
+              ],
+            ),
           ),
         ),
       ),

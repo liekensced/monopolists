@@ -14,7 +14,7 @@ import '../engine/ai/ai.dart';
 import '../engine/ai/ai_type.dart';
 import '../engine/data/deal_data.dart';
 import '../engine/data/extensions.dart';
-import '../engine/data/info.dart';
+import '../engine/data/update_info.dart';
 import '../engine/data/main_data.dart';
 import '../engine/data/map.dart';
 import '../engine/data/player.dart';

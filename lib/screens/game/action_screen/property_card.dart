@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 
 import '../../../bloc/main_bloc.dart';
 import '../../../bloc/ui_bloc.dart';
@@ -80,7 +81,7 @@ class _PropertyCardState extends State<PropertyCard>
                               width: double.maxFinite,
                               child: Center(
                                 child: Text(
-                                  "Build house £" + tile.housePrice.toString(),
+                                  "Build house ${mon(tile.housePrice)}",
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -189,8 +190,7 @@ class _PropertyCardState extends State<PropertyCard>
                         "How much other players have to pay to move from this station."),
                     trailing: RaisedButton.icon(
                       color: Theme.of(context).primaryColor,
-                      icon: Text(
-                          '£' + (tile.transportationPrice ?? 0).toString()),
+                      icon: Text(mon(tile.transportationPrice ?? 0)),
                       label: Icon(Icons.edit),
                       onPressed: () {
                         showDialog(
@@ -297,7 +297,7 @@ class _PropertyCardState extends State<PropertyCard>
                 style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
-                "${tile.mortaged ? 'Mortaged ' : ''} £${tile.price ?? 0}, £${tile.hyp ?? 0}, -£${tile.currentRent ?? 0}",
+                "${tile.mortaged ? 'Mortaged ' : ''} ${mon(tile.price ?? 0)}, ${mon(tile.hyp ?? 0)}, -${mon(tile.currentRent ?? 0)}",
                 style: TextStyle(
                   color: textColor,
                 ),
@@ -403,10 +403,9 @@ class TileInfo extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                        "Value: £" +
-                            tile.price.toString() +
+                        "Value: ${mon(tile.price)}" +
                             "\nRent: " +
-                            tile.currentRent.toString(),
+                            mon(tile.currentRent),
                         textAlign: TextAlign.center),
                   ),
                   tile.mortaged
@@ -453,8 +452,8 @@ class MortageButton extends StatelessWidget {
             child: FlatButton(
               child: Text(
                 (tile.mortaged
-                    ? "Buy back for £" + (tile.hyp * 1.1).floor().toString()
-                    : "Mortage for  £" + tile.hyp.toString()),
+                    ? "Buy back for ${mon(tile.hyp * 1.1)}"
+                    : "Mortage for  ${mon(tile.hyp)}"),
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

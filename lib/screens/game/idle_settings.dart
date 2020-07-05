@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
+import 'package:plutopoly/screens/store/rewards_list.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../bloc/ui_bloc.dart';
@@ -59,6 +60,26 @@ class IdleSettings extends StatelessWidget {
             },
           ),
         ),
+        Divider(),
+        ListTile(
+          title: Text("Currency"),
+          subtitle: Text("The currency used in the game"),
+          trailing: IconButton(
+            icon: Text(
+              Game.data.currency,
+              style: TextStyle(fontSize: 25),
+            ),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                return CurrencyScreen(
+                  selector: true,
+                );
+              }));
+            },
+          ),
+        ),
+        Divider(),
         ListTile(
           title: Text("Let a bot play for you"),
           subtitle: Text("A bot will take your place from the next turn."),

@@ -10,22 +10,21 @@ class AI {
   @HiveField(0)
   AIType type;
   @HiveField(1)
-  @JsonKey(name: "aiSettings")
-  AISettings _aiSettings;
+  AISettings aiSettingsCache;
   @HiveField(2)
   String description;
 
   AISettings get aiSettings {
-    if (_aiSettings == null) return AISettings();
-    if (_aiSettings.chances.length < defaultChances.length) {
-      _aiSettings.chances = defaultChances;
+    if (aiSettingsCache == null) return AISettings();
+    if (aiSettingsCache.chances.length < defaultChances.length) {
+      aiSettingsCache.chances = defaultChances;
     }
-    return _aiSettings;
+    return aiSettingsCache;
   }
 
   AI(this.type, {bool hard = false}) {
     if (hard) {
-      _aiSettings = AISettings.hard();
+      aiSettingsCache = AISettings.hard();
       description = "Hard BOT";
     }
   }
@@ -44,6 +43,14 @@ const List<double> defaultChances = [
   0,
   0.3,
   1,
+];
+
+const List<double> idleChances = [
+  0,
+  0,
+  1,
+  1,
+  0.001,
 ];
 
 @JsonSerializable(explicitToJson: true)

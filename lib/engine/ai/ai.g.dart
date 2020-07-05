@@ -19,7 +19,7 @@ class AIAdapter extends TypeAdapter<AI> {
     return AI(
       fields[0] as AIType,
     )
-      .._aiSettings = fields[1] as AISettings
+      ..aiSettingsCache = fields[1] as AISettings
       ..description = fields[2] as String;
   }
 
@@ -30,7 +30,7 @@ class AIAdapter extends TypeAdapter<AI> {
       ..writeByte(0)
       ..write(obj.type)
       ..writeByte(1)
-      ..write(obj._aiSettings)
+      ..write(obj.aiSettingsCache)
       ..writeByte(2)
       ..write(obj.description);
   }
@@ -78,11 +78,16 @@ class AISettingsAdapter extends TypeAdapter<AISettings> {
 AI _$AIFromJson(Map json) {
   return AI(
     _$enumDecodeNullable(_$AITypeEnumMap, json['type']),
-  )..description = json['description'] as String;
+  )
+    ..aiSettingsCache = json['aiSettingsCache'] == null
+        ? null
+        : AISettings.fromJson(json['aiSettingsCache'] as Map)
+    ..description = json['description'] as String;
 }
 
 Map<String, dynamic> _$AIToJson(AI instance) => <String, dynamic>{
       'type': _$AITypeEnumMap[instance.type],
+      'aiSettingsCache': instance.aiSettingsCache?.toJson(),
       'description': instance.description,
     };
 

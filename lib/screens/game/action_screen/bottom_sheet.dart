@@ -121,6 +121,8 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                                     bool rememberScroll = box.get(
                                         "boolRememberScroll",
                                         defaultValue: true);
+                                    bool showLinear = box.get("boolShowLinear",
+                                        defaultValue: true);
                                     return Column(
                                       children: [
                                         Container(
@@ -163,7 +165,18 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                                               : Container(width: 0),
                                           title:
                                               Text("Remember scroll position"),
-                                        )
+                                        ),
+                                        ListTile(
+                                          onTap: () {
+                                            box.put(
+                                                "boolShowLinear", !showLinear);
+                                          },
+                                          trailing: showLinear
+                                              ? Icon(Icons.check)
+                                              : Container(width: 0),
+                                          title: Text(
+                                              "Show level progress indicator"),
+                                        ),
                                       ],
                                     );
                                   },

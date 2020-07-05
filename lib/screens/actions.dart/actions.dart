@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/bloc/game_listener.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 
 import '../../engine/data/deal_data.dart';
@@ -31,7 +32,7 @@ class ActionsCardChild extends StatelessWidget {
       playersList.add(ListTile(
         title: Text(player.name),
         subtitle: Text(
-          "£${player.money.round()}, ${player.properties.length} properties",
+          "${mon(player.money)}, ${player.properties.length} properties",
           overflow: TextOverflow.fade,
         ),
         trailing: RaisedButton(

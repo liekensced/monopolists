@@ -5,7 +5,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plutopoly/bloc/game_listener.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
+import 'package:plutopoly/helpers/progress_helper.dart';
 import 'package:plutopoly/screens/game/action_screen/action_screen.dart';
+import 'package:plutopoly/widgets/animated_count.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/kernel/main.dart';
@@ -30,6 +32,17 @@ class MoveScreen extends StatelessWidget {
               children: [
                 Column(
                   children: <Widget>[
+                    if (MainBloc.prefbox.get("boolShowLinear") ?? true)
+                      ValueListenableBuilder(
+                          valueListenable:
+                              Hive.box(MainBloc.ACCOUNTBOX).listenable(),
+                          builder: (context, __, _) {
+                            return AnimatedLinear(
+                              duration: Duration(seconds: 1),
+                              count:
+                                  (ProgressHelper.levelProgress * 1000).floor(),
+                            );
+                          }),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 12.0, horizontal: 50),

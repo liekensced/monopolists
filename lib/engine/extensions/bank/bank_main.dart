@@ -1,5 +1,7 @@
+import 'package:plutopoly/helpers/money_helper.dart';
+
 import '../../data/extensions.dart';
-import '../../data/info.dart';
+import '../../data/update_info.dart';
 import '../../data/map.dart';
 import '../../data/player.dart';
 import '../../kernel/core_actions.dart';
@@ -42,12 +44,13 @@ class BankMain {
     if (totalReceived != 0)
       Game.addInfo(
           UpdateInfo(
-              title: "Received loan(s): +£$totalReceived", leading: "bank"),
+              title: "Received loan(s): +${mon(totalReceived)}",
+              leading: "bank"),
           playerIndex);
     if (totalInterest != 0)
       Game.addInfo(
           UpdateInfo(
-              title: "Total interest: -£$totalInterest", leading: "bank"),
+              title: "Total interest: -${mon(totalInterest)}", leading: "bank"),
           playerIndex);
   }
 
@@ -55,7 +58,7 @@ class BankMain {
     if (!enabled) return;
     double rent = Game.data.player.money * Game.data.settings.interest / 100;
     Game.data.player.money += rent;
-    Game.addInfo(UpdateInfo(title: "You received rent! +£${rent.floor()}"),
+    Game.addInfo(UpdateInfo(title: "You received rent! +${mon(rent)}"),
         Game.data.currentPlayer);
   }
 

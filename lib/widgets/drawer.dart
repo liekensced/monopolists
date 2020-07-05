@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plutopoly/helpers/progress_helper.dart';
 import 'package:plutopoly/screens/online_extension_page.dart';
 
@@ -32,27 +33,7 @@ class MyDrawer extends StatelessWidget {
                   )),
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: ListTile(
-                      leading: CircleColor(
-                          color: Color(
-                              MainBloc.player?.color ?? Colors.white.value),
-                          circleSize: 40),
-                      title: Text(
-                        MainBloc.player?.name ?? "unknown",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.w900),
-                      ),
-                      trailing: Text(
-                        ProgressHelper.level.toString(),
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w900),
-                      ),
-                      subtitle: LinearProgressIndicator(
-                        value: ProgressHelper.levelProgress,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            Theme.of(context).accentColor),
-                      ),
-                    ),
+                    child: ProgressListTile(),
                   ),
                 ],
               ),
@@ -161,5 +142,45 @@ class MyDrawer extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class ProgressListTile extends StatelessWidget {
+  final bool leading;
+  const ProgressListTile({
+    Key key,
+    this.leading: true,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+        valueListenable: Hive.box(MainBloc.ACCOUNTBOX).listenable(),
+        builder: (context, __, _) {
+          return ListTile(
+            leading: leading
+                ? CircleColor(
+                    elevation: 0,
+                    color: Color(MainBloc.player?.color ?? Colors.white.value),
+                    circleSize: 40)
+                : Container(
+                    width: 0,
+                  ),
+            title: Text(
+              MainBloc.player?.name ?? "unknown",
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            trailing: Text(
+              ProgressHelper.level.toString(),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+            ),
+            subtitle: LinearProgressIndicator(
+              value: ProgressHelper.levelProgress,
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(Theme.of(context).accentColor),
+            ),
+          );
+        });
   }
 }

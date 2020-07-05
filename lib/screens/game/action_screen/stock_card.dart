@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/data/extensions.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 
 import '../../../engine/extensions/bank/stock_bloc.dart';
 import '../../../engine/kernel/main.dart';
@@ -30,7 +31,7 @@ class StockCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                "£" + Game.data.bankData.worldStock.value.floor().toString(),
+                "${mon(Game.data.bankData.worldStock.value)}",
                 style: TextStyle(fontSize: 20),
               ),
               Container(width: 8),

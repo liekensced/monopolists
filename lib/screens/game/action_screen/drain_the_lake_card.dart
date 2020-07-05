@@ -3,6 +3,7 @@ import 'package:flutter_material_color_picker/flutter_material_color_picker.dart
 import 'package:plutopoly/engine/extensions/lake_drain_extension.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 
 class DrainTheLakeCard extends StatelessWidget {
@@ -32,7 +33,7 @@ class DrainTheLakeCard extends StatelessWidget {
                 : null,
             color: Theme.of(context).primaryColor,
             textColor: Colors.white,
-            child: Text("Drain for £${Game.data.settings.dtlPrice}"),
+            child: Text("Drain for ${mon(Game.data.settings.dtlPrice)}"),
           ),
         )
       ],

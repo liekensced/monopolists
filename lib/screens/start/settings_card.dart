@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plutopoly/screens/store/rewards_list.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../engine/kernel/main.dart';
@@ -37,6 +38,25 @@ class _SettingsCardState extends State<SettingsCard>
             onChanged: (val) {
               Game.data.settings.remotelyBuild = val;
               Game.save(only: [SaveData.settings.toString()]);
+            },
+          ),
+        ),
+        Divider(),
+        ListTile(
+          title: Text("Currency"),
+          subtitle: Text("The currency used in the game"),
+          trailing: IconButton(
+            icon: Text(
+              Game.data.currency,
+              style: TextStyle(fontSize: 25),
+            ),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                return CurrencyScreen(
+                  selector: true,
+                );
+              }));
             },
           ),
         ),

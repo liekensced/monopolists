@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plutopoly/bloc/game_listener.dart';
 import 'package:plutopoly/helpers/icon_helper.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 import 'package:plutopoly/screens/game/action_screen/property_card.dart';
 
 import '../../engine/data/actions.dart';
@@ -202,7 +203,7 @@ class PropertyActionCardChild extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               color: Colors.green,
               child: Text(
-                "Empty  £" + Game.data.pot.floor().toString(),
+                "Empty  ${mon(Game.data.pot)}",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -252,8 +253,9 @@ class PropertyActionCardChild extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               color: price > 0 ? Colors.red : Colors.green,
               child: Text(
-                (price > 0 ? "Pay taxes £" : "You receive £") +
-                    price.abs().toString(),
+                (price > 0
+                    ? "Pay taxes ${mon(price.abs())}"
+                    : "You receive ${mon(price.abs())}"),
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -309,7 +311,7 @@ class PropertyActionCardChild extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               color: Colors.red,
               child: Text(
-                "Bail out £50",
+                "Bail out ${mon(50)}",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -362,7 +364,7 @@ class PropertyActionCardChild extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               color: Colors.green,
               child: Text(
-                "Buy £" + Game.data.player.positionTile.price.toString(),
+                "Buy ${mon(Game.data.player.positionTile.price)}",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

@@ -59,19 +59,22 @@ class InfoAdapter extends TypeAdapter<Info> {
       fields[0] as String,
       fields[1] as String,
       fields[2] as InfoType,
+      color: fields[3] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Info obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
       ..write(obj.content)
       ..writeByte(2)
-      ..write(obj.type);
+      ..write(obj.type)
+      ..writeByte(3)
+      ..write(obj.color);
   }
 }
 
@@ -84,6 +87,7 @@ Info _$InfoFromJson(Map json) {
     json['title'] as String,
     json['content'] as String,
     _$enumDecodeNullable(_$InfoTypeEnumMap, json['type']),
+    color: json['color'] as int,
   );
 }
 
@@ -99,6 +103,7 @@ Map<String, dynamic> _$InfoToJson(Info instance) {
   writeNotNull('title', instance.title);
   writeNotNull('content', instance.content);
   writeNotNull('type', _$InfoTypeEnumMap[instance.type]);
+  writeNotNull('color', instance.color);
   return val;
 }
 

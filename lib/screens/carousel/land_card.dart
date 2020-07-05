@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 import 'package:plutopoly/widgets/owner_text.dart';
 
 import '../../engine/data/map.dart';
@@ -76,10 +77,7 @@ class LandCard extends StatelessWidget {
                 Expanded(
                     child: Center(
                   child: Text(
-                    "£" +
-                        (tile.owner == null
-                            ? tile.price.toString()
-                            : tile.currentRent.toString()),
+                    "${mon(tile.owner == null ? tile.price : tile.currentRent)}",
                     style: TextStyle(
                         color: tile.owner == null ? Colors.green : Colors.red,
                         fontWeight: FontWeight.bold),

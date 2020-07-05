@@ -5,6 +5,7 @@ import 'package:plutopoly/engine/data/player.dart';
 import 'package:plutopoly/engine/extensions/transportation.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 
 class MoveCard extends StatelessWidget {
@@ -23,7 +24,7 @@ class MoveCard extends StatelessWidget {
           color: Theme.of(context).primaryColor,
           child: Text(owner == Game.data.player
               ? "move"
-              : "Pay £" + (tile.transportationPrice ?? 0).toString()),
+              : "Pay ${mon(tile.transportationPrice ?? 0)}"),
           onPressed: Game.data.transported
               ? null
               : () {

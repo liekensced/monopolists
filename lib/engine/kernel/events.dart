@@ -6,7 +6,7 @@ import 'package:plutopoly/engine/ai/ai_type.dart';
 import 'package:plutopoly/engine/ai/normal/normal_ai.dart';
 import 'package:plutopoly/engine/data/actions.dart';
 import 'package:plutopoly/engine/data/extensions.dart';
-import 'package:plutopoly/engine/data/info.dart';
+import 'package:plutopoly/engine/data/update_info.dart';
 import 'package:plutopoly/engine/data/main_data.dart';
 import 'package:plutopoly/engine/data/map.dart';
 import 'package:plutopoly/engine/data/player.dart';

@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 
-import '../data/info.dart';
+import '../data/update_info.dart';
 import '../data/main_data.dart';
 import '../data/map.dart';
 import '../data/player.dart';
@@ -71,7 +72,7 @@ class CoreActions {
             UpdateInfo(
                 title: "You received rent!",
                 subtitle: "From ${data.player.name}.",
-                trailing: "£$amount",
+                trailing: "${mon(amount)}",
                 leading: "rent",
                 show: true),
             receiver,
@@ -85,7 +86,7 @@ class CoreActions {
             Game.addInfo(
               UpdateInfo(
                   title: message,
-                  trailing: "-£$amount",
+                  trailing: "-${mon(amount)}",
                   show: true,
                   color: Colors.red.value),
               receiver,
@@ -97,7 +98,7 @@ class CoreActions {
               Game.addInfo(
                 UpdateInfo(
                     title: "You received!",
-                    trailing: "+£${-amount}",
+                    trailing: "+${mon(-amount)}",
                     show: true,
                     color: Colors.green.value),
                 receiver,

@@ -5,7 +5,7 @@ import 'package:plutopoly/bloc/game_listener.dart';
 import 'package:plutopoly/engine/data/player.dart';
 import 'package:plutopoly/helpers/icon_helper.dart';
 
-import '../../../engine/data/info.dart';
+import '../../../engine/data/update_info.dart';
 import '../../../engine/kernel/main.dart';
 import '../../../widgets/my_card.dart';
 

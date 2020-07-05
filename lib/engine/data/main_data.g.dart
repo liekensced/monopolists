@@ -38,13 +38,15 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..lostPlayers = (fields[18] as List)?.cast<Player>()
       ..bot = fields[19] as bool
       ..transported = fields[20] as bool
-      ..preset = fields[21] as String;
+      ..preset = fields[21] as String
+      ..currency = fields[22] as String
+      ..placeCurrencyInFront = fields[23] as bool;
   }
 
   @override
   void write(BinaryWriter writer, GameData obj) {
     writer
-      ..writeByte(22)
+      ..writeByte(24)
       ..writeByte(0)
       ..write(obj.running)
       ..writeByte(1)
@@ -88,7 +90,11 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..writeByte(20)
       ..write(obj.transported)
       ..writeByte(21)
-      ..write(obj.preset);
+      ..write(obj.preset)
+      ..writeByte(22)
+      ..write(obj.currency)
+      ..writeByte(23)
+      ..write(obj.placeCurrencyInFront);
   }
 }
 
@@ -134,7 +140,9 @@ GameData _$GameDataFromJson(Map json) {
         ?.toList()
     ..bot = json['bot'] as bool
     ..transported = json['transported'] as bool ?? false
-    ..preset = json['preset'] as String;
+    ..preset = json['preset'] as String
+    ..currency = json['currency'] as String
+    ..placeCurrencyInFront = json['placeCurrencyInFront'] as bool;
 }
 
 Map<String, dynamic> _$GameDataToJson(GameData instance) {
@@ -171,6 +179,8 @@ Map<String, dynamic> _$GameDataToJson(GameData instance) {
   writeNotNull('bot', instance.bot);
   writeNotNull('transported', instance.transported);
   writeNotNull('preset', instance.preset);
+  writeNotNull('currency', instance.currency);
+  writeNotNull('placeCurrencyInFront', instance.placeCurrencyInFront);
   return val;
 }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 
 import '../../screens/start/players.dart';
 import '../data/player.dart';
@@ -70,7 +71,7 @@ class Alert {
     double money = player?.money ?? Game.data.player.money;
     content = (player?.name ?? Game.data.player.name) +
         " does not have enough money" +
-        (needed == null ? "." : ":\n£$needed > £${money.floor()}");
+        (needed == null ? "." : ":\n${mon(needed)} > ${mon(money)}}");
   }
 
   static void handleAndPop(Alert Function() f, BuildContext context) {

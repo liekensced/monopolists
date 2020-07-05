@@ -60,14 +60,16 @@ class Preset extends HiveObject {
       place = "default";
       return GameData();
     }
-    if (presetsData.containsKey(searchName)) {
-      place = "local default";
-      return GameData.fromJson(presetsData[searchName]);
-    }
-    if (MainBloc.presetGamesBox.containsKey(searchName)) {
-      place = "local";
-      return MainBloc.presetGamesBox.get(searchName);
-    }
+    try {
+      if (presetsData.containsKey(searchName)) {
+        place = "local default";
+        return GameData.fromJson(presetsData[searchName]);
+      }
+      if (MainBloc.presetGamesBox.containsKey(searchName)) {
+        place = "local";
+        return MainBloc.presetGamesBox.get(searchName);
+      }
+    } catch (e) {}
 
     print("===\nCouldn't find data\n===");
     if (template == "classic" || template == "default") {

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/helpers/money_helper.dart';
 import 'package:plutopoly/screens/game/property_page.dart';
 
 import '../../bloc/game_listener.dart';
@@ -340,7 +341,7 @@ class _DealScreenChildState extends State<DealScreenChild>
                                   keyboardType: TextInputType.numberWithOptions(
                                       signed: false, decimal: false),
                                   decoration: InputDecoration(
-                                    prefixText: "£ ",
+                                    prefixText: "${Game.data.currency ?? "£"} ",
                                     fillColor: Colors.red,
                                     hoverColor: Colors.red,
                                     labelText: "Enter amount",
@@ -378,7 +379,7 @@ class _DealScreenChildState extends State<DealScreenChild>
                         keyboardType: TextInputType.numberWithOptions(
                             signed: false, decimal: false),
                         decoration: InputDecoration(
-                          prefixText: "£ ",
+                          prefixText: "${Game.data.currency ?? "£"} ",
                           fillColor: Colors.red,
                           hoverColor: Colors.red,
                           labelText: "Enter amount",
@@ -487,16 +488,12 @@ class _DealScreenChildState extends State<DealScreenChild>
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Align(
-                alignment: Alignment.topRight,
-                child: Chip(
-                  label: Text("£" +
-                      (dealer
-                          ? (Game.data.players[dealData.dealer].money
-                              .toInt()
-                              .toString())
-                          : Game.data.player.money.toInt().toString())),
-                ),
-              ),
+                  alignment: Alignment.topRight,
+                  child: Chip(
+                    label: Text(
+                      "${mon(dealer ? (Game.data.players[dealData.dealer].money) : Game.data.player.money)}",
+                    ),
+                  )),
             ),
           ],
         ),
@@ -580,7 +577,7 @@ class _DealScreenChildState extends State<DealScreenChild>
         color: Color(tile.color),
         child: ListTile(
           subtitle: Text(
-            "${tile.mortaged ? 'Mortaged ' : ''} £${tile.price}, £${tile.hyp}, -£${tile.currentRent}",
+            "${tile.mortaged ? 'Mortaged ' : ''} ${mon(tile.price)}, ${mon(tile.hyp)}, -${mon(tile.currentRent)}",
             style: TextStyle(
               color: Colors.white,
             ),
@@ -633,7 +630,7 @@ class _DealScreenChildState extends State<DealScreenChild>
         color: Colors.white,
         child: ListTile(
           subtitle: Text(
-            "${tile.mortaged ? 'Mortaged ' : ''} £${tile.price}, £${tile.hyp}, -£${tile.currentRent}",
+            "${tile.mortaged ? 'Mortaged ' : ''} ${mon(tile.price)}, ${mon(tile.hyp)}, -${mon(tile.currentRent)}",
             style: TextStyle(
               color: Colors.white,
             ),
@@ -667,7 +664,7 @@ class _DealScreenChildState extends State<DealScreenChild>
         child: ListTile(
           leading: Icon(Icons.train, color: Colors.black),
           subtitle: Text(
-            "${tile.mortaged ? 'Mortaged ' : ''} £${tile.price}, £${tile.hyp}, -£${tile.currentRent}",
+            "${tile.mortaged ? 'Mortaged ' : ''} ${mon(tile.price)}, ${mon(tile.hyp)}, -${mon(tile.currentRent)}",
             style: TextStyle(
               color: Colors.black,
             ),

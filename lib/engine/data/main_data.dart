@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:plutopoly/engine/ai/ai_type.dart';
+import 'package:plutopoly/screens/store/currencies_data.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../data/extensions.dart';
@@ -63,9 +64,16 @@ class GameData extends HiveObject {
   bool transported = false;
   @HiveField(21)
   String preset = "";
+  @HiveField(22)
+  String currency = "£";
+  @HiveField(23)
+  bool placeCurrencyInFront = true;
 
   GameData() {
     version = MainBloc.version;
+    currency = CurrencyHelper.selectedCurrency?.icon ?? "£";
+    placeCurrencyInFront =
+        CurrencyHelper.selectedCurrency?.placeCurrencyInFront ?? true;
   }
 
   factory GameData.fromJson(Map json) => _$GameDataFromJson(json);

@@ -241,6 +241,12 @@ class GeneralInfoCard extends StatelessWidget {
           size: 40,
         );
         break;
+      case InfoType.setting:
+        return Icon(
+          Icons.settings,
+          size: 40,
+        );
+        break;
     }
     return Container();
   }
