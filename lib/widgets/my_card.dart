@@ -20,24 +20,26 @@ class MyCard extends StatefulWidget {
   final double elevation;
   final Color shadowColor;
   final bool center;
-  const MyCard({
-    Key key,
-    this.title,
-    this.listen: false,
-    @required this.children,
-    this.smallTitle,
-    this.color,
-    this.onTap,
-    this.maxWidth,
-    this.animate: true,
-    this.leading,
-    this.seperated: false,
-    this.show: true,
-    this.shrinkwrap: false,
-    this.shadowColor,
-    this.elevation,
-    this.center: true,
-  }) : super(key: key);
+  final Widget action;
+  const MyCard(
+      {Key key,
+      this.title,
+      this.listen: false,
+      @required this.children,
+      this.smallTitle,
+      this.color,
+      this.onTap,
+      this.maxWidth,
+      this.animate: true,
+      this.leading,
+      this.seperated: false,
+      this.show: true,
+      this.shrinkwrap: false,
+      this.shadowColor,
+      this.elevation,
+      this.center: true,
+      this.action})
+      : super(key: key);
 
   @override
   _MyCardState createState() => _MyCardState();
@@ -59,16 +61,31 @@ class _MyCardState extends State<MyCard> with SingleTickerProviderStateMixin {
 
   Widget buildCenter() {
     return Container(
-        constraints:
-            BoxConstraints(maxWidth: widget.maxWidth ?? UIBloc.maxWidth),
-        child: EagerInkWell(
-          onTap: widget.onTap,
-          child: widget.center
-              ? Center(
-                  child: buildCard(),
-                )
-              : buildCard(),
-        ));
+      constraints: BoxConstraints(maxWidth: widget.maxWidth ?? UIBloc.maxWidth),
+      child: Stack(
+        children: [
+          EagerInkWell(
+            onTap: widget.onTap,
+            child: widget.center
+                ? Center(
+                    child: buildCard(),
+                  )
+                : buildCard(),
+          ),
+          if (widget.action != null)
+            Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Material(
+                  color: Theme.of(context).cardColor,
+                  child: widget.action,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   Card buildCard() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/helpers/icon_helper.dart';
@@ -66,9 +67,11 @@ class _MapCarouselState extends State<MapCarousel> {
 }
 
 Widget buildCard(Tile tile, {zoom: false}) {
+  if (tile == null) return Container();
   switch (tile.type) {
     case TileType.land:
       return LandCard(
+        zoom: zoom,
         tile: tile,
       );
     case TileType.start:
@@ -79,8 +82,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       break;
     case TileType.tax:
       return Card(
-        color: Color(tile.backgroundColor ??
-            (tile.price < 0 ? Colors.green.value : Colors.orange.value)),
+        color: Color(tile.getBackgroundColor()),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -96,7 +98,8 @@ Widget buildCard(Tile tile, {zoom: false}) {
                     Spacer(),
                     Text(
                       mon(tile.price.abs()),
-                      style: TextStyle(color: Colors.white, fontSize: 27),
+                      style: TextStyle(
+                          color: Colors.white, fontSize: zoom ? 35 : 27),
                     )
                   ],
                 ))),
@@ -108,7 +111,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       );
     case TileType.police:
       return Card(
-        color: Color(tile.backgroundColor ?? Colors.blue[900].value),
+        color: Color(tile.getBackgroundColor()),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -125,7 +128,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       );
     case TileType.parking:
       return Card(
-        color: Color(tile.backgroundColor ?? Colors.white.value),
+        color: Color(tile.getBackgroundColor()),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -143,7 +146,8 @@ Widget buildCard(Tile tile, {zoom: false}) {
                     Spacer(),
                     Text(
                       mon(Game.data.pot) + " ",
-                      style: TextStyle(color: Colors.green, fontSize: 25),
+                      style: TextStyle(
+                          color: Colors.green, fontSize: zoom ? 30 : 25),
                     ),
                     Spacer(),
                   ],
@@ -156,7 +160,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       );
     case TileType.company:
       return Card(
-        color: Color(tile.backgroundColor ?? Colors.white.value),
+        color: Color(tile.getBackgroundColor()),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -173,7 +177,10 @@ Widget buildCard(Tile tile, {zoom: false}) {
                         : FaIcon(FontAwesomeIcons.faucet,
                             size: 50,
                             color: Color(tile.color ?? Colors.blue.value)),
-                    OwnerText(tile: tile),
+                    OwnerText(
+                      tile: tile,
+                      zoom: zoom,
+                    ),
                   ],
                 )),
             Expanded(
@@ -184,7 +191,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       );
     case TileType.chest:
       return Card(
-        color: Color(tile.backgroundColor ?? Colors.cyan.value),
+        color: Color(tile.getBackgroundColor()),
         child: Column(
           children: [
             Expanded(
@@ -220,7 +227,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       );
     case TileType.chance:
       return Card(
-        color: Color(tile.backgroundColor ?? Colors.red.value),
+        color: Color(tile.getBackgroundColor()),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -257,7 +264,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
       );
     case TileType.trainstation:
       return Card(
-        color: Color(tile.backgroundColor ?? Colors.white.value),
+        color: Color(tile.getBackgroundColor()),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -270,7 +277,10 @@ Widget buildCard(Tile tile, {zoom: false}) {
                       size: 50,
                       color: Color(tile.color ?? Colors.black.value),
                     ),
-                    OwnerText(tile: tile),
+                    OwnerText(
+                      tile: tile,
+                      zoom: zoom,
+                    ),
                   ],
                 )),
             Expanded(
@@ -280,12 +290,45 @@ Widget buildCard(Tile tile, {zoom: false}) {
         ),
       );
       break;
-    default:
+    case TileType.action:
       return Card(
-        color: Color(tile.backgroundColor ?? Colors.white.value),
-        child: PlayerIndicators(
-          tile: tile,
+        color: Color(tile.getBackgroundColor()),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+                flex: 2,
+                child: Center(
+                    child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Spacer(),
+                    if (tile.iconData != null)
+                      Icon(
+                        mapToIconData(tile.iconData
+                            .map((key, value) => MapEntry(key, value))),
+                        size: 50,
+                        color: Color(tile.color ?? Colors.black.value),
+                      ),
+                    Spacer(),
+                    Text(
+                      tile.name ?? "",
+                      style: TextStyle(
+                          color: Colors.white, fontSize: zoom ? 35 : 27),
+                    )
+                  ],
+                ))),
+            Expanded(
+              child: PlayerIndicators(tile: tile),
+            ),
+          ],
         ),
       );
+      break;
   }
+  return Card(
+    color: Color(tile.backgroundColor ?? Colors.white.value),
+    child: PlayerIndicators(
+      tile: tile,
+    ),
+  );
 }

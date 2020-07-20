@@ -42,7 +42,7 @@ class LandCard extends StatelessWidget {
                   tile.name,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: zoom ? 25 : 20,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
@@ -67,19 +67,24 @@ class LandCard extends StatelessWidget {
                             color: Colors.red,
                             child: Text(
                               "For Sale",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: zoom ? 25 : 20),
                             ),
                           ),
                         ),
                       )
-                    : OwnerText(tile: tile),
+                    : OwnerText(
+                        tile: tile,
+                        zoom: zoom,
+                      ),
                 Expanded(
                     child: Center(
                   child: Text(
                     "${mon(tile.owner == null ? tile.price : tile.currentRent)}",
                     style: TextStyle(
                         color: tile.owner == null ? Colors.green : Colors.red,
+                        fontSize: zoom ? 25 : 14,
                         fontWeight: FontWeight.bold),
                   ),
                 )),

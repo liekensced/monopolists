@@ -54,7 +54,7 @@ class MoneyCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      if (Game.data.placeCurrencyInFront)
+                      if (Game.data.placeCurrencyInFront ?? true)
                         Text(Game.data.currency ?? "£",
                             style:
                                 TextStyle(color: Colors.white, fontSize: 50)),
@@ -67,7 +67,7 @@ class MoneyCard extends StatelessWidget {
                                   TextStyle(color: Colors.white, fontSize: 50));
                         },
                       ),
-                      if (!Game.data.placeCurrencyInFront)
+                      if (!(Game.data.placeCurrencyInFront ?? true))
                         Text(Game.data.currency ?? "£",
                             style:
                                 TextStyle(color: Colors.white, fontSize: 50)),

@@ -33,6 +33,8 @@ class TileTypeAdapter extends TypeAdapter<TileType> {
         return TileType.parking;
       case 9:
         return TileType.police;
+      case 10:
+        return TileType.action;
       default:
         return null;
     }
@@ -70,6 +72,9 @@ class TileTypeAdapter extends TypeAdapter<TileType> {
         break;
       case TileType.police:
         writer.writeByte(9);
+        break;
+      case TileType.action:
+        writer.writeByte(10);
         break;
     }
   }
@@ -128,13 +133,16 @@ class TileAdapter extends TypeAdapter<Tile> {
     )
       ..level = fields[9] as int
       ..transportationPrice = fields[13] as int
-      ..tableColor = fields[16] as int;
+      ..tableColor = fields[16] as int
+      ..actionRequired = fields[17] as bool
+      ..onlyOneAction = fields[18] as bool
+      ..iconData = (fields[19] as Map)?.cast<dynamic, dynamic>();
   }
 
   @override
   void write(BinaryWriter writer, Tile obj) {
     writer
-      ..writeByte(16)
+      ..writeByte(19)
       ..writeByte(0)
       ..write(obj.type)
       ..writeByte(1)
@@ -166,7 +174,13 @@ class TileAdapter extends TypeAdapter<Tile> {
       ..writeByte(15)
       ..write(obj.icon)
       ..writeByte(16)
-      ..write(obj.tableColor);
+      ..write(obj.tableColor)
+      ..writeByte(17)
+      ..write(obj.actionRequired)
+      ..writeByte(18)
+      ..write(obj.onlyOneAction)
+      ..writeByte(19)
+      ..write(obj.iconData);
   }
 }
 
@@ -213,7 +227,17 @@ Tile _$TileFromJson(Map json) {
   )
     ..level = json['level'] as int
     ..transportationPrice = json['transportationPrice'] as int ?? 200
-    ..tableColor = json['tableColor'] as int;
+    ..tableColor = json['tableColor'] as int
+    ..actionRequired = json['actionRequired'] as bool
+    ..onlyOneAction = json['onlyOneAction'] as bool
+    ..iconData = json['iconData'] as Map
+    ..actions = (json['actions'] as List)
+        ?.map((e) => e == null
+            ? null
+            : GameAction.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
+        ?.toList();
 }
 
 Map<String, dynamic> _$TileToJson(Tile instance) {
@@ -241,6 +265,10 @@ Map<String, dynamic> _$TileToJson(Tile instance) {
   val['backgroundColor'] = instance.backgroundColor;
   writeNotNull('icon', instance.icon);
   val['tableColor'] = instance.tableColor;
+  writeNotNull('actionRequired', instance.actionRequired);
+  writeNotNull('onlyOneAction', instance.onlyOneAction);
+  writeNotNull('iconData', instance.iconData);
+  writeNotNull('actions', instance.actions);
   return val;
 }
 
@@ -287,4 +315,5 @@ const _$TileTypeEnumMap = {
   TileType.jail: 'jail',
   TileType.parking: 'parking',
   TileType.police: 'police',
+  TileType.action: 'action',
 };

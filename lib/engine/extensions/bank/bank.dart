@@ -24,7 +24,7 @@ class BankExtension {
         info.add(
           Info(
               "Interest",
-              "You get ${Game.data?.settings?.interest ?? 10}% interest on the money you have in the bank (minus debt) if you pass go.",
+              "You get ${Game.data?.settings?.interest ?? 5}% interest on the money you have in the bank (minus debt) if you pass go.",
               InfoType.rule),
         );
 
@@ -36,10 +36,10 @@ class BankExtension {
       settings: [
         Setting<int>(
           onChanged: onChanged,
-          value: () => Game.data?.settings?.interest ?? 10,
+          value: () => Game.data?.settings?.interest ?? 5,
           title: "Interest in percentage",
           subtitle:
-              "Amount of interest you get for your cash for passing the start. Default: 10%",
+              "Amount of interest you get for your cash for passing the start. Default: 5%",
         ),
       ],
       onAdded: () {

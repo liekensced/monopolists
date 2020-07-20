@@ -47,8 +47,8 @@ class _SettingsCardState extends State<SettingsCard>
           subtitle: Text("The currency used in the game"),
           trailing: IconButton(
             icon: Text(
-              Game.data.currency,
-              style: TextStyle(fontSize: 25),
+              Game.data.currency ?? "£",
+              style: TextStyle(fontSize: 25, color: Colors.orangeAccent),
             ),
             onPressed: () {
               Navigator.push(context,
@@ -146,6 +146,19 @@ class AdvancedSettings extends StatelessWidget {
       children: <Widget>[
         Divider(),
         ListTile(
+          title: Text("Get assets when bankrupting"),
+          subtitle:
+              Text("If you bankrupt another player you'll get all his assets."),
+          trailing: Switch(
+            value: Game.data.settings.receiveProperties ?? false,
+            onChanged: (val) {
+              Game.data.settings.receiveProperties = val;
+              Game.save(only: [SaveData.settings.toString()]);
+            },
+          ),
+        ),
+        Divider(),
+        ListTile(
           title: Text("Go bonus"),
           subtitle: Text("Amount you get for passing go: " +
               Game.data.settings.goBonus.toString()),
@@ -193,6 +206,31 @@ class AdvancedSettings extends StatelessWidget {
                       ]);
                 },
               );
+            },
+          ),
+        ),
+        Divider(),
+        ListTile(
+          title: Text("Double go bonus"),
+          subtitle: Text("Double the bonus when you land on start."),
+          trailing: Switch(
+            value: Game.data.settings.doubleBonus ?? false,
+            onChanged: (val) {
+              Game.data.settings.doubleBonus = val;
+              Game.save(only: [SaveData.settings.toString()]);
+            },
+          ),
+        ),
+        Divider(),
+        ListTile(
+          title: Text("Receive rent in jail"),
+          subtitle: Text(
+              "Wheter you receive rent from your properties while in jail."),
+          trailing: Switch(
+            value: Game.data.settings.receiveRentInJail ?? true,
+            onChanged: (val) {
+              Game.data.settings.receiveRentInJail = val;
+              Game.save(only: [SaveData.settings.toString()]);
             },
           ),
         ),

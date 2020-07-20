@@ -9,7 +9,6 @@ import '../../bloc/main_bloc.dart';
 import '../../bloc/ui_bloc.dart';
 import '../../engine/data/player.dart';
 import '../../engine/kernel/main.dart';
-import '../../engine/ui/game_navigator.dart';
 import '../../widgets/my_card.dart';
 import 'action_screen/bottom_sheet.dart';
 
@@ -30,6 +29,14 @@ class WinScreen extends StatelessWidget {
                     showSettingsSheet(context);
                   },
                 ),
+                actions: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.close,
+                    ),
+                    onPressed: () => deleteGame(context),
+                  )
+                ],
                 expandedHeight: 400.0,
                 floating: false,
                 pinned: true,
@@ -89,7 +96,7 @@ class WinScreen extends StatelessWidget {
                                 child: ListTile(
                                     title: Center(
                                   child: Text(
-                                    Game.data.player.name,
+                                    Game.ui.winner.name,
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 30,
@@ -113,7 +120,7 @@ class WinScreen extends StatelessWidget {
                   MyCard(
                     title: "Money progression",
                     children: [
-                      buildBezierChart(context),
+                      MoneyProgressionChart(),
                       Container(
                         padding: const EdgeInsets.all(8),
                         alignment: Alignment.centerLeft,
@@ -127,19 +134,18 @@ class WinScreen extends StatelessWidget {
                     ],
                   ),
                   Center(
-                    child: RaisedButton(
-                      color: Colors.red,
-                      child: Text(
-                        "Reset: you can reuse this game pin",
-                        style: TextStyle(color: Colors.white),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RaisedButton(
+                        color: Colors.red,
+                        child: Text(
+                          "Close game",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () {
+                          deleteGame(context);
+                        },
                       ),
-                      onPressed: () {
-                        MainBloc.resetGame();
-                        Navigator.popUntil(context, (Route d) {
-                          return d.isFirst;
-                        });
-                        GameNavigator.navigate(context);
-                      },
                     ),
                   )
                 ],
@@ -151,7 +157,71 @@ class WinScreen extends StatelessWidget {
     );
   }
 
-  Widget buildBezierChart(BuildContext context) {
+  void deleteGame(BuildContext context) {
+    try {
+      if (Game.data.onFinished != null) Game.data.onFinished();
+    } catch (e) {}
+    if ((Game.data.levelId ?? "") != "") {
+      Navigator.pop(context);
+    } else {
+      Navigator.popUntil(context, (Route d) {
+        return d.isFirst;
+      });
+    }
+    MainBloc.deleteGame();
+  }
+
+  Widget buildexpanditureChart(BuildContext context) {
+    if (Game.data.bankData == null)
+      return Container(
+        height: 80,
+        child: Center(child: Text("Add banking to see expanditure")),
+      );
+    List<double> xAxisCustomValues = List<double>.generate(
+        Game.data.bankData.expandatureList.length, (i) => i + 1.0);
+
+    List<DataPoint> expanditure = [];
+    Game.data.bankData.expandatureList.asMap().forEach((int key, int value) {
+      if (value >= 0) {
+        expanditure.add(DataPoint(xAxis: key + 1, value: value.toDouble()));
+        return;
+      }
+      expanditure.add(DataPoint(xAxis: key + 1, value: 0));
+    });
+
+    return Container(
+      height: min(MediaQuery.of(context).size.height / 2, 300),
+      width: min(MediaQuery.of(context).size.width * 0.9, UIBloc.maxWidth - 50),
+      child: BezierChart(
+        bezierChartAggregation: BezierChartAggregation.MAX,
+        config: BezierChartConfig(
+          xAxisTextStyle: TextStyle(fontSize: 0),
+          verticalIndicatorStrokeWidth: 3.0,
+          verticalIndicatorColor: Colors.black26,
+          showVerticalIndicator: true,
+          stepsYAxis: 100,
+          displayYAxis: true,
+          showDataPoints: false,
+        ),
+        series: [
+          BezierLine(
+            data: expanditure,
+          ),
+        ],
+        xAxisCustomValues: xAxisCustomValues,
+        bezierChartScale: BezierChartScale.CUSTOM,
+      ),
+    );
+  }
+}
+
+class MoneyProgressionChart extends StatelessWidget {
+  const MoneyProgressionChart({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     List<double> xAxisCustomValues = List<double>.generate(
         Game.data.player.moneyHistory.length, (i) => i + 1.0);
 
@@ -200,49 +270,6 @@ class WinScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget buildexpanditureChart(BuildContext context) {
-    if (Game.data.bankData == null)
-      return Container(
-        height: 80,
-        child: Center(child: Text("Add banking to see expanditure")),
-      );
-    List<double> xAxisCustomValues = List<double>.generate(
-        Game.data.bankData.expandatureList.length, (i) => i + 1.0);
-
-    List<DataPoint> expanditure = [];
-    Game.data.bankData.expandatureList.asMap().forEach((int key, int value) {
-      if (value >= 0) {
-        expanditure.add(DataPoint(xAxis: key + 1, value: value.toDouble()));
-        return;
-      }
-      expanditure.add(DataPoint(xAxis: key + 1, value: 0));
-    });
-
-    return Container(
-      height: min(MediaQuery.of(context).size.height / 2, 300),
-      width: min(MediaQuery.of(context).size.width * 0.9, UIBloc.maxWidth - 50),
-      child: BezierChart(
-        bezierChartAggregation: BezierChartAggregation.MAX,
-        config: BezierChartConfig(
-          xAxisTextStyle: TextStyle(fontSize: 0),
-          verticalIndicatorStrokeWidth: 3.0,
-          verticalIndicatorColor: Colors.black26,
-          showVerticalIndicator: true,
-          stepsYAxis: 100,
-          displayYAxis: true,
-          showDataPoints: false,
-        ),
-        series: [
-          BezierLine(
-            data: expanditure,
-          ),
-        ],
-        xAxisCustomValues: xAxisCustomValues,
-        bezierChartScale: BezierChartScale.CUSTOM,
-      ),
-    );
-  }
 }
 
 class AnimatedCircleColor extends StatefulWidget {
@@ -265,22 +292,26 @@ class _AnimatedCircleColorState extends State<AnimatedCircleColor> {
     super.initState();
     Future.delayed(widget.delay, () {
       _timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
-        floop = !floop;
-        setState(() {});
+        try {
+          floop = !floop;
+          setState(() {});
+        } catch (e) {
+          _timer?.cancel();
+        }
       });
     });
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return CircleColor(
-      color: Color(Game.data.player.color),
+      color: Color(Game.data.ui.winner.color),
       circleSize: floop ? 25 : 55,
     );
   }

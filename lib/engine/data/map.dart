@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../kernel/main.dart';
+import 'game_action.dart';
 import 'player.dart';
 
 part 'map.g.dart';
@@ -81,8 +82,46 @@ class Tile {
   @HiveField(16)
   @JsonKey(includeIfNull: true)
   int tableColor;
+  @HiveField(17)
+  bool actionRequired = true;
+  @HiveField(18)
+  bool onlyOneAction = false;
+  @HiveField(19)
+  Map iconData;
+
+  int getBackgroundColor() {
+    if (backgroundColor != null) return backgroundColor;
+    switch (type) {
+      case TileType.chest:
+        return Colors.cyan[600].value;
+        break;
+      case TileType.tax:
+        return price < 0 ? Colors.green[600].value : Colors.orange.value;
+        break;
+      case TileType.chance:
+        return Colors.red[600].value;
+        break;
+
+      case TileType.police:
+        return Colors.blue[900].value;
+
+        break;
+      default:
+        return Colors.white.value;
+        break;
+    }
+  }
+
+  List<GameAction> actions;
+
   factory Tile.type(TileType _tileType, [String street]) {
     switch (_tileType) {
+      case TileType.action:
+        return Tile(
+          TileType.action,
+          idPrefix: "ac",
+          idIndex: Game.data.gmap.length,
+        );
       case TileType.land:
         Tile newTile = Tile.fromJson(Game.data.gmap
             .firstWhere((element) => element.idPrefix == street, orElse: () {
@@ -144,9 +183,8 @@ class Tile {
             .toJson())
           ..idIndex = Game.data.gmap.length;
         break;
-      default:
-        return null;
     }
+    return null;
   }
 
   factory Tile.fromJson(Map json) => _$TileFromJson(json);
@@ -176,6 +214,9 @@ class Tile {
     if (rent?.isEmpty ?? true) return 0;
     if (mortaged ?? false) return 0;
     if (owner == null) return rent.first;
+    if (owner.jailed && !(Game.data.settings.receiveRentInJail ?? true)) {
+      return 0;
+    }
     int _rentFactor = 1;
     if (type == TileType.trainstation) {
       return rent[owner.trainstations - 1];
@@ -272,7 +313,9 @@ enum TileType {
   @HiveField(8)
   parking,
   @HiveField(9)
-  police
+  police,
+  @HiveField(10)
+  action
 }
 
 List<int> standardConfiguration = [

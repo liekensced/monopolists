@@ -1,6 +1,9 @@
 import 'dart:math';
 
+import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/engine/commands/parser.dart';
 import 'package:plutopoly/engine/data/extensions.dart';
+import 'package:plutopoly/engine/extensions/lake_drain_extension.dart';
 
 import '../../data/actions.dart';
 import '../../data/map.dart';
@@ -79,28 +82,42 @@ class NormalAI {
     return value.floor();
   }
 
+  static extensions() {
+    if (Game.data.extensions.contains(Extension.stock)) {
+      if (isSmart) player.money *= 1.02;
+    }
+    if (Game.data.extensions.contains(Extension.drainTheLake) &&
+        LakeDrain.canDrain) {
+      if (chance((player.money / Game.data.settings.dtlPrice) - 2.2)) {
+        print(LakeDrain.drain());
+      }
+    }
+  }
+
   static onPlayerTurn() async {
     try {
       if (aiSettings.idle ?? false) throw 'idle';
       Game.save(force: true);
       //check wheter the game has changed
       GameData check = Game.data;
-      await Future.delayed(Duration(milliseconds: 1000));
+      if (!Game.testing) await Future.delayed(Duration(milliseconds: 1000));
+      if (check != Game.data && !MainBloc.online) return;
+
       Random r = Random();
       Game.move(r.nextInt(6) + 1, r.nextInt(6) + 1);
 
-      if (check != Game.data) return;
-
       onTile();
       remotelyBuild();
-      trade();
+      if (aiSettings?.canTrade ?? true) trade();
       checkJail();
       mortage();
+      extensions();
+      player.money *= aiSettings.moneyFactor ?? 1;
     } catch (e) {
       print(e);
     } finally {
       Game.save(force: true);
-      await Future.delayed(Duration(seconds: 1));
+      if (!Game.testing) await Future.delayed(Duration(seconds: 1));
 
       Alert nextAlert = Game.next();
       if (nextAlert?.failed ?? false) {
@@ -112,10 +129,19 @@ class NormalAI {
   }
 
   static void onTile() {
-    if (tile.owner != null) {
+    if (tile.owner != null && !isOwner) {
       Game.act.payRent(player.position, null, true);
     } else {
       switch (Game.data.tile.type) {
+        case TileType.action:
+          if ((tile.actionRequired ?? true) ||
+              chance(0.5) && tile.actions.isNotEmpty) {
+            CommandParser.parse(
+              tile.actions[Random().nextInt(tile.actions.length)].command,
+              true,
+            );
+          }
+          break;
         case TileType.land:
           onLand();
           break;
@@ -145,7 +171,7 @@ class NormalAI {
             Game.act.pay(PayType.pot, 50, force: true);
           }
           Game.executeEvent(action.func);
-          onLand();
+          if (!Game.data.rentPayed) onTile();
           break;
         case TileType.tax:
           Game.act.pay(PayType.pot, tile.price, force: true);
@@ -156,7 +182,7 @@ class NormalAI {
             Game.act.pay(PayType.pot, 100, force: true);
           }
           Game.executeEvent(action.func);
-          onLand();
+          if (!Game.data.rentPayed) onTile();
 
           break;
         case TileType.jail:
@@ -200,7 +226,7 @@ class NormalAI {
         return true;
       }).toList();
       if (streetless.isEmpty && streets.isEmpty) {
-        Game.setup.defaultPlayer(player);
+        Game.setup.defaultPlayer(player, false);
         return;
       }
       if (streetless.isEmpty) {
@@ -225,11 +251,11 @@ class NormalAI {
       buildHouses(tile);
       return;
     }
-    if (tile.price < player.money * 2) {
+    if (tile.price * 2 < player.money) {
       if (chance(0.9 - aiSettings.chances[2])) print(Game.act.buy());
       return;
     }
-    if (tile.price < player.money + 100) {
+    if (tile.price + 100 < player.money) {
       if (chance(0.6 - aiSettings.chances[2])) print(Game.act.buy);
       return;
     }
@@ -257,6 +283,7 @@ class NormalAI {
             Player owner = prop.owner;
             if (owner == null) return;
             if (owner.ai.type == AIType.player) return;
+            if (!(owner.ai.aiSettings.canTrade ?? true)) return;
             if (owner.hasAll(prop.idPrefix)) return;
             int price = max(value(prop.id, player), value(prop.id, prop.owner));
             if (player.money > price) {

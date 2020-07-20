@@ -170,11 +170,8 @@ class PresetStudio extends StatelessWidget {
                 child: Text("Run tests"),
                 onPressed: () {
                   Alert.handle(
-                      () =>
-                          GmapChecker.call(Game.data.gmap) ??
-                          Alert("Test succes", "The test didn't fail",
-                              type: DialogType.SUCCES),
-                      context);
+                      () => GmapChecker.check(Game.data.gmap), context);
+                  GmapChecker.botGame();
                 },
               ),
             ),

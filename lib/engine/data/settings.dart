@@ -21,11 +21,11 @@ class Settings {
   @HiveField(6)
   bool hackerScreen = false;
   @HiveField(7)
-  @JsonKey(defaultValue: 10)
-  int interest = 10;
-  @JsonKey(defaultValue: 1500)
+  @JsonKey(defaultValue: 5)
+  int interest = 5;
+  @JsonKey(defaultValue: 2000)
   @HiveField(8)
-  int dtlPrice = 1500;
+  int dtlPrice = 2000;
   @JsonKey(defaultValue: 0)
   @HiveField(9)
   int startProperties = 0;
@@ -41,6 +41,12 @@ class Settings {
   @JsonKey(defaultValue: true)
   @HiveField(13)
   bool generateNames = true;
+  @HiveField(14)
+  bool receiveProperties = true;
+  @HiveField(15)
+  bool receiveRentInJail = true;
+  @HiveField(16)
+  bool doubleBonus = false;
 
   Settings();
 

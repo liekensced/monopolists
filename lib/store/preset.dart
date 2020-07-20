@@ -56,6 +56,9 @@ class Preset extends HiveObject {
       }
       return dataCache;
     }
+    if (searchName == "") {
+      return null;
+    }
     if (searchName == "classic" || searchName == "default") {
       place = "default";
       return GameData();

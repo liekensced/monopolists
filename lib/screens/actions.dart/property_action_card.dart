@@ -2,18 +2,20 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:plutopoly/bloc/game_listener.dart';
-import 'package:plutopoly/helpers/icon_helper.dart';
-import 'package:plutopoly/helpers/money_helper.dart';
-import 'package:plutopoly/screens/game/action_screen/property_card.dart';
+import 'package:plutopoly/engine/commands/parser.dart';
+import 'package:plutopoly/engine/data/game_action.dart';
 
+import '../../bloc/game_listener.dart';
 import '../../engine/data/actions.dart';
 import '../../engine/data/map.dart';
 import '../../engine/data/player.dart';
 import '../../engine/kernel/../ui/alert.dart';
 import '../../engine/kernel/core_actions.dart';
 import '../../engine/kernel/main.dart';
+import '../../helpers/icon_helper.dart';
+import '../../helpers/money_helper.dart';
 import '../../widgets/my_card.dart';
+import '../game/action_screen/property_card.dart';
 
 class PropertyActionCard extends StatelessWidget {
   const PropertyActionCard({Key key}) : super(key: key);
@@ -22,7 +24,6 @@ class PropertyActionCard extends StatelessWidget {
     return GameListener(
       builder: (_, __, ___) {
         Tile tile = Game.data.player.positionTile;
-
         if (tile.type == TileType.chance) {
           CardAction action = events[Game.data.eventIndex];
           return FlipCard(
@@ -157,12 +158,66 @@ class PropertyActionCard extends StatelessWidget {
             ]),
           );
         }
+        if (tile.type == TileType.action) {
+          return MyCard(
+            title: tile.actions.isEmpty ? "You are idle" : "Action tile",
+            action: Tooltip(
+              message: getMessage(tile),
+              child: Icon(Icons.info),
+            ),
+            children: [
+              if (tile.description != null)
+                Center(
+                  child: Padding(
+                      padding: const EdgeInsets.all(12.0).copyWith(top: 0),
+                      child: Text(tile.description)),
+                ),
+              for (GameAction action in tile.actions)
+                RaisedButton(
+                  padding: const EdgeInsets.all(8),
+                  color: Color(
+                      action.color ?? Theme.of(context).primaryColor.value),
+                  child: Text(
+                    action.title,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: Game.data.rentPayed && (tile.onlyOneAction ?? true)
+                      ? null
+                      : () {
+                          Alert.handle(
+                            () => CommandParser.parse(
+                              action.command,
+                              false,
+                              true,
+                            ),
+                            context,
+                          );
+                        },
+                )
+            ],
+          );
+        }
         if (tile.owner == Game.data.player) {
           return PropertyCard(tile: tile, expanded: true);
         }
         return PropertyActionCardChild();
       },
     );
+  }
+
+  getMessage(Tile tile) {
+    String msg = "";
+    if (tile.onlyOneAction) {
+      msg += "You can only do 1 action.";
+    } else {
+      msg += "You can do multiple actions.";
+    }
+    if (tile.actionRequired) {
+      msg += "\nYou need to do at least 1 action.";
+    } else {
+      msg += "\nNo action is required.";
+    }
+    return msg;
   }
 }
 
@@ -180,9 +235,35 @@ class PropertyActionCardChild extends StatelessWidget {
     Player owner = tile.owner;
 
     if (tile.type == TileType.start) {
-      return Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Text("Your on the start tile."),
+      return Container(
+        padding: const EdgeInsets.all(8.0),
+        width: double.maxFinite,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Padding(
+                  padding: const EdgeInsets.all(12.0).copyWith(top: 0),
+                  child:
+                      Text(tile.description ?? "You are on the start tile.")),
+            ),
+            (Game.data.settings.doubleBonus ?? false)
+                ? RaisedButton(
+                    padding: const EdgeInsets.all(8.0),
+                    color: Colors.green,
+                    child: Text(
+                      "Receive double go bonus ${mon(Game.data.settings.goBonus)}!",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                    onPressed:
+                        Game.data.rentPayed ? null : Game.act.doubleGoBonus,
+                  )
+                : Container(),
+          ],
+        ),
       );
     }
 

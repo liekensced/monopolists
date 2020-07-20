@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_json_widget/flutter_json_widget.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/engine/data/update_info.dart';
-import 'package:plutopoly/engine/data/main_data.dart';
-import 'package:plutopoly/engine/ui/alert.dart';
 
+import '../bloc/main_bloc.dart';
+import '../bloc/ui_bloc.dart';
+import '../engine/data/main_data.dart';
+import '../engine/data/update_info.dart';
 import '../engine/kernel/main.dart';
+import '../engine/ui/alert.dart';
 
 class HackerScreen extends StatefulWidget {
   @override
@@ -19,10 +19,11 @@ class HackerScreen extends StatefulWidget {
 class _HackerScreenState extends State<HackerScreen> {
   bool editMode = false;
   String text;
+  Map<String, dynamic> hidden = {};
+
   @override
   Widget build(BuildContext context) {
     JsonEncoder encoder = new JsonEncoder.withIndent('  ');
-    String prettyprint = encoder.convert(Game.data.toJson());
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -41,6 +42,8 @@ class _HackerScreenState extends State<HackerScreen> {
                   }
                   try {
                     Map<String, dynamic> newJson = jsonDecode(text);
+                    newJson.addAll(hidden);
+
                     GameData newGameData = GameData.fromJson(newJson);
                     MainBloc.resetGame(newGameData);
                     Alert.handle(
@@ -83,9 +86,12 @@ class _HackerScreenState extends State<HackerScreen> {
         ),
         body: Builder(builder: (context) {
           Map<String, dynamic> json = Game.data.toJson();
-          json["players"].forEach((Map<String, dynamic> players) {
-            players["code"] = 1234;
-          });
+          // json["players"].forEach((Map<String, dynamic> players) {
+          //   players.remove("code");
+          // });
+          json.remove("levelId");
+          hidden["currency"] = json["currency"];
+          json.remove("currency");
           return Theme(
             data: ThemeData.light(),
             child: SafeArea(
@@ -96,7 +102,7 @@ class _HackerScreenState extends State<HackerScreen> {
                     ? JsonViewerWidget(json)
                     : TextFormField(
                         maxLines: null,
-                        initialValue: prettyprint,
+                        initialValue: encoder.convert(json),
                         onChanged: (String newData) {
                           text = newData;
                         },

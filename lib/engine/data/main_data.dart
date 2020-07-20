@@ -68,11 +68,20 @@ class GameData extends HiveObject {
   String currency = "£";
   @HiveField(23)
   bool placeCurrencyInFront = true;
+  @HiveField(25)
+  String levelId;
+  @HiveField(26)
+  int tableColor;
+
+  @JsonKey(ignore: true)
+  Function() onLaunch;
+  @JsonKey(ignore: true)
+  Function() onFinished;
 
   GameData() {
-    version = MainBloc.version;
-    currency = CurrencyHelper.selectedCurrency?.icon ?? "£";
-    placeCurrencyInFront =
+    version ??= MainBloc.version;
+    currency ??= CurrencyHelper.selectedCurrency?.icon ?? "£";
+    placeCurrencyInFront ??=
         CurrencyHelper.selectedCurrency?.placeCurrencyInFront ?? true;
   }
 
@@ -89,6 +98,14 @@ class GameData extends HiveObject {
     if (players.isEmpty) return Player();
 
     return players.first;
+  }
+
+  Player get firstRealPlayer {
+    if (players.isEmpty) return Player();
+    return players.firstWhere(
+      (element) => element.ai.type == AIType.player,
+      orElse: () => players.first,
+    );
   }
 
   Tile get tile {

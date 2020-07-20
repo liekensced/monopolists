@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plutopoly/helpers/progress_helper.dart';
+import 'package:plutopoly/screens/command_screen.dart';
+import 'package:plutopoly/screens/start/info_screen.dart';
 import 'package:plutopoly/widgets/share_tile.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../../bloc/main_bloc.dart';
 import '../../../bloc/ui_bloc.dart';
 import '../../../engine/kernel/main.dart';
-import '../../../engine/ui/game_navigator.dart';
 import '../../hacker_screen.dart';
 import '../../start/start_game.dart';
 import '../move_screen.dart';
 
 void showSettingsSheet(BuildContext context, [PageController pageController]) {
   Widget settings = Container();
-  if (UIBloc.gamePlayer == Game.data.nextRealPlayer) {
+  if (UIBloc.gamePlayer == Game.data.firstRealPlayer &&
+      Game.data.levelId == null) {
     settings = InkWell(
       onTap: () {
-        Navigator.push(context,
+        Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (BuildContext context) {
-          return StartGameScreen();
+          return StartGameScreen(
+            running: true,
+          );
         }));
       },
       child: ListTile(
@@ -60,7 +66,12 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                           ),
                     InkWell(
                       onTap: () {
-                        GameNavigator.navigate(context, loadGame: true);
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (BuildContext context) {
+                          return InfoScreen(
+                            running: true,
+                          );
+                        }));
                       },
                       child: ListTile(
                         leading: Icon(Icons.info),
@@ -77,6 +88,18 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                       ),
                     ),
                     Game.data.settings.hackerScreen
+                        ? ListTile(
+                            title: Text("open console"),
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                                return CommandScreen();
+                              }));
+                            },
+                            leading: Icon(FontAwesomeIcons.terminal),
+                          )
+                        : Container(),
+                    Game.data.settings.hackerScreen
                         ? InkWell(
                             onTap: () {
                               Navigator.push(context,
@@ -87,20 +110,6 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                             child: ListTile(
                               leading: Icon(Icons.code),
                               title: Text("Hacker screen"),
-                            ),
-                          )
-                        : Container(),
-                    pageController != null
-                        ? InkWell(
-                            onTap: () {
-                              pageController.animateToPage(
-                                  Game.data.player.position,
-                                  duration: Duration(milliseconds: 500),
-                                  curve: Curves.easeInOutCubic);
-                            },
-                            child: ListTile(
-                              leading: Icon(Icons.location_searching),
-                              title: Text("Locate player"),
                             ),
                           )
                         : Container(),
@@ -123,6 +132,9 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                                         defaultValue: true);
                                     bool showLinear = box.get("boolShowLinear",
                                         defaultValue: true);
+                                    bool showSubtitle = box.get(
+                                        "boolShowSubtitle",
+                                        defaultValue: true);
                                     return Column(
                                       children: [
                                         Container(
@@ -136,6 +148,7 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                                             textAlign: TextAlign.start,
                                           ),
                                         ),
+                                        SpeedSetting(),
                                         ListTile(
                                           onTap: () {
                                             box.put("boolShowSnackbar",
@@ -145,6 +158,17 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                                               ? Icon(Icons.check)
                                               : Container(width: 0),
                                           title: Text("Show snackbars"),
+                                        ),
+                                        ListTile(
+                                          onTap: () {
+                                            box.put("boolShowSubtitle",
+                                                !showSubtitle);
+                                          },
+                                          trailing: showSubtitle
+                                              ? Icon(Icons.check)
+                                              : Container(width: 0),
+                                          title: Text(
+                                              "Show property tile subtitle"),
                                         ),
                                         ListTile(
                                           onTap: () {
@@ -190,6 +214,15 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                         title: Text("Visual settings"),
                       ),
                     ),
+                    ListTile(
+                      onTap: () {
+                        Game.data.player.money += 1000;
+                        Game.data.ui.finished = true;
+                        Game.save();
+                      },
+                      leading: Icon(Icons.assistant),
+                      title: Text("Win"),
+                    ),
                     settings,
                     MainBloc.online
                         ? InkWell(
@@ -207,4 +240,35 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
               );
             });
       });
+}
+
+class SpeedSetting extends StatefulWidget {
+  const SpeedSetting({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _SpeedSettingState createState() => _SpeedSettingState();
+}
+
+class _SpeedSettingState extends State<SpeedSetting> {
+  @override
+  Widget build(BuildContext context) {
+    if (ProgressHelper.level < 20) return Container();
+    return ListTile(
+      title: Text("Speed change"),
+      subtitle: Text("Change the speed of the game."),
+      onTap: () {
+        if (timeDilation < 1) {
+          timeDilation = 1;
+        } else if (timeDilation < 2) {
+          timeDilation = 2;
+        } else {
+          timeDilation = 0.5;
+        }
+        setState(() {});
+      },
+      trailing: Text("x " + (1 / timeDilation).toString()),
+    );
+  }
 }

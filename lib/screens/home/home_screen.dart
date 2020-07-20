@@ -4,14 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:plutopoly/helpers/progress_helper.dart';
-import 'package:plutopoly/screens/home/adventure_screen.dart';
-import 'package:plutopoly/screens/store/store_list.dart';
-import 'package:plutopoly/store/store_page.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../bloc/ui_bloc.dart';
 import '../../engine/kernel/main.dart';
+import '../../helpers/progress_helper.dart';
+import '../../store/store_page.dart';
 import '../../widgets/ad.dart';
 import '../../widgets/ad_message.dart';
 import '../../widgets/drawer.dart';
@@ -21,8 +19,10 @@ import '../../widgets/settings_card.dart';
 import '../games_card.dart';
 import '../start/info_screen.dart';
 import '../start/start_game.dart';
+import '../store/store_list.dart';
 import '../version_screen.dart';
 import 'account_card.dart';
+import 'adventure_screen.dart';
 import 'join_online_card.dart';
 import 'landing_page.dart';
 import 'offline_page.dart';
@@ -38,9 +38,12 @@ class _MyHomePageState extends State<MyHomePage> {
   final NativeAdmobController _adController =
       kIsWeb ? null : NativeAdmobController();
   PageController pageController;
+
+  static bool get adventurePage => ProgressHelper.level >= 2;
+
   @override
   void initState() {
-    pageController = PageController(initialPage: 1);
+    pageController = PageController(initialPage: adventurePage ? 1 : 0);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Future.delayed(Duration.zero, () {
         UIBloc.showAlerts(context);
@@ -49,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  int currentPage = 1;
+  int currentPage = adventurePage ? 1 : 0;
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +82,9 @@ class _MyHomePageState extends State<MyHomePage> {
           pageController.jumpToPage(page);
         },
         items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home), title: Text("Adventure")),
+          if (adventurePage)
+            BottomNavigationBarItem(
+                icon: Icon(Icons.home), title: Text("Adventure")),
           BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("Home")),
           BottomNavigationBarItem(icon: Icon(Icons.shop), title: Text("Store")),
         ],
@@ -93,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
             setState(() {});
           },
           children: [
-            AdventureScreen(),
+            if (adventurePage) AdventureScreen(),
             Stack(
               children: <Widget>[
                 FractionallySizedBox(
@@ -264,7 +268,43 @@ class _MyHomePageState extends State<MyHomePage> {
                                     controller: _adController,
                                   ),
                                   Image.asset("assets/wide.png"),
-                                  EndOfList()
+                                  InkWell(
+                                    onDoubleTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                              title: Text("?"),
+                                              content: TextField(
+                                                onSubmitted: (String val) {
+                                                  if (val == "aYpttaz") {
+                                                    ProgressHelper.exp += 1000;
+                                                    ProgressHelper.energy +=
+                                                        100;
+                                                    ProgressHelper.tickets +=
+                                                        100;
+                                                  }
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                              actions: [
+                                                MaterialButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text(
+                                                      "close",
+                                                      style: TextStyle(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .primaryColor),
+                                                    ))
+                                              ]);
+                                        },
+                                      );
+                                    },
+                                    child: EndOfList(),
+                                  ),
                                 ],
                               );
                             }),

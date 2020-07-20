@@ -5,15 +5,17 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:plutopoly/engine/ai/ai_type.dart';
-import 'package:plutopoly/helpers/progress_helper.dart';
-import 'package:plutopoly/widgets/my_card.dart';
-import 'package:plutopoly/widgets/share_tile.dart';
+import 'package:plutopoly/screens/carousel/players_indicator.dart';
+import 'package:plutopoly/screens/store/game_icons_screen.dart';
 
 import '../../bloc/main_bloc.dart';
+import '../../engine/ai/ai_type.dart';
 import '../../engine/data/player.dart';
 import '../../engine/kernel/../ui/alert.dart';
 import '../../engine/kernel/main.dart';
+import '../../helpers/progress_helper.dart';
+import '../../widgets/my_card.dart';
+import '../../widgets/share_tile.dart';
 
 class PlayersCard extends StatefulWidget {
   final bool studio;
@@ -238,6 +240,7 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
   int playerId;
   String name;
   int color;
+  String playerIcon;
 
   @override
   void initState() {
@@ -320,7 +323,28 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
               },
               child: CircleColor(
                 color: Color(color),
-                circleSize: 35,
+                circleSize: 40,
+              ),
+            ),
+          ),
+          ListTile(
+            title: Text("Icon"),
+            trailing: InkWell(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                  return GameIconScreen(
+                    selector: true,
+                  );
+                })).then((value) {
+                  playerIcon = value;
+                  setState(() {});
+                });
+              },
+              child: PlayerIconWidget(
+                player:
+                    Player(color: color, playerIcon: playerIcon, name: name),
+                size: 35,
               ),
             ),
           )
@@ -343,7 +367,8 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
                 return;
               }
               Alert.handleAndPop(
-                  () => Game.setup.addPlayer(name: name, color: color),
+                  () => Game.setup
+                      .addPlayer(name: name, color: color, icon: playerIcon),
                   context);
             },
             child: Text(

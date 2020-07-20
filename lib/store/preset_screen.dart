@@ -80,7 +80,7 @@ class _PresetScreenState extends State<PresetScreen> {
                                   ),
                                   Container(height: 4),
                                   Text(widget.preset.description ??
-                                      "no descrioption")
+                                      "no description")
                                 ],
                               ),
                             ),
@@ -118,7 +118,7 @@ class _PresetScreenState extends State<PresetScreen> {
                                 fontWeight: FontWeight.bold),
                           ),
                         )),
-                    onPressed: () async {
+                    onPressed: () {
                       MainBloc.cancelOnline();
                       Game.newGame(GameData.fromJson(gameData.toJson())
                         ..running = showSettings ? null : false);

@@ -53,8 +53,10 @@ class ExtraCard extends StatelessWidget {
 
   Widget buildGenerateTrailing(BuildContext context) {
     if (!(Game.data.running ?? false)) {
-      if (Game.data.gmap[0].description == null ||
-          Game.data.gmap[0].description == "") {
+      String description = Game.data.gmap[0].description;
+      if (description == null ||
+          description == "" ||
+          description.toLowerCase().trim() == "no info") {
         return Switch(
           value: Game.data.settings.generateNames ?? false,
           onChanged: (bool val) {

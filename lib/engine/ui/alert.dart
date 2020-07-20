@@ -71,7 +71,7 @@ class Alert {
     double money = player?.money ?? Game.data.player.money;
     content = (player?.name ?? Game.data.player.name) +
         " does not have enough money" +
-        (needed == null ? "." : ":\n${mon(needed)} > ${mon(money)}}");
+        (needed == null ? "." : ":\n${mon(needed)} > ${mon(money)}");
   }
 
   static void handleAndPop(Alert Function() f, BuildContext context) {
@@ -102,6 +102,7 @@ class Alert {
         "Lost",
         "You already lost and can't do anything.",
       );
+      return false;
     } else {
       try {
         alert = function();

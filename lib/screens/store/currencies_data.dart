@@ -1,23 +1,25 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
-import 'package:plutopoly/helpers/progress_helper.dart';
+
+import '../../bloc/main_bloc.dart';
+import '../../helpers/progress_helper.dart';
 
 class CurrencyHelper {
   static const String currencyKey = "selectedCurrency";
   static const String ownedCurrenciesKey = "ownedCurrencies";
 
   static List<String> get ownedCurrencies =>
-      box.get(ownedCurrenciesKey, defaultValue: ["£"]);
+      box.get(ownedCurrenciesKey, defaultValue: <String>["£"]).cast<String>();
   static Currency addCurrency() {
     Currency newCurrency =
         commonCurrencies[Random().nextInt(commonCurrencies.length)];
 
     ProgressHelper.tickets -= 20;
 
-    if (!ownedCurrencies.contains(newCurrency.name))
+    if (!ownedCurrencies.contains(newCurrency.icon))
       box.put(ownedCurrenciesKey, [...ownedCurrencies, newCurrency.icon]);
 
     return newCurrency;
@@ -80,21 +82,32 @@ const List<Currency> commonCurrencies = [
       placeCurrencyInFront: false),
   Currency(icon: "🉐", name: "bargains", placeCurrencyInFront: false),
   Currency(icon: "🔪", name: "Knives", placeCurrencyInFront: false),
-  Currency(icon: "🧱", name: "Superb bricks", placeCurrencyInFront: false),
   Currency(
-      icon: "🎉",
-      name: "Confetti is the real value in life",
-      placeCurrencyInFront: false),
+    icon: "🧱",
+    name: "Superb bricks",
+    placeCurrencyInFront: false,
+  ),
+  Currency(
+    icon: "🎉",
+    name: "Confetti is the real value in life",
+    placeCurrencyInFront: false,
+  ),
   Currency(icon: "💎", name: "gems", placeCurrencyInFront: false),
   Currency(
-      icon: "🪕",
-      name: "To play some outer wilds music",
-      placeCurrencyInFront: false),
+    icon: "🪕",
+    name: "To play some outer wilds music",
+    placeCurrencyInFront: false,
+  ),
   Currency(
-      icon: "📱",
-      name: "Earn phones on your phone",
-      placeCurrencyInFront: false),
-  Currency(icon: "📠", name: "Fax machines", placeCurrencyInFront: false),
+    icon: "📱",
+    name: "Earn phones on your phone",
+    placeCurrencyInFront: false,
+  ),
+  Currency(
+    icon: "📠",
+    name: "Fax machines",
+    placeCurrencyInFront: false,
+  ),
   Currency(icon: "💰", name: "Money bags", placeCurrencyInFront: false),
   Currency(icon: "💴", name: "cool Yen", placeCurrencyInFront: false),
   Currency(icon: "💵", name: "cool dollar", placeCurrencyInFront: false),
@@ -105,19 +118,39 @@ const List<Currency> commonCurrencies = [
   Currency(icon: "🧾", name: "reverse psychology", placeCurrencyInFront: false),
   Currency(icon: "🖊", name: "pens", placeCurrencyInFront: false),
   Currency(icon: "🧹", name: "Let's fly", placeCurrencyInFront: false),
-  Currency(icon: "🔑", name: "keys to nowhere", placeCurrencyInFront: false),
+  Currency(
+    icon: "🔑",
+    name: "keys to nowhere",
+    placeCurrencyInFront: false,
+  ),
   Currency(icon: "🗿", name: "Like rai stones"),
   Currency(icon: "🌋", name: "volcanos", placeCurrencyInFront: false),
   Currency(icon: "🏨", name: "hotels", placeCurrencyInFront: false),
   Currency(icon: "🏰", name: "castles", placeCurrencyInFront: false),
-  Currency(icon: "🎡", name: "Ferres wheels", placeCurrencyInFront: false),
-  Currency(icon: "🎢", name: "Roller coasters", placeCurrencyInFront: false),
-  Currency(icon: "✈", name: "planes", placeCurrencyInFront: false),
+  Currency(
+    icon: "🎡",
+    name: "Ferres wheels",
+    placeCurrencyInFront: false,
+  ),
+  Currency(
+    icon: "🎢",
+    name: "Roller coasters",
+    placeCurrencyInFront: false,
+  ),
+  Currency(
+    icon: "✈",
+    name: "planes",
+    placeCurrencyInFront: false,
+  ),
   Currency(icon: "🛰", name: "satellites", placeCurrencyInFront: false),
   Currency(icon: "🚂", name: "Trains", placeCurrencyInFront: false),
   Currency(icon: "🌌", name: "Milky ways", placeCurrencyInFront: false),
   Currency(icon: "🪐", name: "Planets", placeCurrencyInFront: false),
   Currency(icon: "🌕", name: "Moons", placeCurrencyInFront: false),
   Currency(icon: "☕", name: "Coffee", placeCurrencyInFront: false),
-  Currency(icon: "🧲", name: "How do they work?", placeCurrencyInFront: false),
+  Currency(
+    icon: "🧲",
+    name: "How do they work?",
+    placeCurrencyInFront: false,
+  ),
 ];

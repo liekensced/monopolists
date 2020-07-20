@@ -98,7 +98,10 @@ class UIBloc {
 
   static bool get lost {
     if ((!MainBloc.online) || MainBloc.studio) return false;
-    return onlineLost;
+    if (Game.data.players.isEmpty) return false;
+    return Game.data.players.firstWhere((Player p) => p.code == MainBloc.code,
+            orElse: () => null) ==
+        null;
   }
 
   static bool onlineLost = false;

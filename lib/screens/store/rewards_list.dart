@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/screens/store/game_icons_data.dart';
+import 'package:plutopoly/screens/store/game_icons_screen.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../bloc/ui_bloc.dart';
@@ -28,6 +30,7 @@ class StoreRewardsList extends StatefulWidget {
 
 class _StoreRewardsListState extends State<StoreRewardsList> {
   int startIndex;
+  int statIconIndex;
   @override
   void initState() {
     startIndex = Random().nextInt(commonCurrencies.length);
@@ -37,6 +40,7 @@ class _StoreRewardsListState extends State<StoreRewardsList> {
   @override
   Widget build(BuildContext context) {
     startIndex = Random().nextInt(commonCurrencies.length);
+    statIconIndex = Random().nextInt(commonGameIcons.length);
 
     return Container(
       height: 220,
@@ -104,6 +108,65 @@ class _StoreRewardsListState extends State<StoreRewardsList> {
                 )
               ]),
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: OpenContainer(
+              closedColor: Theme.of(context).cardColor,
+              openBuilder: (context, _) {
+                return GameIconScreen();
+              },
+              closedBuilder: (contect, f) => Column(children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Icons",
+                    style: Theme.of(context).textTheme.headline4,
+                    textAlign: TextAlign.start,
+                  ),
+                ),
+                Container(
+                  height: 50,
+                  child: Center(
+                    child: Icon(
+                      commonGameIcons[statIconIndex].data,
+                      size: 40,
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        for (int i in List.generate(5, (index) => index))
+                          Icon(
+                            commonGameIcons[(statIconIndex + i + 1) %
+                                    (commonGameIcons.length - 1)]
+                                .data,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                Builder(
+                  builder: (context) => Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Tooltip(
+                      message: "Open icon screen",
+                      child: MaterialButton(
+                        textColor: Theme.of(context).primaryColor,
+                        child: Text("Open screen"),
+                        onPressed: () {
+                          f();
+                        },
+                      ),
+                    ),
+                  ),
+                )
+              ]),
+            ),
           )
         ],
       ),
@@ -124,7 +187,7 @@ class CurrencyScreen extends StatelessWidget {
                 Currency selected = CurrencyHelper.selectedCurrency;
                 Game.data.currency = selected.icon;
                 Game.data.placeCurrencyInFront = selected.placeCurrencyInFront;
-                Game.save(only: [SaveData.settings.toString()]);
+                Game.save();
                 Navigator.pop(context);
               },
               label: Text(

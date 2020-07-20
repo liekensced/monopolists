@@ -40,13 +40,15 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..transported = fields[20] as bool
       ..preset = fields[21] as String
       ..currency = fields[22] as String
-      ..placeCurrencyInFront = fields[23] as bool;
+      ..placeCurrencyInFront = fields[23] as bool
+      ..levelId = fields[25] as String
+      ..tableColor = fields[26] as int;
   }
 
   @override
   void write(BinaryWriter writer, GameData obj) {
     writer
-      ..writeByte(24)
+      ..writeByte(26)
       ..writeByte(0)
       ..write(obj.running)
       ..writeByte(1)
@@ -94,7 +96,11 @@ class GameDataAdapter extends TypeAdapter<GameData> {
       ..writeByte(22)
       ..write(obj.currency)
       ..writeByte(23)
-      ..write(obj.placeCurrencyInFront);
+      ..write(obj.placeCurrencyInFront)
+      ..writeByte(25)
+      ..write(obj.levelId)
+      ..writeByte(26)
+      ..write(obj.tableColor);
   }
 }
 
@@ -142,7 +148,9 @@ GameData _$GameDataFromJson(Map json) {
     ..transported = json['transported'] as bool ?? false
     ..preset = json['preset'] as String
     ..currency = json['currency'] as String
-    ..placeCurrencyInFront = json['placeCurrencyInFront'] as bool;
+    ..placeCurrencyInFront = json['placeCurrencyInFront'] as bool
+    ..levelId = json['levelId'] as String
+    ..tableColor = json['tableColor'] as int;
 }
 
 Map<String, dynamic> _$GameDataToJson(GameData instance) {
@@ -181,6 +189,8 @@ Map<String, dynamic> _$GameDataToJson(GameData instance) {
   writeNotNull('preset', instance.preset);
   writeNotNull('currency', instance.currency);
   writeNotNull('placeCurrencyInFront', instance.placeCurrencyInFront);
+  writeNotNull('levelId', instance.levelId);
+  writeNotNull('tableColor', instance.tableColor);
   return val;
 }
 

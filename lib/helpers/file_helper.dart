@@ -8,9 +8,7 @@ class FileHelper {
   static Future<String> get presetsDir async {
     String rootPath = (await getExternalStorageDirectory()).path;
     String path = rootPath + "/presets/";
-    if (!await Directory(path).exists()) {
-      Directory(path).create();
-    }
+    await Directory(path).create(recursive: true);
     return path;
   }
 
@@ -38,7 +36,7 @@ class FileHelper {
   }
 
   static Future<String> savePreset(Preset preset) async {
-    String filePath = (await presetsDir) + preset.projectName + '.pp';
+    String filePath = (await presetsDir) + preset.projectName + '.json';
     File file = File(filePath);
     if (!(await file.exists())) {
       file.create();

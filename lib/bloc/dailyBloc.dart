@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:plutopoly/helpers/progress_helper.dart';
 import 'main_bloc.dart';
 
 class DailyBloc {
@@ -34,6 +35,10 @@ class DailyBloc {
       } else {
         box.put("intAdDays", box.get("intAdDays", defaultValue: -1) + 1);
       }
+      Box statBox = Hive.box(MainBloc.STATBOX);
+      Map stat = statBox.get("expStat", defaultValue: {});
+      stat.putIfAbsent(today.toString(), () => ProgressHelper.exp);
+      statBox.put("expStat", stat);
       box.put("lastDate", today.toString());
     }
   }

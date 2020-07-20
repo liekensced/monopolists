@@ -22,7 +22,9 @@ import 'settings_card.dart';
 
 class StartGameScreen extends StatefulWidget {
   final bool studio;
-  const StartGameScreen({Key key, this.studio: false}) : super(key: key);
+  final bool running;
+  const StartGameScreen({Key key, this.studio: false, this.running: false})
+      : super(key: key);
   @override
   _StartGameScreenState createState() => _StartGameScreenState();
 }
@@ -46,6 +48,10 @@ class _StartGameScreenState extends State<StartGameScreen> {
                         color: Colors.white,
                       ),
                       onPressed: () {
+                        if (widget.running) {
+                          Navigator.pop(context);
+                          return;
+                        }
                         if (Game.data.players.length >= 2 || MainBloc.online) {
                           Game.data.running = Game.data.running ?? false;
                           GameNavigator.navigate(context, loadGame: true);

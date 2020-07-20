@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
+import 'package:plutopoly/screens/carousel/players_indicator.dart';
+import 'package:plutopoly/screens/store/game_icons_screen.dart';
 import 'package:plutopoly/screens/store/rewards_list.dart';
 
 import '../../bloc/main_bloc.dart';
@@ -62,11 +64,28 @@ class IdleSettings extends StatelessWidget {
         ),
         Divider(),
         ListTile(
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (BuildContext context) {
+              return GameIconScreen(
+                selector: true,
+                inGame: true,
+              );
+            }));
+          },
+          title: Text("Change icon"),
+          trailing: PlayerIconWidget(
+            player: UIBloc.gamePlayer,
+            size: 35,
+          ),
+        ),
+        Divider(),
+        ListTile(
           title: Text("Currency"),
           subtitle: Text("The currency used in the game"),
           trailing: IconButton(
             icon: Text(
-              Game.data.currency,
+              Game.data.currency ?? "£",
               style: TextStyle(fontSize: 25),
             ),
             onPressed: () {

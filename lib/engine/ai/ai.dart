@@ -69,6 +69,8 @@ class AISettings {
   bool canTrade = true;
   @HiveField(4)
   bool idle = false;
+  @HiveField(5)
+  double moneyFactor = 1;
 
   AISettings();
   AISettings.hard() {

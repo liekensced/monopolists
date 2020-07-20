@@ -31,7 +31,7 @@ class PresetSettings extends StatelessWidget {
           onPressed: () {
             Future.delayed(Duration.zero, () {
               if (Alert.handle(
-                  () => GmapChecker.call(Game.data.gmap), context)) {
+                  () => GmapChecker.check(Game.data.gmap), context)) {
                 if (Alert.handle(() {
                   preset.data.preset = preset.projectName;
                   FileHelper.savePreset(preset);
@@ -315,6 +315,21 @@ class ThemeCard extends StatelessWidget {
               ? null
               : Color(PresetBloc.preset.accentColor),
         )),
+        GameListener(builder: (context, _, __) {
+          return ValueSettingTile(
+              setting: ValueSetting<Color>(
+            allowNull: true,
+            title: "Table color",
+            subtitle: "The background color of the map in the zoom view.",
+            onChanged: (dynamic val) {
+              Game.data.tableColor = val?.value;
+              Game.save();
+            },
+            value: Game.data.tableColor == null
+                ? null
+                : Color(Game.data.tableColor),
+          ));
+        }),
       ],
     );
   }

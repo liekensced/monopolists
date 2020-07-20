@@ -20,8 +20,8 @@ class ProgressHelper {
   static const String energyKey = "intEnergy";
   static const String starsKey = "intStars";
 
-  static const int defaultExp = 150;
-  static const int expPerLevel = 50;
+  static const int defaultExp = 170;
+  static const int expPerLevel = 100;
 
   static double get levelProgress => (exp % expPerLevel) / expPerLevel;
 
@@ -43,15 +43,16 @@ class ProgressHelper {
   static int get levelsReceived => box.get(levelsReceivedKey, defaultValue: 1);
   static set levelsReceived(int amount) {
     if (amount > levelsReceived) {
-      tickets += ticketReward(levelsReceived);
+      tickets += ticketReward(levelsReceived + 1);
       box.put(levelsReceivedKey, amount);
     }
   }
 
   static int ticketReward(int level) {
-    if (level % 8 == 0) return 20;
-    if (level % 6 == 0) return 15;
-    if (level % 2 == 0) return 10;
+    if (level % 21 == 0) return 100;
+    if (level % 8 == 0) return 50;
+    if (level % 6 == 0) return 30;
+    if (level % 2 == 0) return 20;
     return 5;
   }
 
@@ -84,30 +85,32 @@ class ProgressHelper {
       box.put(expKey, defaultExp);
     }
     if (!box.containsKey(ticketKey)) {
-      box.put(ticketKey, 5);
+      box.put(ticketKey, 20);
     }
     if (!box.containsKey(energyKey)) {
-      box.put(ticketKey, 20);
+      box.put(energyKey, 3);
     }
   }
 
   static void onNext() {
-    int reward = 0;
+    double reward = 3;
     Game.data.players.forEach((element) {
       if (element.ai == AIType.player) {
-        reward += MainBloc.online ? 5 : 2;
+        reward += MainBloc.online ? 2 : 1;
       } else {
-        reward += 2;
+        reward += 0.7;
       }
     });
-    exp += min(reward, 50);
+    exp += min(reward.floor(), 50);
   }
 
   static const Map<int, Info> LevelInfo = {
-    2: Info("Adventure mode", "Navigate to adventure on your homescreen!",
-        InfoType.alert),
+    2: Info("Adventure mode",
+        "Navigate to the adventure page on your homescreen!", InfoType.alert),
     10: Info("Hard mode", "You can add a hard AI when creating a new game!",
         InfoType.tip),
+    20: Info("Time dilation",
+        "Change how fast the game runs in the visual settings.", InfoType.tip),
   };
 }
 
@@ -196,84 +199,87 @@ class LevelUpScreen extends StatelessWidget {
           )
         ],
       ),
-      body: Container(
-        constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
-        child: Center(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: LevelUpNotification(
-                  level: level.toString(),
-                ),
-              ),
-              Expanded(
-                child: Container(),
-              ),
-              Expanded(
-                flex: 3,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text('level'),
-                    Text(
-                      level.toString() ?? ProgressHelper.level.toString(),
-                      style: TextStyle(fontSize: 100),
-                    ),
-                    Chip(
-                        label: Text(
-                            '+${ProgressHelper.ticketReward(level)} tickets'),
-                        avatar: CircleAvatar(
-                          backgroundColor: Colors.grey.shade800,
-                          child: Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: Icon(
-                              Icons.local_activity,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ))
-                  ],
-                ),
-              ),
-              if (ProgressHelper.LevelInfo.containsKey(level))
+      body: Center(
+        child: Container(
+          constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: GeneralInfoCard(
-                    info: ProgressHelper.LevelInfo[level],
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: LevelUpNotification(
+                    level: level.toString(),
                   ),
                 ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: FloatingActionButton.extended(
-                    onPressed: () {
-                      ProgressHelper.levelsReceived = level;
-                      if (ProgressHelper.levelsReceived <
-                          ProgressHelper.level) {
-                        MainBloc.prefbox.put("update", true);
-                      } else {
-                        Future.delayed(Duration(milliseconds: 500), () {
+                Expanded(
+                  child: Container(),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text('level'),
+                      Text(
+                        level.toString() ?? ProgressHelper.level.toString(),
+                        style: TextStyle(fontSize: 100),
+                      ),
+                      Chip(
+                          label: Text(
+                              '+${ProgressHelper.ticketReward(level)} tickets'),
+                          avatar: CircleAvatar(
+                            backgroundColor: Colors.grey.shade800,
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Icon(
+                                Icons.local_activity,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ))
+                    ],
+                  ),
+                ),
+                if (ProgressHelper.LevelInfo.containsKey(level))
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GeneralInfoCard(
+                      info: ProgressHelper.LevelInfo[level],
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: FloatingActionButton.extended(
+                      onPressed: () {
+                        ProgressHelper.levelsReceived = level;
+                        if (ProgressHelper.levelsReceived <
+                            ProgressHelper.level) {
                           MainBloc.prefbox.put("update", true);
-                        });
-                      }
-                    },
-                    label: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8.0,
-                        horizontal: 50,
-                      ),
-                      child: Text(
-                        "Receive",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )),
-              ),
-              Container(
-                height: 10,
-              )
-            ],
+                        } else {
+                          Future.delayed(Duration(milliseconds: 500), () {
+                            MainBloc.prefbox.put("update", true);
+                          });
+                        }
+                      },
+                      label: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 50,
+                        ),
+                        child: Text(
+                          "Receive",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )),
+                ),
+                Container(
+                  height: 10,
+                )
+              ],
+            ),
           ),
         ),
       ),

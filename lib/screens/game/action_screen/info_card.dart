@@ -37,13 +37,10 @@ class InfoCard extends StatelessWidget {
                   child: Text("No information\n"),
                 ),
               );
-            return ListView.separated(
+            return ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: info.length,
-              separatorBuilder: (c, _) {
-                return Divider();
-              },
               itemBuilder: (BuildContext context, int i) {
                 if (info[i].title == null) return Container();
                 if (info[i].subtitle == null) {

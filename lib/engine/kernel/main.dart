@@ -4,6 +4,7 @@ import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/engine/extensions/transportation.dart';
 import 'package:plutopoly/helpers/money_helper.dart';
 import 'package:plutopoly/helpers/progress_helper.dart';
+import 'package:plutopoly/screens/store/game_icons_data.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../places.dart';
@@ -69,7 +70,14 @@ class Game {
         MainBloc.updateUI();
       }
     }
-    if (data.running == true && data.player.ai?.type == AIType.normal && !force)
+    getPlayer() {
+      if (!MainBloc.online)
+        return data?.player;
+      else
+        return UIBloc.gamePlayer;
+    }
+
+    if (data.running == true && getPlayer().ai?.type == AIType.normal && !force)
       return;
     if (!(testing ?? false)) {
       MainBloc.save(data, only: only, exclude: exclude, local: local);
@@ -106,6 +114,7 @@ class Game {
         name: account.name,
         color: account.color,
         code: account.code,
+        icon: GameIconHelper.selectedGameIcon.id,
       );
     }
     loadGame(data);
@@ -113,11 +122,11 @@ class Game {
 
   static loadGame(GameData loadData) {
     data = loadData;
-    if (Game.data == null || !(Game.data.running ?? false)) return;
-    checkBot();
   }
 
   static checkBot() {
+    if (Game.data == null || !(Game.data.running ?? false)) return;
+
     if (MainBloc.online) {
       ///RETURNS
       if (Game.data.nextRealPlayer.code != UIBloc.gamePlayer.code) return;
@@ -132,8 +141,8 @@ class Game {
         .add(updateInfo);
   }
 
-  static Alert build([Tile property]) {
-    Tile tile = property ?? Game.data.player.positionTile;
+  static Alert build([Tile _property]) {
+    Tile tile = _property ?? Game.data.player.positionTile;
     if (!Game.data.player.hasAll(tile.idPrefix)) {
       return Alert("Couldn't build house",
           "You don't have all the properties of this street .");
@@ -149,7 +158,7 @@ class Game {
       return Alert("Not upgradable",
           "The tile ${tile.name} is already the highest level.");
     if (!data.settings.remotelyBuild) {
-      if (property.mapIndex != Game.data.player.position) {
+      if (tile.mapIndex != Game.data.player.position) {
         return Alert("Couldn't build house",
             "You can not remotely build houses. (You can change this in settings)");
       }
@@ -171,6 +180,11 @@ class Game {
   static launch() {
     if (data.running ?? false) return;
     Game.data.running = true;
+    try {
+      if (Game.data.onLaunch != null) Game.data.onLaunch();
+    } catch (e) {
+      print("failed onLaunch\n$e");
+    }
 
     //init variables
     if (testing ?? false) {
@@ -304,6 +318,7 @@ class Game {
         default:
       }
     }
+
     if (shouldSave) {
       save(exclude: [
         SaveData.settings.toString(),
@@ -313,8 +328,9 @@ class Game {
   }
 
   static Alert nextCheck() {
-    TileType _type = Game.data.player.positionTile.type;
-    Player _owner = Game.data.player.positionTile.owner;
+    Tile currentPostionTile = Game.data.player.positionTile;
+    TileType _type = currentPostionTile.type;
+    Player _owner = currentPostionTile.owner;
 
     if (_owner != null && _owner != Game.data.player) {
       if (!Game.data.rentPayed)
@@ -325,12 +341,23 @@ class Game {
           "Taxes not payed", "Please pay your taxes before continuing");
     }
     if (_type == TileType.police && !Game.data.rentPayed) {
-      return Alert("Go to jail", "You have to go to jail");
+      return Alert("Go to jail", "Please go to jail");
+    }
+    if (_type == TileType.start &&
+        !Game.data.rentPayed &&
+        (Game.data.settings.doubleBonus ?? false)) {
+      Game.act.doubleGoBonus(save: false);
     }
     if ((_type == TileType.chance || _type == TileType.chest) &&
         !Game.data.rentPayed) {
       return Alert("Card not executed",
           "Tap on the Findings or Event card and execute it.");
+    }
+    if (_type == TileType.action &&
+        (currentPostionTile.actionRequired ?? true) &&
+        !Game.data.rentPayed &&
+        (currentPostionTile.actions ?? []).isNotEmpty) {
+      return Alert("Action required", "You need to execute at least 1 action.");
     }
 
     if (Game.data.player.money < 0)
@@ -359,7 +386,10 @@ class Game {
     Game.data.ui.shouldMove = true;
     ExtensionsMap.event((data) => data.onNext);
 
-    if (data.player.ai.type == AIType.normal && Game.ui.realPlayers) {
+    if (data.player.ai.type == AIType.normal &&
+        (Game.ui.realPlayers || Game.testing) &&
+        !Game.ui.ended &&
+        Game.data.turn < 500) {
       UIBloc.changeScreen(Screen.idle);
       NormalAI.onPlayerTurn();
     }

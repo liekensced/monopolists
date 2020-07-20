@@ -16,10 +16,12 @@ import '../property_page.dart';
 class PropertyCard extends StatefulWidget {
   final Tile tile;
   final bool expanded;
+  final bool onPresed;
   const PropertyCard({
     @required this.tile,
     Key key,
     this.expanded: false,
+    this.onPresed: true,
   }) : super(key: key);
 
   @override
@@ -52,14 +54,16 @@ class _PropertyCardState extends State<PropertyCard>
       content = Container(
         height: 200,
         child: InkWell(
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (BuildContext context) {
-              return PropertyPage(
-                property: tile,
-              );
-            }));
-          },
+          onTap: widget.onPresed
+              ? () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                    return PropertyPage(
+                      property: tile,
+                    );
+                  }));
+                }
+              : null,
           child: Column(
             children: !expanded
                 ? []
@@ -153,7 +157,7 @@ class _PropertyCardState extends State<PropertyCard>
       if (TransportationBloc.active) {
         Widget message;
 
-        if ((tile.owner.trainstations ?? 0) == 0) {
+        if ((tile.owner?.trainstations ?? 0) == 0) {
           message = Container(
               height: 100,
               child: Center(child: Text("Get more transations to move.")));
@@ -296,12 +300,15 @@ class _PropertyCardState extends State<PropertyCard>
                 widget.tile.name ?? "",
                 style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
               ),
-              subtitle: Text(
-                "${tile.mortaged ? 'Mortaged ' : ''} ${mon(tile.price ?? 0)}, ${mon(tile.hyp ?? 0)}, -${mon(tile.currentRent ?? 0)}",
-                style: TextStyle(
-                  color: textColor,
-                ),
-              ),
+              subtitle:
+                  MainBloc.prefbox.get("boolShowSubtitle", defaultValue: true)
+                      ? Text(
+                          "${tile.mortaged ? 'Mortaged ' : ''} ${mon(tile.price ?? 0)}, ${mon(tile.hyp ?? 0)}, -${mon(tile.currentRent ?? 0)}",
+                          style: TextStyle(
+                            color: textColor,
+                          ),
+                        )
+                      : null,
               trailing: Icon(
                 expanded ? Icons.expand_less : Icons.expand_more,
                 color: textColor,

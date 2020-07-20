@@ -1,4 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
+import 'package:plutopoly/engine/data/game_action.dart';
+import 'package:plutopoly/screens/command_screen.dart';
 
 import '../../bloc/game_listener.dart';
 import '../../bloc/main_bloc.dart';
@@ -27,6 +32,9 @@ class PropertyPage extends StatelessWidget {
             : (property.name ?? type)),
       ),
       body: GameListener(builder: (context, _, snapshot) {
+        if (!Game.data.gmap.contains(property))
+          return Container(
+              height: 200, child: Center(child: Text("Unkown property")));
         return ListView(
           shrinkWrap: true,
           children: [
@@ -100,6 +108,7 @@ class PropertyPage extends StatelessWidget {
               ],
             ),
             buildRentCard(studio, context),
+            ActionsCard(studio: studio, property: property),
             studio
                 ? EditCard(
                     property: property,
@@ -109,6 +118,7 @@ class PropertyPage extends StatelessWidget {
                 ? PropertyCard(
                     tile: property,
                     expanded: true,
+                    onPresed: false,
                   )
                 : Container(),
             MyCard(
@@ -180,11 +190,43 @@ class PropertyPage extends StatelessWidget {
     if (property.rent == null) return Container();
     if (studio)
       return MyCard(
+        action: IconButton(
+          icon: Icon(Icons.content_copy),
+          onPressed: () {
+            showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return ListView(
+                    shrinkWrap: true,
+                    children: [
+                      Center(
+                          child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text("Select a tile to copy"),
+                      )),
+                      for (Tile tile in Game.data.gmap
+                          .where((element) =>
+                              element.rent != null && element.rent.isNotEmpty)
+                          .toList())
+                        ListTile(
+                            onTap: () {
+                              property.rent = tile.rent;
+                              Game.save();
+                              Navigator.pop(context);
+                            },
+                            title: Text(tile.name),
+                            subtitle: Text(tile.rent.toString()))
+                    ],
+                  );
+                });
+          },
+        ),
         animate: false,
         title: "Rent (reordable)",
         children: [
           Container(
-            height: property.rent.length * 60.0,
+            height: min(property.rent.length * 60.0,
+                MediaQuery.of(context).size.height * 0.7),
             child: ReorderableListView(
               children: [
                 for (int rent in property.rent)
@@ -196,6 +238,7 @@ class PropertyPage extends StatelessWidget {
                         Game.save();
                       },
                     ),
+                    leading: Text(property.rent.indexOf(rent).toString()),
                     key: Key(rent.toString()),
                     title: Text(property.type == TileType.company
                         ? "x $rent"
@@ -285,6 +328,171 @@ class PropertyPage extends StatelessWidget {
   }
 }
 
+class ActionsCard extends StatelessWidget {
+  const ActionsCard({
+    Key key,
+    @required this.studio,
+    @required this.property,
+  }) : super(key: key);
+
+  final bool studio;
+  final Tile property;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!studio || property.type != TileType.action) return Container();
+    return MyCard(
+      title: "Actions",
+      children: [
+        ValueSettingTile(
+            setting: ValueSetting<bool>(
+                title: "Require at least 1 action",
+                value: property.actionRequired ?? false,
+                onChanged: (dynamic val) {
+                  property.actionRequired = val;
+                })),
+        Divider(),
+        ...getActions(),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: FlatButton(
+            child: Text(
+              "Add action",
+              style: TextStyle(color: Theme.of(context).primaryColor),
+            ),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                return AddActionPage();
+              })).then((value) {
+                if (property.actions == null) {
+                  property.actions = [];
+                }
+                property.actions.add(value);
+              });
+            },
+          ),
+        )
+      ],
+    );
+  }
+
+  List<Widget> getActions() {
+    List<Widget> childs = [];
+    (property.actions ?? []).forEach((element) {
+      childs.add(ListTile(
+        title: Text(element.title),
+        subtitle: Text(element.command),
+        trailing: IconButton(
+          icon: Icon(Icons.delete),
+          onPressed: () {
+            property.actions.remove(element);
+            Game.save();
+          },
+        ),
+      ));
+    });
+    if (childs.isEmpty)
+      return [
+        Container(
+          height: 80,
+          child: Center(child: Text("No actions")),
+        )
+      ];
+    return childs;
+  }
+}
+
+class AddActionPage extends StatefulWidget {
+  const AddActionPage({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _AddActionPageState createState() => _AddActionPageState();
+}
+
+class _AddActionPageState extends State<AddActionPage> {
+  GameAction newAction;
+  @override
+  void initState() {
+    newAction = GameAction();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Add action"),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pop(context, newAction);
+        },
+        child: Icon(
+          Icons.check,
+          color: Colors.white,
+        ),
+      ),
+      body: MyCard(
+        shrinkwrap: true,
+        center: false,
+        title: "Action",
+        children: [
+          ValueSettingTile(
+              setting: ValueSetting<String>(
+                  title: "Title of action",
+                  value: newAction.title,
+                  onChanged: (dynamic val) {
+                    newAction.title = val;
+                    setState(() {});
+                  })),
+          ValueSettingTile(
+              setting: ValueSetting<String>(
+                  title: "Alert, extra information",
+                  value: newAction.alert,
+                  allowNull: true,
+                  onChanged: (dynamic val) {
+                    if (val == "") {
+                      val = null;
+                    }
+                    newAction.alert = val;
+                    setState(() {});
+                  })),
+          ValueSettingTile(
+              setting: ValueSetting<Color>(
+                  title: "Color of action",
+                  subtitle:
+                      "The color of the button. Null will be the primary color.",
+                  value:
+                      newAction.color == null ? null : Color(newAction.color),
+                  allowNull: true,
+                  onChanged: (dynamic val) {
+                    newAction.color = val?.value;
+                    setState(() {});
+                  })),
+          ListTile(
+            title: Text("Action (command)"),
+            subtitle: Text(newAction.command ?? "no command"),
+            trailing: IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                  return CommandScreen(
+                    execute: false,
+                  );
+                })).then((value) => newAction.command = value);
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class EditCard extends StatelessWidget {
   final Tile property;
 
@@ -334,6 +542,25 @@ class EditCard extends StatelessWidget {
                   property.hyp = val;
                   Game.save();
                 })),
+        if (property.type == TileType.action)
+          ListTile(
+            title: Text("Icon"),
+            subtitle: Text("The icon of this tile."),
+            trailing: IconButton(
+              onPressed: () {
+                FlutterIconPicker.showIconPicker(context,
+                        iconPackMode: IconPack.fontAwesomeIcons)
+                    .then((newIcon) {
+                  property.iconData = iconDataToMap(newIcon);
+                  Game.save();
+                });
+              },
+              icon: Icon(property.iconData == null
+                  ? Icons.block
+                  : mapToIconData(property.iconData
+                      .map((key, value) => MapEntry(key, value)))),
+            ),
+          ),
         ValueSettingTile(
             setting: ValueSetting<Color>(
                 title: "Color",

@@ -17,6 +17,9 @@ import '../../widgets/my_card.dart';
 import 'players.dart';
 
 class InfoScreen extends StatelessWidget {
+  final bool running;
+
+  const InfoScreen({Key key, this.running: false}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return GameListener(
@@ -26,6 +29,9 @@ class InfoScreen extends StatelessWidget {
 }
 
 class InfoScreenChild extends StatelessWidget {
+  final bool running;
+
+  const InfoScreenChild({Key key, this.running: false}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     List<Widget> infoWidgets = <Widget>[];
@@ -61,10 +67,29 @@ class InfoScreenChild extends StatelessWidget {
         title: Text("You have to stand on the property to build a house"),
       ));
     }
+    if (settings.receiveProperties ?? false) {
+      prefs.add(ListTile(
+        leading: Icon(Icons.info),
+        title:
+            Text("If you bankrupt another player you'll get all his assets."),
+      ));
+    }
+    if (!(settings.receiveRentInJail ?? true)) {
+      prefs.add(ListTile(
+        leading: Icon(Icons.info),
+        title: Text("You don't receive rent in jail"),
+      ));
+    }
+    if (settings.doubleBonus ?? false) {
+      prefs.add(ListTile(
+        leading: Icon(Icons.info),
+        title: Text("You get a double bonus when landing on start."),
+      ));
+    }
     if (settings.startingMoney != 1500) {
       prefs.add(ListTile(
         leading: Icon(Icons.info),
-        title: Text("You get ${settings.startingMoney} starting money."),
+        title: Text("You get ${settings.startingMoney} money to start with."),
       ));
     }
     if (settings.goBonus != 200) {
@@ -123,6 +148,10 @@ class InfoScreenChild extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          if (running) {
+            Navigator.pop(context);
+            return;
+          }
           Game.launch();
           Game.checkBot();
           GameNavigator.navigate(context);

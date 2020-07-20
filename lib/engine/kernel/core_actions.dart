@@ -45,14 +45,28 @@ class CoreActions {
     return alert;
   }
 
+  Alert doubleGoBonus({bool save: true}) {
+    if (Game.data.rentPayed) {
+      return Alert("Double bonus", "You already got a double go bonus");
+    }
+    Game.data.rentPayed = true;
+    Game.data.player.money += Game.data.settings.goBonus;
+    if (save) Game.save();
+    return null;
+  }
+
   /// Doesn't update gmap, lostPlayers, dealData,
   /// THROWS EXCEPTIONS
-  void pay(PayType type, int amount,
-      {int receiver,
-      bool count: false,
-      bool force: false,
-      bool shouldSave: true,
-      String message: "Payed to pot"}) {
+  void pay(
+    PayType type,
+    int amount, {
+    int receiver,
+    bool count: false,
+    bool force: false,
+    bool shouldSave: true,
+    String message: "Payed to pot",
+    bool isRentPayed,
+  }) {
     if (!force) {
       if (amount > 0) {
         if (data.player.money < amount) throw Alert.funds(null, amount);
@@ -66,7 +80,7 @@ class CoreActions {
     data.player.money -= amount;
     switch (type) {
       case PayType.rent:
-        data.rentPayed = true;
+        data.rentPayed = isRentPayed ?? true;
         if ((amount ?? 0) != 0)
           Game.addInfo(
             UpdateInfo(
@@ -79,7 +93,7 @@ class CoreActions {
           );
         break;
       case PayType.pot:
-        data.rentPayed = true;
+        data.rentPayed = isRentPayed ?? true;
         if (amount > 0) {
           data.pot += amount ?? 0;
           if (message != null) {
@@ -97,7 +111,7 @@ class CoreActions {
             if ((amount ?? 0) != 0)
               Game.addInfo(
                 UpdateInfo(
-                    title: "You received!",
+                    title: message ?? "You received!",
                     trailing: "+${mon(-amount)}",
                     show: true,
                     color: Colors.green.value),

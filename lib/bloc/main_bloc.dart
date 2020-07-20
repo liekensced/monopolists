@@ -9,6 +9,8 @@ import 'package:plutopoly/bloc/preset_bloc.dart';
 import 'package:plutopoly/engine/data/ui_actions.dart';
 import 'package:plutopoly/engine/ui/game_navigator.dart';
 import 'package:plutopoly/helpers/progress_helper.dart';
+import 'package:plutopoly/screens/store/currencies_data.dart';
+import 'package:plutopoly/screens/store/game_icons_data.dart';
 import 'package:plutopoly/store/preset.dart';
 
 import '../engine/data/main_data.dart';
@@ -23,8 +25,8 @@ import 'recent_bloc.dart';
 import 'ui_bloc.dart';
 
 class MainBloc {
-  static const version = "0.5.3";
-  static const List<int> supported = [4];
+  static const version = "0.7.0";
+  static const List<int> supported = [5, 6];
   static const website = "https://filorux.web.app/Plutopoly.html";
   static List<int> get versionCode =>
       version.split(".").map<int>((e) => int.tryParse(e)).toList();
@@ -39,6 +41,7 @@ class MainBloc {
   static const RECENTBOX = _boxVersion + "recentBox";
   static const MOVEBOX = _boxVersion + "moveBox";
   static const PRESETSBOX = _boxVersion + "presetsBox";
+  static const STATBOX = "statBox";
   static Box<Preset> get presetsBox => Hive.box<Preset>(PRESETSBOX);
   static const PRESETGAMESBOX = _boxVersion + "presetGamesBox";
   static Box<GameData> get presetGamesBox => Hive.box<GameData>(PRESETGAMESBOX);
@@ -205,9 +208,14 @@ class MainBloc {
       Game.loadGame(data);
       listener = ref.snapshots().listen(update);
       if (!preJoined) {
-        Game.setup
-            .addPlayer(name: player.name, color: player.color, code: code);
+        Game.setup.addPlayer(
+          name: player.name,
+          color: player.color,
+          code: code,
+          icon: GameIconHelper.selectedGameIcon.id,
+        );
       }
+      Game.checkBot();
     } catch (e) {
       await cancelOnline();
       return Alert("Error while joining game", e.toString());
@@ -246,7 +254,10 @@ class MainBloc {
       bool local: false}) {
     if (!online) {
       print("== New Local Save ==");
-      data.save();
+      if (data.isInBox)
+        data.save();
+      else
+        print("not in box!");
     } else {
       print("== New Online Save ==");
       RecentBloc.update(data);
@@ -325,12 +336,18 @@ class MainBloc {
   static resetGame([GameData data]) {
     GameData newData = data ?? GameData();
     if (!MainBloc.online) {
-      Hive.box(GAMESBOX).put(getGameNumber, newData);
+      Hive.box(GAMESBOX).put(currentGame, newData);
       if (currentGame == null)
         throw Alert("New offline data not in box", "My bad, sorry");
     }
     Game.data = newData;
     Game.save();
+  }
+
+  static deleteGame() {
+    if (!MainBloc.online) {
+      Game.data.delete();
+    }
   }
 
   static GameData newGame([GameData preset]) {
@@ -342,6 +359,9 @@ class MainBloc {
 
       Hive.box(METABOX).put("intCurrentGame", getGameNumber);
     }
+    newGameData.currency = CurrencyHelper.selectedCurrency.icon;
+    newGameData.placeCurrencyInFront =
+        CurrencyHelper.selectedCurrency.placeCurrencyInFront;
     return newGameData;
   }
 

@@ -38,22 +38,55 @@ class ZoomMap extends StatelessWidget {
       }
       if (tileIndex <= gmap.length - 1) {
         Tile tile = gmap[tileIndex];
+        bool left = false;
+        bool right = false;
+        int backGroundColor;
+        if (tile.tableColor == null) {
+          if (tileIndex >= 1) {
+            backGroundColor = gmap[tileIndex - 1].tableColor;
+            if (backGroundColor != null) {
+              left = true;
+            }
+          }
+          if (tileIndex + 1 < gmap.length) {
+            backGroundColor ??= gmap[tileIndex + 1].tableColor;
+            if (gmap[tileIndex + 1].tableColor != null) {
+              right = true;
+            }
+          }
+          if (right && left) {
+            if (gmap[tileIndex - 1].tableColor !=
+                gmap[tileIndex + 1].tableColor) {
+              left = false;
+              right = false;
+            }
+          }
+        }
         gridChildren.add(
           Theme(
             data: tile.tableColor != null
                 ? Theme.of(context).copyWith(
                     cardTheme: CardTheme(
                       color: Color(tile.backgroundColor ?? Colors.white.value),
-                      margin: const EdgeInsets.all(20),
+                      margin: const EdgeInsets.all(30),
                     ),
                     canvasColor: Colors.white,
                   )
                 : Theme.of(context).copyWith(
                     cardTheme: CardTheme(
                     elevation: 0,
+                    clipBehavior: Clip.hardEdge,
                     margin: EdgeInsets.zero,
                     color: Color(tile.backgroundColor ?? Colors.white.value),
-                    shape: Border.all(color: Colors.black, width: 0.5),
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.black, width: 1),
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: !left ? Radius.zero : Radius.circular(20),
+                          topLeft: !left ? Radius.zero : Radius.circular(20),
+                          bottomRight:
+                              !right ? Radius.zero : Radius.circular(20),
+                          topRight: !right ? Radius.zero : Radius.circular(20),
+                        )),
                   )),
             child: EagerInkWell(
               onTap: () {
@@ -63,8 +96,14 @@ class ZoomMap extends StatelessWidget {
                 }));
               },
               child: Container(
-                color: Color(tile.tableColor ?? 0),
-                child: buildCard(tile, zoom: true),
+                color: backGroundColor == null ? null : Color(backGroundColor),
+                child: Container(
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    color: Color(tile.tableColor ?? 0),
+                  ),
+                  child: buildCard(tile, zoom: true),
+                ),
               ),
             ),
           ),
@@ -133,7 +172,7 @@ class BoardZoom extends StatelessWidget {
   Widget build(BuildContext context) {
     return Zoom(
       initZoom: 0,
-      canvasColor: Colors.black,
+      canvasColor: Color(Game.data?.tableColor ?? Colors.black.value),
       enableScroll: true,
       width: (width.toDouble() * 250),
       height: (rows * 250 * (4 / 3)),

@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'info.g.dart';
+part 'update_info.g.dart';
 
 @JsonSerializable(includeIfNull: false)
 @HiveType(typeId: 7)

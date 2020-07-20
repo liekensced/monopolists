@@ -19,24 +19,39 @@ class UIActionsData {
   bool showDealScreen = false;
   @HiveField(2)
   bool shouldMove = true;
+  @HiveField(3)
+  bool finished = false;
 
   bool get ended {
+    if (finished ?? false) return true;
     if (Game.data == null) return false;
     if (Game.data.running == null || Game.data.running == false) {
       return false;
     }
-    if (Game.data.turn > Game.data.settings.maxTurnes) return true;
+    if (Game.data.turn > Game.data.settings.maxTurnes) return onFinished();
     if (Game.data.players.length == 1) {
-      return true;
+      return onFinished();
     }
-    if (!realPlayers) return true;
+    if (!realPlayers && !Game.testing) return onFinished();
 
     return false;
   }
 
+  bool onFinished() {
+    finished = true;
+    try {
+      if (Game.data.onFinished != null) Game.data.onFinished();
+    } catch (e) {
+      print("Failed onFinished");
+      print(e);
+    }
+    Game.save();
+    return true;
+  }
+
   Player get winner {
     if (Game.data.players.length == 1) {
-      Game.data.player;
+      return Game.data.player;
     }
     Player win;
     Game.data.players.forEach((Player p) {
@@ -94,7 +109,8 @@ class UIActionsData {
   Map<String, dynamic> toJson() => _$UIActionsDataToJson(this);
 
   int get moveAnimationMillis {
-    return (Game.data.currentDices[0] + Game.data.currentDices[1] * 200 + 500);
+    return ((Game.data.currentDices[0] + Game.data.currentDices[1]) * 100 + 300)
+        .abs();
   }
 }
 

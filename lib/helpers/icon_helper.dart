@@ -23,17 +23,17 @@ class GameIcon extends StatelessWidget {
         return Icon(Icons.home);
         break;
       case "bank":
-        return BankExtension.data.icon();
+        return BankExtension.data.icon(size: size);
       case "time":
-        return FaIcon(FontAwesomeIcons.solidClock);
+        return FaIcon(FontAwesomeIcons.solidClock, size: size);
       case "arrowRight":
-        return FaIcon(FontAwesomeIcons.arrowRight);
+        return FaIcon(FontAwesomeIcons.arrowRight, size: size);
       case "bolt":
-        return FaIcon(FontAwesomeIcons.bolt);
+        return FaIcon(FontAwesomeIcons.bolt, size: size);
       case "faucet":
-        return FaIcon(FontAwesomeIcons.faucet);
+        return FaIcon(FontAwesomeIcons.faucet, size: size);
       case "hand_usd":
-        return FaIcon(FontAwesomeIcons.handHoldingUsd);
+        return FaIcon(FontAwesomeIcons.handHoldingUsd, size: size);
       case "i":
         return Icon(Icons.info, size: size);
       case "question":
@@ -41,7 +41,7 @@ class GameIcon extends StatelessWidget {
             "assets/question.flr",
             FaIcon(
               FontAwesomeIcons.question,
-              size: 50,
+              size: size ?? 50,
               color: Color(color ?? Colors.white.value),
             ),
             color ?? Colors.white.value);
@@ -49,7 +49,7 @@ class GameIcon extends StatelessWidget {
         return flareBuilder(
           "assets/coffee.flr",
           FaIcon(FontAwesomeIcons.coffee,
-              color: Color(color ?? Colors.white.value), size: 50),
+              color: Color(color ?? Colors.white.value), size: size ?? 50),
           color ?? Colors.brown.value,
         );
       case "gem":
@@ -57,7 +57,7 @@ class GameIcon extends StatelessWidget {
             "assets/gem_shine.flr",
             FaIcon(
               FontAwesomeIcons.solidGem,
-              size: 50,
+              size: size ?? 50,
               color: Color(color ?? Colors.white.value),
             ),
             color ?? Colors.white.value);

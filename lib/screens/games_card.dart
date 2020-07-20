@@ -35,8 +35,12 @@ class _GamesCardState extends State<GamesCard>
           child: ValueListenableBuilder(
               valueListenable: Hive.box(MainBloc.GAMESBOX).listenable(),
               builder: (context, Box box, __) {
-                List<GameData> games =
-                    box.values.toList().whereType<GameData>().toList();
+                List<GameData> games = box.values
+                    .toList()
+                    .whereType<GameData>()
+                    .toList()
+                    .where((element) => element.levelId == null)
+                    .toList();
                 if (widget.preset != null) {
                   games.removeWhere(
                       (element) => element.preset != widget.preset);

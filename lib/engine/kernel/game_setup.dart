@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:plutopoly/bloc/main_bloc.dart';
 import 'package:plutopoly/engine/ai/ai.dart';
 import 'package:plutopoly/engine/ai/ai_type.dart';
 import 'package:plutopoly/engine/data/main_data.dart';
+import 'package:plutopoly/engine/kernel/core_actions.dart';
 import 'package:plutopoly/screens/start/players.dart';
 
 import '../data/player.dart';
@@ -27,7 +30,7 @@ class GameSetup {
   }
 
   Alert addBot({bool hard: false}) {
-    String name = "bot ${data.players.length}";
+    String name = "bot ${data.players.length + 1}";
     while (true) {
       try {
         addPlayerCheck(name: name);
@@ -48,7 +51,7 @@ class GameSetup {
     return null;
   }
 
-  Alert addPlayer({String name, int color: 0, int code: -1}) {
+  Alert addPlayer({String name, int color: 0, int code: -1, String icon}) {
     try {
       addPlayerCheck(name: name, color: color, code: code);
     } on Alert catch (e) {
@@ -60,6 +63,7 @@ class GameSetup {
       color: color,
       name: name,
       code: code,
+      playerIcon: icon,
       ai: AI(AIType.player),
     ));
     Game.save(only: [SaveData.players.toString()]);
@@ -72,19 +76,37 @@ class GameSetup {
     if (shouldSave) Game.save(only: [SaveData.players.toString()]);
   }
 
-  defaultPlayer(Player player) {
+  defaultPlayer(Player player, [bool next = true]) {
     Game.data.lostPlayers.add(player);
-    player.properties.forEach((String index) {
-      Game.data.gmap
-          .where((element) => element.id == index)
-          .forEach((element) => element.reset());
-    });
+    if (Game.data.settings.receiveProperties ?? false) {
+      Player owner = Game.data.tile.owner;
+      if (owner != null && owner != player) {
+        owner.properties.addAll(player.properties);
+        Game.act.pay(
+            PayType.pay, max(player.money.floor(), -Game.data.tile.currentRent),
+            force: true,
+            shouldSave: false,
+            message: "You bankrupted " + owner.name);
+      } else {
+        resetProperties(player);
+      }
+    } else {
+      resetProperties(player);
+    }
     deletePlayer(player, false);
     Game.data.currentPlayer--;
     if (Game.data.currentPlayer < 0) {
       Game.data.currentPlayer = Game.data.players.last.index;
     }
     Game.save(force: true);
-    Game.next(force: true);
+    if (next) Game.next(force: true);
+  }
+
+  void resetProperties(Player player) {
+    player.properties.forEach((String index) {
+      Game.data.gmap
+          .where((element) => element.id == index)
+          .forEach((element) => element.reset());
+    });
   }
 }

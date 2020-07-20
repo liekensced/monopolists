@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:plutopoly/bloc/main_bloc.dart';
 
 import '../data/main_data.dart';
@@ -15,20 +17,21 @@ class GameHelpers {
   jail(Player player, {bool shouldSave: true}) {
     data.doublesThrown = 0;
     player.jailed = true;
-    player.position = data.gmap
-        .firstWhere((element) => element.type == TileType.jail)
-        .mapIndex;
+    List<Tile> jails =
+        data.gmap.where((element) => element.type == TileType.jail).toList();
+
+    player.position = jails[Random().nextInt(jails.length)].mapIndex;
     player.jailTries = data.tile.price ?? 2;
     if (shouldSave) {
       Game.save(only: ["doublesThrown", SaveData.players.toString()]);
     }
   }
 
-  birthDay() {
+  birthDay([int amount = 50]) {
     data.players.forEach((Player p) {
       if (p == data.player) return;
-      p.money -= 50;
-      data.player.money += 50;
+      p.money -= amount;
+      data.player.money += amount;
     });
     Game.save(only: [SaveData.players.toString()]);
   }
@@ -38,7 +41,7 @@ class GameHelpers {
     data.currentDices[1] += 10;
   }
 
-  Alert repareHouses({int houseFactor: 25, hotelFactor: 100}) {
+  Alert repareHouses({int houseFactor: 25, int hotelFactor: 100}) {
     int _housesPay = 0;
     Game.data.player.properties.forEach((String i) {
       Tile tile = Game.data.gmap.firstWhere((element) => element.id == i);

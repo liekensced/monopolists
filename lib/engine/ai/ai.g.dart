@@ -51,13 +51,14 @@ class AISettingsAdapter extends TypeAdapter<AISettings> {
       ..dealFactor = fields[1] as double
       ..smart = fields[2] as bool
       ..canTrade = fields[3] as bool
-      ..idle = fields[4] as bool;
+      ..idle = fields[4] as bool
+      ..moneyFactor = fields[5] as double;
   }
 
   @override
   void write(BinaryWriter writer, AISettings obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.chances)
       ..writeByte(1)
@@ -67,7 +68,9 @@ class AISettingsAdapter extends TypeAdapter<AISettings> {
       ..writeByte(3)
       ..write(obj.canTrade)
       ..writeByte(4)
-      ..write(obj.idle);
+      ..write(obj.idle)
+      ..writeByte(5)
+      ..write(obj.moneyFactor);
   }
 }
 
@@ -135,7 +138,8 @@ AISettings _$AISettingsFromJson(Map json) {
     ..dealFactor = (json['dealFactor'] as num)?.toDouble()
     ..smart = json['smart'] as bool
     ..canTrade = json['canTrade'] as bool
-    ..idle = json['idle'] as bool;
+    ..idle = json['idle'] as bool
+    ..moneyFactor = (json['moneyFactor'] as num)?.toDouble();
 }
 
 Map<String, dynamic> _$AISettingsToJson(AISettings instance) =>
@@ -145,4 +149,5 @@ Map<String, dynamic> _$AISettingsToJson(AISettings instance) =>
       'smart': instance.smart,
       'canTrade': instance.canTrade,
       'idle': instance.idle,
+      'moneyFactor': instance.moneyFactor,
     };

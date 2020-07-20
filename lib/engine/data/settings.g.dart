@@ -30,13 +30,16 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..transportPassGo = fields[10] as bool
       ..allowDiceSelect = fields[11] as bool
       ..allowPriceChanges = fields[12] as bool
-      ..generateNames = fields[13] as bool;
+      ..generateNames = fields[13] as bool
+      ..receiveProperties = fields[14] as bool
+      ..receiveRentInJail = fields[15] as bool
+      ..doubleBonus = fields[16] as bool;
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -64,7 +67,13 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(12)
       ..write(obj.allowPriceChanges)
       ..writeByte(13)
-      ..write(obj.generateNames);
+      ..write(obj.generateNames)
+      ..writeByte(14)
+      ..write(obj.receiveProperties)
+      ..writeByte(15)
+      ..write(obj.receiveRentInJail)
+      ..writeByte(16)
+      ..write(obj.doubleBonus);
   }
 }
 
@@ -81,13 +90,16 @@ Settings _$SettingsFromJson(Map json) {
     ..mustAuction = json['mustAuction'] as bool
     ..startingMoney = json['startingMoney'] as int
     ..hackerScreen = json['hackerScreen'] as bool
-    ..interest = json['interest'] as int ?? 10
-    ..dtlPrice = json['dtlPrice'] as int ?? 1500
+    ..interest = json['interest'] as int ?? 5
+    ..dtlPrice = json['dtlPrice'] as int ?? 2000
     ..startProperties = json['startProperties'] as int ?? 0
     ..transportPassGo = json['transportPassGo'] as bool ?? true
     ..allowDiceSelect = json['allowDiceSelect'] as bool ?? false
     ..allowPriceChanges = json['allowPriceChanges'] as bool ?? false
-    ..generateNames = json['generateNames'] as bool ?? true;
+    ..generateNames = json['generateNames'] as bool ?? true
+    ..receiveProperties = json['receiveProperties'] as bool
+    ..receiveRentInJail = json['receiveRentInJail'] as bool
+    ..doubleBonus = json['doubleBonus'] as bool;
 }
 
 Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
@@ -105,4 +117,7 @@ Map<String, dynamic> _$SettingsToJson(Settings instance) => <String, dynamic>{
       'allowDiceSelect': instance.allowDiceSelect,
       'allowPriceChanges': instance.allowPriceChanges,
       'generateNames': instance.generateNames,
+      'receiveProperties': instance.receiveProperties,
+      'receiveRentInJail': instance.receiveRentInJail,
+      'doubleBonus': instance.doubleBonus,
     };

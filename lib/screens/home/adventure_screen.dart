@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
-import 'package:plutopoly/helpers/progress_helper.dart';
-import 'package:plutopoly/screens/home/adventure_page.dart';
-import 'package:plutopoly/widgets/animated_count.dart';
+
+import '../../bloc/main_bloc.dart';
+import '../../helpers/progress_helper.dart';
+import '../../widgets/animated_count.dart';
+import 'adventure_page.dart';
 
 class AdventureScreen extends StatefulWidget {
   @override
@@ -19,6 +20,7 @@ class _AdventureScreenState extends State<AdventureScreen> {
     double mapHeight = MediaQuery.of(context).size.height * 1.5;
 
     return new Scaffold(
+      backgroundColor: Colors.cyan,
       appBar: AppBar(
         title: Text("adventure"),
         actions: [
@@ -53,7 +55,7 @@ class _AdventureScreenState extends State<AdventureScreen> {
                           height: mapHeight / levels,
                         ),
                       ),
-                  ],
+                  ].reversed.toList(),
                 ),
               ],
             )

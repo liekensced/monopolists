@@ -58,19 +58,22 @@ class UIActionsDataAdapter extends TypeAdapter<UIActionsData> {
     return UIActionsData()
       ..screenState = fields[0] as Screen
       ..showDealScreen = fields[1] as bool
-      ..shouldMove = fields[2] as bool;
+      ..shouldMove = fields[2] as bool
+      ..finished = fields[3] as bool;
   }
 
   @override
   void write(BinaryWriter writer, UIActionsData obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.screenState)
       ..writeByte(1)
       ..write(obj.showDealScreen)
       ..writeByte(2)
-      ..write(obj.shouldMove);
+      ..write(obj.shouldMove)
+      ..writeByte(3)
+      ..write(obj.finished);
   }
 }
 
@@ -82,7 +85,8 @@ UIActionsData _$UIActionsDataFromJson(Map json) {
   return UIActionsData()
     ..screenState = _$enumDecodeNullable(_$ScreenEnumMap, json['screenState'])
     ..showDealScreen = json['showDealScreen'] as bool
-    ..shouldMove = json['shouldMove'] as bool;
+    ..shouldMove = json['shouldMove'] as bool
+    ..finished = json['finished'] as bool;
 }
 
 Map<String, dynamic> _$UIActionsDataToJson(UIActionsData instance) =>
@@ -90,6 +94,7 @@ Map<String, dynamic> _$UIActionsDataToJson(UIActionsData instance) =>
       'screenState': _$ScreenEnumMap[instance.screenState],
       'showDealScreen': instance.showDealScreen,
       'shouldMove': instance.shouldMove,
+      'finished': instance.finished,
     };
 
 T _$enumDecode<T>(

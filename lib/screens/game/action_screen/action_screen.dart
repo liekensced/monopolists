@@ -399,55 +399,52 @@ class InfoSnackbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: MyCard(
-        center: false,
-        shadowColor: Color(info.color ?? Colors.green.value),
-        elevation: 10,
-        shrinkwrap: true,
-        color: Color(info.color ?? Colors.green.value),
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              info.title ?? "",
-              style: Theme.of(context)
-                  .textTheme
-                  .headline5
-                  .copyWith(color: Colors.white),
-              textAlign: TextAlign.start,
-            ),
+    return MyCard(
+      center: false,
+      shadowColor: Color(info.color ?? Colors.green.value),
+      elevation: 10,
+      shrinkwrap: true,
+      color: Color(info.color ?? Colors.green.value),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            info.title ?? "",
+            style: Theme.of(context)
+                .textTheme
+                .headline5
+                .copyWith(color: Colors.white),
+            textAlign: TextAlign.start,
           ),
-          info.subtitle == null
-              ? Container()
-              : Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    info.subtitle ?? "",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6
-                        .copyWith(color: Colors.white),
-                    textAlign: TextAlign.start,
-                  ),
+        ),
+        info.subtitle == null
+            ? Container()
+            : Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  info.subtitle ?? "",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6
+                      .copyWith(color: Colors.white),
+                  textAlign: TextAlign.start,
                 ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            alignment: Alignment.bottomRight,
-            child: Text(
-              info.trailing ?? "",
-              style: Theme.of(context)
-                  .textTheme
-                  .headline4
-                  .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.end,
-            ),
-          )
-        ],
-      ),
+              ),
+        Container(
+          padding: const EdgeInsets.all(8),
+          alignment: Alignment.bottomRight,
+          child: Text(
+            info.trailing ?? "",
+            style: Theme.of(context)
+                .textTheme
+                .headline4
+                .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.end,
+          ),
+        )
+      ],
     );
   }
 }

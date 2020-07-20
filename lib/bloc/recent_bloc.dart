@@ -47,6 +47,6 @@ class RecentBloc {
     Hive.box(MainBloc.RECENTBOX).put(
         MainBloc.gameId,
         Recent(data.settings.name, data.players.first.name, data.turn,
-            data.ui.idle));
+            data.ui.idle || data.ui.ended));
   }
 }

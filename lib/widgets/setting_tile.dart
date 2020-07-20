@@ -173,6 +173,18 @@ class _ValueSettingTileState extends State<ValueSettingTile> {
                             style: TextStyle(
                                 color: Theme.of(context).primaryColor),
                           )),
+                      if (setting.allowNull)
+                        MaterialButton(
+                            onPressed: () {
+                              setting.onChanged(null);
+                              Navigator.pop(context);
+                              Game.save();
+                            },
+                            child: Text(
+                              "null",
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor),
+                            )),
                       MaterialButton(
                           onPressed: () {
                             int number = int.tryParse(value);
@@ -193,7 +205,8 @@ class _ValueSettingTileState extends State<ValueSettingTile> {
           });
     }
 
-    if (setting.value is String) {
+    if (setting.value is String ||
+        (setting.allowNull && setting is ValueSetting<String>)) {
       return IconButton(
           icon: Icon(Icons.edit),
           onPressed: () {
@@ -219,6 +232,18 @@ class _ValueSettingTileState extends State<ValueSettingTile> {
                             style: TextStyle(
                                 color: Theme.of(context).primaryColor),
                           )),
+                      if (setting.allowNull)
+                        MaterialButton(
+                            onPressed: () {
+                              setting.onChanged(null);
+                              Navigator.pop(context);
+                              Game.save();
+                            },
+                            child: Text(
+                              "null",
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor),
+                            )),
                       MaterialButton(
                           onPressed: () {
                             setting.onChanged(value);
@@ -266,38 +291,43 @@ class _ValueSettingTileState extends State<ValueSettingTile> {
                                 },
                               ),
                             ),
-                            Wrap(
-                              alignment: WrapAlignment.spaceBetween,
-                              children: [
-                                FlatButton(
-                                  textColor: Theme.of(context).primaryColor,
-                                  child: Text("Black"),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    setting.onChanged(Colors.black);
-                                    return;
-                                  },
-                                ),
-                                FlatButton(
-                                  textColor: Theme.of(context).primaryColor,
-                                  child: Text("White"),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    setting.onChanged(Colors.white);
-                                    return;
-                                  },
-                                ),
-                                if (setting.allowAlpha)
-                                  FlatButton(
-                                    textColor: Theme.of(context).primaryColor,
-                                    child: Text("Transparent"),
-                                    onPressed: () {
+                            Center(
+                              child: Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: CircleColor(
+                                      circleSize: 40,
+                                      color: Colors.black,
+                                      onColorChoose: () {
+                                        Navigator.pop(context);
+                                        setting.onChanged(Colors.black);
+                                        return;
+                                      },
+                                    ),
+                                  ),
+                                  CircleColor(
+                                    circleSize: 40,
+                                    color: Colors.white,
+                                    onColorChoose: () {
                                       Navigator.pop(context);
-                                      setting.onChanged(Colors.transparent);
+                                      setting.onChanged(Colors.white);
                                       return;
                                     },
-                                  )
-                              ],
+                                  ),
+                                  if (setting.allowAlpha)
+                                    FlatButton(
+                                      textColor: Theme.of(context).primaryColor,
+                                      child: Text("Transparent"),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        setting.onChanged(Colors.transparent);
+                                        return;
+                                      },
+                                    )
+                                ],
+                              ),
                             ),
                             setting.allowNull
                                 ? FlatButton(

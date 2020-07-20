@@ -4,8 +4,10 @@ import '../engine/data/map.dart';
 
 class OwnerText extends StatelessWidget {
   final Tile tile;
+  final bool zoom;
 
-  const OwnerText({Key key, @required this.tile}) : super(key: key);
+  const OwnerText({Key key, @required this.tile, this.zoom: false})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     if (tile.owner == null) return Container();
@@ -27,20 +29,22 @@ class OwnerText extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     "Owner: ",
-                    style: TextStyle(color: Colors.black, fontSize: 18),
+                    style: TextStyle(
+                        color: Colors.black, fontSize: zoom ? 24 : 18),
                   ),
                   Text(tile.owner.name,
                       style: TextStyle(
                           color: Color(tile.owner.color),
                           fontWeight: FontWeight.bold,
-                          fontSize: 20)),
+                          fontSize: zoom ? 26 : 20)),
                 ],
               ),
               Container(height: 2),
               tile.mortaged
                   ? Text(
                       "(mortaged)",
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(
+                          color: Colors.grey, fontSize: zoom ? 02 : 14),
                     )
                   : Container(),
             ],

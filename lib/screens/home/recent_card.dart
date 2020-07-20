@@ -24,6 +24,7 @@ class RecentCard extends StatelessWidget {
     List<Widget> recents = [];
     RecentBloc.getRecent().forEach((String key, Recent recentGame) {
       if (active && (recentGame.idle ?? true)) return;
+
       recents.add(InkWell(
         onTap: () {
           joinOnline(context, key);

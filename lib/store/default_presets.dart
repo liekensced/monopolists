@@ -26,6 +26,7 @@ class PresetHelper {
   static Preset newPreset(Preset _preset) {
     GameData gameData = GameData.fromJson(_preset.data.toJson());
     gameData.preset = _preset.projectName;
+    _preset.dataCache = gameData;
     MainBloc.presetsBox.put(_preset.projectName, _preset);
     MainBloc.presetGamesBox.put(_preset.projectName, gameData);
     MainBloc.cancelOnline();

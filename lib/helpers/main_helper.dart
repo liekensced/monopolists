@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:plutopoly/engine/data/tip.dart';
+import 'package:plutopoly/store/adventure/adventure_data.dart';
 import 'package:plutopoly/store/preset.dart';
 
 import '../bloc/ad_bloc.dart';
@@ -53,6 +54,8 @@ class MainHelper {
     Hive.registerAdapter(PresetAdapter());
     Hive.registerAdapter(InfoAdapter());
     Hive.registerAdapter(InfoTypeAdapter());
+
+    Hive.registerAdapter(LevelProgressAdapter());
     Hive.registerAdapter(AISettingsAdapter());
     await Hive.openBox(MainBloc.PREFBOX);
 

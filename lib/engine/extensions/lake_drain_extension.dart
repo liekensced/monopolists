@@ -19,7 +19,7 @@ class LakeDrain {
       getInfo: () => [
             Info(
               "Drain the lake",
-              "You can drain the lake for ${mon(Game?.data?.settings?.dtlPrice ?? 1500)}. This will add 2 properties to the map that you will own and can upgrade.",
+              "You can drain the lake for ${mon(Game?.data?.settings?.dtlPrice ?? 2000)}. This will add 2 properties to the map that you will own and can upgrade.",
               InfoType.rule,
             ),
             Info(
@@ -62,7 +62,7 @@ class LakeDrain {
 
     Game.act.pay(
       PayType.bank,
-      Game.data.settings.dtlPrice ?? 1500,
+      Game.data.settings.dtlPrice ?? 2000,
       shouldSave: false,
     );
 
