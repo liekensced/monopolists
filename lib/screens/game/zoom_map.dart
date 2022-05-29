@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:zoom_widget/zoom_widget.dart';
+import 'package:plutopoly/helpers/main_helper.dart';
+import 'package:plutopoly/widgets/tilt_widget.dart';
+// import 'package:zoom_widget/zoom_widget.dart';
 
 import '../../bloc/main_bloc.dart';
 import '../../bloc/ui_bloc.dart';
@@ -16,9 +18,14 @@ import 'property_page.dart';
 class ZoomMap extends StatelessWidget {
   final PageController carrouselController;
   final bool studio;
+  final bool full;
 
-  const ZoomMap({Key key, this.carrouselController, this.studio: false})
-      : super(key: key);
+  const ZoomMap({
+    Key key,
+    this.carrouselController,
+    this.studio: false,
+    this.full: true,
+  }) : super(key: key);
   void changePos(int index) {
     if (carrouselController == null) return;
     if (carrouselController.hasClients) {
@@ -79,13 +86,14 @@ class ZoomMap extends StatelessWidget {
                     margin: EdgeInsets.zero,
                     color: Color(tile.backgroundColor ?? Colors.white.value),
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.black, width: 1),
+                        side: BorderSide(
+                            color: MainHelper.primaryColor, width: 1),
                         borderRadius: BorderRadius.only(
-                          bottomLeft: !left ? Radius.zero : Radius.circular(20),
-                          topLeft: !left ? Radius.zero : Radius.circular(20),
+                          bottomLeft: !left ? Radius.zero : Radius.circular(10),
+                          topLeft: !left ? Radius.zero : Radius.circular(10),
                           bottomRight:
-                              !right ? Radius.zero : Radius.circular(20),
-                          topRight: !right ? Radius.zero : Radius.circular(20),
+                              !right ? Radius.zero : Radius.circular(10),
+                          topRight: !right ? Radius.zero : Radius.circular(10),
                         )),
                   )),
             child: EagerInkWell(
@@ -128,6 +136,19 @@ class ZoomMap extends StatelessWidget {
     if (UIBloc.isWide(context)) {
       heigth = min(MediaQuery.of(context).size.height, heigth);
     }
+    if (!full) {
+      return ZoomableTiltView(
+        child: Container(
+          width: size,
+          height: heigth,
+          child: Theme(
+            data:
+                Theme.of(context).copyWith(iconTheme: IconThemeData(size: 0.5)),
+            child: BoardZoom(width: width, gridChildren: gridChildren),
+          ),
+        ),
+      );
+    }
     return Padding(
       padding: UIBloc.isWide(context)
           ? const EdgeInsets.symmetric(horizontal: 20.0)
@@ -135,11 +156,16 @@ class ZoomMap extends StatelessWidget {
       child: MyCard(
         maxWidth: 1500,
         children: <Widget>[
-          Container(
-            width: size,
-            height: heigth,
-            child: BoardZoom(
-                width: width, gridChildren: gridChildren, heigth: heigth),
+          ZoomableTiltView(
+            child: Container(
+              width: size,
+              height: heigth,
+              child: Theme(
+                data: Theme.of(context)
+                    .copyWith(iconTheme: IconThemeData(size: 1)),
+                child: BoardZoom(width: width, gridChildren: gridChildren),
+              ),
+            ),
           ),
           ListTile(
             title: Text("Map configuration:"),
@@ -161,24 +187,23 @@ class BoardZoom extends StatelessWidget {
     Key key,
     @required this.width,
     @required this.gridChildren,
-    @required this.heigth,
   }) : super(key: key);
-  final double heigth;
 
   final int width;
   final List<Widget> gridChildren;
 
   @override
   Widget build(BuildContext context) {
-    return Zoom(
-      initZoom: 0,
-      canvasColor: Color(Game.data?.tableColor ?? Colors.black.value),
-      enableScroll: true,
-      width: (width.toDouble() * 250),
-      height: (rows * 250 * (4 / 3)),
-      backgroundColor: Colors.black,
-      child: buildGrid(),
-    );
+    return buildGrid();
+    // return Zoom(
+    //   initZoom: 0,
+    //   canvasColor: Color(Game.data?.tableColor ?? Colors.black.value),
+    //   enableScroll: true,
+    //   width: (width.toDouble() * 250),
+    //   height: (rows * 250 * (4 / 3)),
+    //   backgroundColor: Colors.black,
+    //   child: buildGrid(),
+    // );
   }
 
   int get rows => ((gridChildren.length / width.toDouble()).ceil());

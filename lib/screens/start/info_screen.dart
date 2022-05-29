@@ -130,6 +130,72 @@ class InfoScreenChild extends StatelessWidget {
       });
     }
 
+    switch (settings.diceType) {
+      case DiceType.one:
+        infoWidgets.add(IconDivider(
+            icon: Icon(
+          FontAwesomeIcons.dice,
+          size: 35,
+        )));
+        infoWidgets.add(GeneralInfoCard(
+            info: Info("1 Dice", "You only have one dice.", InfoType.rule)));
+        infoWidgets.add(GeneralInfoCard(
+            info: Info("Leave prison", "You can leave prison via throwing a 6.",
+                InfoType.tip)));
+        break;
+      case DiceType.two:
+        //default
+        break;
+      case DiceType.three:
+        infoWidgets.add(IconDivider(
+            icon: Icon(
+          FontAwesomeIcons.dice,
+          size: 35,
+        )));
+        infoWidgets.add(GeneralInfoCard(
+            info: Info("3 Dices", "You have 2 dices and 1 bonus dice.",
+                InfoType.rule)));
+        infoWidgets.add(GeneralInfoCard(
+            info: Info(
+                "Bonus dice",
+                "You can only throw a double with the first 2 dices. The last one doesn't count.",
+                InfoType.alert)));
+        break;
+      case DiceType.random:
+        infoWidgets.add(IconDivider(
+            icon: Icon(
+          FontAwesomeIcons.dice,
+          size: 35,
+        )));
+        infoWidgets.add(GeneralInfoCard(
+            info: Info("Random amount of dices",
+                "You'll will randomly get 1, 2 or 3 dices.", InfoType.rule)));
+        infoWidgets.add(GeneralInfoCard(
+            info: Info("Leave prison (1 dice)",
+                "You can leave prison via throwing a 6.", InfoType.tip)));
+        infoWidgets.add(GeneralInfoCard(
+            info: Info(
+                "Bonus dice (3 dices)",
+                "You can only throw a double with the first 2 dices. The last one doesn't count.",
+                InfoType.alert)));
+        break;
+      case DiceType.choose:
+        infoWidgets.add(IconDivider(
+            icon: Icon(
+          FontAwesomeIcons.dice,
+          size: 35,
+        )));
+        infoWidgets.add(GeneralInfoCard(
+            info: Info(
+                "Choose the amount of dices",
+                "You can choose if you want to use 1 or 2 dices.",
+                InfoType.rule)));
+        infoWidgets.add(GeneralInfoCard(
+            info: Info("Leave prison (1 dice)",
+                "You can leave prison via throwing a 6.", InfoType.tip)));
+        break;
+    }
+
     extensions.forEach((ext) {
       ExtensionData extensionData = ExtensionsMap.call()[ext];
       infoWidgets.add(IconDivider(icon: extensionData.icon()));

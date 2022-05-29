@@ -9,7 +9,6 @@ import 'package:overlay_support/overlay_support.dart';
 import 'package:plutopoly/engine/ui/alert.dart';
 import 'package:plutopoly/helpers/progress_helper.dart';
 import 'package:plutopoly/store/adventure/levels/classic_adventure_lands.dart';
-import 'package:plutopoly/store/gmap_checker.dart';
 import 'package:plutopoly/widgets/end_of_list.dart';
 import 'package:plutopoly/widgets/my_card.dart';
 
@@ -369,19 +368,13 @@ class _LevelCardState extends State<LevelCard> {
               duration: Duration(milliseconds: 500),
               child: Column(
                 children: [
-                  GestureDetector(
-                    onDoubleTap: () {
-                      Game.data = preset.data;
-                      GmapChecker.botGame(nullify: true);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        preset.title,
-                        style: Theme.of(context).textTheme.headline4,
-                        textAlign: TextAlign.start,
-                      ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      preset.title,
+                      style: Theme.of(context).textTheme.headline4,
+                      textAlign: TextAlign.start,
                     ),
                   ),
                   Padding(
@@ -392,9 +385,8 @@ class _LevelCardState extends State<LevelCard> {
                   Theme(
                     data: Theme.of(context).copyWith(
                         primaryColor: Color(preset.primaryColor ??
-                            Theme.of(context).primaryColor.value),
-                        accentColor: Color(preset.accentColor ??
-                            Theme.of(context).accentColor.value)),
+                            Theme.of(context).primaryColor.value), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color(preset.accentColor ??
+                            Theme.of(context).colorScheme.secondary.value))),
                     child: Builder(
                       builder: (context) => Align(
                         alignment: Alignment.bottomCenter,

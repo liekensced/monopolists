@@ -40,7 +40,6 @@ class MoveCard extends StatelessWidget {
                       headerAnimationLoop: false,
                     ).show();
                   }
-                  ;
                 },
         ),
       ));

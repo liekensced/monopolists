@@ -65,9 +65,8 @@ class StoreList extends StatelessWidget {
                 Theme(
                   data: Theme.of(context).copyWith(
                       primaryColor: Color(preset.primaryColor ??
-                          Theme.of(context).primaryColor.value),
-                      accentColor: Color(preset.accentColor ??
-                          Theme.of(context).accentColor.value)),
+                          Theme.of(context).primaryColor.value), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color(preset.accentColor ??
+                          Theme.of(context).colorScheme.secondary.value))),
                   child: Builder(
                     builder: (context) => Align(
                       alignment: Alignment.bottomCenter,

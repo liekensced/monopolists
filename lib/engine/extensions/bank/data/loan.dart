@@ -47,4 +47,9 @@ class Contract {
 
   factory Contract.fromJson(Map json) => _$ContractFromJson(json);
   Map<String, dynamic> toJson() => _$ContractToJson(this);
+
+  @override
+  // TODO: implement hashCode
+  int get hashCode => super.hashCode;
+
 }

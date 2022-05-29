@@ -31,13 +31,13 @@ class _SettingsCardState extends State<SettingsCard> {
                   !Hive.box(MainBloc.PREFBOX)
                       .get("boolOverlays", defaultValue: true));
               if (!UIBloc.hideOverlays) {
-                SystemChrome.setEnabledSystemUIOverlays([
+                SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
                   SystemUiOverlay.bottom,
                   SystemUiOverlay.bottom,
                 ]);
                 SystemChrome.restoreSystemUIOverlays();
               } else {
-                SystemChrome.setEnabledSystemUIOverlays([]);
+                SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
                 SystemChrome.restoreSystemUIOverlays();
               }
             },

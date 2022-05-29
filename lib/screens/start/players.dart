@@ -1,8 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/screens/carousel/players_indicator.dart';
@@ -342,10 +340,10 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
                 });
               },
               child: PlayerIconWidget(
-                player:
-                    Player(color: color, playerIcon: playerIcon, name: name),
-                size: 35,
-              ),
+                  player:
+                      Player(color: color, playerIcon: playerIcon, name: name),
+                  size: 35,
+                  zoom: false),
             ),
           )
         ],

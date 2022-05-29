@@ -10,7 +10,7 @@ import 'player.dart';
 
 part 'map.g.dart';
 
-@JsonSerializable(nullable: true, includeIfNull: false)
+@JsonSerializable(nullable: true, includeIfNull: false, explicitToJson: true)
 @HiveType(typeId: 9)
 class MapConfiguration {
   @HiveField(0)
@@ -37,13 +37,17 @@ class MapConfiguration {
     width = 10;
     configuration = denseConfiguration;
   }
+  MapConfiguration.extraWide() {
+    width = 15;
+    configuration = denseConfiguration;
+  }
 
   factory MapConfiguration.fromJson(Map json) =>
       _$MapConfigurationFromJson(json);
   Map<String, dynamic> toJson() => _$MapConfigurationToJson(this);
 }
 
-@JsonSerializable(nullable: true, includeIfNull: false)
+@JsonSerializable(nullable: true, includeIfNull: false, explicitToJson: true)
 @HiveType(typeId: 1)
 class Tile {
   @HiveField(0)
@@ -88,6 +92,8 @@ class Tile {
   bool onlyOneAction = false;
   @HiveField(19)
   Map iconData;
+  @HiveField(20)
+  List<GameAction> actions;
 
   int getBackgroundColor() {
     if (backgroundColor != null) return backgroundColor;
@@ -111,8 +117,6 @@ class Tile {
         break;
     }
   }
-
-  List<GameAction> actions;
 
   factory Tile.type(TileType _tileType, [String street]) {
     switch (_tileType) {

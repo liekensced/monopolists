@@ -350,9 +350,19 @@ class ActionsCard extends StatelessWidget {
                 value: property.actionRequired ?? false,
                 onChanged: (dynamic val) {
                   property.actionRequired = val;
+                  Game.save();
                 })),
         Divider(),
-        ...getActions(),
+        ValueSettingTile(
+            setting: ValueSetting<bool>(
+                title: "Only 1 action",
+                value: property.onlyOneAction ?? true,
+                onChanged: (dynamic val) {
+                  property.onlyOneAction = val;
+                  Game.save();
+                })),
+        Divider(),
+        ...getActions(context),
         Align(
           alignment: Alignment.bottomRight,
           child: FlatButton(
@@ -368,7 +378,7 @@ class ActionsCard extends StatelessWidget {
                 if (property.actions == null) {
                   property.actions = [];
                 }
-                property.actions.add(value);
+                if (value != null) property.actions.add(value);
               });
             },
           ),
@@ -377,18 +387,35 @@ class ActionsCard extends StatelessWidget {
     );
   }
 
-  List<Widget> getActions() {
+  List<Widget> getActions(BuildContext context) {
     List<Widget> childs = [];
     (property.actions ?? []).forEach((element) {
+      if (element == null) property.actions.remove(element);
       childs.add(ListTile(
-        title: Text(element.title),
-        subtitle: Text(element.command),
-        trailing: IconButton(
-          icon: Icon(Icons.delete),
-          onPressed: () {
-            property.actions.remove(element);
-            Game.save();
-          },
+        title: Text(element.title ?? ""),
+        subtitle: Text(element.command ?? ""),
+        trailing: Wrap(
+          runAlignment: WrapAlignment.center,
+          children: [
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                property.actions.remove(element);
+                Game.save();
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                  return AddActionPage(
+                    action: element,
+                  );
+                })).then((value) => Game.save());
+              },
+            ),
+          ],
         ),
       ));
     });
@@ -404,8 +431,10 @@ class ActionsCard extends StatelessWidget {
 }
 
 class AddActionPage extends StatefulWidget {
+  final GameAction action;
   const AddActionPage({
     Key key,
+    this.action,
   }) : super(key: key);
 
   @override
@@ -416,7 +445,7 @@ class _AddActionPageState extends State<AddActionPage> {
   GameAction newAction;
   @override
   void initState() {
-    newAction = GameAction();
+    newAction = widget.action ?? GameAction();
     super.initState();
   }
 
@@ -435,59 +464,72 @@ class _AddActionPageState extends State<AddActionPage> {
           color: Colors.white,
         ),
       ),
-      body: MyCard(
-        shrinkwrap: true,
-        center: false,
-        title: "Action",
-        children: [
-          ValueSettingTile(
-              setting: ValueSetting<String>(
-                  title: "Title of action",
-                  value: newAction.title,
-                  onChanged: (dynamic val) {
-                    newAction.title = val;
-                    setState(() {});
-                  })),
-          ValueSettingTile(
-              setting: ValueSetting<String>(
-                  title: "Alert, extra information",
-                  value: newAction.alert,
-                  allowNull: true,
-                  onChanged: (dynamic val) {
-                    if (val == "") {
-                      val = null;
-                    }
-                    newAction.alert = val;
-                    setState(() {});
-                  })),
-          ValueSettingTile(
-              setting: ValueSetting<Color>(
-                  title: "Color of action",
-                  subtitle:
-                      "The color of the button. Null will be the primary color.",
-                  value:
-                      newAction.color == null ? null : Color(newAction.color),
-                  allowNull: true,
-                  onChanged: (dynamic val) {
-                    newAction.color = val?.value;
-                    setState(() {});
-                  })),
-          ListTile(
-            title: Text("Action (command)"),
-            subtitle: Text(newAction.command ?? "no command"),
-            trailing: IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return CommandScreen(
-                    execute: false,
-                  );
-                })).then((value) => newAction.command = value);
-              },
-            ),
-          )
-        ],
+      body: SingleChildScrollView(
+        child: MyCard(
+          shrinkwrap: true,
+          center: false,
+          title: "Action",
+          children: [
+            ValueSettingTile(
+                setting: ValueSetting<String>(
+                    title: "Title of action",
+                    value: newAction.title,
+                    onChanged: (dynamic val) {
+                      newAction.title = val;
+                      setState(() {});
+                    })),
+            ValueSettingTile(
+                setting: ValueSetting<String>(
+                    title: "Alert, extra information",
+                    value: newAction.alert,
+                    allowNull: true,
+                    onChanged: (dynamic val) {
+                      if (val == "") {
+                        val = null;
+                      }
+                      newAction.alert = val;
+                      setState(() {});
+                    })),
+            ValueSettingTile(
+                setting: ValueSetting<Color>(
+                    title: "Color of action",
+                    subtitle:
+                        "The color of the button. Null will be the primary color.",
+                    value:
+                        newAction.color == null ? null : Color(newAction.color),
+                    allowNull: true,
+                    onChanged: (dynamic val) {
+                      newAction.color = val?.value;
+                      setState(() {});
+                    })),
+            ValueSettingTile(
+                setting: ValueSetting<bool>(
+                    title: "Finish turn",
+                    subtitle:
+                        "Should it allow to go to the next turn after the action.",
+                    value: newAction.allowNext,
+                    allowNull: true,
+                    onChanged: (dynamic val) {
+                      newAction.allowNext = val;
+                      setState(() {});
+                    })),
+            ListTile(
+              title: Text("Action (command)"),
+              subtitle: Text(newAction.command ?? "no command"),
+              trailing: IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                    return CommandScreen(
+                      execute: false,
+                    );
+                  })).then((value) => newAction.command = value);
+                },
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -512,8 +554,11 @@ class EditCard extends StatelessWidget {
                 })),
         ValueSettingTile(
             setting: ValueSetting<int>(
-                title: "Property price",
+                title: property.type == TileType.jail
+                    ? "Price to leave jail"
+                    : "Property price",
                 value: property.price,
+                allowNull: true,
                 onChanged: (dynamic val) {
                   property.price = val;
                   Game.save();

@@ -214,15 +214,6 @@ void showSettingsSheet(BuildContext context, [PageController pageController]) {
                         title: Text("Visual settings"),
                       ),
                     ),
-                    ListTile(
-                      onTap: () {
-                        Game.data.player.money += 1000;
-                        Game.data.ui.finished = true;
-                        Game.save();
-                      },
-                      leading: Icon(Icons.assistant),
-                      title: Text("Win"),
-                    ),
                     settings,
                     MainBloc.online
                         ? InkWell(

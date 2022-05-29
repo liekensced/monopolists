@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:plutopoly/bloc/game_listener.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/engine/data/ui_actions.dart';
-import 'package:plutopoly/helpers/progress_helper.dart';
-import 'package:plutopoly/screens/game/action_screen/action_screen.dart';
-import 'package:plutopoly/widgets/animated_count.dart';
 
+import '../../bloc/game_listener.dart';
 import '../../bloc/main_bloc.dart';
+import '../../bloc/ui_bloc.dart';
+import '../../engine/data/ui_actions.dart';
 import '../../engine/kernel/main.dart';
+import '../../helpers/progress_helper.dart';
+import '../../widgets/animated_count.dart';
 import '../carousel/map_carousel.dart';
+import 'action_screen/action_screen.dart';
 import 'dice_select.dart';
 
 class MoveScreen extends StatelessWidget {
@@ -20,6 +20,8 @@ class MoveScreen extends StatelessWidget {
     double fraction = 200 / MediaQuery.of(context).size.width;
     PageController pageController = PageController(
         initialPage: Game.data.player.position, viewportFraction: fraction);
+    ScrollController scrollController =
+        ScrollController(initialScrollOffset: getPixels(context));
     return Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
         body: GestureDetector(
@@ -58,6 +60,7 @@ class MoveScreen extends StatelessWidget {
                             data: ThemeData.light(),
                             child: MapCarousel(
                               controller: pageController,
+                              scrollController: scrollController,
                             ),
                           ),
                         );
@@ -66,13 +69,14 @@ class MoveScreen extends StatelessWidget {
                     ValueListenableBuilder(
                       valueListenable: Hive.box(MainBloc.MOVEBOX).listenable(),
                       builder: (BuildContext context, Box box, Widget _) {
-                        if (box.containsKey("intDice0") &&
-                            box.containsKey("intDice1")) {
+                        if (diceDone(box)) {
                           int dice1 = box.get("intDice0");
-                          int dice2 = box.get("intDice1");
+                          int dice2 = box.get("intDice1") ?? 0;
+                          int dice3 = box.get("intDice2") ?? 0;
                           Game.move(
                             dice1,
                             dice2,
+                            dice3,
                             shouldSave: false,
                           );
 
@@ -80,14 +84,20 @@ class MoveScreen extends StatelessWidget {
 
                           int mapLength = Game.data.gmap.length;
                           Future.delayed(Duration.zero, () {
-                            pageController.animateToPage(
-                              (pageController.page ?? 0) > pos
-                                  ? pos + mapLength
-                                  : pos,
-                              duration: Duration(
-                                  milliseconds: Game.ui.moveAnimationMillis),
-                              curve: Curves.decelerate,
-                            );
+                            if (pageController.hasClients)
+                              pageController.animateToPage(
+                                (pageController.page ?? 0) > pos
+                                    ? pos + mapLength
+                                    : pos,
+                                duration: Duration(
+                                    milliseconds: Game.ui.moveAnimationMillis),
+                                curve: Curves.decelerate,
+                              );
+                            if (scrollController.hasClients) {
+                              scrollController.animateTo(getPixels(context),
+                                  duration: Duration(milliseconds: 200),
+                                  curve: Curves.decelerate);
+                            }
                           });
                           Future.delayed(
                               Duration(
@@ -95,6 +105,7 @@ class MoveScreen extends StatelessWidget {
                                       Game.ui.moveAnimationMillis + 500), () {
                             box.delete("intDice0");
                             box.delete("intDice1");
+                            box.delete("intDice2");
                             UIBloc.changeScreen(Screen.active);
                             Game.save();
                           });
@@ -122,11 +133,18 @@ class MoveScreen extends StatelessWidget {
   }
 }
 
+bool diceDone(Box box) {
+  return box.containsKey("intDice0") &&
+      (Game.ui.amountOfDices < 2 || box.containsKey("intDice1")) &&
+      (Game.ui.amountOfDices < 3 || box.containsKey("intDice2"));
+}
+
 void moveModalBottomSheet(BuildContext context) {
   if (MainBloc.online) return;
   Box box = Hive.box(MainBloc.MOVEBOX);
   box.delete("intDice0");
   box.delete("intDice1");
+  box.delete("intDice2");
   showModalBottomSheet(
       context: context,
       builder: (BuildContext bc) {
@@ -173,7 +191,7 @@ class _DoublePopupState extends State<DoublePopup>
       valueListenable: Hive.box(MainBloc.MOVEBOX).listenable(),
       builder: (context, box, __) {
         bool show = false;
-        if (box.containsKey("intDice0") && box.containsKey("intDice1")) {
+        if (diceDone(box)) {
           int dice1 = box.get("intDice0");
           int dice2 = box.get("intDice1");
           show = dice2 == dice1;

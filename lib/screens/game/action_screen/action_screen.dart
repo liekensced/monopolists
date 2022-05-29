@@ -2,34 +2,34 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
-
-import 'package:plutopoly/engine/data/update_info.dart';
-import 'package:plutopoly/helpers/hero_info.dart';
-import 'package:plutopoly/helpers/progress_helper.dart';
-import 'package:plutopoly/screens/game/zoom_map.dart';
-import 'package:plutopoly/widgets/end_of_list.dart';
-import 'package:plutopoly/widgets/my_card.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../bloc/ad_bloc.dart';
 import '../../../bloc/game_listener.dart';
 import '../../../bloc/main_bloc.dart';
 import '../../../bloc/ui_bloc.dart';
-import '../../../engine/data/main_data.dart';
+import '../../../engine/data/deal_data.dart';
 import '../../../engine/data/map.dart';
 import '../../../engine/data/player.dart';
 import '../../../engine/data/ui_actions.dart';
+import '../../../engine/data/update_info.dart';
 import '../../../engine/kernel/main.dart';
 import '../../../engine/ui/alert.dart';
 import '../../../engine/ui/game_navigator.dart';
+import '../../../helpers/hero_info.dart';
+import '../../../helpers/progress_helper.dart';
 import '../../../widgets/animated_count.dart';
+import '../../../widgets/end_of_list.dart';
+import '../../../widgets/my_card.dart';
 import '../../../widgets/slide_fab.dart';
 import '../../carousel/map_carousel.dart';
 import '../deal_screen.dart';
 import '../idle_screen.dart';
 import '../move_screen.dart';
+import '../zoom_map.dart';
 import 'action_cards.dart';
 import 'bottom_sheet.dart';
 import 'holding_cards.dart';
@@ -108,36 +108,12 @@ class _ActionScreenState extends State<ActionScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: pageIndex,
         onTap: (i) {
-          if (i == 3) {
-            showModalBottomSheet(
-                context: context,
-                builder: (c) {
-                  return BottomSheet(
-                      onClosing: () {},
-                      builder: (c) {
-                        return Column(children: [
-                          Container(
-                            child: Center(child: Text("Action screen")),
-                            height: 50,
-                          ),
-                          ListTile(title: Text("ds")),
-                        ]);
-                      });
-                });
-          } else {
-            if (i == 2) {
-              controller.jumpTo(450);
-            }
-            actionPageController.jumpToPage(i);
-          }
+          onNavigationRequest(i, context);
         },
         items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.list), title: Text("Holdings")),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home), title: Text("Actions")),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.grid_on), title: Text("Gridview"))
+          BottomNavigationBarItem(icon: Icon(Icons.list)),
+          BottomNavigationBarItem(icon: Icon(Icons.home)),
+          BottomNavigationBarItem(icon: Icon(Icons.grid_on))
         ],
       ),
       body: SafeArea(
@@ -215,12 +191,11 @@ class _ActionScreenState extends State<ActionScreen> {
                                         visit: true,
                                       );
                                     }));
-                                    ;
                                   });
                                 }
                               }
                             } catch (e) {
-                              Game.data.dealData == GameData();
+                              Game.data.dealData = DealData();
                             }
 
                             return Row(
@@ -336,6 +311,31 @@ class _ActionScreenState extends State<ActionScreen> {
         ),
       ),
     );
+  }
+
+  void onNavigationRequest(int i, BuildContext context) {
+    if (i == 3) {
+      showModalBottomSheet(
+          context: context,
+          builder: (c) {
+            return BottomSheet(
+                onClosing: () {},
+                builder: (c) {
+                  return Column(children: [
+                    Container(
+                      child: Center(child: Text("Action screen")),
+                      height: 50,
+                    ),
+                    ListTile(title: Text("ds")),
+                  ]);
+                });
+          });
+    } else {
+      if (i == 2) {
+        controller.jumpTo(450);
+      }
+      actionPageController.jumpToPage(i);
+    }
   }
 }
 
@@ -478,61 +478,74 @@ class ActionFab extends StatelessWidget {
             },
           );
         }
+        FocusNode _focusNode = FocusNode();
+        FocusScope.of(context).requestFocus(_focusNode);
 
         return Align(
           alignment: Alignment.bottomRight,
           child: Padding(
             padding: const EdgeInsets.only(right: 12.0),
-            child: FloatingActionButton(
-              onPressed: () {
-                if (continueCheck(1, context)) {
-                  if (Alert.handle(() => Game.next(changeS: true), context)) {
-                    if (!kIsWeb)
-                      AdBloc.idleAdController = NativeAdmobController();
-                  }
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                          title: Text("Continue"),
-                          content: Text(
-                              "Are you sure you want to go to the next turn?"),
-                          actions: [
-                            MaterialButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  "close",
-                                  style: TextStyle(
-                                      color: Theme.of(context).primaryColor),
-                                )),
-                            MaterialButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Alert.handle(
-                                      () => Game.next(changeS: true), context);
-                                },
-                                child: Text(
-                                  "continue",
-                                  style: TextStyle(
-                                      color: Theme.of(context).primaryColor),
-                                ))
-                          ]);
-                    },
-                  );
+            child: RawKeyboardListener(
+              autofocus: true,
+              focusNode: _focusNode,
+              onKey: (RawKeyEvent event) {
+                if (event.runtimeType == RawKeyDownEvent) {
+                  // if ((event.logicalKey.keyId == LogicalKeyboardKey.keyN) ||
+                  //     event.logicalKey.keyId == LogicalKeyboardKey.space) {
+                  //   onNextPressed(context);
+                  // }
                 }
               },
-              child: Icon(
-                Icons.navigate_next,
-                color: Colors.white,
+              child: FloatingActionButton(
+                onPressed: () {
+                  onNextPressed(context);
+                },
+                child: Icon(
+                  Icons.navigate_next,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
         );
       },
     );
+  }
+
+  void onNextPressed(BuildContext context) {
+    if (continueCheck(1, context)) {
+      if (Alert.handle(() => Game.next(changeS: true), context)) {
+        if (!kIsWeb) AdBloc.idleAdController = NativeAdmobController();
+      }
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: Text("Continue"),
+              content: Text("Are you sure you want to go to the next turn?"),
+              actions: [
+                MaterialButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "close",
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    )),
+                MaterialButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Alert.handle(() => Game.next(changeS: true), context);
+                    },
+                    child: Text(
+                      "continue",
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    ))
+              ]);
+        },
+      );
+    }
   }
 }
 

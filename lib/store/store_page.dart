@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/helpers/file_helper.dart';
 import 'package:plutopoly/helpers/progress_helper.dart';
 import 'package:plutopoly/screens/store/rewards_list.dart';
@@ -209,6 +210,15 @@ class StudioCard extends StatelessWidget {
       childs.removeLast();
     }
     return MyCard(
+      action: Tooltip(
+        message: "more info",
+        child: IconButton(
+          icon: Icon(Icons.info),
+          onPressed: () {
+            UIBloc.launchUrl(context, "https://filorux.web.app/studio.html");
+          },
+        ),
+      ),
       title: "Studio (beta)",
       children: [
         Align(

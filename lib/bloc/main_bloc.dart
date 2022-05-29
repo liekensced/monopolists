@@ -2,31 +2,30 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:plutopoly/bloc/preset_bloc.dart';
-import 'package:plutopoly/engine/data/ui_actions.dart';
-import 'package:plutopoly/engine/ui/game_navigator.dart';
-import 'package:plutopoly/helpers/progress_helper.dart';
-import 'package:plutopoly/screens/store/currencies_data.dart';
-import 'package:plutopoly/screens/store/game_icons_data.dart';
-import 'package:plutopoly/store/preset.dart';
 
 import '../engine/data/main_data.dart';
 import '../engine/data/map.dart';
 import '../engine/data/player.dart';
+import '../engine/data/ui_actions.dart';
 import '../engine/kernel/main.dart';
 import '../engine/ui/alert.dart';
+import '../engine/ui/game_navigator.dart';
 import '../helpers/online_extensions.dart';
+import '../helpers/progress_helper.dart';
 import '../helpers/route_helper.dart';
+import '../screens/store/currencies_data.dart';
+import '../screens/store/game_icons_data.dart';
+import '../store/preset.dart';
 import 'dailyBloc.dart';
+import 'preset_bloc.dart';
 import 'recent_bloc.dart';
 import 'ui_bloc.dart';
 
 class MainBloc {
-  static const version = "0.7.0";
-  static const List<int> supported = [5, 6];
+  static const version = "0.8.1";
+  static const List<int> supported = [5, 6, 7];
   static const website = "https://filorux.web.app/Plutopoly.html";
   static List<int> get versionCode =>
       version.split(".").map<int>((e) => int.tryParse(e)).toList();
@@ -155,7 +154,7 @@ class MainBloc {
             await cancelOnline();
             if (supported.contains(joinVersionCode[1])) {
               return Alert("Upgrade game?",
-                  "The versions are not the same:\nYour version: ${version}\nGame version: $joinVersion\nDo you want to upgrade the version?",
+                  "The versions are not the same:\nYour version: $version\nGame version: $joinVersion\nDo you want to upgrade the version?",
                   actions: {
                     "yes": (BuildContext context) async {
                       Navigator.pop(context);
@@ -168,7 +167,7 @@ class MainBloc {
                   });
             }
             return Alert("Versions not correct",
-                "The versions are not the same:\nYour version: ${version}\nGame version: $joinVersion");
+                "The versions are not the same:\nYour version: $version\nGame version: $joinVersion");
           }
         }
       }
@@ -316,6 +315,9 @@ class MainBloc {
     }
     if (!Hive.box(MAPCONFBOX).containsKey("wide")) {
       Hive.box(MAPCONFBOX).put("wide", MapConfiguration.wide());
+    }
+    if (!Hive.box(MAPCONFBOX).containsKey("extra wide")) {
+      Hive.box(MAPCONFBOX).put("extra wide", MapConfiguration.extraWide());
     }
     if (!Hive.box(MAPCONFBOX).containsKey("tween")) {
       Hive.box(MAPCONFBOX).put("tween", MapConfiguration.tween());

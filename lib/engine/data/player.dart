@@ -80,7 +80,6 @@ class Player {
     int _companies = 0;
     properties.forEach((String i) {
       Tile tile = Game.data.gmap.firstWhere((element) => element.id == i);
-      ;
       if (tile.type == TileType.company) _companies++;
     });
     return _companies;

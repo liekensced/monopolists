@@ -112,13 +112,13 @@ class MyDrawer extends StatelessWidget {
                     !Hive.box(MainBloc.PREFBOX)
                         .get("boolOverlays", defaultValue: true));
                 if (!UIBloc.hideOverlays) {
-                  SystemChrome.setEnabledSystemUIOverlays([
+                  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
                     SystemUiOverlay.bottom,
                     SystemUiOverlay.bottom,
                   ]);
                   SystemChrome.restoreSystemUIOverlays();
                 } else {
-                  SystemChrome.setEnabledSystemUIOverlays([]);
+                  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
                   SystemChrome.restoreSystemUIOverlays();
                 }
               },
@@ -178,7 +178,7 @@ class ProgressListTile extends StatelessWidget {
             subtitle: LinearProgressIndicator(
               value: ProgressHelper.levelProgress,
               valueColor:
-                  AlwaysStoppedAnimation<Color>(Theme.of(context).accentColor),
+                  AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.secondary),
             ),
           );
         });

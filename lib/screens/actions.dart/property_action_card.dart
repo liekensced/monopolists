@@ -1,7 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:plutopoly/engine/commands/parser.dart';
 import 'package:plutopoly/engine/data/game_action.dart';
 
@@ -160,7 +159,8 @@ class PropertyActionCard extends StatelessWidget {
         }
         if (tile.type == TileType.action) {
           return MyCard(
-            title: tile.actions.isEmpty ? "You are idle" : "Action tile",
+            title:
+                (tile.actions ?? []).isEmpty ? "You are idle" : "Action tile",
             action: Tooltip(
               message: getMessage(tile),
               child: Icon(Icons.info),
@@ -172,27 +172,19 @@ class PropertyActionCard extends StatelessWidget {
                       padding: const EdgeInsets.all(12.0).copyWith(top: 0),
                       child: Text(tile.description)),
                 ),
-              for (GameAction action in tile.actions)
-                RaisedButton(
+              for (GameAction action in (tile.actions ?? []))
+                RaisedButton.icon(
                   padding: const EdgeInsets.all(8),
+                  icon: action.alert != null ? Icon(Icons.info) : Container(),
                   color: Color(
                       action.color ?? Theme.of(context).primaryColor.value),
-                  child: Text(
+                  label: Text(
                     action.title,
                     style: TextStyle(color: Colors.white),
                   ),
                   onPressed: Game.data.rentPayed && (tile.onlyOneAction ?? true)
                       ? null
-                      : () {
-                          Alert.handle(
-                            () => CommandParser.parse(
-                              action.command,
-                              false,
-                              true,
-                            ),
-                            context,
-                          );
-                        },
+                      : () => actionOnPressed(action, context),
                 )
             ],
           );
@@ -203,6 +195,51 @@ class PropertyActionCard extends StatelessWidget {
         return PropertyActionCardChild();
       },
     );
+  }
+
+  actionOnPressed(GameAction action, BuildContext context) {
+    handle() {
+      Alert.handle(
+        () => CommandParser.parse(
+          action.command,
+          false,
+          true,
+        ),
+        context,
+      );
+    }
+
+    if (action.alert == null) {
+      handle();
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: Text("info"),
+              content: Text(action.alert),
+              actions: [
+                MaterialButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "cancel",
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    )),
+                MaterialButton(
+                    onPressed: () {
+                      handle();
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      "continue",
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    ))
+              ]);
+        },
+      );
+    }
   }
 
   getMessage(Tile tile) {

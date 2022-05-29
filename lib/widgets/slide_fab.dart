@@ -58,7 +58,7 @@ class _SlideFabState extends State<SlideFab>
           absorbing: widget.hide,
           child: widget.child == null
               ? FloatingActionButton.extended(
-                  backgroundColor: Theme.of(context).accentColor,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                   label: Container(
                       width: MediaQuery.of(context).size.width * 0.8,
                       child: Center(

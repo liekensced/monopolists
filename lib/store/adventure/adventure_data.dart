@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -205,7 +204,7 @@ class LevelProgress extends HiveObject {
   @HiveField(0)
   int stars = 0;
   @HiveField(1)
-  int best = null;
+  int best;
   @HiveField(2)
   bool unlocked = false;
   @HiveField(3)

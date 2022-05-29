@@ -31,7 +31,7 @@ class GameNavigator {
           MainBloc.prefbox.put("primaryColor",
               preset.primaryColor ?? Theme.of(context).primaryColor.value);
           MainBloc.prefbox.put("accentColor",
-              preset.accentColor ?? Theme.of(context).accentColor.value);
+              preset.accentColor ?? Theme.of(context).colorScheme.secondary.value);
         }
       }
     } catch (e) {
@@ -64,7 +64,7 @@ class GameNavigator {
     }
 
     //DURING GAME
-    if (UIBloc.hideOverlays) SystemChrome.setEnabledSystemUIOverlays([]);
+    if (UIBloc.hideOverlays) SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 
     Navigator.pushReplacement(
       context,

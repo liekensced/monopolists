@@ -19,7 +19,7 @@ import '../../widgets/my_card.dart';
 class DealScreen extends StatelessWidget {
   final int dealer;
   final bool visit;
-  const DealScreen({Key key, @required this.dealer, bool this.visit: false})
+  const DealScreen({Key key, @required this.dealer, this.visit: false})
       : super(key: key);
 
   @override
@@ -269,7 +269,7 @@ class _DealScreenChildState extends State<DealScreenChild>
           absorbing: false,
           child: FloatingActionButton.extended(
             backgroundColor:
-                checkPay() ? Colors.red : Theme.of(context).accentColor,
+                checkPay() ? Colors.red : Theme.of(context).colorScheme.secondary,
             label: Container(
                 width: MediaQuery.of(context).size.width * 0.8,
                 child: Center(

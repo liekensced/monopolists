@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+// WEB // import 'dart:js' as js;
 
 import '../../bloc/game_listener.dart';
 import '../../bloc/main_bloc.dart';
@@ -68,6 +69,7 @@ class _StartGameScreenState extends State<StartGameScreen> {
                                   failed: false),
                               context);
                         }
+                        // WEB //js.context["gdsdk"].callMethod("showAd");
                       },
                     ),
               appBar: AppBar(

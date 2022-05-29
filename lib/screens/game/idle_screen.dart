@@ -54,8 +54,18 @@ class IdleScreen extends StatelessWidget {
             return "Jailed";
           }
           List<int> dices = Game.data.currentDices;
-          if ((dices[0] ?? -1) > 0 && (dices[1] ?? -1) > 0) {
-            return "Threw ${dices[0]} and ${dices[1]}";
+          if ((dices[0] ?? -1) >= 0 && (dices[1] ?? -1) >= 0) {
+            switch (Game.ui.amountOfDices) {
+              case 1:
+                return "Threw ${dices[0]}";
+                break;
+              case 2:
+                return "Threw ${dices[0]} and ${dices[1]}";
+                break;
+              case 3:
+                return "Threw ${dices[0]}, ${dices[1]} and ${dices[2]}";
+                break;
+            }
           }
           break;
         case Screen.parlement:

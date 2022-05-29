@@ -1,12 +1,11 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
-import 'package:plutopoly/helpers/money_helper.dart';
 
-import '../data/update_info.dart';
+import '../../bloc/main_bloc.dart';
+import '../../helpers/money_helper.dart';
 import '../data/main_data.dart';
 import '../data/map.dart';
 import '../data/player.dart';
+import '../data/update_info.dart';
 import '../ui/alert.dart';
 import 'main.dart';
 
@@ -148,7 +147,7 @@ class CoreActions {
 
   Alert buyOutJail() {
     try {
-      pay(PayType.pot, 50, shouldSave: false);
+      pay(PayType.pot, Game.data.tile.price ?? 50, shouldSave: false);
     } on Alert catch (e) {
       return e;
     }

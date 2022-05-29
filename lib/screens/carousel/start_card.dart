@@ -6,8 +6,10 @@ import 'players_indicator.dart';
 
 class StartCard extends StatelessWidget {
   final Tile tile;
+  final bool zoom;
   const StartCard({
     Key key,
+    @required this.zoom,
     @required this.tile,
   }) : super(key: key);
 
@@ -20,24 +22,25 @@ class StartCard extends StatelessWidget {
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: const EdgeInsets.all(10),
+              padding: EdgeInsets.all(zoom ? 5 : 10),
               child: Text("Start",
                   style: Theme.of(context)
                       .textTheme
                       .headline4
-                      .copyWith(color: Colors.black)),
+                      .copyWith(color: Colors.black, fontSize: zoom ? 15 : 40)),
             ),
           ),
           Align(
             alignment: Alignment.center,
             child: FaIcon(
               FontAwesomeIcons.arrowRight,
-              size: 40,
+              size: zoom ? 20 : 40,
               color: Colors.black,
             ),
           ),
           PlayerIndicators(
             tile: tile,
+            zoom: zoom,
           )
         ],
       ),

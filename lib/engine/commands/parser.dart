@@ -1,6 +1,7 @@
 import 'package:plutopoly/engine/data/player.dart';
 import 'package:plutopoly/engine/kernel/core_actions.dart';
 import 'package:plutopoly/engine/kernel/main.dart';
+import 'package:plutopoly/engine/ui/alert.dart';
 
 extension NullList on List<String> {
   ///Return null when out of bounds.
@@ -46,7 +47,7 @@ class CommandParser {
   static void parsePart(String command,
       [bool force = false, bool allowNext = true]) {
     List<String> split = command.trim().split(" ");
-
+    Alert alert;
     switch (split.first.toLowerCase()) {
       case "mv":
         Game.jump(
@@ -58,7 +59,7 @@ class CommandParser {
       case "mvr":
         Game.jump(
           Game.data.player.position + split.tryGetInt(1),
-          split.tryGetBool(2) ?? true,
+          split.tryGetBool(2) ?? false,
           split.tryGetBool(3) ?? false,
         );
         break;
@@ -81,7 +82,7 @@ class CommandParser {
         Game.data.ui.ended;
         break;
       case "rh":
-        Game.helper.repareHouses(
+        alert = Game.helper.repareHouses(
             houseFactor: split.tryGetInt(1) ?? 25,
             hotelFactor: split.tryGetInt(2) ?? 100);
         break;
@@ -92,11 +93,13 @@ class CommandParser {
         Game.data.player.goojCards += split.tryGetInt(1) ?? 1;
         break;
       case "bd":
-        Game.helper.birthDay(split.tryGetInt(1) ?? 50);
+        alert = Game.helper.birthDay(split.tryGetInt(1) ?? 50);
         break;
       default:
         print("unkown command " + split.first);
+        alert = Alert("unkown command", "Couldn't parse " + split.first);
     }
+    if (alert != null) throw alert;
     if (allowNext ?? true) Game.data.rentPayed = true;
   }
 }

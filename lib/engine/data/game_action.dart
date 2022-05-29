@@ -10,8 +10,6 @@ class GameAction extends HiveObject {
   String title = "";
   @HiveField(1)
   String command;
-  @HiveField(2)
-  String cost;
   @HiveField(3)
   String alert;
   @HiveField(4)

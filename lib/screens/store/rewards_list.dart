@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:animations/animations.dart';
 import 'package:flare_flutter/flare_actor.dart';

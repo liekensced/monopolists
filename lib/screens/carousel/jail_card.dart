@@ -5,8 +5,10 @@ import 'players_indicator.dart';
 
 class JailCard extends StatelessWidget {
   final Tile tile;
+  final bool zoom;
   const JailCard({
     Key key,
+    @required this.zoom,
     @required this.tile,
   }) : super(key: key);
 
@@ -25,7 +27,8 @@ class JailCard extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     "PRISON",
-                    style: TextStyle(color: Colors.white, fontSize: 40),
+                    style: TextStyle(
+                        color: Colors.white, fontSize: zoom ? 20 : 40),
                   ),
                   Container(
                     height: 10,
@@ -33,6 +36,7 @@ class JailCard extends StatelessWidget {
                   PlayerIndicators(
                     tile: tile,
                     jailed: true,
+                    zoom: zoom,
                   )
                 ],
               ),
@@ -41,6 +45,7 @@ class JailCard extends StatelessWidget {
           Expanded(
             child: PlayerIndicators(
               tile: tile,
+              zoom: zoom,
             ),
           )
         ],

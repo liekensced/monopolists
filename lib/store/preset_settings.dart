@@ -90,6 +90,19 @@ class PresetSettings extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
+                      initialValue: preset.description ?? "",
+                      onFieldSubmitted: (String val) {
+                        preset.description = val;
+                        preset.save();
+                      },
+                      decoration: InputDecoration(
+                        labelText: "description",
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
                       initialValue: preset.version,
                       onFieldSubmitted: (String val) {
                         preset.version = val;

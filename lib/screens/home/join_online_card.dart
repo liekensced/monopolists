@@ -55,7 +55,7 @@ class _JoinOnlineCardState extends State<JoinOnlineCard> {
           child: TextFormField(
             controller: textEditingController,
             maxLength: 20,
-            maxLengthEnforced: true,
+            maxLengthEnforcement: MaxLengthEnforcement.enforced,
             onChanged: (val) {
               gamePin = val;
             },

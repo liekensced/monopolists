@@ -15,13 +15,13 @@ class OwnerText extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: EdgeInsets.all(zoom ? 4 : 12.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Container(
-                height: 40,
+                height: zoom ? 15 : 40,
                 child: Houses(amount: tile.level),
               ),
               Row(
@@ -29,14 +29,14 @@ class OwnerText extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     "Owner: ",
-                    style: TextStyle(
-                        color: Colors.black, fontSize: zoom ? 24 : 18),
+                    style:
+                        TextStyle(color: Colors.black, fontSize: zoom ? 9 : 18),
                   ),
                   Text(tile.owner.name,
                       style: TextStyle(
                           color: Color(tile.owner.color),
                           fontWeight: FontWeight.bold,
-                          fontSize: zoom ? 26 : 20)),
+                          fontSize: zoom ? 10 : 20)),
                 ],
               ),
               Container(height: 2),
@@ -44,7 +44,7 @@ class OwnerText extends StatelessWidget {
                   ? Text(
                       "(mortaged)",
                       style: TextStyle(
-                          color: Colors.grey, fontSize: zoom ? 02 : 14),
+                          color: Colors.grey, fontSize: zoom ? 7 : 14),
                     )
                   : Container(),
             ],

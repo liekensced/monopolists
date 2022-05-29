@@ -4,7 +4,8 @@ import 'package:flare_flutter/provider/asset_flare.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:plutopoly/engine/extensions/bank/bank.dart';
+
+import '../engine/extensions/bank/bank.dart';
 
 class GameIcon extends StatelessWidget {
   final String iconId;
@@ -73,6 +74,9 @@ class GameIcon extends StatelessWidget {
         if (!loaded) return Center(child: loading);
         return FlareActor(
           path,
+          sizeFromArtboard: true,
+          alignment: Alignment.center,
+          fit: BoxFit.scaleDown,
           color: Color(color ?? Colors.white.value),
           animation: "Untitled",
         );

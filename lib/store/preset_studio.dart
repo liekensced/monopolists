@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -47,9 +48,13 @@ class PresetStudio extends StatelessWidget {
                     child: Theme(
                       data: ThemeData.light(),
                       child: Center(
-                        child: Text(
-                          preset.title,
-                          style: TextStyle(fontSize: 50),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            preset.title,
+                            style: TextStyle(fontSize: 50),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     ),
@@ -250,7 +255,23 @@ class _MapListViewState extends State<MapListView> {
                         child: ListTile(
                           key: Key(tile.id),
                           title: Text(tile.name ?? tile.id),
-                          trailing: Icon(Icons.reorder),
+                          trailing: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.content_copy),
+                                onPressed: () {
+                                  Game.data.gmap.insert(
+                                    Game.data.gmap.indexOf(tile),
+                                    Tile.fromJson(tile.toJson())
+                                      ..idIndex = Game.data.gmap.length,
+                                  );
+                                  Game.save();
+                                },
+                              ),
+                              Icon(Icons.reorder),
+                            ],
+                          ),
                           leading: buildLeading(tile),
                           subtitle: Text(tile.id +
                               ", " +
@@ -390,7 +411,7 @@ class _AddStreetScreenState extends State<AddStreetScreen> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               maxLength: 2,
-              maxLengthEnforced: true,
+              maxLengthEnforcement: MaxLengthEnforcement.enforced,
               onChanged: (String val) => setState(() {
                 amount = int.tryParse(val) ?? amount;
                 setState(() {});

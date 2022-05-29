@@ -83,10 +83,9 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         items: [
           if (adventurePage)
-            BottomNavigationBarItem(
-                icon: Icon(Icons.home), title: Text("Adventure")),
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("Home")),
-          BottomNavigationBarItem(icon: Icon(Icons.shop), title: Text("Store")),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Adventure"),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.shop), label: "Store"),
         ],
       ),
       body: SafeArea(
@@ -112,7 +111,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             pinned: true,
                             flexibleSpace: FlexibleSpaceBar(
                                 centerTitle: true,
-                                title: Text("Plutopoly extended boardgame",
+                                title: Text("Plutopoly customizable boardgame",
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 16.0,
@@ -284,6 +284,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     ProgressHelper.tickets +=
                                                         100;
                                                   }
+
                                                   Navigator.pop(context);
                                                 },
                                               ),
@@ -361,7 +362,7 @@ class ColorActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (Theme.of(context).primaryColor.value != Colors.teal.value ||
-        Theme.of(context).accentColor.value != Colors.cyan.value) {
+        Theme.of(context).colorScheme.secondary.value != Colors.cyan.value) {
       return Tooltip(
         message: "Reset colors",
         child: FloatingActionButton(

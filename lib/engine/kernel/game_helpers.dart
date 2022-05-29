@@ -14,7 +14,7 @@ class GameHelpers {
 
   static GameData get data => Game.data;
 
-  jail(Player player, {bool shouldSave: true}) {
+  void jail(Player player, {bool shouldSave: true}) {
     data.doublesThrown = 0;
     player.jailed = true;
     List<Tile> jails =

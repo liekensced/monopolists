@@ -77,6 +77,7 @@ class IdleSettings extends StatelessWidget {
           trailing: PlayerIconWidget(
             player: UIBloc.gamePlayer,
             size: 35,
+            zoom: false,
           ),
         ),
         Divider(),

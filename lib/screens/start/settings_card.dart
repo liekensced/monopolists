@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plutopoly/engine/data/settings.dart';
 import 'package:plutopoly/screens/store/rewards_list.dart';
 
 import '../../bloc/main_bloc.dart';
@@ -144,6 +145,24 @@ class AdvancedSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
+        Divider(),
+        ListTile(
+          title: Text("Dice"),
+          subtitle: Text("The amount of dices"),
+          trailing: DropdownButton(
+              value: Game.data.settings.diceType,
+              items: [
+                for (DiceType type in DiceType.values)
+                  DropdownMenuItem(
+                    child: Text(type.toString().split(".").last),
+                    value: type,
+                  )
+              ],
+              onChanged: (DiceType type) {
+                Game.data.settings.diceType = type;
+                Game.save(only: [SaveData.settings.toString()]);
+              }),
+        ),
         Divider(),
         ListTile(
           title: Text("Get assets when bankrupting"),

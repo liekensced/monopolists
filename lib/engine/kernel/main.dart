@@ -1,24 +1,24 @@
 import 'dart:math';
 
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/engine/extensions/transportation.dart';
-import 'package:plutopoly/helpers/money_helper.dart';
-import 'package:plutopoly/helpers/progress_helper.dart';
-import 'package:plutopoly/screens/store/game_icons_data.dart';
-
 import '../../bloc/main_bloc.dart';
+import '../../bloc/ui_bloc.dart';
+import '../../helpers/money_helper.dart';
+import '../../helpers/progress_helper.dart';
 import '../../places.dart';
+import '../../screens/store/game_icons_data.dart';
 import '../ai/ai_type.dart';
 import '../ai/normal/normal_ai.dart';
 import '../data/actions.dart';
 import '../data/extensions.dart';
-import '../data/update_info.dart';
 import '../data/main_data.dart';
 import '../data/map.dart';
 import '../data/player.dart';
+import '../data/settings.dart';
 import '../data/ui_actions.dart';
+import '../data/update_info.dart';
 import '../extensions/bank/bank.dart';
 import '../extensions/bank/data/bank_data.dart';
+import '../extensions/transportation.dart';
 import '../ui/alert.dart';
 import 'core_actions.dart';
 import 'game_helpers.dart';
@@ -234,6 +234,9 @@ class Game {
 
     data.findingsIndex = Random().nextInt(findings.length);
     data.eventIndex = Random().nextInt(events.length);
+    ui.randomDices =
+        data.settings.diceType == DiceType.random ? Random().nextInt(3) + 1 : 2;
+
     data.currentPlayer = 0;
 
     data.players.forEach((Player p) {
@@ -245,7 +248,6 @@ class Game {
   //basic interactions
 
   static Alert executeEvent(Function func) {
-    data.rentPayed = true;
     var r;
     try {
       r = func();
@@ -256,6 +258,7 @@ class Game {
       return r;
     }
 
+    data.rentPayed = true;
     Game.save();
     return null;
   }
@@ -276,18 +279,26 @@ class Game {
     Game.save();
   }
 
-  static void move(int dice1, int dice2, {bool shouldSave: true}) {
+  static void move(int dice1, int dice2, int dice3, {bool shouldSave: true}) {
     if (!ui.shouldMove) return;
     ui.shouldMove = false;
     data.rentPayed = false;
+    dice2 = Game.ui.amountOfDices > 1 ? dice2 : 0;
+    dice3 = Game.ui.amountOfDices > 2 ? dice3 : 0;
 
     Player player = data.player;
-    data.currentDices = [dice1, dice2];
-    int steps = dice1 + dice2;
+    data.currentDices = [dice1, dice2 ?? 0, dice3 ?? 0];
+    int steps = dice1 + (dice2 ?? 0) + (dice3 ?? 0);
 
     if (player.jailed) {
       data.doublesThrown = 0;
-      if (dice1 == dice2 || player.jailTries == 0) {
+      bool diceCheck = false;
+      if (Game.ui.amountOfDices == 1) {
+        diceCheck = dice1 == 6;
+      } else {
+        diceCheck = dice1 == dice2;
+      }
+      if (diceCheck || player.jailTries == 0) {
         player.jailed = false;
         dice1 -= 10;
         dice2 += 10;
@@ -372,6 +383,8 @@ class Game {
     if (alert != null && !force) return alert;
     data.findingsIndex = Random().nextInt(findings.length);
     data.eventIndex = Random().nextInt(events.length);
+    if (data.settings.diceType == DiceType.random)
+      ui.randomDices = Random().nextInt(3) + 1;
 
     if (data.currentDices[0] == data.currentDices[1] && !data.player.jailed) {
       data.doublesThrown++;

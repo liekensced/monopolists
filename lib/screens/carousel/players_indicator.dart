@@ -13,9 +13,14 @@ class PlayerIndicators extends StatelessWidget {
   final bool jailed;
   final Tile tile;
   final String heroTag;
+  final bool zoom;
 
   const PlayerIndicators(
-      {Key key, @required this.tile, this.jailed: false, this.heroTag})
+      {Key key,
+      @required this.tile,
+      this.jailed: false,
+      this.heroTag,
+      @required this.zoom})
       : super(key: key);
 
   @override
@@ -26,19 +31,20 @@ class PlayerIndicators extends StatelessWidget {
       if (player.jailed != jailed) return;
 
       if (player == Game.data.player && !Game.ui.shouldMove) {
-        wrap.add(FadeIn(player));
+        wrap.add(FadeIn(player, zoom));
       } else {
         wrap.add(buildTooltip(player, zoom));
       }
     });
 
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: EdgeInsets.all(zoom ? 6.0 : 12.0),
       child: Align(
         alignment: Alignment.bottomLeft,
         child: Wrap(
-          spacing: 5,
-          runSpacing: 5,
+          spacing: zoom ? 2 : 5,
+          runSpacing: zoom ? 2 : 5,
+          alignment: WrapAlignment.start,
           children: wrap,
         ),
       ),
@@ -50,6 +56,7 @@ class PlayerIndicators extends StatelessWidget {
         message: player.name,
         child: PlayerIconWidget(
           player: player,
+          zoom: zoom,
         ));
   }
 }
@@ -61,7 +68,7 @@ class PlayerIconWidget extends StatelessWidget {
   const PlayerIconWidget({
     Key key,
     @required this.player,
-    this.zoom: false,
+    @required this.zoom,
     this.size,
   }) : super(key: key);
 
@@ -69,7 +76,9 @@ class PlayerIconWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (player == null) return Container();
     double iconSize = size?.toDouble() ??
-        (player.index == Game.data.currentPlayer && zoom ? 50 : 40);
+        (player.index == Game.data.currentPlayer && zoom
+            ? 18
+            : (zoom ? 15 : 40));
     if (player.playerIcon != null) {
       IconData data = commonGameIcons
           .firstWhere(
@@ -94,7 +103,8 @@ class PlayerIconWidget extends StatelessWidget {
 
 class FadeIn extends StatefulWidget {
   final Player player;
-  FadeIn(this.player);
+  final bool zoom;
+  FadeIn(this.player, this.zoom);
 
   @override
   _FadeInState createState() => _FadeInState();
@@ -109,7 +119,10 @@ class _FadeInState extends State<FadeIn> {
         delay: Duration(milliseconds: Game.ui.moveAnimationMillis),
         child: Tooltip(
             message: widget.player.name,
-            child: PlayerIconWidget(player: widget.player)),
+            child: PlayerIconWidget(
+              player: widget.player,
+              zoom: widget.zoom,
+            )),
       ),
     );
   }

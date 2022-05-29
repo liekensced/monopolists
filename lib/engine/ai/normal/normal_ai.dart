@@ -74,7 +74,7 @@ class NormalAI {
         value += 100;
         break;
       case 3:
-        value * 0.8;
+        value *= 0.8;
         break;
       default:
     }
@@ -104,7 +104,7 @@ class NormalAI {
       if (check != Game.data && !MainBloc.online) return;
 
       Random r = Random();
-      Game.move(r.nextInt(6) + 1, r.nextInt(6) + 1);
+      Game.move(r.nextInt(6) + 1, r.nextInt(6) + 1, r.nextInt(6) + 1);
 
       onTile();
       remotelyBuild();
@@ -270,7 +270,7 @@ class NormalAI {
   }
 
   static trade() {
-    if (Game.data.turn < 5 || chance(1 - player.money / 1000)) {
+    if (Game.data.turn < 5 || chance(1 - player.money / 1500)) {
       return;
     } else
       Game.data.gmap

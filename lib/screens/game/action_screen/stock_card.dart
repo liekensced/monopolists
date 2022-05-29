@@ -67,7 +67,7 @@ class StockCard extends StatelessWidget {
 
     List<BezierLine> series = [];
     series.add(
-        BezierLine(data: stockData, lineColor: Theme.of(context).accentColor));
+        BezierLine(data: stockData, lineColor: Theme.of(context).colorScheme.secondary));
     if (showTrend) {
       series.add(BezierLine(
           data: trend, lineColor: Colors.green, lineStrokeWidth: 0.5));

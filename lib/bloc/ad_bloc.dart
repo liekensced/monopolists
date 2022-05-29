@@ -19,9 +19,8 @@ class AdBloc {
   static void init() async {
     if (kIsWeb) return;
     idleAdController = NativeAdmobController();
-    bool b = await FirebaseAdMob.instance
+    await FirebaseAdMob.instance
         .initialize(appId: "ca-app-pub-3735790035510409~3556832676");
-    print("Very epic thing $b");
   }
 
   Continent get continent {

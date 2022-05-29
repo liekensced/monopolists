@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plutopoly/bloc/main_bloc.dart';
+import 'package:plutopoly/bloc/ui_bloc.dart';
 import 'package:plutopoly/helpers/icon_helper.dart';
 import 'package:plutopoly/helpers/money_helper.dart';
+import 'package:plutopoly/screens/game/zoom_map.dart';
 
 import '../../engine/data/map.dart';
 import '../../engine/kernel/main.dart';
@@ -15,9 +19,16 @@ import 'start_card.dart';
 
 class MapCarousel extends StatefulWidget {
   final PageController controller;
-  final bool zoom;
+  final ScrollController scrollController;
 
-  const MapCarousel({Key key, @required this.controller, this.zoom: false})
+  final bool zoom;
+  final bool grid;
+  const MapCarousel(
+      {Key key,
+      @required this.controller,
+      this.zoom: false,
+      this.grid: true,
+      this.scrollController})
       : super(key: key);
 
   @override
@@ -25,11 +36,13 @@ class MapCarousel extends StatefulWidget {
 }
 
 class _MapCarouselState extends State<MapCarousel> {
+  int lastPosition;
+  ScrollController scrollController;
+
   void initState() {
+    scrollController = widget.scrollController ?? ScrollController();
     super.initState();
   }
-
-  int lastPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +53,7 @@ class _MapCarouselState extends State<MapCarousel> {
       if (lastPosition != Game.data.player.position) {
         if (Game.data.ui.shouldMove && widget.controller.hasClients) {
           widget.controller.jumpToPage(Game.data.player.position);
+          scrollController?.jumpTo(getPixels(context));
         } else {
           int position2 = Game.data.player.position;
           if (lastPosition > position2) {
@@ -50,12 +64,28 @@ class _MapCarouselState extends State<MapCarousel> {
                 duration: Duration(milliseconds: 500),
                 curve: Curves.easeInOutCubic);
           }
+          if (scrollController.hasClients) {
+            scrollController.animateTo(getPixels(context),
+                duration: Duration(milliseconds: 200),
+                curve: Curves.easeInOutCubic);
+          }
         }
         lastPosition = Game.data.player.position;
       }
     });
 
     final int length = Game.data.gmap.length;
+
+    if (widget.grid)
+      return Container(
+        height: 500,
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: ZoomMap(
+            full: false,
+          ),
+        ),
+      );
 
     return PageView.builder(
       scrollDirection: Axis.horizontal,
@@ -75,10 +105,16 @@ Widget buildCard(Tile tile, {zoom: false}) {
         tile: tile,
       );
     case TileType.start:
-      return StartCard(tile: tile);
+      return StartCard(
+        tile: tile,
+        zoom: zoom,
+      );
       break;
     case TileType.jail:
-      return JailCard(tile: tile);
+      return JailCard(
+        tile: tile,
+        zoom: zoom,
+      );
       break;
     case TileType.tax:
       return Card(
@@ -94,17 +130,20 @@ Widget buildCard(Tile tile, {zoom: false}) {
                     Spacer(),
                     FaIcon(FontAwesomeIcons.handHoldingUsd,
                         color: Color(tile.color ?? Colors.white.value),
-                        size: 50),
+                        size: zoom ? 30 : 50),
                     Spacer(),
                     Text(
                       mon(tile.price.abs()),
                       style: TextStyle(
-                          color: Colors.white, fontSize: zoom ? 35 : 27),
+                          color: Colors.white, fontSize: zoom ? 14 : 27),
                     )
                   ],
                 ))),
             Expanded(
-              child: PlayerIndicators(tile: tile),
+              child: PlayerIndicators(
+                tile: tile,
+                zoom: zoom,
+              ),
             ),
           ],
         ),
@@ -119,9 +158,12 @@ Widget buildCard(Tile tile, {zoom: false}) {
                 child: Center(
                     child: FaIcon(FontAwesomeIcons.handPaper,
                         color: Color(tile.color ?? Colors.white.value),
-                        size: 50))),
+                        size: zoom ? 30 : 50))),
             Expanded(
-              child: PlayerIndicators(tile: tile),
+              child: PlayerIndicators(
+                tile: tile,
+                zoom: zoom,
+              ),
             ),
           ],
         ),
@@ -139,21 +181,26 @@ Widget buildCard(Tile tile, {zoom: false}) {
                   children: <Widget>[
                     Spacer(),
                     Container(
-                      height: 100,
-                      width: 100,
-                      child: GameIcon("coffee"),
+                      height: zoom ? 50 : 100,
+                      width: zoom ? 50 : 100,
+                      child: GameIcon(
+                        "coffee",
+                      ),
                     ),
                     Spacer(),
                     Text(
                       mon(Game.data.pot) + " ",
                       style: TextStyle(
-                          color: Colors.green, fontSize: zoom ? 30 : 25),
+                          color: Colors.green, fontSize: zoom ? 12 : 25),
                     ),
                     Spacer(),
                   ],
                 ))),
             Expanded(
-              child: PlayerIndicators(tile: tile),
+              child: PlayerIndicators(
+                tile: tile,
+                zoom: zoom,
+              ),
             ),
           ],
         ),
@@ -171,11 +218,11 @@ Widget buildCard(Tile tile, {zoom: false}) {
                     tile.icon == "bolt"
                         ? FaIcon(
                             FontAwesomeIcons.bolt,
-                            size: 50,
+                            size: zoom ? 25 : 50,
                             color: Color(tile.color ?? Colors.orange.value),
                           )
                         : FaIcon(FontAwesomeIcons.faucet,
-                            size: 50,
+                            size: zoom ? 25 : 50,
                             color: Color(tile.color ?? Colors.blue.value)),
                     OwnerText(
                       tile: tile,
@@ -184,7 +231,10 @@ Widget buildCard(Tile tile, {zoom: false}) {
                   ],
                 )),
             Expanded(
-              child: PlayerIndicators(tile: tile),
+              child: PlayerIndicators(
+                tile: tile,
+                zoom: zoom,
+              ),
             ),
           ],
         ),
@@ -201,8 +251,8 @@ Widget buildCard(Tile tile, {zoom: false}) {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                        height: 100,
-                        width: 100,
+                        height: zoom ? 50 : 100,
+                        width: zoom ? 50 : 100,
                         child: GameIcon(
                           "gem",
                           color: tile.color ?? Colors.white.value,
@@ -220,7 +270,10 @@ Widget buildCard(Tile tile, {zoom: false}) {
                   ],
                 ))),
             Expanded(
-              child: PlayerIndicators(tile: tile),
+              child: PlayerIndicators(
+                tile: tile,
+                zoom: zoom,
+              ),
             ),
           ],
         ),
@@ -237,8 +290,8 @@ Widget buildCard(Tile tile, {zoom: false}) {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      height: 100,
-                      width: 100,
+                      height: zoom ? 50 : 100,
+                      width: zoom ? 50 : 100,
                       child: GameIcon(
                         "question",
                         color: tile.color ?? Colors.white.value,
@@ -257,7 +310,10 @@ Widget buildCard(Tile tile, {zoom: false}) {
                   ],
                 ))),
             Expanded(
-              child: PlayerIndicators(tile: tile),
+              child: PlayerIndicators(
+                tile: tile,
+                zoom: zoom,
+              ),
             ),
           ],
         ),
@@ -274,7 +330,7 @@ Widget buildCard(Tile tile, {zoom: false}) {
                   children: <Widget>[
                     FaIcon(
                       FontAwesomeIcons.train,
-                      size: 50,
+                      size: zoom ? 25 : 50,
                       color: Color(tile.color ?? Colors.black.value),
                     ),
                     OwnerText(
@@ -284,7 +340,10 @@ Widget buildCard(Tile tile, {zoom: false}) {
                   ],
                 )),
             Expanded(
-              child: PlayerIndicators(tile: tile),
+              child: PlayerIndicators(
+                tile: tile,
+                zoom: zoom,
+              ),
             ),
           ],
         ),
@@ -313,12 +372,15 @@ Widget buildCard(Tile tile, {zoom: false}) {
                     Text(
                       tile.name ?? "",
                       style: TextStyle(
-                          color: Colors.white, fontSize: zoom ? 35 : 27),
+                          color: Colors.white, fontSize: zoom ? 14 : 27),
                     )
                   ],
                 ))),
             Expanded(
-              child: PlayerIndicators(tile: tile),
+              child: PlayerIndicators(
+                tile: tile,
+                zoom: zoom,
+              ),
             ),
           ],
         ),
@@ -329,6 +391,16 @@ Widget buildCard(Tile tile, {zoom: false}) {
     color: Color(tile.backgroundColor ?? Colors.white.value),
     child: PlayerIndicators(
       tile: tile,
+      zoom: zoom,
     ),
   );
+}
+
+double getPixels(BuildContext context) {
+  int confWidth = UIBloc.mapConfiguration.width;
+  double heightPerRow =
+      min(MediaQuery.of(context).size.width, UIBloc.maxWidth) /
+          confWidth *
+          (4 / 3);
+  return heightPerRow * (Game.data.player.position / confWidth).floor();
 }

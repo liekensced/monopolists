@@ -136,13 +136,14 @@ class TileAdapter extends TypeAdapter<Tile> {
       ..tableColor = fields[16] as int
       ..actionRequired = fields[17] as bool
       ..onlyOneAction = fields[18] as bool
-      ..iconData = (fields[19] as Map)?.cast<dynamic, dynamic>();
+      ..iconData = (fields[19] as Map)?.cast<dynamic, dynamic>()
+      ..actions = (fields[20] as List)?.cast<GameAction>();
   }
 
   @override
   void write(BinaryWriter writer, Tile obj) {
     writer
-      ..writeByte(19)
+      ..writeByte(20)
       ..writeByte(0)
       ..write(obj.type)
       ..writeByte(1)
@@ -180,7 +181,9 @@ class TileAdapter extends TypeAdapter<Tile> {
       ..writeByte(18)
       ..write(obj.onlyOneAction)
       ..writeByte(19)
-      ..write(obj.iconData);
+      ..write(obj.iconData)
+      ..writeByte(20)
+      ..write(obj.actions);
   }
 }
 
@@ -268,7 +271,7 @@ Map<String, dynamic> _$TileToJson(Tile instance) {
   writeNotNull('actionRequired', instance.actionRequired);
   writeNotNull('onlyOneAction', instance.onlyOneAction);
   writeNotNull('iconData', instance.iconData);
-  writeNotNull('actions', instance.actions);
+  writeNotNull('actions', instance.actions?.map((e) => e?.toJson())?.toList());
   return val;
 }
 

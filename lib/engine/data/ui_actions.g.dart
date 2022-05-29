@@ -59,13 +59,14 @@ class UIActionsDataAdapter extends TypeAdapter<UIActionsData> {
       ..screenState = fields[0] as Screen
       ..showDealScreen = fields[1] as bool
       ..shouldMove = fields[2] as bool
-      ..finished = fields[3] as bool;
+      ..finished = fields[3] as bool
+      ..randomDices = fields[4] as int;
   }
 
   @override
   void write(BinaryWriter writer, UIActionsData obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.screenState)
       ..writeByte(1)
@@ -73,7 +74,9 @@ class UIActionsDataAdapter extends TypeAdapter<UIActionsData> {
       ..writeByte(2)
       ..write(obj.shouldMove)
       ..writeByte(3)
-      ..write(obj.finished);
+      ..write(obj.finished)
+      ..writeByte(4)
+      ..write(obj.randomDices);
   }
 }
 
@@ -86,7 +89,8 @@ UIActionsData _$UIActionsDataFromJson(Map json) {
     ..screenState = _$enumDecodeNullable(_$ScreenEnumMap, json['screenState'])
     ..showDealScreen = json['showDealScreen'] as bool
     ..shouldMove = json['shouldMove'] as bool
-    ..finished = json['finished'] as bool;
+    ..finished = json['finished'] as bool
+    ..randomDices = json['randomDices'] as int;
 }
 
 Map<String, dynamic> _$UIActionsDataToJson(UIActionsData instance) =>
@@ -95,6 +99,7 @@ Map<String, dynamic> _$UIActionsDataToJson(UIActionsData instance) =>
       'showDealScreen': instance.showDealScreen,
       'shouldMove': instance.shouldMove,
       'finished': instance.finished,
+      'randomDices': instance.randomDices,
     };
 
 T _$enumDecode<T>(

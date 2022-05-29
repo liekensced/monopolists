@@ -67,7 +67,7 @@ class _GamesCardState extends State<GamesCard>
                         trailing: IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () {
-                            box.deleteAt(index);
+                            games[index].delete();
                           },
                         ),
                       ),

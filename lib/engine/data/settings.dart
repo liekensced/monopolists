@@ -47,9 +47,26 @@ class Settings {
   bool receiveRentInJail = true;
   @HiveField(16)
   bool doubleBonus = false;
+  @HiveField(17)
+  @JsonKey(defaultValue: DiceType.two)
+  DiceType diceType = DiceType.two;
 
   Settings();
 
   factory Settings.fromJson(Map json) => _$SettingsFromJson(json);
   Map<String, dynamic> toJson() => _$SettingsToJson(this);
+}
+
+@HiveType(typeId: 26)
+enum DiceType {
+  @HiveField(0)
+  one,
+  @HiveField(1)
+  two,
+  @HiveField(2)
+  three,
+  @HiveField(3)
+  random,
+  @HiveField(4)
+  choose
 }

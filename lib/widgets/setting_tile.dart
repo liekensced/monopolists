@@ -145,7 +145,8 @@ class _ValueSettingTileState extends State<ValueSettingTile> {
       });
     }
 
-    if (setting.value is int) {
+    if (setting.value is int ||
+        (setting.allowNull && setting is ValueSetting<int>)) {
       return IconButton(
           icon: Icon(Icons.edit),
           onPressed: () {

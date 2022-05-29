@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:plutopoly/engine/data/settings.dart';
 import 'package:plutopoly/engine/extensions/bank/bank_main.dart';
 
 import '../../bloc/main_bloc.dart';
@@ -21,6 +24,30 @@ class UIActionsData {
   bool shouldMove = true;
   @HiveField(3)
   bool finished = false;
+
+  @HiveField(4)
+  int randomDices;
+
+  int get amountOfDices {
+    switch (Game.data.settings.diceType) {
+      case DiceType.one:
+        return 1;
+        break;
+      case DiceType.two:
+        return 2;
+        break;
+      case DiceType.three:
+        return 3;
+        break;
+      case DiceType.choose:
+        return randomDices ?? 2;
+        break;
+      case DiceType.random:
+        return randomDices ?? Random().nextInt(3) + 1;
+        break;
+    }
+    return 2;
+  }
 
   bool get ended {
     if (finished ?? false) return true;

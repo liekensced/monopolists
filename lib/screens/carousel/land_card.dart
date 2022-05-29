@@ -37,12 +37,13 @@ class LandCard extends StatelessWidget {
               ),
               child: Container(
                 alignment: Alignment.bottomCenter,
-                padding: EdgeInsets.only(bottom: 10, right: 5, left: 5),
+                padding:
+                    EdgeInsets.only(bottom: zoom ? 5 : 10, right: 5, left: 5),
                 child: Text(
                   tile.name,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: zoom ? 25 : 20,
+                    fontSize: zoom ? 10 : 20,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
@@ -56,20 +57,20 @@ class LandCard extends StatelessWidget {
               children: <Widget>[
                 tile.owner == null
                     ? Container(
-                        margin: EdgeInsets.all(12),
+                        margin: EdgeInsets.all(zoom ? 6 : 12),
                         color: Colors.red,
-                        padding: EdgeInsets.all(3),
+                        padding: EdgeInsets.all(zoom ? 1 : 3),
                         child: Container(
                           color: Colors.white,
-                          padding: EdgeInsets.all(2),
+                          padding: EdgeInsets.all(zoom ? 1 : 2),
                           child: Container(
-                            padding: EdgeInsets.all(6),
+                            padding: EdgeInsets.all(zoom ? 3 : 6),
                             color: Colors.red,
                             child: Text(
                               "For Sale",
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: zoom ? 25 : 20),
+                                  fontSize: zoom ? 10 : 20),
                             ),
                           ),
                         ),
@@ -84,13 +85,14 @@ class LandCard extends StatelessWidget {
                     "${mon(tile.owner == null ? tile.price : tile.currentRent)}",
                     style: TextStyle(
                         color: tile.owner == null ? Colors.green : Colors.red,
-                        fontSize: zoom ? 25 : 14,
+                        fontSize: zoom ? 7 : 14,
                         fontWeight: FontWeight.bold),
                   ),
                 )),
                 Expanded(
                   child: Align(
                     child: PlayerIndicators(
+                      zoom: zoom,
                       tile: tile,
                     ),
                     alignment: Alignment.bottomLeft,

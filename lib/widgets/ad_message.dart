@@ -108,7 +108,11 @@ class DailyAdsMessage extends StatelessWidget {
   }
 
   void giveReward(int amount) {
-    ProgressHelper.energy += Random().nextInt(3) + 1;
+    int reward = Random().nextInt(3) + 1;
+    if (reward == 3) {
+      reward = Random().nextInt(3) + 1;
+    }
+    ProgressHelper.energy += reward;
     Hive.box(MainBloc.METABOX).put("intAdDays", amount - 1);
   }
 }

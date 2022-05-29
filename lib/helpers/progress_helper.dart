@@ -5,13 +5,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:plutopoly/bloc/main_bloc.dart';
-import 'package:plutopoly/bloc/ui_bloc.dart';
-import 'package:plutopoly/engine/ai/ai_type.dart';
-import 'package:plutopoly/engine/data/tip.dart';
-import 'package:plutopoly/engine/kernel/main.dart';
-import 'package:plutopoly/screens/start/info_screen.dart';
-import 'package:plutopoly/widgets/animated_count.dart';
+
+import '../bloc/main_bloc.dart';
+import '../bloc/ui_bloc.dart';
+import '../engine/ai/ai_type.dart';
+import '../engine/data/tip.dart';
+import '../engine/kernel/main.dart';
+import '../screens/start/info_screen.dart';
+import '../widgets/animated_count.dart';
 
 class ProgressHelper {
   static const String expKey = "intExp";
@@ -204,6 +205,7 @@ class LevelUpScreen extends StatelessWidget {
           constraints: BoxConstraints(maxWidth: UIBloc.maxWidth),
           child: Center(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
@@ -212,11 +214,8 @@ class LevelUpScreen extends StatelessWidget {
                     level: level.toString(),
                   ),
                 ),
-                Expanded(
-                  child: Container(),
-                ),
-                Expanded(
-                  flex: 3,
+                Container(
+                  width: double.infinity,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -243,6 +242,7 @@ class LevelUpScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                Spacer(),
                 if (ProgressHelper.LevelInfo.containsKey(level))
                   Padding(
                     padding: const EdgeInsets.all(8.0),

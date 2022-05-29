@@ -149,7 +149,6 @@ class BankMain {
     double propertiesValue = 0;
     player.properties.forEach((String id) {
       Tile tile = Game.data.gmap.firstWhere((element) => element.id == id);
-      ;
       propertiesValue += tile.price ?? 0;
       propertiesValue += (tile.level ?? 0) * (tile.housePrice ?? 0);
       if (tile.mortaged) propertiesValue -= tile.hyp ?? 0;

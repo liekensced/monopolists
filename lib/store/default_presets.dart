@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plutopoly/store/default_presets/snakes_and_ladders.dart';
 import 'package:plutopoly/store/default_presets_data.dart';
 
 import '../bloc/main_bloc.dart';
@@ -76,6 +77,7 @@ class PresetHelper {
         ),
       ]
       ..version = "1.0.2",
-    Preset.fromJson(aiExample)
+    Preset.fromJson(snakesAndLaddersData),
+    Preset.fromJson(aiExample),
   ];
 }

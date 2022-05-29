@@ -151,7 +151,7 @@ class _StockTestingScreenState extends State<StockTestingScreen> {
         series: exp
             ? [
                 BezierLine(
-                    data: stockData, lineColor: Theme.of(context).accentColor)
+                    data: stockData, lineColor: Theme.of(context).colorScheme.secondary)
               ]
             : [
                 BezierLine(

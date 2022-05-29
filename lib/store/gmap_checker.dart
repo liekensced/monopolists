@@ -21,11 +21,19 @@ class GmapChecker {
     List<String> usedIds = [];
     map.forEach((Tile element) {
       if (usedIds.contains(element.id)) {
-        throw Alert(
-            "No unique id", "There are two tiles with the same id:\n$element");
+        int i = 0;
+        while (usedIds.contains(element.id)) {
+          element.idIndex = i;
+          i++;
+          if (i > 500) {
+            throw Alert("No unique id",
+                "There are two tiles with the same id:\n$element");
+          }
+        }
       }
       usedIds.add(element.id);
     });
+    Game.save();
   }
 
   static botGame({bool nullify: false}) async {
